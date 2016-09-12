@@ -1,0 +1,48 @@
+{
+  "prefix": "!",
+  "modrolename": "Moderator",
+  "membrolename": "Member",
+  "botownerid": "83264808022970368",
+  "officialmapids": {
+    "Sprint": {
+      "Broken Symmetry": "280609",
+      "Lost Society": "318898",
+      "Negative Space": "447655",
+      "Departure": "447656",
+      "Friction": "",
+      "Aftermath": "447657",
+      "The Thing About Machines": "447658",
+      "Amusement": "",
+      "Corruption": "252032",
+      "The Observer Effect": "194839",
+      "Dissolution": "194976",
+      "Falling Through": "194977",
+      "Monolith": "359423",
+      "Uncanny Valley": ""
+    },
+    "Speed and Style": {
+      "Broken Symmetry": "288411",
+      "Lost Society": "324741",
+      "Negative Space": "449730",
+      "Departure": "449731",
+      "Friction": "",
+      "Aftermath": "449669",
+      "The Thing About Machines": "449735",
+      "Amusement": "",
+      "Corruption": "274046",
+      "The Observer Effect": "288417",
+      "Dissolution": "273907",
+      "Falling Through": "274028",
+      "Monolith": "411280",
+      "Uncanny Valley": ""
+    },
+    "Challenge": {
+      "Dodge": "500646",
+      "Thunder Struck": "259139",
+      "Grinder": "430714",
+      "Descent": "500881",
+      "Detached": "502241",
+      "Elevation": "500054"
+    }
+  }
+}
