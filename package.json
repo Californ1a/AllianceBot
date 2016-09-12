@@ -10,9 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.1.2",
-    "discord.js": "^9.1.1",
+    "discord.js": "^9.2.0",
     "fs-extra": "^0.30.0",
-    "moment": "^2.14.1",
+    "http": "0.0.0",
+    "moment": "^2.15.0",
     "mysql": "^2.11.1",
     "twit": "^2.2.4",
     "util": "^0.10.3",
