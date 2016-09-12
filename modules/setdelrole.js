@@ -1,7 +1,8 @@
+//TODO -- Not working yet
+
 var setdelrole = function () {
   var self = this;
   self.setRole = function setDelRole (message, modrolename, membrolename, prefix, bot, toprole) {
-    //if (bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
     if (message.server.owner.equals(message.author) || toprole.hasPermission("manageRoles")) {
       var str = message.content.toString();
       var results = null;

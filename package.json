@@ -1,5 +1,5 @@
 {
-  "name": "discord_bot",
+  "name": "discord_bot9",
   "version": "1.0.0",
   "description": "Discord bot",
   "main": "bot 9.0.js",
@@ -9,6 +9,13 @@
   "author": "Californ1a",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "8.1.0"
+    "colors": "^1.1.2",
+    "discord.js": "^9.1.1",
+    "fs-extra": "^0.30.0",
+    "moment": "^2.14.1",
+    "mysql": "^2.11.1",
+    "twit": "^2.2.4",
+    "util": "^0.10.3",
+    "xml2js": "^0.4.17"
   }
 }
