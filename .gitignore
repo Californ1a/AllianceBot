@@ -50,3 +50,4 @@ tweet.json
 userinfo.txt
 DiscordChatlogs/*
 backups/*
+*.bat
