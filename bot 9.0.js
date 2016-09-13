@@ -13,16 +13,13 @@ var token = require('./config/logins/discordtoken.json').token;
 var twitconfig = require('./config/logins/twitconfig.js'); //local js
 var sqlconfig = require('./config/logins/sqlconfig.js'); //local js
 var RipWin = require('./modules/RipWin.js'); //local js
-var setdelrole = require ('./modules/setdelrole.js'); //local js
-var checkMapID = require('./modules/checkmapid.js'); //local js
+var setDelRole = require ('./modules/setdelrole.js'); //local js
+var CheckMapID = require('./modules/checkmapid.js'); //local js
 var timers = require('./modules/timers.js'); //local js
 // </editor-fold>
 
 
 // <editor-fold desc='variables'>
-var RipWinInstance = new RipWin(); //new object for ripwin
-var setDelRoleInstance = new setdelrole(); //new object for setdelrole
-var checkMapIDInstance = new checkMapID(); //new object for checkMapID
 var T = new Twit(twitconfig); //new twitter object
 var bot = new Discord.Client(); //create bot
 var prefix = jsondata.prefix;
@@ -809,7 +806,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 								}
 								else {
-									mapid = checkMapIDInstance.checkMapID(message, colors, results, jsondata, mapid);
+									mapid = CheckMapID.checkMapID(message, colors, results, jsondata, mapid);
 
 
 
@@ -1221,7 +1218,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 
-								setDelRoleInstance.setRole(message, modrolename, membrolename, prefix, bot, toprole);
+								setDelRole.setRole(message, modrolename, membrolename, prefix, bot, toprole);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
 									hardcommands[ref]["onCooldown"] = "false";
@@ -1246,7 +1243,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 
-								setDelRoleInstance.delRole(message, modrolename, membrolename, prefix, bot, toprole);
+								setDelRole.delRole(message, modrolename, membrolename, prefix, bot, toprole);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
 									hardcommands[ref]["onCooldown"] = "false";
@@ -1281,7 +1278,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 								ripwin = "win";
-								RipWinInstance.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
+								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
 									hardcommands[ref]["onCooldown"] = "false";
@@ -1308,7 +1305,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 								ripwin = "rip";
-								RipWinInstance.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
+								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
 									hardcommands[ref]["onCooldown"] = "false";
