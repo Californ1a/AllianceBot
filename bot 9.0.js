@@ -806,7 +806,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "dist help` for syntax help.");
 								}
 								else if (results[1] == "help") {
-									message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <category>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`category`\rThe category. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The category will be ignored if a Challenge-mode map name is given. Abbreviations for categories is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
+									message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 								}
 								else {
 									mapid = checkMapIDInstance.checkMapID(message, colors, results, jsondata, mapid);
@@ -1096,7 +1096,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 
-								currentss = GetCount(message);
+								currentss = timers.GetCount(message);
 								message.author.sendMessage("Speedy Saturday is a community multiplayer get-together event that occurs every week (on Saturday) at 6:00PM UTC until 8:00PM UTC (2 hour duration). More information can be found here:\rhttp://steamcommunity.com/app/233610/discussions/0/528398719786414266/\rhttps://redd.it/3mlfje\r" + currentss);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
@@ -1125,7 +1125,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 
-								connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id, function(error, quotes) {
+								connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " order by commandname asc", function(error, quotes) {
 									if (error) {
 										message.channel.sendMessage("Failed to find any, with errors.");
 										console.log(error);
