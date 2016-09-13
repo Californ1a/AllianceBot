@@ -159,8 +159,6 @@ Returns a countdown until the next Speedy Saturday.
 #### Syntax: `wr <category>`
 Uses the server name as the game name and returns the time, username, and video link of the \#1 time on the speedrun.com leaderboards for the specified category.
 
----
-
 ##### Parameters
 * `category`
   * The category to search for. Must match, but doesn't have to be an exact match. Search term `any` will match a category named `any%`, or `all` will match a category named `all collectables`.
