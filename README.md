@@ -8,10 +8,10 @@ Discord chat bot.
 ## Commands  
 Within a syntax, `(parenthesis)` denotes optional parameters (use exact word(s) shown with the parenthesis), and `<less than/greater than>` denotes replacement of the word(s).
 
-##### Syntax: `advent (set|del) (<datetime> <event name>)`  
+#### Syntax: `advent (set|del) (<datetime> <event name>)`  
 Creates a custom event countdown. Only one event is supported.
 
-###### Parameters
+##### Parameters
 * `set|del`
   * Optional parameter for Moderators to set a new event or delete the current event. When deleting, neither the date nor the name parameters are required because there can only ever be one event countdown at a time.
 * `datetime`
@@ -19,7 +19,7 @@ Creates a custom event countdown. Only one event is supported.
 * `event name`
   * When setting a new event, provide a name for the event.
 
-###### Examples
+##### Examples
 * ModUser: `!advent set 2016-02-08T13:30:20 Some Name`
   * Set an event named *Some Name* to start at February 8th, 2016 at 1:30:20 PM.
 * ModUser: `!advent del`
@@ -27,27 +27,35 @@ Creates a custom event countdown. Only one event is supported.
 * RegUser: `!advent`
   * Display the countdown for the set event, if there is one.
 
-##### Syntax: `automemb`
+---
+
+#### Syntax: `automemb`
 Not an actual command. If it appears in the command list, it denotes *automatic Member role assignment* whenever a guest first says something in any text channel.
 
-##### Syntax: `cmds|commands|help`
+---
+
+#### Syntax: `cmds|commands|help`
 Returns the list of commands in a PM.
 
-##### Syntax: `delcom <command name>`
+---
+
+#### Syntax: `delcom <command name>`
 Delete a custom command.
 
-###### Parameter
+##### Parameter
 * `command name`
   * The name of the command to be deleted, without the prefix.
 
-###### Example
+##### Example
 * ModUser: `!delcom spooky`
   * Deletes the custom `!spooky` command.
 
-##### Syntax: `delrole <username> <discriminator> <role>`
+---
+
+#### Syntax: `delrole <username> <discriminator> <role>`
 Removes an assigned role from a user.
 
-###### Parameters
+##### Parameters
 * `username`
   * Name of the user to have the role removed from. Case-sensitive.
 * `discriminator`
@@ -55,28 +63,32 @@ Removes an assigned role from a user.
 * `role`
   * Name of the role to be removed from the user. Case-sensitive.
 
-###### Example
+##### Example
 * ModUser: `!delrole Cal 5209 Member`
   * If both the bot and the Moderator using the command have the permission to do so, this will remove the role *Member* from the user *Cal#5209*.
 
-##### Syntax: `dist <map name> (<mode>)`
+---
+
+#### Syntax: `dist <map name> (<mode>)`
 Return the current \#1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.
 
-###### Parameters
+##### Parameters
 * `map name`
   * The name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).
 * `mode`
   * The mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). Any given mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`).
 
-###### Examples
+##### Examples
 * RegUser: `!dist bs s`
 * RegUser: `!dist broken symmetry sprint`
   * Both of these will return the best time for Broken Symmetry in Sprint mode.
 
-##### Syntax: `!newcom <command name> <mod-only> <reply-in-pm> <message>`
+---
+
+#### Syntax: `!newcom <command name> <mod-only> <reply-in-pm> <message>`
 Create custom commands.
 
-###### Parameters
+##### Parameters
 * `command name`
   * Name of command without prefix.
 * `mod-only (true|false)`
@@ -86,14 +98,16 @@ Create custom commands.
 * `message`
   * The message to be sent when the command is given.
 
-###### Example
+##### Example
 * ModUser: `!newcom spook false false BOO! Scared ya!`
   * The new custom command would be `!spook` which would be enabled for all members to use, would reply in-channel, and the returned message would be `BOO! Scared ya!`.
 
-##### Syntax: `rip|win (<key>|list|add|del) (<quote>)`
+---
+
+#### Syntax: `rip|win (<key>|list|add|del) (<quote>)`
 Obtain or manipulate rip/win quotes. Using no parameters returns a random quote.
 
-###### Parameters
+##### Parameters
 * `key`
   * Supply a keyword to search for a specific quote.
 * `list`
@@ -105,7 +119,7 @@ Obtain or manipulate rip/win quotes. Using no parameters returns a random quote.
 * `quote`
   * The quote test to be added to the list or removed from the list. For deletion, it must be an exact match. Use `list` and copy+paste from the full list.
 
-###### Examples
+##### Examples
 * RegUser: `!rip nitro`
   * Return a rip message matching `nitro`.
 * ModUser: `!win add Totally Awesome!`
@@ -113,10 +127,12 @@ Obtain or manipulate rip/win quotes. Using no parameters returns a random quote.
 * ModUser: `!rip del Failure!`
   * Remove the quote `Failure!` from the list of rip quotes.
 
-##### Syntax: `setrole <username> <discriminator> <role>`
+---
+
+#### Syntax: `setrole <username> <discriminator> <role>`
 Assign a role to a user.
 
-###### Parameters
+##### Parameters
 * `username`
   * Name of the user to have the role set to. Case-sensitive.
 * `discriminator`
@@ -124,23 +140,31 @@ Assign a role to a user.
 * `role`
   * Name of the role to be added to the user. Case-sensitive.
 
-###### Example
+##### Example
 * ModUser: `!setrole Cal 5209 Member`
   * If both the bot and the Moderator using the command have the permission to do so, this will add the role *Member* to the user *Cal#5209*.
 
-##### Syntax: `speedy`
+---
+
+#### Syntax: `speedy`
 Returns Speedy Saturday information along with links to the SS Reddit and Steam Discussion threads. Also includes the countdown until the next SS.
 
-##### Syntax: `ss`
+---
+
+#### Syntax: `ss`
 Returns a countdown until the next Speedy Saturday.
 
-##### Syntax: `wr <category>`
+---
+
+#### Syntax: `wr <category>`
 Uses the server name as the game name and returns the time, username, and video link of the \#1 time on the speedrun.com leaderboards for the specified category.
 
-###### Parameters
+---
+
+##### Parameters
 * `category`
   * The category to search for. Must match, but doesn't have to be an exact match. Search term `any` will match a category named `any%`, or `all` will match a category named `all collectables`.
 
-###### Example
+##### Example
 * RegUser: `!wr any`
   * Returns the time, username, and video link for the top time of the first category matching `any` (likely `any%`).
