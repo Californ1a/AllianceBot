@@ -8,6 +8,21 @@ Discord chat bot. Version update to [discord.js](https://github.com/hydrabolt/di
 ## Commands  
 Within a syntax, `(parenthesis)` denotes optional parameters (use exact word(s) shown with the parenthesis), and `<less than/greater than>` denotes replacement of the word(s).
 
+---
+
+#### Syntax: `addcomtoserv <command name>`
+Enable a specific hardcoded command on a server. Only usable by the bot owner or the server owner.
+
+##### Parameter
+* `command name`
+  * Command name to be enabled on that server, without the prefix.
+
+##### Example:
+* ServOwner: `!addcomtoserv advent`
+  * Enable the `!advent` hardcoded command on the server.
+
+---
+
 #### Syntax: `advent (set|del) (<datetime> <event name>)`  
 Creates a custom event countdown. Only one event is supported.
 
@@ -101,6 +116,19 @@ Create custom commands.
 ##### Example
 * ModUser: `!newcom spook false false BOO! Scared ya!`
   * The new custom command would be `!spook` which would be enabled for all members to use, would reply in-channel, and the returned message would be `BOO! Scared ya!`.
+
+---
+
+#### Syntax: `remcomfromserv <command name>`
+Disable a specific hardcoded command on a server. Only usable by the bot owner or the server owner.
+
+##### Parameter
+* `command name`
+  * Command name to be disabled on that server, without the prefix.
+
+##### Example:
+* ServOwner: `!remcomfromserv advent`
+  * Disables the `!advent` hardcoded command on the server.
 
 ---
 
