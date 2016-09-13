@@ -85,7 +85,7 @@ Return the current \#1 time on a specified map. May take a few seconds to reply,
 
 ---
 
-#### Syntax: `!newcom <command name> <mod-only> <reply-in-pm> <message>`
+#### Syntax: `newcom <command name> <mod-only> <reply-in-pm> <message>`
 Create custom commands.
 
 ##### Parameters
