@@ -4,11 +4,11 @@ var commandCount = 0;
 
 module.exports = Command;
 
-function Command(n) {
+function Command(o) {
   this.id = commandCount;
-  this.name = n;
+  this.name = o.name;
   this.onCooldown = false;
-  this.cooldownTimer = 5000;
+  this.cooldownTimer = o.cooldown;
   commandCount++;
 
 }

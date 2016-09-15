@@ -17,12 +17,12 @@ var setDelRole = require ('./modules/setdelrole.js'); //local js
 var CheckMapID = require('./modules/checkmapid.js'); //local js
 var timers = require('./modules/timers.js'); //local js
 var Command = require('./modules/command.js'); //local js
+var commandList = require('./config/commands.json'); //local json
 // </editor-fold>
 
 var hardCode = []
-var hardcommands = ["newcom", "delcom", "dist", "wr", "ss", "speedy", "cmds", "commands", "help", "setrole", "delrole", "win", "rip", "test", "advent"];
-for (i in hardcommands) {
-	hardCode[i] = new Command(hardcommands[i]);
+for (i in commandList) {
+	hardCode[i] = new Command(commandList[i]);
 }
 
 
@@ -488,6 +488,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 			var str = message.content;
 			results = str.split(' ');
 			results[0] = results[0].replace(prefix, "");
+			var ref = 0;
+			for (var i = 0; i < hardCode.length; i++) {
+				if (hardCode[i].name == results[0].replace(prefix,"")) {
+					ref = i;
+				}
+			}
 
 			//check for custom server command
 			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[0] + "'", function(error, returntext) {
@@ -1268,13 +1274,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				//ripwin command
-				else if (message.content.startsWith(prefix + "win")) {
-					var ref = 0;
-					for (var i = 0; i < hardCode.length; i++) {
-						if (hardCode[i].name == results[0].replace(prefix,"")) {
-							ref = i;
-						}
-					}
+				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
 						if (response && !hardCode[ref].onCooldown) {
 							ripwin = results[0].replace(prefix, "");
@@ -1282,33 +1282,6 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							hardCode[ref].timeout();
 						}
 					}).catch (error => console.error(error));
-				}
-				else if (message.content.startsWith(prefix + "rip")) {
-					isEnabledForServer(message, connection, function(someresult) {
-						if (someresult) {
-
-
-
-							var ref = 0;
-							for (var i = 0; i < hardcommands.length; i++) {
-								if (hardcommands[i]["comName"] == results[1]) {
-									ref = i;
-								}
-							}
-							if (hardcommands[ref]["onCooldown"] == "false") {
-
-
-
-
-								ripwin = results[0].replace("!", "");
-								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
-								hardcommands[ref]["onCooldown"] = "true";
-								setTimeout(function() {
-									hardcommands[ref]["onCooldown"] = "false";
-								}, 100);
-							}
-						}
-					});
 				}
 				//end ripwin
 			}

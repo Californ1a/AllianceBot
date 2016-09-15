@@ -1,0 +1,63 @@
+
+  [
+    {
+      "name": "newcom",
+      "cooldown": 5000
+    },
+    {
+      "name": "delcom",
+      "timeout": 5000
+    },
+    {
+      "name": "dist",
+      "timeout": 5000
+    },
+    {
+      "name": "wr",
+      "timeout": 5000
+    },
+    {
+      "name": "ss",
+      "timeout": 5000
+    },
+    {
+      "name": "speedy",
+      "timeout": 1000
+    },
+    {
+      "name": "cmds",
+      "timeout": 5000
+    },
+    {
+      "name": "commands",
+      "timeout": 5000
+    },
+    {
+      "name": "help",
+      "timeout": 5000
+    },
+    {
+      "name": "setrole",
+      "timeout": 5000
+    },
+    {
+      "name": "delrole",
+      "timeout": 5000
+    },
+    {
+      "name": "win",
+      "timeout": 100
+    },
+    {
+      "name": "rip",
+      "timeout": 100
+    },
+    {
+      "name": "test",
+      "timeout": 0
+    },
+    {
+      "name": "advent",
+      "timeout": 5000
+    }
+  ]
