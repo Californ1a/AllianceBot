@@ -154,31 +154,7 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 
 	// <editor-fold desc='newmessage matching'>
 	var newchatlog = "E:/OtherStuff/DiscordChatlogs2/";
-	var hournew = newMessage.timestamp.getHours();
-	ampmpast = "AM";
-	if (hournew == 0) {
-		hournew = 12
-		ampmpast = "AM";
-	}
-	else if (hournew >= 13) {
-		hournew = hournew - 12;
-		ampmpast = "PM";
-	}
-	if (hournew < 10 && hournew > 0) {
-		hournew = "0" + hournew;
-	}
-	var minutenew = newMessage.timestamp.getMinutes();
-	if (minutenew < 10) {
-		minutenew = "0" + minutenew;
-	}
-	var secondnew = newMessage.timestamp.getSeconds();
-	if (secondnew < 10) {
-		secondnew = "0" + secondnew;
-	}
-	var daynew = newMessage.timestamp.getDate();
-	var newmonthIndex = newMessage.timestamp.getMonth();
-	var yearnew = newMessage.timestamp.getFullYear();
-	var newthedate = monthNames[newmonthIndex] + " " + daynew + ", " + yearnew + " " + hournew + ":" + minutenew + ":" + secondnew + ampm;
+	var newMessageTime = messageDate(newMessage);
 	var newuserrole = newMessage.guild.members.get(newMessage.author.id);
 	//console.log(newuserrole.roles);
 	if (newuserrole.roles.size == 0) {
@@ -210,42 +186,18 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 			newisbot = "";
 		}
 	}
-	newchatlog = newchatlog + newMessage.guild.name + "/" + newMessage.channel.name + "/" + yearnew + "/" + monthNames[newmonthIndex] + ".txt";
+	newchatlog = newchatlog + newMessage.guild.name + "/" + newMessage.channel.name + "/" + newMessageTime.year + "/" + newMessageTime.month + ".txt";
 	if (newMessage.guild.members.get(newMessage.author.id).nick) {
-		newchatlinedata = newthedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.guild.members.get(newMessage.author.id).nick + ": " + newMessage.cleanContent;
+		newchatlinedata = newMessageTime.thedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.guild.members.get(newMessage.author.id).nick + ": " + newMessage.cleanContent;
 	}
 	else {
-		newchatlinedata = newthedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.author.username + ": " + newMessage.cleanContent;
+		newchatlinedata = newMessageTime.thedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.author.username + ": " + newMessage.cleanContent;
 	}
 	// </editor-fold>
 
 	// <editor-fold desc='oldmessage matching'>
 	var oldchatlog = "E:/OtherStuff/DiscordChatlogs2/";
-	var hourthen = oldMessage.timestamp.getHours();
-	ampmpast = "AM";
-	if (hourthen == 0) {
-		hourthen = 12
-		ampmpast = "AM";
-	}
-	else if (hourthen >= 13) {
-		hourthen = hourthen - 12;
-		ampmpast = "PM";
-	}
-	if (hourthen < 10 && hourthen > 0) {
-		hourthen = "0" + hourthen;
-	}
-	var minutethen = oldMessage.timestamp.getMinutes();
-	if (minutethen < 10) {
-		minutethen = "0" + minutethen;
-	}
-	var secondthen = oldMessage.timestamp.getSeconds();
-	if (secondthen < 10) {
-		secondthen = "0" + secondthen;
-	}
-	var daythen = oldMessage.timestamp.getDate();
-	var oldmonthIndex = oldMessage.timestamp.getMonth();
-	var yearthen = oldMessage.timestamp.getFullYear();
-	var oldthedate = monthNames[oldmonthIndex] + " " + daythen + ", " + yearthen + " " + hourthen + ":" + minutethen + ":" + secondthen + ampm;
+	var oldMessageTime = messageDate(oldMessage);
 	var userrole = oldMessage.guild.members.get(oldMessage.author.id);
 	//console.log(userrole.roles);
 	if (userrole.roles.size == 0) {
@@ -277,15 +229,15 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 			isbot = "";
 		}
 	}
-	oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt";
+	oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt";
 	if (oldMessage.guild.members.get(oldMessage.author.id).nick) {
-		oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
+		oldchatlinedata = oldMessageTime.thedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
 	}
 	else {
-		oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
+		oldchatlinedata = oldMessageTime.thedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
 	}
 	// </editor-fold>
-	fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", function(error, data) {
+	fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", function(error, data) {
 		if (error) {
 			console.log(error);
 		}
@@ -306,7 +258,7 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 					array[i] = newchatlinedata;
 					//array.splice(i+1,0,"(Edited -->) " + newMessage.cleanContent);
 
-					fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", array.join("\r\n"), function(error) {
+					fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", array.join("\r\n"), function(error) {
 						if (error) {
 							console.log(error);
 						}
@@ -338,32 +290,9 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 bot.on("message", (message) => {
 var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	if (message.guild) { //non-pm messages
-		var d = message.timestamp;
-		var hournow = d.getHours();
-		ampm = "AM";
-		if (hournow == 0) {
-			hournow = 12
-			ampm = "AM";
-		}
-		else if (hournow >= 13) {
-			hournow = hournow - 12;
-			ampm = "PM";
-		}
-		if (hournow < 10 && hournow > 0) {
-			hournow = "0" + hournow;
-		}
-		var minutenow = d.getMinutes();
-		if (minutenow < 10) {
-			minutenow = "0" + minutenow;
-		}
-		var secondnow = d.getSeconds();
-		if (secondnow < 10) {
-			secondnow = "0" + secondnow;
-		}
-		var day = d.getDate();
-		var monthIndex = d.getMonth();
-		var year = d.getFullYear();
-		var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
+
+		var messageTime = messageDate(message);
+
 		var userrole = message.guild.members.get(message.author.id);
 		//console.log(userrole.roles);
 		if (userrole.roles.size == 0) {
@@ -396,7 +325,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 			}
 		}
 
-		fs.mkdirs(chatlog + message.guild.name + "/" + message.channel.name + "/" + year, function(error) {
+		fs.mkdirs(chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
 			if (error) {
 				console.log(error);
 				return;
@@ -406,12 +335,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 			}
 		});
 		if (message.attachments.length > 0) {
-			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + year + "/" + monthNames[monthIndex] + ".txt";
+			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
 			if (message.guild.members.get(message.author.id).nick) {
-				chatlinedata = thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
+				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
 			}
 			else {
-				chatlinedata = thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
+				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
 			}
 			fs.appendFile(chatlog, chatlinedata, function(error) {
 				if (error) {
@@ -422,19 +351,19 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 						console.log(colors.white(hournow + ":" + minutenow + ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
 					}
 					else {
-						console.log(colors.white(hournow + ":" + minutenow + ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
+						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
 					}
 					console.log(colors.white(message.attachments[0].url));
 				}
 			});
 		}
 		else {
-			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + year + "/" + monthNames[monthIndex] + ".txt";
+			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
 			if (message.guild.members.get(message.author.id).nick) {
-				chatlinedata = thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n";
+				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n";
 			}
 			else {
-				chatlinedata = thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n";
+				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n";
 			}
 
 			fs.appendFile(chatlog, chatlinedata, function(error) {
@@ -443,10 +372,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				}
 				else {
 					if (message.guild.members.get(message.author.id).nick) {
-						console.log(colors.white(hournow + ":" + minutenow + ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
+						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
 					}
 					else {
-						console.log(colors.white(hournow + ":" + minutenow + ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
+						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
 					}
 				}
 			});
@@ -1154,3 +1083,41 @@ bot.on('debug', e => { console.info(e); });
 
 //discord login
 bot.login(token);
+
+
+var messageDate = function messageDate (message) {
+	var d = message.timestamp;
+	var hournow = d.getHours();
+	ampm = "AM";
+	if (hournow == 0) {
+		hournow = 12
+		ampm = "AM";
+	}
+	else if (hournow >= 13) {
+		hournow = hournow - 12;
+		ampm = "PM";
+	}
+	if (hournow < 10 && hournow > 0) {
+		hournow = "0" + hournow;
+	}
+	var minutenow = d.getMinutes();
+	if (minutenow < 10) {
+		minutenow = "0" + minutenow;
+	}
+	var secondnow = d.getSeconds();
+	if (secondnow < 10) {
+		secondnow = "0" + secondnow;
+	}
+	var day = d.getDate();
+	var monthIndex = d.getMonth();
+	var year = d.getFullYear();
+	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
+	return {
+		"thedate": thedate,
+		"year": year,
+		"month": monthNames[monthIndex],
+		"hour": hournow,
+		"minute": minutenow,
+		"ampm": ampm
+	}
+}
