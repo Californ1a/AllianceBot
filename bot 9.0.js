@@ -16,7 +16,14 @@ var RipWin = require('./modules/RipWin.js'); //local js
 var setDelRole = require ('./modules/setdelrole.js'); //local js
 var CheckMapID = require('./modules/checkmapid.js'); //local js
 var timers = require('./modules/timers.js'); //local js
+var Command = require('./modules/command.js'); //local js
 // </editor-fold>
+
+var hardCode = []
+var hardcommands = ["newcom", "delcom", "dist", "wr", "ss", "speedy", "cmds", "commands", "help", "setrole", "delrole", "win", "rip", "test", "advent"];
+for (i in hardcommands) {
+	hardCode[i] = new Command(hardcommands[i]);
+}
 
 
 // <editor-fold desc='variables'>
@@ -32,7 +39,7 @@ var chatlinedata = ""; //chatlog string
 var ampm = "AM";
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 var commandname = "";
-var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
+//var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
 var isit = false;
 var cooldown = false;
 var stream = T.stream('statuses/filter', { follow: ['628034104', '241371699']}); //create tweet filter, first two are refract and torcht, any others for testing
@@ -615,7 +622,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "newcom")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -707,7 +714,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "delcom")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -769,7 +776,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				//test
 
 				else if (message.content.startsWith(prefix + "test")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 						}
@@ -779,7 +786,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "dist")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -886,7 +893,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "wr")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -987,7 +994,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "ss")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1015,7 +1022,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "advent")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1078,7 +1085,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "speedy")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1107,7 +1114,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "commands") || message.content.startsWith(prefix + "cmds") || message.content.startsWith(prefix + "help")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1203,7 +1210,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 				//setdelrole
 				else if (message.content.startsWith(prefix + "setrole")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1228,7 +1235,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 					});
 				}
 				else if (message.content.startsWith(prefix + "delrole")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1262,33 +1269,43 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 				//ripwin command
 				else if (message.content.startsWith(prefix + "win")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					var ref = 0;
+					for (var i = 0; i < hardCode.length; i++) {
+						if (hardCode[i].name == results[0].replace("!","")) {
+							ref = i;
+						}
+					}
+					hardCode[ref].isEnabledForServer(message, connection, prefix, function(someresult) {
 						if (someresult) {
 
 
-							var ref = 0;
-							for (var i = 0; i < hardcommands.length; i++) {
-								if (hardcommands[i]["comName"] == results[1]) {
-									ref = i;
-								}
-							}
-							if (hardcommands[ref]["onCooldown"] == "false") {
+							// var ref = 0;
+							// for (var i = 0; i < hardCode.length; i++) {
+							// 	if (hardCode[i].name == results[0].replace("!","")) {
+							// 		ref = i;
+							// 	}
+							// }
+							if (!hardCode[ref].onCooldown) {
 
 
 
 
-								ripwin = "win";
+								ripwin = results[0].replace("!", "");
 								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
-								hardcommands[ref]["onCooldown"] = "true";
+
+
+
+								
+								hardCode[ref].onCooldown = true;
 								setTimeout(function() {
-									hardcommands[ref]["onCooldown"] = "false";
+									hardCode[ref].onCooldown = false;
 								}, 100);
 							}
 						}
 					});
 				}
 				else if (message.content.startsWith(prefix + "rip")) {
-					isEnabledForServer(message, connection, bot, function(someresult) {
+					isEnabledForServer(message, connection, function(someresult) {
 						if (someresult) {
 
 
@@ -1304,7 +1321,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 
-								ripwin = "rip";
+								ripwin = results[0].replace("!", "");
 								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
@@ -1347,8 +1364,8 @@ bot.login(token);
 
 
 //try to make commands per-server
-function isEnabledForServer(message, connection, bot, cb) {
-	var str = message.content.toString();
+function isEnabledForServer(message, connection, cb) {
+	var str = message.content;
 	var results = null;
 	results = str.split(' ');
 	if (results[0].includes(prefix)) {
