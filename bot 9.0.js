@@ -151,6 +151,75 @@ bot.on("serverDeleted", (server) => {
 
 // <editor-fold desc='bot on message edit'>
 bot.on('messageUpdate', (oldMessage, newMessage) => {
+
+	// <editor-fold desc='newmessage matching'>
+	var newchatlog = "E:/OtherStuff/DiscordChatlogs2/";
+	var hournew = newMessage.timestamp.getHours();
+	ampmpast = "AM";
+	if (hournew == 0) {
+		hournew = 12
+		ampmpast = "AM";
+	}
+	else if (hournew >= 13) {
+		hournew = hournew - 12;
+		ampmpast = "PM";
+	}
+	if (hournew < 10 && hournew > 0) {
+		hournew = "0" + hournew;
+	}
+	var minutenew = newMessage.timestamp.getMinutes();
+	if (minutenew < 10) {
+		minutenew = "0" + minutenew;
+	}
+	var secondnew = newMessage.timestamp.getSeconds();
+	if (secondnew < 10) {
+		secondnew = "0" + secondnew;
+	}
+	var daynew = newMessage.timestamp.getDate();
+	var newmonthIndex = newMessage.timestamp.getMonth();
+	var yearnew = newMessage.timestamp.getFullYear();
+	var newthedate = monthNames[newmonthIndex] + " " + daynew + ", " + yearnew + " " + hournew + ":" + minutenew + ":" + secondnew + ampm;
+	var newuserrole = newMessage.guild.members.get(newMessage.author.id);
+	//console.log(newuserrole.roles);
+	if (newuserrole.roles.size == 0) {
+		newuserrole = "Guest";
+		if (newMessage.author.bot) {
+			newisbot = "{BOT}"
+		}
+		else {
+			newisbot = "";
+		}
+	}
+	else {
+		var maxpos = 0;
+
+		//find max role of user
+		for (var i = 0; i < newMessage.guild.roles.size+1; i++) {
+			maxpos = newuserrole.roles.exists("position",i) && newuserrole.roles.find("position",i).position > maxpos ? newuserrole.roles.find("position",i).position : maxpos;
+			// if (newuserrole.roles.exists("position",i) && newuserrole.roles.find("position",i).position > maxpos) {
+			// 	maxpos = newuserrole.roles.find("position",i).position;
+			// }
+		}
+		var newtoprole = newMessage.guild.roles.find("position", maxpos);
+
+		newuserrole = newtoprole.name;
+		if (newMessage.author.bot) {
+			newisbot = "{BOT}"
+		}
+		else {
+			newisbot = "";
+		}
+	}
+	newchatlog = newchatlog + newMessage.guild.name + "/" + newMessage.channel.name + "/" + yearnew + "/" + monthNames[newmonthIndex] + ".txt";
+	if (newMessage.guild.members.get(newMessage.author.id).nick) {
+		newchatlinedata = newthedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.guild.members.get(newMessage.author.id).nick + ": " + newMessage.cleanContent;
+	}
+	else {
+		newchatlinedata = newthedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.author.username + ": " + newMessage.cleanContent;
+	}
+	// </editor-fold>
+
+	// <editor-fold desc='oldmessage matching'>
 	var oldchatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	var hourthen = oldMessage.timestamp.getHours();
 	ampmpast = "AM";
@@ -208,80 +277,47 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 			isbot = "";
 		}
 	}
-	if (oldMessage.attachments.length > 0) {
-		oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt";
-		if (oldMessage.guild.members.get(oldMessage.author.id).nick) {
-			oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
-		}
-		else {
-			oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
-		}
-		fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", function(error, data) {
-	    if (error) {
-				console.log(error);
-			}
-			else {
-	    	var array = data.toString().split("\n");
-				//console.log(array[0]);
-	    	for(i in array) {
-	        //console.log(array[i]);
-					if (array[i] == oldchatlinedata) {
-						// console.log("yes");
-						array.splice(i+1,0,"(Edited -->) " + newMessage.cleanContent);
-
-						fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", array.join("\r\n"), function(error) {
-							if (error) {
-								console.log(error);
-							}
-							else {
-								console.log("wrote file");
-							}
-						});
-					}
-	    	}
-			}
-		});
+	oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt";
+	if (oldMessage.guild.members.get(oldMessage.author.id).nick) {
+		oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
 	}
 	else {
-		oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt";
-		if (oldMessage.guild.members.get(oldMessage.author.id).nick) {
-			oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
+		oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
+	}
+	// </editor-fold>
+	fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", function(error, data) {
+		if (error) {
+			console.log(error);
 		}
 		else {
-			oldchatlinedata = oldthedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
-		}
-		fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", function(error, data) {
-	    if (error) {
-				console.log(error);
-			}
-			else {
-	    	var array = data.toString().split("\r\n");
-				//console.log(array[0]);
-	    	for(var i = 0; i < array.length; i++) {
-	        //console.log(array[i]);
-					// array[i] = array[i].replace('\r','');
-					// array[i] = array[i].replace('\n','');
-					// oldchatlinedata = oldchatlinedata.replace('\r','');
-					// oldchatlinedata = oldchatlinedata.replace('\n','');
-					// console.log(array[i]);
-					// console.log(oldchatlinedata);
-					if (array[i] == oldchatlinedata) {
-						// console.log("yes");
-						array.splice(i+1,0,"(Edited -->) " + newMessage.cleanContent);
+			var array = data.toString().split("\r\n");
+			//console.log(array[0]);
+			for(var i = 0; i < array.length; i++) {
+				//console.log(array[i]);
+				// array[i] = array[i].replace('\r','');
+				// array[i] = array[i].replace('\n','');
+				// oldchatlinedata = oldchatlinedata.replace('\r','');
+				// oldchatlinedata = oldchatlinedata.replace('\n','');
+				// console.log(array[i]);
+				// console.log(oldchatlinedata);
+				if (array[i] == oldchatlinedata) {
+					// console.log("yes");
 
-						fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", array.join("\r\n"), function(error) {
-							if (error) {
-								console.log(error);
-							}
-							else {
-								console.log("wrote file");
-							}
-						});
-					}
-	    	}
+					array[i] = newchatlinedata;
+					//array.splice(i+1,0,"(Edited -->) " + newMessage.cleanContent);
+
+					fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldmonthIndex] + ".txt", array.join("\r\n"), function(error) {
+						if (error) {
+							console.log(error);
+						}
+						// else {
+						// 	console.log("wrote file");
+						// }
+					});
+				}
 			}
-		});
-	}
+		}
+	});
 
 
 
