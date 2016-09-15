@@ -1276,13 +1276,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 						}
 					}
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
-						if (response) {
+						if (response && !hardCode[ref].onCooldown) {
 							ripwin = results[0].replace(prefix, "");
 							RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
-							hardCode[ref].onCooldown = true;
-							setTimeout(function() {
-								hardCode[ref].onCooldown = false;
-							}, 100);
+							hardCode[ref].timeout();
 						}
 					}).catch (error => console.error(error));
 				}

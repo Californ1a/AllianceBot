@@ -8,6 +8,7 @@ function Command(n) {
   this.id = commandCount;
   this.name = n;
   this.onCooldown = false;
+  this.cooldownTimer = 5000;
   commandCount++;
 
 }
@@ -15,8 +16,7 @@ function Command(n) {
 Command.prototype.isEnabledForServer = function(message, connection, prefix) {
   return new Promise((resolve) => {
     var str = message.content;
-    var results = null;
-    results = str.split(' ');
+    var results = str.split(' ');
     if (results[0].includes(prefix)) {
       commandname = results[0].replace(prefix, "");
     }
@@ -38,4 +38,11 @@ Command.prototype.isEnabledForServer = function(message, connection, prefix) {
       }
     });
   });
-};
+}
+
+Command.prototype.timeout = function() {
+  this.onCooldown = true;
+  setTimeout(function() {
+    this.onCooldown = false;
+  }, this.cooldownTimer);
+}
