@@ -31,7 +31,7 @@ var chatlinedata = "";
 var ampm = "AM";
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 var commandname = "";
-var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
+var hardcommands = [{comName:"tf", onCooldown:"false"}, {comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
 var isit = false;
 var cooldown = false;
 var stream = T.stream('statuses/filter', { follow: ['628034104', '241371699']}); //create tweet filter, first two are refract and torcht, rest for testing
@@ -1262,6 +1262,33 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs/";
 
 
 								ripwin = "rip";
+								RipWinInstance.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
+								hardcommands[ref]["onCooldown"] = "true";
+								setTimeout(function() {
+									hardcommands[ref]["onCooldown"] = "false";
+								}, 100);
+							}
+						}
+					});
+				}
+				else if (message.content.startsWith(prefix + "tf")) {
+					isEnabledForServer(message, connection, bot, function(someresult) {
+						if (someresult) {
+
+
+
+							var ref = 0;
+							for (var i = 0; i < hardcommands.length; i++) {
+								if (hardcommands[i]["comName"] == results[1]) {
+									ref = i;
+								}
+							}
+							if (hardcommands[ref]["onCooldown"] == "false") {
+
+
+
+
+								ripwin = "tf";
 								RipWinInstance.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
 								hardcommands[ref]["onCooldown"] = "true";
 								setTimeout(function() {
