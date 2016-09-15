@@ -42,7 +42,8 @@ Command.prototype.isEnabledForServer = function(message, connection, prefix) {
 
 Command.prototype.timeout = function() {
   this.onCooldown = true;
+  var that = this;
   setTimeout(function() {
-    this.onCooldown = false;
+    that.onCooldown = false;
   }, this.cooldownTimer);
 }
