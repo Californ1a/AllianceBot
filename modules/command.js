@@ -12,29 +12,30 @@ function Command(n) {
 
 }
 
-Command.prototype.isEnabledForServer = function(message, connection, prefix, cb) {
-  var str = message.content;
-  var results = null;
-  results = str.split(' ');
-  if (results[0].includes(prefix)) {
-    commandname = results[0].replace(prefix, "");
-  }
-  connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " AND commandname='" + this.name + "'", function(error, enabledforserver) {
-    if (error) {
-      message.channel.sendMessage("Failed.");
-      console.log(error);
-      return;
+Command.prototype.isEnabledForServer = function(message, connection, prefix) {
+  return new Promise((resolve) => {
+    var str = message.content;
+    var results = null;
+    results = str.split(' ');
+    if (results[0].includes(prefix)) {
+      commandname = results[0].replace(prefix, "");
     }
-    else {
-      if (enabledforserver[0] == null) {
-        console.log(colors.red("Command not enabled for this server."));
-        isit = false;
+    connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " AND commandname='" + this.name + "'", function(error, enabledforserver) {
+      if (error) {
+        message.channel.sendMessage("Failed.");
+        console.log(error);
+        return;
       }
       else {
-        console.log(colors.red("Command enabled for this server."));
-        isit = true;
+        if (enabledforserver[0] == null) {
+          console.log(colors.red("Command not enabled for this server."));
+          resolve(false);
+        }
+        else {
+          console.log(colors.red("Command enabled for this server."));
+          resolve(true);
+        }
       }
-    }
-    cb(isit);
+    });
   });
-}
+};

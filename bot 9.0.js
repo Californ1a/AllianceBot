@@ -1271,38 +1271,20 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				else if (message.content.startsWith(prefix + "win")) {
 					var ref = 0;
 					for (var i = 0; i < hardCode.length; i++) {
-						if (hardCode[i].name == results[0].replace("!","")) {
+						if (hardCode[i].name == results[0].replace(prefix,"")) {
 							ref = i;
 						}
 					}
-					hardCode[ref].isEnabledForServer(message, connection, prefix, function(someresult) {
-						if (someresult) {
-
-
-							// var ref = 0;
-							// for (var i = 0; i < hardCode.length; i++) {
-							// 	if (hardCode[i].name == results[0].replace("!","")) {
-							// 		ref = i;
-							// 	}
-							// }
-							if (!hardCode[ref].onCooldown) {
-
-
-
-
-								ripwin = results[0].replace("!", "");
-								RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
-
-
-
-								
-								hardCode[ref].onCooldown = true;
-								setTimeout(function() {
-									hardCode[ref].onCooldown = false;
-								}, 100);
-							}
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+						if (response) {
+							ripwin = results[0].replace(prefix, "");
+							RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
+							hardCode[ref].onCooldown = true;
+							setTimeout(function() {
+								hardCode[ref].onCooldown = false;
+							}, 100);
 						}
-					});
+					}).catch (error => console.error(error));
 				}
 				else if (message.content.startsWith(prefix + "rip")) {
 					isEnabledForServer(message, connection, function(someresult) {
