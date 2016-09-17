@@ -223,7 +223,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   }
 
   ripwin = null;
-}
+};
 //end ripwin command
 module.exports = {
   ripWin

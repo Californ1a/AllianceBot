@@ -848,7 +848,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 											message.channel.sendMessage("No record found for the given category.");
 											nonefound = true;
 										}
-									})
+									});
 								}).end();
 							}
 							else {
@@ -1105,5 +1105,5 @@ var messageDate = function messageDate (message) {
 		"hour": hournow,
 		"minute": minutenow,
 		"ampm": ampm
-	}
-}
+	};
+};
