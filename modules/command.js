@@ -47,4 +47,4 @@ Command.prototype.timeout = function() {
   setTimeout(function() {
     that.onCooldown = false;
   }, this.cooldownTimer);
-}
+};

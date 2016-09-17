@@ -517,7 +517,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 										var info = {
 											"commandname": results[1],
 											"server_id": message.guild.id,
-										}
+										};
 										connection.query("INSERT INTO commands SET ?", info, function(error) {
 											if (error) {
 												console.log(error);
@@ -626,7 +626,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 										"modonly": results[2],
 										"inpm": results[3],
 										"server_id": message.guild.id
-									}
+									};
 									connection.query("INSERT INTO servcom SET ?", info, function(error) {
 										if (error) {
 											console.log(error);
@@ -824,7 +824,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 												if (key.indexOf(category) > -1) {
 													if (nonefound) {
 														var sometime = actable[key].time;
-														var working = parseFloat(sometime.toString())
+														var working = parseFloat(sometime.toString());
 														var wrmin = (working/60) >> 0;
 														var wrsec = working-(wrmin*60) >> 0;
 														var wrmil = working.toFixed(2).split(".");
@@ -852,7 +852,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}).end();
 							}
 							else {
-								message.channel.sendMessage("Incorrect syntax, category name required.")
+								message.channel.sendMessage("Incorrect syntax, category name required.");
 							}
 							hardCode[ref].timeout();
 						}
@@ -905,11 +905,11 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}
 							}
 							else if ((results[1] === null || results[1] === "") && (eventDate !== null && eventDate !== "")) {
-								currentstream = timers.getCountEvent(eventDate, eventName);
+								var currentstream = timers.getCountEvent(eventDate, eventName);
 								message.channel.sendMessage(currentstream + "");
 							}
 							else {
-								message.channel.sendMessage("No event set.")
+								message.channel.sendMessage("No event set.");
 							}
 							hardCode[ref].timeout();
 						}
@@ -920,7 +920,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "speedy")) {
-					isEnabledForServer(message, connection, prefix).then((response) => {
+					hardCode[i].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							currentss = timers.getCount(message);
 							message.author.sendMessage("Speedy Saturday is a community multiplayer get-together event that occurs every week (on Saturday) at 6:00PM UTC until 8:00PM UTC (2 hour duration). More information can be found here:\rhttp://steamcommunity.com/app/233610/discussions/0/528398719786414266/\rhttps://redd.it/3mlfje\r" + currentss);

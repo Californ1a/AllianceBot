@@ -172,7 +172,6 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 //delete role begin
 var delRole = function setDelRole (message, modrolename, membrolename, prefix, bot, toprole) {
-  //if (bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
   if (message.server.owner.equals(message.author) || toprole.hasPermission("manageRoles")) {
     var str = message.content.toString();
     var results = null;
@@ -328,7 +327,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
   else {
     bot.reply(message, "You do not have permission to remove roles.");
   }
-}
+};
 //delete role end
 
 

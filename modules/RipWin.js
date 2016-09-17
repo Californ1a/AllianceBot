@@ -82,7 +82,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       }
       var info = {
         "quote": recombined
-      }
+      };
       console.log(colors.red("Attempting to remove " + ripwin + " message '" + recombined + "' from the database."));
       connection.query("DELETE FROM " + ripwin + " WHERE quote = '" + recombined + "' AND server_id=" + message.guild.id, function(error) {
         if (error) {
@@ -126,7 +126,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     console.log(colors.red("Attempting to get full " + ripwin + " list."));
     // var info = {
     // 	"quote": results
-    // }
+    // };
     var rw = ripwin;
     connection.query("SELECT quote FROM " + ripwin + " WHERE server_id=" + message.guild.id + " order by quote asc", function(error, quotes) {
       if (error) {
@@ -161,7 +161,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       console.log(colors.red("Trying to find " + ripwin + " message matching '" + results[1] + "' in database."));
       // var info = {
       //   "quote": results[1]
-      // }
+      // };
       var rw = ripwin;
       //console.log(results[1]);
       // <editor-fold desc='escape bad characters'>
