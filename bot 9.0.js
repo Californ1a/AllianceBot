@@ -1,14 +1,14 @@
 // <editor-fold desc='requirements'>
 var Discord = require("discord.js"); //requirements
-var mysql = require('mysql'); //requirements
-var colors = require('colors'); //requirements
+var mysql = require("mysql"); //requirements
+var colors = require("colors"); //requirements
 var jsondata = require('./config/options.json'); //local options
-var http = require('http'); //requirements
+var http = require("http"); //requirements
 var fs = require('fs-extra'); //requirements
-var parseString = require('xml2js').parseString; //requirements
-var Twit = require('twit'); //requirements
-var util = require('util'); //requirements
-var moment = require('moment'); //requirements
+var parseString = require("xml2js").parseString; //requirements
+var Twit = require("twit"); //requirements
+var util = require("util"); //requirements
+var moment = require("moment"); //requirements
 var token = require('./config/logins/discordtoken.json').token;
 var twitconfig = require('./config/logins/twitconfig.js'); //local js
 var sqlconfig = require('./config/logins/sqlconfig.js'); //local js
@@ -42,7 +42,7 @@ var commandname = "";
 //var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
 var isit = false;
 var cooldown = false;
-var stream = T.stream('statuses/filter', { follow: ['628034104', '241371699']}); //create tweet filter, first two are refract and torcht, any others for testing
+var stream = T.stream('statuses/filter', { follow: ["628034104", "241371699"]}); //create tweet filter, first two are refract and torcht, any others for testing
 var tweetcount = 0;
 var eventDate = null;
 var eventName = null;
@@ -51,11 +51,11 @@ var eventName = null;
 
 // <editor-fold desc='twitter stream'>
 //on new tweet matching filter
-stream.on('tweet', function (tweet) {
+stream.on("tweet", function (tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid)); //console link to tweet
-	if ((tweet.in_reply_to_user_id == null || tweet.in_reply_to_user_id == tweet.user.id) && !tweet.text.startsWith("RT @") && !tweet.text.startsWith("@") && (tweet.user.screen_name == "torcht" || tweet.user.screen_name == "refractstudios")) {
+	if ((tweet.in_reply_to_user_id === null || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && !tweet.text.startsWith("@") && (tweet.user.screen_name === "torcht" || tweet.user.screen_name === "refractstudios")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
 		if (tweetcount < 4) {
 			tweetcount += 1;
@@ -70,7 +70,7 @@ stream.on('tweet', function (tweet) {
 		if (tweet.entities.media) {
 			mediaurl = "\r" + tweet.entities.media[0].media_url;
 		}
-		if (tweet.entities.urls != null && tweet.entities.urls != "") {
+		if (tweet.entities.urls !== null && tweet.entities.urls !== "") {
 			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
 				vine = "\r" + tweet.entities.urls[0].expanded_url;
 			}
@@ -150,14 +150,14 @@ bot.on("serverDeleted", (server) => {
 
 
 // <editor-fold desc='bot on message edit'>
-bot.on('messageUpdate', (oldMessage, newMessage) => {
+bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 	// <editor-fold desc='newmessage matching'>
 	var newchatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	var newMessageTime = messageDate(newMessage);
 	var newuserrole = newMessage.guild.members.get(newMessage.author.id);
 	//console.log(newuserrole.roles);
-	if (newuserrole.roles.size == 0) {
+	if (newuserrole.roles.size === 0) {
 		newuserrole = "Guest";
 		if (newMessage.author.bot) {
 			newisbot = "{BOT}"
@@ -200,7 +200,7 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 	var oldMessageTime = messageDate(oldMessage);
 	var userrole = oldMessage.guild.members.get(oldMessage.author.id);
 	//console.log(userrole.roles);
-	if (userrole.roles.size == 0) {
+	if (userrole.roles.size === 0) {
 		userrole = "Guest";
 		if (oldMessage.author.bot) {
 			isbot = "{BOT}"
@@ -252,7 +252,7 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
 				// oldchatlinedata = oldchatlinedata.replace('\n','');
 				// console.log(array[i]);
 				// console.log(oldchatlinedata);
-				if (array[i] == oldchatlinedata) {
+				if (array[i] === oldchatlinedata) {
 					// console.log("yes");
 
 					array[i] = newchatlinedata;
@@ -295,7 +295,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 		var userrole = message.guild.members.get(message.author.id);
 		//console.log(userrole.roles);
-		if (userrole.roles.size == 0) {
+		if (userrole.roles.size === 0) {
 			userrole = "Guest";
 			if (message.author.bot) {
 				isbot = "{BOT}"
@@ -393,12 +393,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 					return;
 				}
 				else {
-					if (enabledforserver[0] == null) {
+					if (enabledforserver[0] === null) {
 						console.log(colors.red("Automemb not enabled for this server."));
 					}
 					else {
 						var botcanassign = false;
-						if (userrole == "Guest") {
+						if (userrole === "Guest") {
 							console.log(colors.red("User is Guest."));
 							toprole = 0;
 						}
@@ -406,7 +406,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							console.log("User isn't guest?");
 						}
 						var userrole3 = message.guild.members.get(bot.user.id);
-						if (userrole3.roles.length == 0) {
+						if (userrole3.roles.length === 0) {
 							//bot is guest
 							console.log(colors.red("Bot cannot assign (Bot is guest)."));
 							botcanassign = false;
@@ -421,12 +421,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							}
 							var toprole3 = message.guild.roles.find("position", maxpos2);
 
-							if (toprole3.hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) {
+							if (toprole3.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
 								botcanassign = true;
 								if (toprole3.position <= toprole.position) {
 									botcanassign = false;
 								}
-								else if (toprole3.position - 1 == toprole.position) {
+								else if (toprole3.position - 1 === toprole.position) {
 									botcanassign = false;
 								}
 							}
@@ -451,11 +451,11 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 		//check for command
 		if (message.content.startsWith(prefix)) {
 			var str = message.content;
-			results = str.split(' ');
+			results = str.split(" ");
 			results[0] = results[0].replace(prefix, "");
 			var ref = 0;
 			for (var i = 0; i < hardCode.length; i++) {
-				if (hardCode[i].name == results[0].replace(prefix,"")) {
+				if (hardCode[i].name === results[0].replace(prefix,"")) {
 					ref = i;
 				}
 			}
@@ -467,25 +467,25 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 					return;
 				}
 				else {
-					if (!(returntext[0] == null)) {
-						if (returntext[0].modonly == "true" && message.member.roles.exists("name", modrolename)) {
+					if (!(returntext[0] === null)) {
+						if (returntext[0].modonly === "true" && message.member.roles.exists("name", modrolename)) {
 							var str = returntext[0].comtext;
 							results = str.slice(1,str.length-1);
-							if (returntext[0].inpm == "true") {
+							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
 							}
-							else if (returntext[0].inpm == "false") {
+							else if (returntext[0].inpm === "false") {
 								message.channel.sendMessage(message, results);
 							}
 							messagesent = true;
 						}
-						else if (returntext[0].modonly == "false") {
+						else if (returntext[0].modonly === "false") {
 							var str = returntext[0].comtext;
 							results = str.slice(1,str.length-1);
-							if (returntext[0].inpm == "true") {
+							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
 							}
-							else if (returntext[0].inpm == "false") {
+							else if (returntext[0].inpm === "false") {
 								message.channel.sendMessage(results);
 							}
 							messagesent = true;
@@ -505,18 +505,18 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 			if(!messagesent) {
 				if (message.content.startsWith(prefix + "addcomtoserv")) {
-					if (message.author.id == botowner || message.guild.owner.equals(message.author)) {
+					if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
 						if (results.length <= 2) {
-							if (results[1] == null) {
+							if (results[1] === null) {
 								message.channel.sendMessage("To view the help for this command use `" + prefix + "addcomtoserv help`.");
 							}
-							else if (results[1] == "help") {
+							else if (results[1] === "help") {
 								message.channel.sendMessage("Syntax: __**`" + prefix + "addcometoserv <command name>`**__\rUsed to enable hardcoded commands on the server, only available to the bot owner and server owner.\r\r`command name`\rName of command without prefix.\r\r**Example**\r`" + prefix + "addcomtoserv advent`\rThis will enable the hardcoded `" + prefix + "advent` command.");
 							}
 							else {
 								var iscommand = false;
 								for (var i = 0; i < hardcommands.length; i++) {
-									if (hardcommands[i]["comName"] == results[1]) {
+									if (hardcommands[i]["comName"] === results[1]) {
 										iscommand = true;
 									}
 								}
@@ -556,12 +556,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				}
 
 				else if (message.content.startsWith(prefix + "remcomfromserv")) {
-					if (message.author.id == botowner || message.guild.owner.equals(message.author)) {
+					if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
 						if (results.length <= 2) {
-							if (results[1] == null) {
+							if (results[1] === null) {
 								message.channel.sendMessage("To view the help for this command use `" + prefix + "remcomfromserv help`.");
 							}
-							else if (results[1] == "help") {
+							else if (results[1] === "help") {
 								message.channel.sendMessage("Syntax: __**`" + prefix + "remcomefromserv <command name>`__**\rDisables a hardcoded command on this server. Only available for bot owner and server owner.\r\r`command name`\rName of the command to be disabled without the prefix.\r\r**Example**\r`" + prefix + "remcomfromserv advent`\rThis will disable the `" + prefix + "advent` command.");
 							}
 							else {
@@ -597,35 +597,35 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 						if (response && !hardCode[ref].onCooldown) {
 							if (message.member.roles.exists("name", modrolename)) {
 								var str = message.content.toString();
-								results = str.split(' ');
-								if (results[1] == null) {
+								results = str.split(" ");
+								if (results[1] === null) {
 									message.channel.sendMessage("Incorrect syntax1. Use `" + prefix + "newcom help` for help.");
 								}
-								else if (results[1] == "help") {
+								else if (results[1] === "help") {
 									message.channel.sendMessage("Syntax: __**`" + prefix + "newcom <command name> <mod-only> <reply-in-pm> <message>`**__\rUsed to create custom commands.\r\r`command name`\rName of command without prefix\r\r`mod-only (true|false)`\rOnly " + modrolename + "s can use the command.\r\r`reply-in-pm (true|false)`\rReply to command in a PM rather than in-channel.\r\r`message`\rThe message to be sent when command is given.\r\r**Example**\r`" + prefix + "newcom spook false false BOO! Scared ya!`\rThe new command would be `" + prefix + "spook` (enabled for all members, not just " + modrolename + "s & would reply in-channel) and the returned message would be `BOO! Scared ya!`");
 								}
 								else if (results[1].includes(prefix)) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
 								}
-								else if (results.length == 2) {
+								else if (results.length === 2) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
 								}
-								else if (results.length == 3) {
+								else if (results.length === 3) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
 								}
-								else if (results.length == 4) {
+								else if (results.length === 4) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
 								}
-								else if ((results[2] != "true") && (results[2] != "false")) {
+								else if ((results[2] !== "true") && (results[2] !== "false")) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help. " + results[2]);
 								}
-								else if ((results[3] != "true") && (results[3] != "false")) {
+								else if ((results[3] !== "true") && (results[3] !== "false")) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help. " + results[2]);
 								}
 								else {
 									var recombined = "";
 									for (i = 0; i < results.length-4; i++) {
-										if (i != results.length-5) {
+										if (i !== results.length-5) {
 											recombined += results[i+4] + " ";
 										}
 										else {
@@ -668,11 +668,11 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 						if (response && !hardCode[ref].onCooldown) {
 							if (message.member.roles.exists("name", modrolename)) {
 								var str = message.content.toString();
-								results = str.split(' ');
-								if (results[1] == null) {
+								results = str.split(" ");
+								if (results[1] === null) {
 									message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "delcom help` for help.");
 								}
-								else if (results[1] == "help") {
+								else if (results[1] === "help") {
 									message.channel.sendMessage("Syntax: `" + prefix + "delcom <command name>`\rUsed to delete custom commands.\r\r`command name`\rName of command to be deleted, without prefix.\r\r**Example**\r`" + prefix + "delcom spook`\rThis will remove the `" + prefix + "spook` command.");
 								}
 								else if (results[1].includes(prefix)) {
@@ -722,18 +722,18 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
 						if (response && !hardCode[ref].onCooldown) {
 							var mapid = null;
-							if (results[1] == null || results[1] == "") {
+							if (results[1] === null || results[1] === "") {
 								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "dist help` for syntax help.");
 							}
-							else if (results[1] == "help") {
+							else if (results[1] === "help") {
 								message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 							}
 							else {
 								mapid = CheckMapID.checkMapID(message, colors, results, jsondata, mapid);
-								if (mapid == 0) {
+								if (mapid === 0) {
 									message.channel.sendMessage("Incorrect syntax.");
 								}
-								else if (mapid != null && mapid != "") {
+								else if (mapid !== null && mapid !== "") {
 									var optionsac = {
 										hostname: 'steamcommunity.com',
 										path: '/stats/233610/leaderboards/' + mapid + '/?xml=1&start=1&end=1',
@@ -741,10 +741,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									};
 									http.request(optionsac, function(response) {
 										var str = '';
-										response.on('data', function (chunk) {
+										response.on("data", function (chunk) {
 											str += chunk;
 										});
-										response.on('end', function() {
+										response.on("end", function() {
 											parseString(str, function(error, result) {
 												if (error) {
 													console.log(error);
@@ -768,10 +768,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 													};
 													http.request(optionsac2, function(response) {
 														var str2 = '';
-														response.on('data', function (chunk) {
+														response.on("data", function (chunk) {
 															str2 += chunk;
 														});
-														response.on('end', function() {
+														response.on("end", function() {
 															parseString(str2, function(error, result2) {
 																if (error) {
 																	console.log(error);
@@ -802,18 +802,18 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				else if (message.content.startsWith(prefix + "wr")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
 						if (response && !hardCode[ref].onCooldown) {
-							if (results[1] != null) {
+							if (results[1] !== null) {
 								var str2 = message.content.toString();
 								str2 = str2.substr(str2.indexOf(" ") + 1);
-								str2 = str2.toLowerCase().split(' ');
+								str2 = str2.toLowerCase().split(" ");
 								for (var i = 0; i < str2.length; i++) {
 									str2[i] = str2[i].split('');
 									str2[i][0] = str2[i][0].toUpperCase();
 									str2[i] = str2[i].join('');
 								}
-								firstLetterCaps = str2.join(' ');
+								firstLetterCaps = str2.join(" ");
 								var category = firstLetterCaps;
-								if (message.guild.name == "Cali Test Server") {
+								if (message.guild.name === "Cali Test Server") {
 									var gamename = "Antichamber";
 								}
 								else {
@@ -828,10 +828,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								};
 								http.request(optionsac, function(response) {
 									var str = '';
-									response.on('data', function (chunk) {
+									response.on("data", function (chunk) {
 										str += chunk;
 									});
-									response.on('end', function() {
+									response.on("end", function() {
 										var actable = JSON.parse(str)[gamename];
 										for (var key in actable) {
 											if (actable.hasOwnProperty(key)) {
@@ -846,7 +846,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 														if (wrsec < 10) {
 															wrsec = "0" + wrsec;
 														}
-														if (actable[key].video == null || actable[key].video == "") {
+														if (actable[key].video === null || actable[key].video === "") {
 															message.channel.sendMessage(wrmin + ":" + wrsec + "." + wrmil + " by " + actable[key].player + ": No video found.");
 															nonefound = false;
 														}
@@ -888,14 +888,14 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				else if (message.content.startsWith(prefix + "advent")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
 						if (response && !hardCode[ref].onCooldown) {
-							if (results[1] == "set" && message.member.roles.exists("name", modrolename)) {
+							if (results[1] === "set" && message.member.roles.exists("name", modrolename)) {
 								//console.log(results[2]);
-								if (results[2] != null && results[2] != "") {
+								if (results[2] !== null && results[2] !== "") {
 									eventName = null;
 									eventDate = results[2];
-									if (results[3] != null && results[3] != "") {
+									if (results[3] !== null && results[3] !== "") {
 										for (var i = 0; i < results.length; i++) {
-											if (i == 3) {
+											if (i === 3) {
 												eventName = results[i];
 											}
 											else if (i > 3) {
@@ -909,8 +909,8 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									message.channel.sendMessage("Syntax: __**`" + prefix + "advent set <date> <event name>`**__\rCreate an event countdown. Only one event at a time is supported.\r\r`date`\rThe date and time when the event begins. ISO8601 format with no spaces - use T instead of a space to denote the time. Times must be given in Eastern Time unless an offset is defined.\r\r`event name`\rThe name of the event.\r\r**Example**\r`" + prefix + "advent set 2016-02-08T13:30:20 Some Name`\rThis would set an event named `Some Name` to start at February 8th, 2016 at 1:30:20 PM.");
 								}
 							}
-							else if (results[1] == "del" && message.member.roles.exists("name", modrolename)) {
-								if (eventDate != null && eventDate != "") {
+							else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
+								if (eventDate !== null && eventDate !== "") {
 									eventDate = null;
 									message.channel.sendMessage("Event removed.");
 								}
@@ -918,7 +918,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									message.channel.sendMessage("No event set.");
 								}
 							}
-							else if ((results[1] == null || results[1] == "") && (eventDate != null && eventDate != "")) {
+							else if ((results[1] === null || results[1] === "") && (eventDate !== null && eventDate !== "")) {
 								currentstream = timers.GetCountEvent(eventDate, eventName);
 								message.channel.sendMessage(currentstream + "");
 							}
@@ -955,14 +955,14 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									return;
 								}
 								else {
-									if (quotes[0] == null) {
+									if (quotes[0] === null) {
 										var quotespm = "";
 									}
 									else {
 										console.log(colors.red("Success."));
 										var quotespm = "`" + prefix;
 										for (i = 0; i < quotes.length; i++) {
-											if (i == quotes.length-1) {
+											if (i === quotes.length-1) {
 												quotespm += quotes[i].commandname + "`";
 											}
 											else {
@@ -976,21 +976,21 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 												return;
 											}
 											else {
-												if (quotes2[0] == null) {
+												if (quotes2[0] === null) {
 													var quotespm2 = "";
 												}
 												else {
 													console.log(colors.red("Success."));
 													var quotespm2 = "`" + prefix;
 													for (i = 0; i < quotes2.length; i++) {
-														if (!(i == quotes2.length-1)) {
+														if (!(i === quotes2.length-1)) {
 															quotespm2 += quotes2[i].comname + "`, `" + prefix;
 														}
 														else {
 															quotespm2 += quotes2[i].comname + "`";
 														}
 													}
-													if (quotespm == "") {
+													if (quotespm === "") {
 														if (quotespm2) {
 															message.author.sendMessage("No commands found for this server.");
 														}
@@ -998,7 +998,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 															message.author.sendMessage("Here are the main commands enabled for this server:\n" + quotespm);
 														}
 													}
-													else if (quotespm2 == "") {
+													else if (quotespm2 === "") {
 														message.author.sendMessage("Here are the custom commands for this server:\n" + quotespm2);
 													}
 													else {
@@ -1074,9 +1074,9 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 //catch errors
-bot.on('error', e => { console.error(e); });
-bot.on('warn', e => { console.warn(e); });
-bot.on('debug', e => { console.info(e); });
+bot.on("error", e => { console.error(e); });
+bot.on("warn", e => { console.warn(e); });
+bot.on("debug", e => { console.info(e); });
 
 
 
@@ -1089,7 +1089,7 @@ var messageDate = function messageDate (message) {
 	var d = message.timestamp;
 	var hournow = d.getHours();
 	ampm = "AM";
-	if (hournow == 0) {
+	if (hournow === 0) {
 		hournow = 12
 		ampm = "AM";
 	}

@@ -3,14 +3,14 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   results = str.split(' ');
 
   // <editor-fold desc='get random rip/win quote if no parameters given'>
-  if (results[1] == null) {
+  if (results[1] === null) {
     connection.query("SELECT quote FROM " + ripwin + " WHERE server_id=" + message.guild.id + " ORDER BY RAND() LIMIT 1", function(error, quotes) {
       if (error) {
         console.log(error);
         return;
       }
       else {
-        if (quotes[0].quote == null || quotes[0].quote == "") {
+        if (quotes[0].quote === null || quotes[0].quote === "") {
           message.channel.sendMessage("None found.")
         }
         else {
@@ -23,12 +23,12 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
 
 
   // <editor-fold desc='add quote if member is moderator'>
-  else if (results[1] == "add" && message.member.roles.exists("name", modrolename)) {
+  else if (results[1] === "add" && message.member.roles.exists("name", modrolename)) {
     if (results.length >= 3) {
       var recombined = "";
       //console.log(results.length);
       for (i = 0; i < results.length-2; i++) {
-        if (i != results.length-3) {
+        if (i !== results.length-3) {
           recombined += results[i+2] + " ";
         }
         else {
@@ -54,7 +54,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     }
     // <editor-fold desc='add helptext'>
     else {
-      qu = ripwin == "win" ? "Totally Awesome!" : ripwin == "rip" ? "Complete Failure!" : "Some Quote";
+      qu = ripwin === "win" ? "Totally Awesome!" : ripwin === "rip" ? "Complete Failure!" : "Some Quote";
       message.channel.sendMessage("Syntax: __**`" + prefix + ripwin + " add <quote>`**__\rAdd a new " + ripwin + " quote.\r\r`quote`\rThe quote to add.\r\r**Example**\r`" + prefix + ripwin + " add " + qu + "`\rThis would add the " + ripwin + " quote `" + qu + "` to the list of possible quotes.");
     }
     // </editor-fold>
@@ -62,17 +62,17 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   // </editor-fold>
 
   //non-moderator
-  else if (results[1] == "add") {
+  else if (results[1] === "add") {
     bot.reply(message, "You do not have permission to add new " + ripwin + " quotes.");
   }
 
   // <editor-fold desc='del quote if member is moderator'>
-  else if (results[1] == "del" && message.member.roles.exists("name", modrolename)) {
+  else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
     if (results.length >= 3) {
       var recombined = "";
       //console.log(results.length);
       for (i = 0; i < results.length-2; i++) {
-        if (i != results.length-3) {
+        if (i !== results.length-3) {
           recombined += results[i+2] + " ";
         }
         else {
@@ -94,7 +94,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     }
     // <editor-fold desc='del helptext'>
     else {
-      qu = ripwin == "win" ? "Totally Awesome!" : ripwin == "rip" ? "Total Failure!" : "Some Quote";
+      qu = ripwin === "win" ? "Totally Awesome!" : ripwin === "rip" ? "Total Failure!" : "Some Quote";
       message.channel.sendMessage("Syntax: __**`" + prefix + ripwin + " del <quote>`**__\rRemove a " + ripwin + " quote.\r\r`quote`\rThe quote to remove. It must be an exact match. Use `" + prefix + ripwin + " list` to directly copy from the list.\r\r**Example**\r`" + prefix + ripwin + " del " + qu + "`\rThis would remove the " + ripwin + " quote `" + qu + "` from the list of possible quotes.");
     }
     // </editor-fold>
@@ -102,18 +102,18 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   // </editor-fold>
 
   //non-moderator
-  else if (results[1] == "del") {
+  else if (results[1] === "del") {
     bot.reply(message, "You do not have permission to remove " + ripwin + " quotes.");
   }
 
   // <editor-fold desc='helptext'>
-  else if (results[1] == "help") {
+  else if (results[1] === "help") {
     if (message.member.roles.exists("name", modrolename)) {
-      qu = ripwin == "win" ? "Totally Awesome!" : ripwin == "rip" ? "Total Failure!" : "Some Quote";
+      qu = ripwin === "win" ? "Totally Awesome!" : ripwin === "rip" ? "Total Failure!" : "Some Quote";
       message.channel.sendMessage("Syntax: __**`" + prefix + ripwin + " <add|del|list> <quote>`**__\rAdd or remove a " + ripwin + " quote.\r\r`add|del|list`\rWhether to add or remove a quote, or to get a list of all the current quotes.\r\r`quote`\rOnly required for add or del. The quote to add or remove. For removal it must be an exact match - Use `" + prefix + ripwin + " list` to directly copy from the list for removal.\r\r**Example**\r`" + prefix + ripwin + " add " + qu + "`\rThis would add the " + ripwin + " quote `" + qu + "` to the list of possible quotes.");
     }
     else {
-      qu = ripwin == "win" ? "Totally Awesome!" : ripwin == "rip" ? "Total Failure!" : "Some Quote";
+      qu = ripwin === "win" ? "Totally Awesome!" : ripwin === "rip" ? "Total Failure!" : "Some Quote";
       message.channel.sendMessage("Syntax: __**`" + prefix + ripwin + " (key|list)`**__\rObtain a " + ripwin + " quote at random, or with keyword search, or a full list of all quotes.\r\r`key|list` (Optional)\rUse the command without anything else to get a random " + ripwin + " quote returned. Use anything except `help` or `list` to do a search for a specific keyword. Use `list` to obtain a full list of all the current " + ripwin + " quotes in a PM. \r\r**Example**\r`" + prefix + ripwin + " tot`\rThis would do a search for " + ripwin + " quotes that contain `tot` anywhere within them, and, for example, would return `" + qu + "`.");
     }
   }
@@ -121,7 +121,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
 
 
   // <editor-fold desc='get full list of quotes in pm'>
-  else if (results[1] == "list") {
+  else if (results[1] === "list") {
     console.log(colors.red("Attempting to get full " + ripwin + " list."));
     // var info = {
     // 	"quote": results
@@ -134,7 +134,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         return;
       }
       else {
-        if (quotes[0] == null) {
+        if (quotes[0] === null) {
           console.log(colors.red("Failed."));
           message.author.sendMessage("Failed to find any " + ripwin + " quotes for your server.");
         }
@@ -156,7 +156,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   else {
 
     // <editor-fold desc='find quote matching keyword search'>
-    if (results.length == 2) {
+    if (results.length === 2) {
       console.log(colors.red("Trying to find " + ripwin + " message matching '" + results[1] + "' in database."));
       // var info = {
       //   "quote": results[1]
@@ -196,7 +196,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
           return;
         }
         else {
-          if (quotes[0] == null) {
+          if (quotes[0] === null) {
             console.log(colors.red("Failed to find any matching."));
             message.channel.sendMessage("Unable to find any " + rw + " quotes matching '" + results[1] + "'.");
           }

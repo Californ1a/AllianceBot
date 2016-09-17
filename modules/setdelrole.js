@@ -20,18 +20,18 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
     if (message.content.includes(" help")) {
       bot.sendMessage(message, "Usage: `" + prefix + "setrole <username> <discriminator> <role>`\nAll fields are required. Both the username and the role are case-sensitive. The discriminator is the number given next to the user's name (Ex. The Alliance`#5209`). The # symbol can be used, but is not required.");
     }
-    else if (results.length == 4) {
+    else if (results.length === 4) {
       //begin parsing username/discriminator
       var somenamevalid = null;
       var failedmessage = "notnull";
       for (i = 0; i < message.server.members.length; i++) {
-        if (message.server.members[i].name == results[1]) {
-          if (message.server.members[i].discriminator == results[2]) {
+        if (message.server.members[i].name === results[1]) {
+          if (message.server.members[i].discriminator === results[2]) {
             somenamevalid = message.server.members[i];
           }
         }
       }
-      if (somenamevalid == null) {
+      if (somenamevalid === null) {
         failedmessage = null;
         //bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.")
       }
@@ -40,7 +40,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //begin parsing role
       var somerolevalid = null;
       for (i = 0; i < message.server.roles.length; i++) {
-        if (message.server.roles[i].name == results[3]) {
+        if (message.server.roles[i].name === results[3]) {
           somerolevalid = message.server.roles[i];
         }
       }
@@ -48,15 +48,15 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end role parse
 
       //begin not-found check
-      if (somerolevalid == null) {
-        if (somenamevalid == null) {
+      if (somerolevalid === null) {
+        if (somenamevalid === null) {
           bot.sendMessage(message, "No role with that name found and no user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.");
         }
         else {
           bot.sendMessage(message, "No role with that name found. Use `" + prefix + "setrole help` for syntax help.");
         }
       }
-      else if (somenamevalid == null) {
+      else if (somenamevalid === null) {
         bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.");
       }
       //end not-found check
@@ -66,12 +66,12 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 
       //assign role begin
-      if (somenamevalid != null && somerolevalid != null) {
+      if (somenamevalid !== null && somerolevalid !== null) {
 
 
         //get top role of user being set
         var userrole2 = message.server.detailsOfUser(somenamevalid.id);
-        if (userrole2.roles.length == 0) {
+        if (userrole2.roles.length === 0) {
           toprole2 = -1;
         }
         else {
@@ -105,7 +105,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
               var botcanassign = false;
               var userrole3 = message.server.detailsOfUser(bot.user);
-              if (userrole3.roles.length == 0) {
+              if (userrole3.roles.length === 0) {
                 //bot is guest
                 botcanassign = false;
               }
@@ -119,7 +119,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
                   if (toprole3.position <= toprole2.position) {
                     botcanassign = false;
                   }
-                  else if (toprole3.position - 1 == toprole2.position) {
+                  else if (toprole3.position - 1 === toprole2.position) {
                     botcanassign = false;
                   }
                   else if (toprole3.position <= somerolevalid.position) {
@@ -191,18 +191,18 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
     if (message.content.includes(" help")) {
       bot.sendMessage(message, "Usage: `" + prefix + "delrole <username> <discriminator> <role>`\nAll fields are required. Both the username and the role are case-sensitive. The discriminator is the number given next to the user's name (Ex. The Alliance`#5209`). The # symbol can be used, but is not required.");
     }
-    else if (results.length == 4) {
+    else if (results.length === 4) {
       //begin parsing username/discriminator
       var somenamevalid = null;
       var failedmessage = "notnull";
       for (i = 0; i < message.server.members.length; i++) {
-        if (message.server.members[i].name == results[1]) {
-          if (message.server.members[i].discriminator == results[2]) {
+        if (message.server.members[i].name === results[1]) {
+          if (message.server.members[i].discriminator === results[2]) {
             somenamevalid = message.server.members[i];
           }
         }
       }
-      if (somenamevalid == null) {
+      if (somenamevalid === null) {
         failedmessage = null;
         //bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.")
       }
@@ -211,7 +211,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //begin parsing role
       var somerolevalid = null;
       for (i = 0; i < message.server.roles.length; i++) {
-        if (message.server.roles[i].name == results[3]) {
+        if (message.server.roles[i].name === results[3]) {
           somerolevalid = message.server.roles[i];
         }
       }
@@ -219,15 +219,15 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end role parse
 
       //begin not-found check
-      if (somerolevalid == null) {
-        if (somenamevalid == null) {
+      if (somerolevalid === null) {
+        if (somenamevalid === null) {
           bot.sendMessage(message, "No role with that name found and no user with that name/discriminator combo found. Use `" + prefix + "delrole help` for syntax help.");
         }
         else {
           bot.sendMessage(message, "No role with that name found. Use `" + prefix + "delrole help` for syntax help.");
         }
       }
-      else if (somenamevalid == null) {
+      else if (somenamevalid === null) {
         bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "delrole help` for syntax help.");
       }
       //end not-found check
@@ -237,12 +237,12 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 
       //assign role begin
-      if (somenamevalid != null && somerolevalid != null) {
+      if (somenamevalid !== null && somerolevalid !== null) {
 
 
         //get top role of user being set
         var userrole2 = message.server.detailsOfUser(somenamevalid.id);
-        if (userrole2.roles.length == 0) {
+        if (userrole2.roles.length === 0) {
           toprole2 = -1;
         }
         else {
@@ -275,7 +275,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
               //check if bot can remove role
               var botcanremove = false;
               var userrole3 = message.server.detailsOfUser(bot.user);
-              if (userrole3.roles.length == 0) {
+              if (userrole3.roles.length === 0) {
                 //bot is guest
                 botcanremove = false;
               }
@@ -289,7 +289,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
                   if (toprole3.position <= toprole2.position) {
                     botcanremove = false;
                   }
-                  // else if (toprole3.position - 1 == toprole2.position) {
+                  // else if (toprole3.position - 1 === toprole2.position) {
                   //   botcanremove = false;
                   // }
                 }

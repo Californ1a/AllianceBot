@@ -3,7 +3,7 @@
     var resultDate = new Date(date.getTime());
 
     resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
-    if (date.getDay() == 6 && date.getHours() >= 16) {
+    if (date.getDay() === 6 && date.getHours() >= 16) {
       resultDate.setDate(date.getDate()+7);
     }
 
@@ -22,7 +22,7 @@
     var resultDate = new Date(date.getTime());
 
     resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
-    if (date.getDay() == 6 && date.getHours() >= 16) {
+    if (date.getDay() === 6 && date.getHours() >= 16) {
       resultDate.setDate(date.getDay()+7);
     }
 
@@ -73,9 +73,9 @@
 
       out += "The next SS will begin in ";
 
-      if(days != 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0 || mins != 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
+      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
       out += secs +" seconds.";
       return out;
       //message.channel.sendMessage("SS will begin in " + out + ".");
@@ -113,9 +113,9 @@
 
       out += "SS is currently happening! It will end in ";
 
-      if(days != 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0 || mins != 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
+      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
       out += secs +" seconds.";
       return out;
     }
@@ -164,9 +164,9 @@
 
       out += eventName + " will begin in ";
 
-      if(days != 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days != 0 || hours != 0 || mins != 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
+      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
       out += secs +" seconds.";
       return out;
 
