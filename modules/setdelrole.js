@@ -72,11 +72,12 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
         //get top role of user being set
         var userrole2 = message.server.detailsOfUser(somenamevalid.id);
+        var toprole2 = 0;
         if (userrole2.roles.length === 0) {
           toprole2 = -1;
         }
         else {
-          var toprole2 = message.server.roles.get("position", userrole2.roles.length);
+          toprole2 = message.server.roles.get("position", userrole2.roles.length);
           //console.log(toprole);
         }
 

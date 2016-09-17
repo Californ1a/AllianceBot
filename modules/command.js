@@ -2,8 +2,6 @@ var colors = require("colors");
 
 var commandCount = 0;
 
-module.exports = Command;
-
 function Command(o) {
   this.id = commandCount;
   this.name = o.name;
@@ -48,3 +46,5 @@ Command.prototype.timeout = function() {
     that.onCooldown = false;
   }, this.cooldownTimer);
 };
+
+module.exports = Command;

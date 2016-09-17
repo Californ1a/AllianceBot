@@ -18,10 +18,11 @@ var CheckMapID = require("./modules/checkmapid.js"); //local js
 var timers = require("./modules/timers.js"); //local js
 var Command = require("./modules/command.js"); //local js
 var commandList = require("./config/commands.json"); //local json
+var md = require("./modules/messagedate.js"); //local js
 // </editor-fold>
 
 var hardCode = [];
-for (var i in commandList) {
+for (var i = 0; i < commandList.length; i++) {
 	hardCode[i] = new Command(commandList[i]);
 }
 
@@ -154,7 +155,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 	// <editor-fold desc='newmessage matching'>
 	var newchatlog = "E:/OtherStuff/DiscordChatlogs2/";
-	var newMessageTime = messageDate(newMessage);
+	var newMessageTime = md.messageDate(newMessage);
 	var newuserrole = newMessage.guild.members.get(newMessage.author.id);
 	var maxpos = 0;
 	var newisbot = "";
@@ -193,7 +194,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 	// <editor-fold desc='oldmessage matching'>
 	var oldchatlog = "E:/OtherStuff/DiscordChatlogs2/";
-	var oldMessageTime = messageDate(oldMessage);
+	var oldMessageTime = md.messageDate(oldMessage);
 	var userrole = oldMessage.guild.members.get(oldMessage.author.id);
 	var maxpos = 0;
 	var isbot = "";
@@ -283,7 +284,7 @@ bot.on("message", (message) => {
 var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	if (message.guild) { //non-pm messages
 
-		var messageTime = messageDate(message);
+		var messageTime = md.messageDate(message);
 
 		var userrole = message.guild.members.get(message.author.id);
 		var isbot = "";
@@ -799,11 +800,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									str2[i] = str2[i].join("");
 								}
 								var category = str2.join(" ");
+								var gamename = "";
 								if (message.guild.name === "Cali Test Server") {
-									var gamename = "Antichamber";
+									gamename = "Antichamber";
 								}
 								else {
-									var gamename = message.guild.name;
+									gamename = message.guild.name;
 								}
 								var nonefound = true;
 								var optionsac = {
@@ -1069,41 +1071,3 @@ bot.on("debug", e => { console.info(e); });
 
 //discord login
 bot.login(token);
-
-
-var messageDate = function messageDate (message) {
-	var d = message.timestamp;
-	var hournow = d.getHours();
-	ampm = "AM";
-	if (hournow === 0) {
-		hournow = 12
-		ampm = "AM";
-	}
-	else if (hournow >= 13) {
-		hournow = hournow - 12;
-		ampm = "PM";
-	}
-	if (hournow < 10 && hournow > 0) {
-		hournow = "0" + hournow;
-	}
-	var minutenow = d.getMinutes();
-	if (minutenow < 10) {
-		minutenow = "0" + minutenow;
-	}
-	var secondnow = d.getSeconds();
-	if (secondnow < 10) {
-		secondnow = "0" + secondnow;
-	}
-	var day = d.getDate();
-	var monthIndex = d.getMonth();
-	var year = d.getFullYear();
-	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
-	return {
-		"thedate": thedate,
-		"year": year,
-		"month": monthNames[monthIndex],
-		"hour": hournow,
-		"minute": minutenow,
-		"ampm": ampm
-	};
-};

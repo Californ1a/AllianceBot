@@ -127,7 +127,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     // var info = {
     // 	"quote": results
     // };
-    var rw = ripwin;
+    //var rw = ripwin;
     connection.query("SELECT quote FROM " + ripwin + " WHERE server_id=" + message.guild.id + " order by quote asc", function(error, quotes) {
       if (error) {
         bot.sendMessage("Failed to find any, with errors.");
@@ -141,7 +141,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         }
         else {
           console.log(colors.red("Success."));
-          var quotespm = "\n**Here are all the current " + rw + " quotes:**\n--------------------\n```";
+          var quotespm = "\n**Here are all the current " + ripwin + " quotes:**\n--------------------\n```";
           for (var i = 0; i < quotes.length; i++) {
             quotespm += quotes[i].quote + "\r";
           }
@@ -162,7 +162,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       // var info = {
       //   "quote": results[1]
       // };
-      var rw = ripwin;
+      //var rw = ripwin;
       //console.log(results[1]);
       // <editor-fold desc='escape bad characters'>
       var escapechars = true;
@@ -199,7 +199,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         else {
           if (quotes[0] === null) {
             console.log(colors.red("Failed to find any matching."));
-            message.channel.sendMessage("Unable to find any " + rw + " quotes matching '" + results[1] + "'.");
+            message.channel.sendMessage("Unable to find any " + ripwin + " quotes matching '" + results[1] + "'.");
           }
           else {
             console.log(colors.red("Successfully found a quote."));

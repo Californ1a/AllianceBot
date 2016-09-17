@@ -38,6 +38,49 @@ var moment = require("moment"); //requirements
 
 
 
+  var getDown = function getDown() { //second countdown, for end of event
+    //currentss = 1;
+    var currentTime = new Date();
+    var amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
+    var days=0;
+    var hours=0;
+    var mins=0;
+    var secs=0;
+    var out="";
+    //delete currentTime;
+
+    if(amount2 < 0){
+      //currentss = 0;
+      console.log("Woops, something went wrong.");
+      //when event is over
+    }
+
+    else{
+      days=0;hours=0;mins=0;secs=0;out="";
+
+      amount2 = Math.floor(amount2/1000);//kill the "milliseconds" so just secs
+
+      days=Math.floor(amount2/86400);//days
+      amount2=amount2%86400;
+
+      hours=Math.floor(amount2/3600);//hours
+      amount2=amount2%3600;
+
+      mins=Math.floor(amount2/60);//minutes
+      amount2=amount2%60;
+
+      secs=Math.floor(amount2);//seconds
+
+      out += "SS is currently happening! It will end in ";
+
+      if(days !== 0){out += days +" day"+((days!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!==1)?"s":"")+", ";}
+      out += secs +" seconds.";
+      return out;
+    }
+  };
+
 
   //get and format duration from now until "futuredate"
   var getCount = function getCount() {
@@ -80,62 +123,15 @@ var moment = require("moment"); //requirements
 
       out += "The next SS will begin in ";
 
-      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
+      if(days !== 0){out += days +" day"+((days!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!==1)?"s":"")+", ";}
       out += secs +" seconds.";
       return out;
       //message.channel.sendMessage("SS will begin in " + out + ".");
 
     }
   };
-
-  var getDown = function getDown() { //second countdown, for end of event
-    //currentss = 1;
-    var currentTime = new Date();
-    var amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
-    var days=0;
-    var hours=0;
-    var mins=0;
-    var secs=0;
-    var out="";
-    //delete currentTime;
-
-    if(amount2 < 0){
-      //currentss = 0;
-      console.log("Woops, something went wrong.");
-      //when event is over
-    }
-
-    else{
-      days=0;hours=0;mins=0;secs=0;out="";
-
-      amount2 = Math.floor(amount2/1000);//kill the "milliseconds" so just secs
-
-      days=Math.floor(amount2/86400);//days
-      amount2=amount2%86400;
-
-      hours=Math.floor(amount2/3600);//hours
-      amount2=amount2%3600;
-
-      mins=Math.floor(amount2/60);//minutes
-      amount2=amount2%60;
-
-      secs=Math.floor(amount2);//seconds
-
-      out += "SS is currently happening! It will end in ";
-
-      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
-      out += secs +" seconds.";
-      return out;
-    }
-  };
-
-
-
-
 
 
 
@@ -181,9 +177,9 @@ var moment = require("moment"); //requirements
 
       out += eventName + " will begin in ";
 
-      if(days !== 0){out += days +" day"+((days!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!=1)?"s":"")+", ";}
-      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!=1)?"s":"")+", ";}
+      if(days !== 0){out += days +" day"+((days!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0){out += hours +" hour"+((hours!==1)?"s":"")+", ";}
+      if(days !== 0 || hours !== 0 || mins !== 0){out += mins +" minute"+((mins!==1)?"s":"")+", ";}
       out += secs +" seconds.";
       return out;
 
