@@ -1,6 +1,6 @@
 var ripWin = function ripWin(message, prefix, modrolename, colors, connection, bot, ripwin) {
   var str = message.content.toString();
-  results = str.split(' ');
+  results = str.split(" ");
 
   // <editor-fold desc='get random rip/win quote if no parameters given'>
   if (results[1] === null) {
@@ -167,19 +167,19 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       escapechars = true;
       while (escapechars) {
         if (results[1].includes("\'") && !results[1].includes("\\\'")) {
-          results[1] = results[1].replace("\'", "\\\'", 'g');
+          results[1] = results[1].replace("\'", "\\\'", "g");
         }
         else if (results[1].includes("\"") && !results[1].includes("\\\"")) {
-          results[1] = results[1].replace("\"", "\\\"", 'g');
+          results[1] = results[1].replace("\"", "\\\"", "g");
         }
         else if (results[1].includes("\\") && !results[1].includes("\\\\")) {
-          results[1] = results[1].replace("\\", "\\\\", 'g');
+          results[1] = results[1].replace("\\", "\\\\", "g");
         }
         else if (results[1].includes("\%") && !results[1].includes("\\\%")) {
-          results[1] = results[1].replace("\%", "\\\%", 'g');
+          results[1] = results[1].replace("\%", "\\\%", "g");
         }
         else if (results[1].includes("\_") && !results[1].includes("\\\_")) {
-          results[1] = results[1].replace("\_", "\\\_", 'g');
+          results[1] = results[1].replace("\_", "\\\_", "g");
         }
         else {
           //console.log("false");

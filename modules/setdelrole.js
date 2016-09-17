@@ -7,16 +7,16 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
     //console.log(str);
     //strip # if present
     if (str.includes("#")) {
-      results = str.split(' ');
+      results = str.split(" ");
       if (results[2].includes("#")) {
         results[2] = results[2].replace("#", "");
       }
     }
     else {
-      results = str.split(' ');
+      results = str.split(" ");
     }
     //console.log(str);
-    //results = str.split(' ');
+    //results = str.split(" ");
     if (message.content.includes(" help")) {
       bot.sendMessage(message, "Usage: `" + prefix + "setrole <username> <discriminator> <role>`\nAll fields are required. Both the username and the role are case-sensitive. The discriminator is the number given next to the user's name (Ex. The Alliance`#5209`). The # symbol can be used, but is not required.");
     }
@@ -178,16 +178,16 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
     //console.log(str);
     //strip # if present
     if (str.includes("#")) {
-      results = str.split(' ');
+      results = str.split(" ");
       if (results[2].includes("#")) {
         results[2] = results[2].replace("#", "");
       }
     }
     else {
-      results = str.split(' ');
+      results = str.split(" ");
     }
     //console.log(str);
-    //results = str.split(' ');
+    //results = str.split(" ");
     if (message.content.includes(" help")) {
       bot.sendMessage(message, "Usage: `" + prefix + "delrole <username> <discriminator> <role>`\nAll fields are required. Both the username and the role are case-sensitive. The discriminator is the number given next to the user's name (Ex. The Alliance`#5209`). The # symbol can be used, but is not required.");
     }

@@ -2,22 +2,22 @@
 var Discord = require("discord.js"); //requirements
 var mysql = require("mysql"); //requirements
 var colors = require("colors"); //requirements
-var jsondata = require('./config/options.json'); //local options
+var jsondata = require("./config/options.json"); //local options
 var http = require("http"); //requirements
-var fs = require('fs-extra'); //requirements
+var fs = require("fs-extra"); //requirements
 var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
 var util = require("util"); //requirements
 var moment = require("moment"); //requirements
-var token = require('./config/logins/discordtoken.json').token;
-var twitconfig = require('./config/logins/twitconfig.js'); //local js
-var sqlconfig = require('./config/logins/sqlconfig.js'); //local js
-var RipWin = require('./modules/RipWin.js'); //local js
-var setDelRole = require ('./modules/setdelrole.js'); //local js
-var CheckMapID = require('./modules/checkmapid.js'); //local js
-var timers = require('./modules/timers.js'); //local js
-var Command = require('./modules/command.js'); //local js
-var commandList = require('./config/commands.json'); //local json
+var token = require("./config/logins/discordtoken.json").token;
+var twitconfig = require("./config/logins/twitconfig.js"); //local js
+var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
+var RipWin = require("./modules/RipWin.js"); //local js
+var setDelRole = require ("./modules/setdelrole.js"); //local js
+var CheckMapID = require("./modules/checkmapid.js"); //local js
+var timers = require("./modules/timers.js"); //local js
+var Command = require("./modules/command.js"); //local js
+var commandList = require("./config/commands.json"); //local json
 // </editor-fold>
 
 var hardCode = []
@@ -42,7 +42,7 @@ var commandname = "";
 //var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
 var isit = false;
 var cooldown = false;
-var stream = T.stream('statuses/filter', { follow: ["628034104", "241371699"]}); //create tweet filter, first two are refract and torcht, any others for testing
+var stream = T.stream("statuses/filter", { follow: ["628034104", "241371699"]}); //create tweet filter, first two are refract and torcht, any others for testing
 var tweetcount = 0;
 var eventDate = null;
 var eventName = null;
@@ -237,7 +237,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 		oldchatlinedata = oldMessageTime.thedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
 	}
 	// </editor-fold>
-	fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", function(error, data) {
+	fs.readFile("E:/OtherStuff/DiscordChatlogs2/" + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", function(error, data) {
 		if (error) {
 			console.log(error);
 		}
@@ -246,10 +246,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 			//console.log(array[0]);
 			for(var i = 0; i < array.length; i++) {
 				//console.log(array[i]);
-				// array[i] = array[i].replace('\r','');
-				// array[i] = array[i].replace('\n','');
-				// oldchatlinedata = oldchatlinedata.replace('\r','');
-				// oldchatlinedata = oldchatlinedata.replace('\n','');
+				// array[i] = array[i].replace("\r","");
+				// array[i] = array[i].replace("\n","");
+				// oldchatlinedata = oldchatlinedata.replace("\r","");
+				// oldchatlinedata = oldchatlinedata.replace("\n","");
 				// console.log(array[i]);
 				// console.log(oldchatlinedata);
 				if (array[i] === oldchatlinedata) {
@@ -258,7 +258,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					array[i] = newchatlinedata;
 					//array.splice(i+1,0,"(Edited -->) " + newMessage.cleanContent);
 
-					fs.writeFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", array.join("\r\n"), function(error) {
+					fs.writeFile("E:/OtherStuff/DiscordChatlogs2/" + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", array.join("\r\n"), function(error) {
 						if (error) {
 							console.log(error);
 						}
@@ -273,8 +273,8 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 
 
-  //var chatlogArray = loadStrings('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldMonthIndex] + ".txt");
-	// fs.readFile('E:/OtherStuff/DiscordChatlogs2/' + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldMonthIndex] + ".txt", function(err, data) {
+  //var chatlogArray = loadStrings("E:/OtherStuff/DiscordChatlogs2/" + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldMonthIndex] + ".txt");
+	// fs.readFile("E:/OtherStuff/DiscordChatlogs2/" + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + yearthen + "/" + monthNames[oldMonthIndex] + ".txt", function(err, data) {
   //   if(err) throw err;
   //   var array = data.toString().split("\n");
 	// 	console.log(array[0]);
@@ -735,12 +735,12 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}
 								else if (mapid !== null && mapid !== "") {
 									var optionsac = {
-										hostname: 'steamcommunity.com',
-										path: '/stats/233610/leaderboards/' + mapid + '/?xml=1&start=1&end=1',
-										method: 'GET',
+										hostname: "steamcommunity.com",
+										path: "/stats/233610/leaderboards/" + mapid + "/?xml=1&start=1&end=1",
+										method: "GET",
 									};
 									http.request(optionsac, function(response) {
-										var str = '';
+										var str = "";
 										response.on("data", function (chunk) {
 											str += chunk;
 										});
@@ -755,19 +755,19 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 													var working = parseInt(sometest.toString(), 10)
 													var wrmin = ((working/1000)/60) >> 0;
 													var wrsec = (working/1000)-(wrmin*60) >> 0;
-													var wrmil = (working/1000).toFixed(3).split('.');
+													var wrmil = (working/1000).toFixed(3).split(".");
 													wrmil = wrmil[1];
 													if (wrsec < 10) {
 														wrsec = "0" + wrsec;
 													}
 													//begin convert steamid64 to profile name
 													var optionsac2 = {
-														hostname: 'steamcommunity.com',
-														path: '/profiles/' + somesteamid + "/?xml=1",
-														method: 'GET',
+														hostname: "steamcommunity.com",
+														path: "/profiles/" + somesteamid + "/?xml=1",
+														method: "GET",
 													};
 													http.request(optionsac2, function(response) {
-														var str2 = '';
+														var str2 = "";
 														response.on("data", function (chunk) {
 															str2 += chunk;
 														});
@@ -807,9 +807,9 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								str2 = str2.substr(str2.indexOf(" ") + 1);
 								str2 = str2.toLowerCase().split(" ");
 								for (var i = 0; i < str2.length; i++) {
-									str2[i] = str2[i].split('');
+									str2[i] = str2[i].split("");
 									str2[i][0] = str2[i][0].toUpperCase();
-									str2[i] = str2[i].join('');
+									str2[i] = str2[i].join("");
 								}
 								firstLetterCaps = str2.join(" ");
 								var category = firstLetterCaps;
@@ -821,13 +821,13 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}
 								var nonefound = true;
 								var optionsac = {
-									hostname: 'www.speedrun.com',
-									path: '/api_records.php?game=' + gamename,
-									method: 'GET',
+									hostname: "www.speedrun.com",
+									path: "/api_records.php?game=" + gamename,
+									method: "GET",
 									json:true
 								};
 								http.request(optionsac, function(response) {
-									var str = '';
+									var str = "";
 									response.on("data", function (chunk) {
 										str += chunk;
 									});
@@ -841,7 +841,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 														var working = parseFloat(sometime.toString())
 														var wrmin = (working/60) >> 0;
 														var wrsec = working-(wrmin*60) >> 0;
-														var wrmil = working.toFixed(2).split('.');
+														var wrmil = working.toFixed(2).split(".");
 														wrmil = wrmil[1];
 														if (wrsec < 10) {
 															wrsec = "0" + wrsec;

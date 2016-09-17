@@ -1,4 +1,4 @@
-var colors = require('colors');
+var colors = require("colors");
 
 var commandCount = 0;
 
@@ -16,7 +16,7 @@ function Command(o) {
 Command.prototype.isEnabledForServer = function(message, connection, prefix) {
   return new Promise((resolve) => {
     var str = message.content;
-    var results = str.split(' ');
+    var results = str.split(" ");
     if (results[0].includes(prefix)) {
       commandname = results[0].replace(prefix, "");
     }
