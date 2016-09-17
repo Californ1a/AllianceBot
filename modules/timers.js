@@ -40,11 +40,16 @@
   //get and format duration from now until "futuredate"
   var GetCount = function GetCount() {
 
-    dateNow = new Date(); //grab current date
-    localTime = dateNow.getTime();
-    localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
-    utc = localTime+localOffset;
-    amount = getNextSSDay(dateNow, 6).getTime() - dateNow.getTime(); //calc milliseconds between dates
+    var dateNow = new Date(); //grab current date
+    var localTime = dateNow.getTime();
+    var localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
+    var utc = localTime+localOffset;
+    var amount = getNextSSDay(dateNow, 6).getTime() - dateNow.getTime(); //calc milliseconds between dates
+    var days=0;
+    var hours=0;
+    var mins=0;
+    var secs=0;
+    var out="";
     delete dateNow;
 
     // time is already past
@@ -85,8 +90,13 @@
 
   var GetDown = function GetDown(){ //second countdown, for end of event
     currentss = 1;
-    currentTime = new Date();
-    amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
+    var currentTime = new Date();
+    var amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
+    var days=0;
+    var hours=0;
+    var mins=0;
+    var secs=0;
+    var out="";
     delete currentTime;
 
     if(amount2 < 0){
@@ -131,11 +141,16 @@
   var GetCountEvent = function GetCountEvent(dateFuture, eventName) {
     var momentDate = moment(dateFuture)
     dateFuture = momentDate.toDate();
-    dateNow = new Date(); //grab current date
-    localTime = dateNow.getTime();
-    localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
-    utc = localTime+localOffset;
-    amount = dateFuture.getTime() - dateNow.getTime(); //calc milliseconds between dates
+    var dateNow = new Date(); //grab current date
+    var localTime = dateNow.getTime();
+    var localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
+    var utc = localTime+localOffset;
+    var amount = dateFuture.getTime() - dateNow.getTime(); //calc milliseconds between dates
+    var days=0;
+    var hours=0;
+    var mins=0;
+    var secs=0;
+    var out="";
     delete dateNow;
 
     // time is already past
@@ -174,9 +189,9 @@
   }
 
 module.exports = {
-  GetCountEvent: GetCountEvent,
-  GetDown: GetDown,
-  GetCount: GetCount,
-  happeningNow: happeningNow,
-  getNextSSDay: getNextSSDay
+  GetCountEvent,
+  GetDown,
+  GetCount,
+  happeningNow,
+  getNextSSDay
 };

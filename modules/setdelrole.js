@@ -24,7 +24,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //begin parsing username/discriminator
       var somenamevalid = null;
       var failedmessage = "notnull";
-      for (i = 0; i < message.server.members.length; i++) {
+      for (var i = 0; i < message.server.members.length; i++) {
         if (message.server.members[i].name === results[1]) {
           if (message.server.members[i].discriminator === results[2]) {
             somenamevalid = message.server.members[i];
@@ -67,6 +67,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
       //assign role begin
       if (somenamevalid !== null && somerolevalid !== null) {
+        var jumpend = "";
 
 
         //get top role of user being set
@@ -331,6 +332,6 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 
 module.exports = {
-  setRole: setRole,
-  delRole: delRole
+  setRole,
+  delRole
 };

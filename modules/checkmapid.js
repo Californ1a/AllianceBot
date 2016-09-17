@@ -429,8 +429,8 @@ var checkMapID = function checkMapID(message, colors, results, jsondata, mapid) 
     mapid = 0;
   }
   return mapid;
-}
+};
 
 module.exports = {
-  checkMapID: checkMapID
+  checkMapID
 };

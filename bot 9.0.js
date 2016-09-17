@@ -21,7 +21,7 @@ var commandList = require("./config/commands.json"); //local json
 // </editor-fold>
 
 var hardCode = []
-for (i in commandList) {
+for (var i in commandList) {
 	hardCode[i] = new Command(commandList[i]);
 }
 
@@ -156,18 +156,17 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 	var newchatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	var newMessageTime = messageDate(newMessage);
 	var newuserrole = newMessage.guild.members.get(newMessage.author.id);
+	var maxpos = 0;
+	var newisbot = "";
+	var newchatlinedata = "";
 	//console.log(newuserrole.roles);
 	if (newuserrole.roles.size === 0) {
 		newuserrole = "Guest";
 		if (newMessage.author.bot) {
-			newisbot = "{BOT}"
-		}
-		else {
-			newisbot = "";
+			newisbot = "{BOT}";
 		}
 	}
 	else {
-		var maxpos = 0;
 
 		//find max role of user
 		for (var i = 0; i < newMessage.guild.roles.size+1; i++) {
@@ -180,10 +179,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 		newuserrole = newtoprole.name;
 		if (newMessage.author.bot) {
-			newisbot = "{BOT}"
-		}
-		else {
-			newisbot = "";
+			newisbot = "{BOT}";
 		}
 	}
 	newchatlog = newchatlog + newMessage.guild.name + "/" + newMessage.channel.name + "/" + newMessageTime.year + "/" + newMessageTime.month + ".txt";
@@ -199,18 +195,17 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 	var oldchatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	var oldMessageTime = messageDate(oldMessage);
 	var userrole = oldMessage.guild.members.get(oldMessage.author.id);
+	var maxpos = 0;
+	var isbot = "";
+	var oldchatlinedata = "";
 	//console.log(userrole.roles);
 	if (userrole.roles.size === 0) {
 		userrole = "Guest";
 		if (oldMessage.author.bot) {
-			isbot = "{BOT}"
-		}
-		else {
-			isbot = "";
+			isbot = "{BOT}";
 		}
 	}
 	else {
-		var maxpos = 0;
 
 		//find max role of user
 		for (var i = 0; i < oldMessage.guild.roles.size+1; i++) {
@@ -223,10 +218,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 		userrole = toprole.name;
 		if (oldMessage.author.bot) {
-			isbot = "{BOT}"
-		}
-		else {
-			isbot = "";
+			isbot = "{BOT}";
 		}
 	}
 	oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt";
@@ -294,18 +286,16 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 		var messageTime = messageDate(message);
 
 		var userrole = message.guild.members.get(message.author.id);
+		var isbot = "";
+		var maxpos = 0;
 		//console.log(userrole.roles);
 		if (userrole.roles.size === 0) {
 			userrole = "Guest";
 			if (message.author.bot) {
-				isbot = "{BOT}"
-			}
-			else {
-				isbot = "";
+				isbot = "{BOT}";
 			}
 		}
 		else {
-			var maxpos = 0;
 
 			//find max role of user
 			for (var i = 0; i < message.guild.roles.size+1; i++) {
@@ -319,9 +309,6 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 			userrole = toprole.name;
 			if (message.author.bot) {
 				isbot = "{BOT}"
-			}
-			else {
-				isbot = "";
 			}
 		}
 
@@ -451,7 +438,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 		//check for command
 		if (message.content.startsWith(prefix)) {
 			var str = message.content;
-			results = str.split(" ");
+			var results = str.split(" ");
 			results[0] = results[0].replace(prefix, "");
 			var ref = 0;
 			for (var i = 0; i < hardCode.length; i++) {

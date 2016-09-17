@@ -1,6 +1,7 @@
 var ripWin = function ripWin(message, prefix, modrolename, colors, connection, bot, ripwin) {
   var str = message.content.toString();
-  results = str.split(" ");
+  var results = str.split(" ");
+  var qu = "";
 
   // <editor-fold desc='get random rip/win quote if no parameters given'>
   if (results[1] === null) {
@@ -225,5 +226,5 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
 }
 //end ripwin command
 module.exports = {
-  ripWin: ripWin
+  ripWin
 };
