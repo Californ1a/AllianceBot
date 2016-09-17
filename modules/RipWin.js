@@ -27,6 +27,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   else if (results[1] === "add" && message.member.roles.exists("name", modrolename)) {
     if (results.length >= 3) {
       var recombined = "";
+      var info = "";
       //console.log(results.length);
       for (var i = 0; i < results.length-2; i++) {
         if (i !== results.length-3) {
@@ -37,7 +38,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         }
       }
       console.log(colors.red("Trying to insert " + ripwin + " message '" + recombined + "' into database."));
-      var info = {
+      info = {
         "quote": recombined,
         "server_id": message.guild.id
       };
@@ -80,9 +81,6 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
           recombined += results[i+2];
         }
       }
-      var info = {
-        "quote": recombined
-      };
       console.log(colors.red("Attempting to remove " + ripwin + " message '" + recombined + "' from the database."));
       connection.query("DELETE FROM " + ripwin + " WHERE quote = '" + recombined + "' AND server_id=" + message.guild.id, function(error) {
         if (error) {

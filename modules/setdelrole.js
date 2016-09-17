@@ -240,6 +240,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //assign role begin
       if (somenamevalid !== null && somerolevalid !== null) {
         var jumpend = "";
+        var toprole2 = "";
 
 
         //get top role of user being set
@@ -248,7 +249,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
           toprole2 = -1;
         }
         else {
-          var toprole2 = message.server.roles.get("position", userrole2.roles.length);
+          toprole2 = message.server.roles.get("position", userrole2.roles.length);
           //console.log(toprole);
         }
 

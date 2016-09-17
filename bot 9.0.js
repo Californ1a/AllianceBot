@@ -287,6 +287,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 		var userrole = message.guild.members.get(message.author.id);
 		var isbot = "";
 		var maxpos = 0;
+		var toprole = "";
 		//console.log(userrole.roles);
 		if (userrole.roles.size === 0) {
 			userrole = "Guest";
@@ -303,7 +304,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				// 	maxpos = userrole.roles.find("position",i).position;
 				// }
 			}
-			var toprole = message.guild.roles.find("position", maxpos);
+			toprole = message.guild.roles.find("position", maxpos);
 
 			userrole = toprole.name;
 			if (message.author.bot) {
@@ -455,8 +456,8 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				else {
 					if (!(returntext[0] === null)) {
 						if (returntext[0].modonly === "true" && message.member.roles.exists("name", modrolename)) {
-							var str = returntext[0].comtext;
-							results = str.slice(1,str.length-1);
+							var strs = returntext[0].comtext;
+							results = strs.slice(1,str.length-1);
 							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
 							}
@@ -941,12 +942,13 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									return;
 								}
 								else {
+									var quotespm = "";
 									if (quotes[0] === null) {
-										var quotespm = "";
+										quotespm = "";
 									}
 									else {
 										console.log(colors.red("Success."));
-										var quotespm = "`" + prefix;
+										quotespm = "`" + prefix;
 										for (i = 0; i < quotes.length; i++) {
 											if (i === quotes.length-1) {
 												quotespm += quotes[i].commandname + "`";
@@ -962,12 +964,13 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 												return;
 											}
 											else {
+												var quotespm2 = "";
 												if (quotes2[0] === null) {
-													var quotespm2 = "";
+													quotespm2 = "";
 												}
 												else {
 													console.log(colors.red("Success."));
-													var quotespm2 = "`" + prefix;
+													quotespm2 = "`" + prefix;
 													for (i = 0; i < quotes2.length; i++) {
 														if (!(i === quotes2.length-1)) {
 															quotespm2 += quotes2[i].comname + "`, `" + prefix;
