@@ -1,9 +1,12 @@
+var ampm = "AM";
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
 var messageDate = function messageDate (message) {
 	var d = message.timestamp;
 	var hournow = d.getHours();
 	ampm = "AM";
 	if (hournow === 0) {
-		hournow = 12
+		hournow = 12;
 		ampm = "AM";
 	}
 	else if (hournow >= 13) {
@@ -26,12 +29,12 @@ var messageDate = function messageDate (message) {
 	var year = d.getFullYear();
 	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
 	return {
-		"thedate": thedate,
-		"year": year,
+		thedate,
+		year,
 		"month": monthNames[monthIndex],
 		"hour": hournow,
 		"minute": minutenow,
-		"ampm": ampm
+		ampm
 	};
 };
 
