@@ -11,14 +11,14 @@ var RipWin = function () {
     //new
     var str = message.content.toString();
     results = str.split(' ');
-    if (results[1] == null) {
+    if (results[1] === null) {
       connection.query("SELECT quote FROM " + ripwin + " WHERE server_id=" + message.server.id + " ORDER BY RAND() LIMIT 1", function(error, quotes) {
         if (error) {
           console.log(error);
           return;
         }
         else {
-          if (quotes[0].quote == null || quotes[0].quote == "") {
+          if (quotes[0].quote === null || quotes[0].quote === "") {
             bot.sendMessage(message, "None found.")
           }
           else {
@@ -27,12 +27,12 @@ var RipWin = function () {
         }
       });
     }
-    else if (results[1] == "add" && bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
+    else if (results[1] === "add" && bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
       if (results.length >= 3) {
         var recombined = "";
         //console.log(results.length);
         for (i = 0; i < results.length-2; i++) {
-          if (i != results.length-3) {
+          if (i !== results.length-3) {
             recombined += results[i+2] + " ";
           }
           else {
@@ -60,15 +60,15 @@ var RipWin = function () {
         bot.sendMessage(message, modrolename + "s has the ability to add new " + ripwin + " quotes with the use of `" + prefix + ripwin + " add <quote>`");
       }
     }
-    else if (results[1] == "add") {
+    else if (results[1] === "add") {
       bot.reply(message, "You do not have permission to add new " + ripwin + " quotes.");
     }
-    else if (results[1] == "del" && bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
+    else if (results[1] === "del" && bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
       if (results.length >= 3) {
         var recombined = "";
         //console.log(results.length);
         for (i = 0; i < results.length-2; i++) {
-          if (i != results.length-3) {
+          if (i !== results.length-3) {
             recombined += results[i+2] + " ";
           }
           else {
@@ -92,10 +92,10 @@ var RipWin = function () {
         bot.sendMessage(message, modrolename + "s have the ability to remove " + ripwin + " quotes with the use of `" + prefix + ripwin + " del <quote>`. The quote must be an exact match, to prevent erroneously removing the incorrect quote. Use `" + prefix + ripwin + " list` to directly copy from the list.");
       }
     }
-    else if (results[1] == "del") {
+    else if (results[1] === "del") {
       bot.reply(message, "You do not have permission to remove " + ripwin + " quotes.");
     }
-    else if (results[1] == "help") {
+    else if (results[1] === "help") {
       if (bot.memberHasRole(message.author, message.server.roles.get("name", modrolename))) {
         bot.sendMessage(message, modrolename + "s have the ability to use `" + prefix + ripwin + " <add|del> <quote>`\nMembers can use `" + prefix + ripwin + "` to get a random " + ripwin + " quote and `" + prefix + ripwin + " <keyword>` to search for a matching quote (Ex. `" + prefix + ripwin + " too`) as well as `" + prefix + ripwin + " list` to be PM'd a full list of the current " + ripwin + " quotes.");
       }
@@ -103,7 +103,7 @@ var RipWin = function () {
         bot.reply(message, "Use `" + prefix + ripwin + "` to get a random " + ripwin + " quote and `" + prefix + ripwin + " <keyword>` to search for a matching quote (Ex. `" + prefix + ripwin + " too`) as well as `" + prefix + ripwin + " list` to be PM'd a full list of the current " + ripwin + " quotes.");
       }
     }
-    else if (results[1] == "list") {
+    else if (results[1] === "list") {
       console.log(colors.red("Attempting to get full " + ripwin + " list."));
       // var info = {
       // 	"quote": results
@@ -116,7 +116,7 @@ var RipWin = function () {
           return;
         }
         else {
-          if (quotes[0] == null) {
+          if (quotes[0] === null) {
             console.log(colors.red("Failed."));
             bot.sendMessage(message.author.id, "Failed to find any " + ripwin + " quotes for your server.");
           }
@@ -133,7 +133,7 @@ var RipWin = function () {
       });
     }
     else {
-      if (results.length == 2) {
+      if (results.length === 2) {
         console.log(colors.red("Trying to find " + ripwin + " message matching '" + results[1] + "' in database."));
         // var info = {
         //   "quote": results[1]
@@ -171,7 +171,7 @@ var RipWin = function () {
             return;
           }
           else {
-            if (quotes[0] == null) {
+            if (quotes[0] === null) {
               console.log(colors.red("Failed to find any matching."));
               bot.sendMessage(message, "Unable to find any " + rw + " quotes matching '" + results[1] + "'.");
             }

@@ -6,11 +6,11 @@ var CheckMapID = function () {
 
     //broken symmetry
     if (results[1].match(/^broken$/i)) {
-      if (results[2] != null && results[2].match(/^symmetry$/i)) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i) || results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^symmetry$/i)) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i) || results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Broken Symmetry'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Broken Symmetry'];
         }
         else {
@@ -22,10 +22,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^bs$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Broken Symmetry'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Broken Symmetry'];
       }
       else {
@@ -36,11 +36,11 @@ var CheckMapID = function () {
 
     //lost society
     else if (results[1].match(/^lost$/i)) {
-      if (results[2] != null && results[2].match(/^society$/i)) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^society$/i)) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Lost Society'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Lost Society'];
         }
 
@@ -53,10 +53,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^ls$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Lost Society'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Lost Society'];
       }
       else {
@@ -67,11 +67,11 @@ var CheckMapID = function () {
 
     //negative space
     else if (results[1].match(/^negative$/i)) {
-      if (results[2] != null && (results[2].match(/^space$/i))) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^space$/i))) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Negative Space'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Negative Space'];
         }
         else {
@@ -83,10 +83,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^ns$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Negative Space'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Negative Space'];
       }
       else {
@@ -97,10 +97,10 @@ var CheckMapID = function () {
 
     //departure
     else if (results[1].match(/^departure$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Departure'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Departure'];
       }
       else {
@@ -111,10 +111,10 @@ var CheckMapID = function () {
 
     //Friction
     else if (results[1].match(/^friction$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Friction'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Friction'];
       }
       else {
@@ -125,10 +125,10 @@ var CheckMapID = function () {
 
     //Aftermath
     else if (results[1].match(/^aftermath$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Aftermath'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Aftermath'];
       }
       else {
@@ -139,13 +139,13 @@ var CheckMapID = function () {
 
     //the thing about machines
     else if (results[1].match(/^the$/i)) {
-      if (results[2] != null && results[2].match(/^thing$/i)) {
-        if (results[3] != null && results[3].match(/^about$/i)) {
-          if (results[4] != null && results[4].match(/^machines$/i)) {
-            if (results[5] != null && (results[5].match(/^sas$/i) || results[5].match(/^speed$/i)|| results[5].match(/^sns$/i) || results[5].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^thing$/i)) {
+        if (results[3] !== null && results[3].match(/^about$/i)) {
+          if (results[4] !== null && results[4].match(/^machines$/i)) {
+            if (results[5] !== null && (results[5].match(/^sas$/i) || results[5].match(/^speed$/i)|| results[5].match(/^sns$/i) || results[5].match(/^s&s$/i))) {
               mapid = jsondata.officialmapids['Speed and Style']['The Thing About Machines'];
             }
-            else if (results[5] != null && (results[5].match(/^s$/i) || results[5].match(/^sprint$/i))) {
+            else if (results[5] !== null && (results[5].match(/^s$/i) || results[5].match(/^sprint$/i))) {
               mapid = jsondata.officialmapids['Sprint']['The Thing About Machines'];
             }
             else {
@@ -160,12 +160,12 @@ var CheckMapID = function () {
           mapid = 0;
         }
       }
-      else if (results[2] != null && results[2].match(/^observer$/i)) { //partial observer
-        if (results[3] != null && results[3].match(/^effect$/i)) {
-          if (results[4] != null && (results[4].match(/^sas$/i) || results[4].match(/^speed$/i)|| results[4].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
+      else if (results[2] !== null && results[2].match(/^observer$/i)) { //partial observer
+        if (results[3] !== null && results[3].match(/^effect$/i)) {
+          if (results[4] !== null && (results[4].match(/^sas$/i) || results[4].match(/^speed$/i)|| results[4].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
             mapid = jsondata.officialmapids['Speed and Style']['The Observer Effect'];
           }
-          else if (results[4] != null && (results[4].match(/^s$/i) || results[4].match(/^sprint$/i))) {
+          else if (results[4] !== null && (results[4].match(/^s$/i) || results[4].match(/^sprint$/i))) {
             mapid = jsondata.officialmapids['Sprint']['The Observer Effect'];
           }
           else {
@@ -181,12 +181,12 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^thing$/i)) {
-      if (results[2] != null && results[2].match(/^about$/i)) {
-        if (results[3] != null && results[3].match(/^machines$/i)) {
-          if (results[4] != null && (results[4].match(/^sas$/i) || results[4].match(/^speed$/i)|| results[4].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^about$/i)) {
+        if (results[3] !== null && results[3].match(/^machines$/i)) {
+          if (results[4] !== null && (results[4].match(/^sas$/i) || results[4].match(/^speed$/i)|| results[4].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
             mapid = jsondata.officialmapids['Speed and Style']['The Thing About Machines'];
           }
-          else if (results[4] != null && (results[4].match(/^s$/i) || results[4].match(/^sprint$/i))) {
+          else if (results[4] !== null && (results[4].match(/^s$/i) || results[4].match(/^sprint$/i))) {
             mapid = jsondata.officialmapids['Sprint']['The Thing About Machines'];
           }
           else {
@@ -202,10 +202,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^machines$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['The Thing About Machines'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['The Thing About Machines'];
       }
       else {
@@ -213,10 +213,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^ttam$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['The Thing About Machines'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['The Thing About Machines'];
       }
       else {
@@ -227,10 +227,10 @@ var CheckMapID = function () {
 
     //Amusement
     else if (results[1].match(/^amusement$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Amusement'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Amusement'];
       }
       else {
@@ -241,10 +241,10 @@ var CheckMapID = function () {
 
     //Corruption
     else if (results[1].match(/^corruption$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Corruption'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Corruption'];
       }
       else {
@@ -255,11 +255,11 @@ var CheckMapID = function () {
 
     //the observer Effect
     else if (results[1].match(/^observer$/i)) {
-      if (results[2] != null && results[2].match(/^effect$/i)) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^effect$/i)) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['The Observer Effect'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['The Observer Effect'];
         }
         else {
@@ -267,10 +267,10 @@ var CheckMapID = function () {
         }
       }
       else {
-        if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+        if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['The Observer Effect'];
         }
-        else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+        else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['The Observer Effect'];
         }
         else {
@@ -279,10 +279,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^toe$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['The Observer Effect'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['The Observer Effect'];
       }
       else {
@@ -293,10 +293,10 @@ var CheckMapID = function () {
 
     //Dissolution
     else if (results[1].match(/^dissolution$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Dissolution'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Dissolution'];
       }
       else {
@@ -307,21 +307,21 @@ var CheckMapID = function () {
 
     //falling Through
     else if (results[1].match(/^falling$/i)) {
-      if (results[2] != null && results[2].match(/^through$/i)) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^through$/i)) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[4].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Falling Through'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Falling Through'];
         }
         else {
           mapid = 0;
         }
       }
-      else if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      else if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Falling Through'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Falling Through'];
       }
       else {
@@ -329,10 +329,10 @@ var CheckMapID = function () {
       }
     }
     else if (results[1].match(/^ft$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Falling Through'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Falling Through'];
       }
       else {
@@ -343,10 +343,10 @@ var CheckMapID = function () {
 
     //Monolith
     else if (results[1].match(/^monolith$/i)) {
-      if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+      if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
         mapid = jsondata.officialmapids['Speed and Style']['Monolith'];
       }
-      else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+      else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
         mapid = jsondata.officialmapids['Sprint']['Monolith'];
       }
       else {
@@ -357,11 +357,11 @@ var CheckMapID = function () {
 
     //uncanny Valley
     else if (results[1].match(/^uncanny$/i)) {
-      if (results[2] != null && results[2].match(/^valley$/i)) {
-        if (results[3] != null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
+      if (results[2] !== null && results[2].match(/^valley$/i)) {
+        if (results[3] !== null && (results[3].match(/^sas$/i) || results[3].match(/^speed$/i)|| results[3].match(/^sns$/i) || results[3].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Uncanny Valley'];
         }
-        else if (results[3] != null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
+        else if (results[3] !== null && (results[3].match(/^s$/i) || results[3].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Uncanny Valley'];
         }
         else {
@@ -369,10 +369,10 @@ var CheckMapID = function () {
         }
       }
       else {
-        if (results[2] != null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
+        if (results[2] !== null && (results[2].match(/^sas$/i) || results[2].match(/^speed$/i)|| results[2].match(/^sns$/i) || results[2].match(/^s&s$/i))) {
           mapid = jsondata.officialmapids['Speed and Style']['Uncanny Valley'];
         }
-        else if (results[2] != null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
+        else if (results[2] !== null && (results[2].match(/^s$/i) || results[2].match(/^sprint$/i))) {
           mapid = jsondata.officialmapids['Sprint']['Uncanny Valley'];
         }
         else {
@@ -390,7 +390,7 @@ var CheckMapID = function () {
 
     //thunder stuck Challenge
     else if (results[1].match(/^thunder$/i)) {
-      if (results[2] != null && results[2].match(/^struck$/i)) {
+      if (results[2] !== null && results[2].match(/^struck$/i)) {
         mapid = jsondata.officialmapids['Challenge']['Thunder Struck'];
       }
       else {
