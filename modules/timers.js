@@ -1,3 +1,5 @@
+var moment = require("moment"); //requirements
+
   var getNextSSDay = function getNextSSDay(date, dayOfWeek) {
 
     var resultDate = new Date(date.getTime());
@@ -14,7 +16,7 @@
     resultDate.setMilliseconds(0);
 
     return resultDate;
-  }
+  };
 
 
   var happeningNow = function happeningNow(date, dayOfWeek) {
@@ -32,13 +34,13 @@
     resultDate.setMilliseconds(0);
 
     return resultDate;
-  }
+  };
 
 
 
 
   //get and format duration from now until "futuredate"
-  var GetCount = function GetCount() {
+  var getCount = function getCount() {
 
     var dateNow = new Date(); //grab current date
     var localTime = dateNow.getTime();
@@ -50,17 +52,17 @@
     var mins=0;
     var secs=0;
     var out="";
-    delete dateNow;
+    //delete dateNow;
 
     // time is already past
     if(amount < 0){
       //after event starts
-      currentss = 1;
-      return GetDown(); //start second countdown
+      //currentss = 1;
+      return getDown(); //start second countdown
     }
     // date is still good
     else{
-      currentss = 0;
+      //currentss = 0;
       days=0;hours=0;mins=0;secs=0;out="";
 
       amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
@@ -86,10 +88,10 @@
       //message.channel.sendMessage("SS will begin in " + out + ".");
 
     }
-  }
+  };
 
-  var GetDown = function GetDown(){ //second countdown, for end of event
-    currentss = 1;
+  var getDown = function getDown() { //second countdown, for end of event
+    //currentss = 1;
     var currentTime = new Date();
     var amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
     var days=0;
@@ -97,10 +99,10 @@
     var mins=0;
     var secs=0;
     var out="";
-    delete currentTime;
+    //delete currentTime;
 
     if(amount2 < 0){
-      currentss = 0;
+      //currentss = 0;
       console.log("Woops, something went wrong.");
       //when event is over
     }
@@ -129,7 +131,7 @@
       out += secs +" seconds.";
       return out;
     }
-  }
+  };
 
 
 
@@ -138,8 +140,8 @@
 
 
   //get and format duration from now until "futuredate"
-  var GetCountEvent = function GetCountEvent(dateFuture, eventName) {
-    var momentDate = moment(dateFuture)
+  var getCountEvent = function getCountEvent(dateFuture, eventName) {
+    var momentDate = moment(dateFuture);
     dateFuture = momentDate.toDate();
     var dateNow = new Date(); //grab current date
     var localTime = dateNow.getTime();
@@ -151,7 +153,7 @@
     var mins=0;
     var secs=0;
     var out="";
-    delete dateNow;
+    //delete dateNow;
 
     // time is already past
     if(amount < 0){
@@ -161,7 +163,7 @@
     }
     // date is still good
     else{
-      currentss = 0;
+      //currentss = 0;
       days=0;hours=0;mins=0;secs=0;out="";
 
       amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
@@ -186,12 +188,9 @@
       return out;
 
     }
-  }
+  };
 
 module.exports = {
-  GetCountEvent,
-  GetDown,
-  GetCount,
-  happeningNow,
-  getNextSSDay
+  getCountEvent,
+  getCount
 };

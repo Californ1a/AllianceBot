@@ -39,7 +39,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end username/discriminator
       //begin parsing role
       var somerolevalid = null;
-      for (i = 0; i < message.server.roles.length; i++) {
+      for (var i = 0; i < message.server.roles.length; i++) {
         if (message.server.roles[i].name === results[3]) {
           somerolevalid = message.server.roles[i];
         }
@@ -164,7 +164,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
   else {
     bot.reply(message, "You do not have permission to set roles.");
   }
-}
+};
 //setrole end
 
 
@@ -196,7 +196,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //begin parsing username/discriminator
       var somenamevalid = null;
       var failedmessage = "notnull";
-      for (i = 0; i < message.server.members.length; i++) {
+      for (var i = 0; i < message.server.members.length; i++) {
         if (message.server.members[i].name === results[1]) {
           if (message.server.members[i].discriminator === results[2]) {
             somenamevalid = message.server.members[i];
@@ -211,7 +211,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end username/discriminator
       //begin parsing role
       var somerolevalid = null;
-      for (i = 0; i < message.server.roles.length; i++) {
+      for (var i = 0; i < message.server.roles.length; i++) {
         if (message.server.roles[i].name === results[3]) {
           somerolevalid = message.server.roles[i];
         }
@@ -239,6 +239,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
       //assign role begin
       if (somenamevalid !== null && somerolevalid !== null) {
+        var jumpend = "";
 
 
         //get top role of user being set
@@ -311,7 +312,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
                 bot.sendMessage(message, "Successfully removed " + somenamevalid.mention() + " from the " + somerolevalid.name + " role.");
               }
               else {
-                bot.sendMessage(message, "I do not have the permission to remove this role.")
+                bot.sendMessage(message, "I do not have the permission to remove this role.");
               }
             }
           }

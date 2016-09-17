@@ -12,7 +12,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       }
       else {
         if (quotes[0].quote === null || quotes[0].quote === "") {
-          message.channel.sendMessage("None found.")
+          message.channel.sendMessage("None found.");
         }
         else {
           message.channel.sendMessage(quotes[0].quote);
@@ -28,7 +28,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     if (results.length >= 3) {
       var recombined = "";
       //console.log(results.length);
-      for (i = 0; i < results.length-2; i++) {
+      for (var i = 0; i < results.length-2; i++) {
         if (i !== results.length-3) {
           recombined += results[i+2] + " ";
         }
@@ -40,7 +40,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       var info = {
         "quote": recombined,
         "server_id": message.guild.id
-      }
+      };
       connection.query("INSERT INTO " + ripwin + " SET ?", info, function(error) {
         if (error) {
           bot.sendMessage("Failed");
@@ -72,7 +72,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
     if (results.length >= 3) {
       var recombined = "";
       //console.log(results.length);
-      for (i = 0; i < results.length-2; i++) {
+      for (var i = 0; i < results.length-2; i++) {
         if (i !== results.length-3) {
           recombined += results[i+2] + " ";
         }
@@ -142,7 +142,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         else {
           console.log(colors.red("Success."));
           var quotespm = "\n**Here are all the current " + rw + " quotes:**\n--------------------\n```";
-          for (i = 0; i < quotes.length; i++) {
+          for (var i = 0; i < quotes.length; i++) {
             quotespm += quotes[i].quote + "\r";
           }
           quotespm += "```";
@@ -165,7 +165,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
       var rw = ripwin;
       //console.log(results[1]);
       // <editor-fold desc='escape bad characters'>
-      escapechars = true;
+      var escapechars = true;
       while (escapechars) {
         if (results[1].includes("\'") && !results[1].includes("\\\'")) {
           results[1] = results[1].replace("\'", "\\\'", "g");

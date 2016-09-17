@@ -8,7 +8,7 @@ var fs = require("fs-extra"); //requirements
 var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
 var util = require("util"); //requirements
-var moment = require("moment"); //requirements
+//var moment = require("moment"); //requirements
 var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
 var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
@@ -20,7 +20,7 @@ var Command = require("./modules/command.js"); //local js
 var commandList = require("./config/commands.json"); //local json
 // </editor-fold>
 
-var hardCode = []
+var hardCode = [];
 for (var i in commandList) {
 	hardCode[i] = new Command(commandList[i]);
 }
@@ -118,7 +118,7 @@ bot.on("serverCreated", (server) => {
 		"serverid": server.id,
 		"ownerid": server.owner.id,
 		"prefix": "!"
-	}
+	};
 	// connection.query("INSERT INTO servers SET ?", info, function(error) {
 	// 	if (error) {
 	// 		console.log(error);
@@ -308,7 +308,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 			userrole = toprole.name;
 			if (message.author.bot) {
-				isbot = "{BOT}"
+				isbot = "{BOT}";
 			}
 		}
 
@@ -335,7 +335,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				}
 				else {
 					if (message.guild.members.get(message.author.id).nick) {
-						console.log(colors.white(hournow + ":" + minutenow + ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
+						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
 					}
 					else {
 						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
@@ -502,8 +502,8 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							}
 							else {
 								var iscommand = false;
-								for (var i = 0; i < hardcommands.length; i++) {
-									if (hardcommands[i]["comName"] === results[1]) {
+								for (var i = 0; i < hardCode.length; i++) {
+									if (hardCode[i].name === results[1]) {
 										iscommand = true;
 									}
 								}
@@ -580,7 +580,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "newcom")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							if (message.member.roles.exists("name", modrolename)) {
 								var str = message.content.toString();
@@ -651,7 +651,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "delcom")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							if (message.member.roles.exists("name", modrolename)) {
 								var str = message.content.toString();
@@ -696,7 +696,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				//test
 
 				else if (message.content.startsWith(prefix + "test")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 
 						}
@@ -706,7 +706,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "dist")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							var mapid = null;
 							if (results[1] === null || results[1] === "") {
@@ -739,7 +739,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 												else {
 													var sometest = result.response.entries[0].entry[0].score;
 													var somesteamid = result.response.entries[0].entry[0].steamid.toString();
-													var working = parseInt(sometest.toString(), 10)
+													var working = parseInt(sometest.toString(), 10);
 													var wrmin = ((working/1000)/60) >> 0;
 													var wrsec = (working/1000)-(wrmin*60) >> 0;
 													var wrmil = (working/1000).toFixed(3).split(".");
@@ -768,15 +768,15 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 																	message.channel.sendMessage(wrmin + ":" + wrsec + "." + wrmil + " by " + profilename);
 																}
 															});
-														})
+														});
 													}).end();
 												}
 											});
-										})
+										});
 									}).end();
 								}
 								else {
-									message.channel.sendMessage("No data found.")
+									message.channel.sendMessage("No data found.");
 								}
 								hardCode[ref].timeout();
 							}
@@ -787,7 +787,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "wr")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							if (results[1] !== null) {
 								var str2 = message.content.toString();
@@ -798,8 +798,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 									str2[i][0] = str2[i][0].toUpperCase();
 									str2[i] = str2[i].join("");
 								}
-								firstLetterCaps = str2.join(" ");
-								var category = firstLetterCaps;
+								var category = str2.join(" ");
 								if (message.guild.name === "Cali Test Server") {
 									var gamename = "Antichamber";
 								}
@@ -862,9 +861,9 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "ss")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							currentss = timers.GetCount();
+							currentss = timers.getCount();
 							message.channel.sendMessage(currentss + " Use " + prefix + "speedy for full SS information.");
 							hardCode[ref].timeout();
 						}
@@ -873,7 +872,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "advent")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							if (results[1] === "set" && message.member.roles.exists("name", modrolename)) {
 								//console.log(results[2]);
@@ -906,7 +905,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}
 							}
 							else if ((results[1] === null || results[1] === "") && (eventDate !== null && eventDate !== "")) {
-								currentstream = timers.GetCountEvent(eventDate, eventName);
+								currentstream = timers.getCountEvent(eventDate, eventName);
 								message.channel.sendMessage(currentstream + "");
 							}
 							else {
@@ -921,9 +920,9 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "speedy")) {
-					isEnabledForServer(message, connection, prefix).then(response => {
+					isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							currentss = timers.GetCount(message);
+							currentss = timers.getCount(message);
 							message.author.sendMessage("Speedy Saturday is a community multiplayer get-together event that occurs every week (on Saturday) at 6:00PM UTC until 8:00PM UTC (2 hour duration). More information can be found here:\rhttp://steamcommunity.com/app/233610/discussions/0/528398719786414266/\rhttps://redd.it/3mlfje\r" + currentss);
 							hardCode[ref].timeout();
 						}
@@ -933,7 +932,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 				else if (message.content.startsWith(prefix + "commands") || message.content.startsWith(prefix + "cmds") || message.content.startsWith(prefix + "help")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " order by commandname asc", function(error, quotes) {
 								if (error) {
@@ -1007,7 +1006,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 				//setdelrole
 				else if (message.content.startsWith(prefix + "setrole")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							setDelRole.setRole(message, modrolename, membrolename, prefix, bot, toprole);
 							hardCode[ref].timeout();
@@ -1016,7 +1015,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				}
 
 				else if (message.content.startsWith(prefix + "delrole")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							setDelRole.delRole(message, modrolename, membrolename, prefix, bot, toprole);
 							hardCode[ref].timeout();
@@ -1033,7 +1032,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 				//ripwin command
 				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then(response => {
+					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							ripwin = results[0].replace(prefix, "");
 							RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);

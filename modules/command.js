@@ -39,7 +39,7 @@ Command.prototype.isEnabledForServer = function(message, connection, prefix) {
       }
     });
   });
-}
+};
 
 Command.prototype.timeout = function() {
   this.onCooldown = true;
