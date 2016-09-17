@@ -194,7 +194,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 	var oldchatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	var oldMessageTime = md.messageDate(oldMessage);
 	var userrole = oldMessage.guild.members.get(oldMessage.author.id);
-	var maxpos = 0;
+	maxpos = 0;
 	var isbot = "";
 	var oldchatlinedata = "";
 	//console.log(userrole.roles);
@@ -457,7 +457,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 					if (!(returntext[0] === null)) {
 						if (returntext[0].modonly === "true" && message.member.roles.exists("name", modrolename)) {
 							var strs = returntext[0].comtext;
-							results = strs.slice(1,str.length-1);
+							results = strs.slice(1,strs.length-1);
 							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
 							}
@@ -467,8 +467,8 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							messagesent = true;
 						}
 						else if (returntext[0].modonly === "false") {
-							var str = returntext[0].comtext;
-							results = str.slice(1,str.length-1);
+							var stre = returntext[0].comtext;
+							results = stre.slice(1,stre.length-1);
 							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
 							}
@@ -1041,7 +1041,7 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 							RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
 							hardCode[ref].timeout();
 						}
-					}).catch (error => console.error(error));
+					}).catch ((error) => console.error(error));
 				}
 				//end ripwin
 			}
@@ -1063,9 +1063,9 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 
 
 //catch errors
-bot.on("error", e => { console.error(e); });
-bot.on("warn", e => { console.warn(e); });
-bot.on("debug", e => { console.info(e); });
+bot.on("error", (e) => { console.error(e); });
+bot.on("warn", (e) => { console.warn(e); });
+bot.on("debug", (e) => { console.info(e); });
 
 
 
