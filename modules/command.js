@@ -26,7 +26,7 @@ Command.prototype.isEnabledForServer = function(message, connection, prefix) {
         return;
       }
       else {
-        if (enabledforserver[0] === null) {
+        if (enabledforserver[0] === undefined) {
           console.log(colors.red("Command not enabled for this server."));
           resolve(false);
         }
