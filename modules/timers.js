@@ -3,6 +3,7 @@ var momentDate;
 var dateNow;
 var localTime;
 var localOffset;
+var dateFuture;
 var utc;
 var amount;
 var days;
