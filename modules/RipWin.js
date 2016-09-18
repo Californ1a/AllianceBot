@@ -4,14 +4,14 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
   var qu = "";
 
   // <editor-fold desc='get random rip/win quote if no parameters given'>
-  if (results[1] === undefined) {
+  if (typeof results[1] !== "object") {
     connection.query("SELECT quote FROM " + ripwin + " WHERE server_id=" + message.guild.id + " ORDER BY RAND() LIMIT 1", function(error, quotes) {
       if (error) {
         console.log(error);
         return;
       }
       else {
-        if (quotes[0].quote === undefined || quotes[0].quote === "") {
+        if (typeof quotes[0].quote !== "string") {
           message.channel.sendMessage("None found.");
         }
         else {
@@ -133,7 +133,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
         return;
       }
       else {
-        if (quotes[0] === undefined) {
+        if (typeof quotes[0] !== "object") {
           console.log(colors.red("Failed."));
           message.author.sendMessage("Failed to find any " + ripwin + " quotes for your server.");
         }
@@ -195,7 +195,7 @@ var ripWin = function ripWin(message, prefix, modrolename, colors, connection, b
           return;
         }
         else {
-          if (quotes[0] === undefined) {
+          if (typeof quotes[0] !== "object") {
             console.log(colors.red("Failed to find any matching."));
             message.channel.sendMessage("Unable to find any " + ripwin + " quotes matching '" + results[1] + "'.");
           }

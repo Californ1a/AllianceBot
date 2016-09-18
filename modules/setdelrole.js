@@ -31,7 +31,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
           }
         }
       }
-      if (somenamevalid === undefined) {
+      if (typeof somenamevalid !== "string") {
         failedmessage = null;
         //bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.")
       }
@@ -48,15 +48,15 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end role parse
 
       //begin not-found check
-      if (somerolevalid === undefined) {
-        if (somenamevalid === undefined) {
+      if (typeof somerolevalid !== "string") {
+        if (typeof somenamevalid !== "string") {
           bot.sendMessage(message, "No role with that name found and no user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.");
         }
         else {
           bot.sendMessage(message, "No role with that name found. Use `" + prefix + "setrole help` for syntax help.");
         }
       }
-      else if (somenamevalid === undefined) {
+      else if (typeof somenamevalid !== "string") {
         bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.");
       }
       //end not-found check
@@ -66,7 +66,7 @@ var setRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 
       //assign role begin
-      if (somenamevalid !== undefined && somerolevalid !== undefined) {
+      if (typeof somenamevalid === "string" && typeof somerolevalid === "string") {
         var jumpend = "";
 
 
@@ -203,7 +203,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
           }
         }
       }
-      if (somenamevalid === undefined) {
+      if (typeof somenamevalid !== "string") {
         failedmessage = null;
         //bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "setrole help` for syntax help.")
       }
@@ -220,15 +220,15 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
       //end role parse
 
       //begin not-found check
-      if (somerolevalid === undefined) {
-        if (somenamevalid === undefined) {
+      if (typeof somerolevalid !== "string") {
+        if (typeof somenamevalid !== "string") {
           bot.sendMessage(message, "No role with that name found and no user with that name/discriminator combo found. Use `" + prefix + "delrole help` for syntax help.");
         }
         else {
           bot.sendMessage(message, "No role with that name found. Use `" + prefix + "delrole help` for syntax help.");
         }
       }
-      else if (somenamevalid === undefined) {
+      else if (typeof somenamevalid !== "string") {
         bot.sendMessage(message, "No user with that name/discriminator combo found. Use `" + prefix + "delrole help` for syntax help.");
       }
       //end not-found check
@@ -238,7 +238,7 @@ var delRole = function setDelRole (message, modrolename, membrolename, prefix, b
 
 
       //assign role begin
-      if (somenamevalid !== undefined && somerolevalid !== undefined) {
+      if (typeof somenamevalid === "string" && typeof somerolevalid === "string") {
         var jumpend = "";
         var toprole2 = "";
 
