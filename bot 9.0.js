@@ -865,7 +865,10 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 				else if (message.content.startsWith(prefix + "ss")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							currentss = timers.getCount();
+							var forSS = {
+								"bool": true
+							};
+							currentss = timers.getCount(false, "The next SS will begin in ", forSS);
 							message.channel.sendMessage(currentss + " Use " + prefix + "speedy for full SS information.");
 							hardCode[ref].timeout();
 						}
@@ -909,7 +912,13 @@ var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 								}
 							}
 							else if (typeof results[1] !== "string" && eventDate !== null) {
-								var currentstream = timers.getCountEvent(eventDate, eventName);
+								var forSS = {
+									"bool": false,
+									eventDate,
+									eventName
+								};
+								var startMessage = eventName + " will begin in ";
+								var currentstream = timers.getCount(false, startMessage, forSS);
 								message.channel.sendMessage(currentstream + "");
 							}
 							else {
