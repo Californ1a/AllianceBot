@@ -1,6 +1,6 @@
 var moment = require("moment"); //requirements
 
-  var getNextSSDay = function getNextSSDay(date, dayOfWeek) {
+  var getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
 
     var resultDate = new Date(date.getTime());
 
@@ -9,26 +9,12 @@ var moment = require("moment"); //requirements
       resultDate.setDate(date.getDate()+7);
     }
 
-
-    resultDate.setHours(14);
-    resultDate.setMinutes(0);
-    resultDate.setSeconds(0);
-    resultDate.setMilliseconds(0);
-
-    return resultDate;
-  };
-
-
-  var happeningNow = function happeningNow(date, dayOfWeek) {
-
-    var resultDate = new Date(date.getTime());
-
-    resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
-    if (date.getDay() === 6 && date.getHours() >= 16) {
-      resultDate.setDate(date.getDay()+7);
+    if (currentlyHappening) {
+      resultDate.setHours(16);
     }
-
-    resultDate.setHours(16);
+    else {
+      resultDate.setHours(14);
+    }
     resultDate.setMinutes(0);
     resultDate.setSeconds(0);
     resultDate.setMilliseconds(0);
@@ -41,7 +27,7 @@ var moment = require("moment"); //requirements
   var getDown = function getDown() { //second countdown, for end of event
     //currentss = 1;
     var currentTime = new Date();
-    var amount2 = happeningNow(currentTime, 6).getTime() - currentTime.getTime();
+    var amount2 = getNextSSDay(currentTime, 6, false).getTime() - currentTime.getTime();
     var days=0;
     var hours=0;
     var mins=0;
@@ -89,7 +75,7 @@ var moment = require("moment"); //requirements
     var localTime = dateNow.getTime();
     var localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
     var utc = localTime+localOffset;
-    var amount = getNextSSDay(dateNow, 6).getTime() - dateNow.getTime(); //calc milliseconds between dates
+    var amount = getNextSSDay(dateNow, 6, true).getTime() - dateNow.getTime(); //calc milliseconds between dates
     var days=0;
     var hours=0;
     var mins=0;
