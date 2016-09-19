@@ -189,13 +189,14 @@ bot.on("message", (message) => {
 
 
 		var cl = formatChatlog(message);
-		fs.appendFile(cl.currentLog, cl.chatlinedata + "\r\n", function(error) {
+
+		fs.appendFile(cl.currentLog, cl.chatlinedata + cl.formattedAtturls + "\r\n", function(error) {
 			if (error) {
 				console.log(message.content);
 				console.log(error);
 			}
 			else {
-				console.log(colors.white(cl.consoleChat));
+				console.log(colors.white(cl.consoleChat + cl.formattedAtturls));
 			}
 		});
 
@@ -924,6 +925,8 @@ function formatChatlog(message) {
 	var isbot = "";
 	var maxpos = 0;
 	var toprole = "";
+	var att = [];
+	var formattedAtturls = "";
 	fs.mkdirsSync(logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
 		if (error) {
 			console.log(error);
@@ -939,26 +942,22 @@ function formatChatlog(message) {
 		chatlinedata += message.author.username + ": " + message.cleanContent;
 		consoleChat += message.author.username + ": " + message.cleanContent;
 	}
-	if (message.attachments.length > 0) {
-		chatlinedata += message.attachments[0].url + "\r\n";
-		consoleChat += "\n" + message.attachments[0].url;
+	if (message.attachments.size > 0) {
+		var attc = message.attachments.array();
+		for (var i = 0; i < attc.length; i++) {
+			att.push(attc[i].url);
+		}
+		for (var i = 0; i < att.length; i++) {
+			formattedAtturls += "\r\n" + att[i];
+		}
 	}
-
 	return {
 		"currentLog": chatlog,
 		chatlinedata,
-		consoleChat
+		consoleChat,
+		"atturls": att,
+		formattedAtturls
 	};
-
-	// fs.appendFile(chatlog, chatlinedata, function(error) {
-	// 	if (error) {
-	// 		console.log(message.content);
-	// 		console.log(error);
-	// 	}
-	// 	else {
-	// 		console.log(colors.white(consoleChat));
-	// 	}
-	// });
 }
 
 function getMaxRole(message) {
