@@ -8,7 +8,6 @@ var fs = require("fs-extra"); //requirements
 var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
 var util = require("util"); //requirements
-//var moment = require("moment"); //requirements
 var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
 var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
@@ -19,6 +18,8 @@ var timers = require("./modules/timers.js"); //local js
 var Command = require("./modules/command.js"); //local js
 var commandList = require("./config/commands.json"); //local json
 var md = require("./modules/messagedate.js"); //local js
+var pbtoken = require("./config/logins/pushbullet.json").access; //local json
+var cl = require("./modules/chatinfo.js"); //local js
 // </editor-fold>
 
 var hardCode = [];
@@ -36,16 +37,13 @@ var membrolename = jsondata.membrolename;
 var botowner = jsondata.botownerid;
 var currentss = 0;
 var ripwin = null;
-//var chatlinedata = ""; //chatlog string
 var commandname = "";
-//var hardcommands = [{comName:"newcom", onCooldown:"false"}, {comName:"delcom", onCooldown:"false"}, {comName:"dist", onCooldown:"false"}, {comName:"wr", onCooldown:"false"}, {comName:"ss", onCooldown:"false"}, {comName:"speedy", onCooldown:"false"}, {comName:"cmds", onCooldown:"false"}, {comName:"commands", onCooldown:"false"}, {comName:"help", onCooldown:"false"}, {comName:"setrole", onCooldown:"false"}, {comName:"delrole", onCooldown:"false"}, {comName:"win", onCooldown:"false"}, {comName:"rip", onCooldown:"false"}, {comName:"test", onCooldown:"false"}, {comName:"advent", onCooldown:"false"}];
 var isit = false;
 var cooldown = false;
 var stream = T.stream("statuses/filter", { follow: ["628034104", "241371699"]}); //create tweet filter, first two are refract and torcht, any others for testing
 var tweetcount = 0;
 var eventDate = null;
 var eventName = null;
-var logLocation = "E:/OtherStuff/DiscordChatlogs2/";
 // </editor-fold>
 
 
@@ -55,7 +53,7 @@ stream.on("tweet", function (tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid)); //console link to tweet
-	if ((typeof tweet.in_reply_to_user_id !== "object" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && !tweet.text.startsWith("@") && (tweet.user.screen_name === "torcht" || tweet.user.screen_name === "refractstudios")) {
+	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && !tweet.text.startsWith("@") && (tweet.user.screen_name === "torcht" || tweet.user.screen_name === "refractstudios")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
 		if (tweetcount < 4) {
 			tweetcount += 1;
@@ -152,11 +150,8 @@ bot.on("serverDeleted", (server) => {
 // <editor-fold desc='bot on message edit'>
 bot.on("messageUpdate", (oldMessage, newMessage) => {
 
-	var newc = formatChatlog(newMessage);
-	var newMessageTime = md.messageDate(newMessage);
-
-	var oldc = formatChatlog(oldMessage);
-	var oldMessageTime = md.messageDate(oldMessage);
+	var newc = cl.formatChatlog(newMessage);
+	var oldc = cl.formatChatlog(oldMessage);
 
 	fs.readFile(oldc.currentLog, function(error, data) {
 		if (error) {
@@ -187,15 +182,15 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 bot.on("message", (message) => {
 	if (message.guild) { //non-pm messages
 
-		var cl = formatChatlog(message);
+		var cha = cl.formatChatlog(message);
 
-		fs.appendFile(cl.currentLog, cl.chatlinedata + cl.formattedAtturls + "\r\n", function(error) {
+		fs.appendFile(cha.currentLog, cha.chatlinedata + cha.formattedAtturls + "\r\n", function(error) {
 			if (error) {
 				console.log(message.content);
 				console.log(error);
 			}
 			else {
-				console.log(colors.white(cl.consoleChat + cl.formattedAtturls));
+				console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 			}
 		});
 
@@ -211,53 +206,53 @@ bot.on("message", (message) => {
 				}
 				else {
 					if (typeof enabledforserver[0] !== "object") {
-						console.log(colors.red("Automemb not enabled for this server."));
+						if (cha.user.isbot !== "{BOT}") {
+							console.log(colors.red("Automemb not enabled for this server."));
+						}
 					}
 					else {
-						var botcanassign = false;
-						if (cl.user.user === "Guest") {
-							console.log(colors.red("User is Guest."));
-							toprole = 0;
-						}
-						else {
+
+						if (cha.user.toprole.name !== "Guest" && cha.user.isbot !== "{BOT}") {
 							console.log("User isn't guest?");
 						}
 
-
-
-
-						var userrole3 = message.guild.members.get(bot.user.id);
-						if (userrole3.roles.length === 0) {
-							//bot is guest
+						var botcanassign = false;
+						var bu = cl.getMaxRole(message.guild.members.get(bot.user.id));
+						if (bu.toprole.name === "Guest") {
 							console.log(colors.red("Bot cannot assign (Bot is guest)."));
-							botcanassign = false;
 						}
 						else {
-							//get top role of the bot
-							var maxpos2 = 0;
-							for (var i = 0; i < userrole3.roles.length; i++) {
-								if (userrole3.roles[i].position > maxpos2) {
-									maxpos2 = userrole3.roles[i].position;
-								}
-							}
-							var toprole3 = message.guild.roles.find("position", maxpos2);
 
-							if (toprole3.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
-								botcanassign = true;
-								if (toprole3.position <= cl.user.toprole.position) {
+							if (bu.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
+								if (bu.toprole.position <= cha.user.toprole.position) {
 									botcanassign = false;
 								}
-								else if (toprole3.position - 1 === cl.user.toprole.position) {
+								else if (bu.toprole.position - 1 === cha.user.toprole.position) {
 									botcanassign = false;
+								}
+								else {
+									botcanassign = true;
 								}
 							}
 							else {
 								botcanassign = false;
 							}
 						}
-						if (botcanassign) {
-							bot.addMemberToRole(message.author, message.guild.roles.find("name", membrolename));
-							bot.reply(message, "Welcome to the discord! You are now a " + membrolename + ".");
+						if (botcanassign && cha.user.isbot !== "{BOT}") {
+							message.member.addRole(message.guild.roles.find("name", membrolename));
+							if (message.guild.id === "83078957620002816") {
+								message.reply("Welcome to the discord! You are now a " + membrolename + ". Make sure to read the #rules_and_info channel.");
+							}
+							else {
+								message.reply("Welcome to the discord! You are now a " + membrolename + ".");
+							}
+
+						}
+						else if (cha.user.isbot === "{BOT}") {
+							return;
+						}
+						else {
+							console.log(colors.red("Bot does not have permission to assign " + membrolename + "."))
 						}
 					}
 				}
@@ -918,77 +913,3 @@ bot.on("debug", (e) => { console.info(e); });
 
 //discord login
 bot.login(token);
-
-function formatChatlog(message) {
-	var messageTime = md.messageDate(message);
-	var user = getMaxRole(message);
-	var chatlog = logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
-	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole.name + ")";
-	var consoleChat = messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole.name + ")";
-	var att = [];
-	var formattedAtturls = "";
-	fs.mkdirsSync(logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
-		if (error) {
-			console.log(error);
-			return;
-		}
-	});
-
-	if (user.nick) {
-		chatlinedata += user.nick + ": " + message.cleanContent;
-		consoleChat += user.nick + ": " + message.cleanContent;
-	}
-	else {
-		chatlinedata += message.author.username + ": " + message.cleanContent;
-		consoleChat += message.author.username + ": " + message.cleanContent;
-	}
-	if (message.attachments.size > 0) {
-		var attc = message.attachments.array();
-		for (var i = 0; i < attc.length; i++) {
-			att.push(attc[i].url);
-		}
-		for (var i = 0; i < att.length; i++) {
-			formattedAtturls += "\r\n" + att[i];
-		}
-	}
-	return {
-		user,
-		"currentLog": chatlog,
-		chatlinedata,
-		consoleChat,
-		"atturls": att,
-		formattedAtturls
-	};
-}
-
-function getMaxRole(message) {
-	var user = message.guild.members.get(message.author.id);
-	var nick = null;
-	var isbot = "";
-	var toprole = "";
-	if (user.roles.size === 0) {
-		user = "Guest";
-		if (message.author.bot) {
-			isbot = "{BOT}";
-		}
-	}
-	else {
-		if (message.author.bot) {
-			isbot = "{BOT}";
-		}
-		var maxpos = 0;
-		for (var i = 0; i < message.guild.roles.size+1; i++) {
-			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
-		}
-		toprole = message.guild.roles.find("position", maxpos);
-		if (message.guild.members.get(message.author.id).nick) {
-			nick = message.guild.members.get(message.author.id).nick;
-		}
-		return {
-			user,
-			toprole,
-			isbot,
-			nick
-		};
-	}
-}
