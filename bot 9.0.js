@@ -183,10 +183,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 	}
 	newchatlog = newchatlog + newMessage.guild.name + "/" + newMessage.channel.name + "/" + newMessageTime.year + "/" + newMessageTime.month + ".txt";
 	if (newMessage.guild.members.get(newMessage.author.id).nick) {
-		newchatlinedata = newMessageTime.thedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.guild.members.get(newMessage.author.id).nick + ": " + newMessage.cleanContent;
+		newchatlinedata = newMessageTime.formatteddate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.guild.members.get(newMessage.author.id).nick + ": " + newMessage.cleanContent;
 	}
 	else {
-		newchatlinedata = newMessageTime.thedate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.author.username + ": " + newMessage.cleanContent;
+		newchatlinedata = newMessageTime.formatteddate + " | " + newisbot + "(" + newuserrole + ")" + newMessage.author.username + ": " + newMessage.cleanContent;
 	}
 	// </editor-fold>
 
@@ -222,10 +222,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 	}
 	oldchatlog = oldchatlog + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt";
 	if (oldMessage.guild.members.get(oldMessage.author.id).nick) {
-		oldchatlinedata = oldMessageTime.thedate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
+		oldchatlinedata = oldMessageTime.formatteddate + " | " + isbot + "(" + userrole + ")" + oldMessage.guild.members.get(oldMessage.author.id).nick + ": " + oldMessage.cleanContent;
 	}
 	else {
-		oldchatlinedata = oldMessageTime.thedate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
+		oldchatlinedata = oldMessageTime.formatteddate + " | " + isbot + "(" + userrole + ")" + oldMessage.author.username + ": " + oldMessage.cleanContent;
 	}
 	// </editor-fold>
 	fs.readFile("E:/OtherStuff/DiscordChatlogs2/" + oldMessage.guild.name + "/" + oldMessage.channel.name + "/" + oldMessageTime.year + "/" + oldMessageTime.month + ".txt", function(error, data) {
@@ -279,95 +279,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 //--------------------------Begin bot commands--------------------------
 bot.on("message", (message) => {
-var chatlog = "E:/OtherStuff/DiscordChatlogs2/";
 	if (message.guild) { //non-pm messages
 
-		var messageTime = md.messageDate(message);
 
-		var userrole = message.guild.members.get(message.author.id);
-		var isbot = "";
-		var maxpos = 0;
-		var toprole = "";
-		//console.log(userrole.roles);
-		if (userrole.roles.size === 0) {
-			userrole = "Guest";
-			if (message.author.bot) {
-				isbot = "{BOT}";
-			}
-		}
-		else {
-
-			//find max role of user
-			for (var i = 0; i < message.guild.roles.size+1; i++) {
-				maxpos = userrole.roles.exists("position",i) && userrole.roles.find("position",i).position > maxpos ? userrole.roles.find("position",i).position : maxpos;
-				// if (userrole.roles.exists("position",i) && userrole.roles.find("position",i).position > maxpos) {
-				// 	maxpos = userrole.roles.find("position",i).position;
-				// }
-			}
-			toprole = message.guild.roles.find("position", maxpos);
-
-			userrole = toprole.name;
-			if (message.author.bot) {
-				isbot = "{BOT}";
-			}
-		}
-
-		fs.mkdirs(chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
-			if (error) {
-				console.log(error);
-				return;
-			}
-			else {
-				//console.log("made");
-			}
-		});
-		if (message.attachments.length > 0) {
-			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
-			if (message.guild.members.get(message.author.id).nick) {
-				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
-			}
-			else {
-				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n" + message.attachments[0].url + "\r\n";
-			}
-			fs.appendFile(chatlog, chatlinedata, function(error) {
-				if (error) {
-					console.log(error);
-				}
-				else {
-					if (message.guild.members.get(message.author.id).nick) {
-						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
-					}
-					else {
-						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
-					}
-					console.log(colors.white(message.attachments[0].url));
-				}
-			});
-		}
-		else {
-			chatlog = chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
-			if (message.guild.members.get(message.author.id).nick) {
-				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent + "\r\n";
-			}
-			else {
-				chatlinedata = messageTime.thedate + " | " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent + "\r\n";
-			}
-
-			fs.appendFile(chatlog, chatlinedata, function(error) {
-				if (error) {
-					console.log(error);
-				}
-				else {
-					if (message.guild.members.get(message.author.id).nick) {
-						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.guild.members.get(message.author.id).nick + ": " + message.cleanContent));
-					}
-					else {
-						console.log(colors.white(messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + isbot + "(" + userrole + ")" + message.author.username + ": " + message.cleanContent));
-					}
-				}
-			});
-		}
-
+		writeChatlog(message);
 
 
 		//add new members to member role
@@ -1084,3 +999,72 @@ bot.on("debug", (e) => { console.info(e); });
 
 //discord login
 bot.login(token);
+
+function writeChatlog(message) {
+	var messageTime = md.messageDate(message);
+	var user = getMaxRole(message);
+	var chatlog = "E:/OtherStuff/DiscordChatlogs2/" + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
+	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole + ")";
+	var consoleChat = messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole + ")";
+	var isbot = "";
+	var maxpos = 0;
+	var toprole = "";
+	fs.mkdirs(chatlog + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
+		if (error) {
+			console.log(error);
+			return;
+		}
+	});
+
+	if (user.nick) {
+		chatlinedata += user.nick + ": " + message.cleanContent;
+		consoleChat += user.nick + ": " + message.cleanContent;
+	}
+	else {
+		chatlinedata += message.author.username + ": " + message.cleanContent;
+		consoleChat += message.author.username + ": " + message.cleanContent;
+	}
+	if (message.attachments.length > 0) {
+		chatlinedata += "\r\n" + message.attachments[0].url + "\r\n";
+		consoleChat += "\n" + message.attachments[0].url;
+	}
+	fs.appendFile(chatlog, chatlinedata, function(error) {
+		if (error) {
+			console.log(message.content);
+			console.log(error);
+		}
+		else {
+			console.log(colors.white(consoleChat));
+		}
+	});
+}
+
+function getMaxRole(message) {
+	var user = message.guild.members.get(message.author.id);
+	var nick = null;
+	var isbot = "";
+	if (user.roles.size === 0) {
+		user = "Guest";
+		if (message.author.bot) {
+			isbot = "{BOT}";
+		}
+	}
+	else {
+		if (message.author.bot) {
+			isbot = "{BOT}";
+		}
+		var maxpos = 0;
+		for (var i = 0; i < message.guild.roles.size+1; i++) {
+			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
+		}
+		toprole = message.guild.roles.find("position", maxpos);
+		if (message.guild.members.get(message.author.id).nick) {
+			nick = message.guild.members.get(message.author.id).nick;
+		}
+		return {
+			"toprole": toprole.name,
+			isbot,
+			nick
+		};
+	}
+}

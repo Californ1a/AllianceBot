@@ -29,7 +29,7 @@ var messageDate = function messageDate (message) {
 	var year = d.getFullYear();
 	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
 	return {
-		thedate,
+		"formattedDate": thedate,
 		year,
 		"month": monthNames[monthIndex],
 		"hour": hournow,
