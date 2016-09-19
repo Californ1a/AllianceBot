@@ -187,7 +187,6 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 bot.on("message", (message) => {
 	if (message.guild) { //non-pm messages
 
-
 		var cl = formatChatlog(message);
 
 		fs.appendFile(cl.currentLog, cl.chatlinedata + cl.formattedAtturls + "\r\n", function(error) {
@@ -216,13 +215,17 @@ bot.on("message", (message) => {
 					}
 					else {
 						var botcanassign = false;
-						if (userrole === "Guest") {
+						if (cl.user.user === "Guest") {
 							console.log(colors.red("User is Guest."));
 							toprole = 0;
 						}
 						else {
 							console.log("User isn't guest?");
 						}
+
+
+
+
 						var userrole3 = message.guild.members.get(bot.user.id);
 						if (userrole3.roles.length === 0) {
 							//bot is guest
@@ -241,10 +244,10 @@ bot.on("message", (message) => {
 
 							if (toprole3.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
 								botcanassign = true;
-								if (toprole3.position <= toprole.position) {
+								if (toprole3.position <= cl.user.toprole.position) {
 									botcanassign = false;
 								}
-								else if (toprole3.position - 1 === toprole.position) {
+								else if (toprole3.position - 1 === cl.user.toprole.position) {
 									botcanassign = false;
 								}
 							}
@@ -854,7 +857,7 @@ bot.on("message", (message) => {
 				else if (message.content.startsWith(prefix + "setrole")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							setDelRole.setRole(message, modrolename, membrolename, prefix, bot, toprole);
+							setDelRole.setRole(message, modrolename, membrolename, prefix, bot, cl.user.toprole);
 							hardCode[ref].timeout();
 						}
 					});
@@ -863,7 +866,7 @@ bot.on("message", (message) => {
 				else if (message.content.startsWith(prefix + "delrole")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							setDelRole.delRole(message, modrolename, membrolename, prefix, bot, toprole);
+							setDelRole.delRole(message, modrolename, membrolename, prefix, bot, cl.user.toprole);
 							hardCode[ref].timeout();
 						}
 					});
@@ -920,11 +923,8 @@ function formatChatlog(message) {
 	var messageTime = md.messageDate(message);
 	var user = getMaxRole(message);
 	var chatlog = logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
-	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole + ")";
-	var consoleChat = messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole + ")";
-	var isbot = "";
-	var maxpos = 0;
-	var toprole = "";
+	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole.name + ")";
+	var consoleChat = messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole.name + ")";
 	var att = [];
 	var formattedAtturls = "";
 	fs.mkdirsSync(logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
@@ -952,6 +952,7 @@ function formatChatlog(message) {
 		}
 	}
 	return {
+		user,
 		"currentLog": chatlog,
 		chatlinedata,
 		consoleChat,
@@ -964,6 +965,7 @@ function getMaxRole(message) {
 	var user = message.guild.members.get(message.author.id);
 	var nick = null;
 	var isbot = "";
+	var toprole = "";
 	if (user.roles.size === 0) {
 		user = "Guest";
 		if (message.author.bot) {
@@ -983,7 +985,8 @@ function getMaxRole(message) {
 			nick = message.guild.members.get(message.author.id).nick;
 		}
 		return {
-			"toprole": toprole.name,
+			user,
+			toprole,
 			isbot,
 			nick
 		};
