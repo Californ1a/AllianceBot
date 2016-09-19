@@ -1,16 +1,4 @@
 var moment = require("moment"); //requirements
-var momentDate;
-var dateNow;
-var localTime;
-var localOffset;
-var dateFuture;
-var utc;
-var amount;
-var days;
-var hours;
-var mins;
-var secs;
-var out;
 
   var getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
 
@@ -37,15 +25,18 @@ var out;
 
   //get and format duration from now until "futuredate"
   var getCount = function getCount(currentlyHappening, startMessage, forSS) {
-    dateNow = new Date(); //grab current date
-    localTime = dateNow.getTime();
-    localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
-    utc = localTime+localOffset;
-    days=0;
-    hours=0;
-    mins=0;
-    secs=0;
-    out="";
+    var momentDate;
+    var dateFuture;
+    var amount;
+    var dateNow = new Date(); //grab current date
+    var localTime = dateNow.getTime();
+    var localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
+    var utc = localTime+localOffset;
+    var days=0;
+    var hours=0;
+    var mins=0;
+    var secs=0;
+    var out="";
     if (forSS.bool) {
       utc = localTime+localOffset;
       amount = getNextSSDay(dateNow, 6, currentlyHappening).getTime() - dateNow.getTime(); //calc milliseconds between dates
@@ -77,13 +68,13 @@ var out;
       amount = Math.floor(amount/1000);//kill the "milliseconds" so just secs
 
       days=Math.floor(amount/86400);//days
-      amount=amount%86400;
+      amount %= 86400;
 
       hours=Math.floor(amount/3600);//hours
-      amount=amount%3600;
+      amount %= 3600;
 
       mins=Math.floor(amount/60);//minutes
-      amount=amount%60;
+      amount %= 60;
 
       secs=Math.floor(amount);//seconds
 

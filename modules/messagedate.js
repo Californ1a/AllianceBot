@@ -10,7 +10,7 @@ var messageDate = function messageDate (message) {
 		ampm = "AM";
 	}
 	else if (hournow >= 13) {
-		hournow = hournow - 12;
+		hournow -= 12;
 		ampm = "PM";
 	}
 	if (hournow < 10 && hournow > 0) {
