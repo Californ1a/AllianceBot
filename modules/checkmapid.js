@@ -259,20 +259,16 @@ var checkMapID = function checkMapID(message, results) {
   var totalMaps = individualMaps.length;
   i = 0;
   for (i; i < totalMaps + 1; i++) {
-    console.log(i);
     if (typeof mapid === "string") {
       return mapid;
     }
     else if (i < totalMaps && mapid === 0) {
-      console.log("ping");
       mapid = individualMaps[i](results);
     }
     else if (i === totalMaps && mapid === 0) {
-      console.log("hit");
       return mapid;
     }
   }
-  console.log("nope");
   return mapid;
 };
 

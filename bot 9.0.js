@@ -54,8 +54,7 @@ var quotespm2 = "";
 stream.on("tweet", function (tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
-	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid)); //console link to tweet
-	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && !tweet.text.startsWith("@") && (tweet.user.screen_name === "torcht" || tweet.user.screen_name === "refractstudios")) {
+	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name)) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
 		if (tweetcount < 4) {
 			tweetcount += 1;
@@ -70,7 +69,7 @@ stream.on("tweet", function (tweet) {
 		if (tweet.entities.media) {
 			mediaurl = "\r" + tweet.entities.media[0].media_url;
 		}
-		if (typeof tweet.entities.urls === "object") {
+		if (tweet.entities.urls[0]) {
 			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
 				vine = "\r" + tweet.entities.urls[0].expanded_url;
 			}
