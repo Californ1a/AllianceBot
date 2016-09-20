@@ -191,7 +191,7 @@ var checkThunder = function(results) {
     }
   }
   else if (results[1].match(/^thunderstruck$/i)) {
-    pid = jsondata.officialmapids["Challenge"]["Thunder Struck"];
+    id = jsondata.officialmapids["Challenge"]["Thunder Struck"];
   }
   else if (results[1].match(/^ts$/i)) {
     id = jsondata.officialmapids["Challenge"]["Thunder Struck"];
