@@ -12,9 +12,6 @@ var getMapID = function(results, mapname) {
     else if (typeof results[i] === "string" && (results[i].match(/^s$/i) || results[i].match(/^sprint$/i))) {
       id = jsondata.officialmapids["Sprint"][mapname];
     }
-    else {
-      console.log("Wut?");
-    }
   }
   return id;
 };
@@ -178,101 +175,104 @@ var checkUncanny = function(results) {
   return id;
 };
 
+var checkDodge = function(results) {
+  var id = 0;
+  if (results[1].match(/^dodge$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Dodge"];
+  }
+  return id;
+};
+
+var checkThunder = function(results) {
+  var id = 0;
+  if (results[1].match(/^thunder$/i)) {
+    if (typeof results[2] === "string" && results[2].match(/^struck$/i)) {
+      id = jsondata.officialmapids["Challenge"]["Thunder Struck"];
+    }
+  }
+  else if (results[1].match(/^thunderstruck$/i)) {
+    pid = jsondata.officialmapids["Challenge"]["Thunder Struck"];
+  }
+  else if (results[1].match(/^ts$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Thunder Struck"];
+  }
+  return id;
+};
+
+var checkGrind = function(results) {
+  var id = 0;
+  if (results[1].match(/^grinder$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Grinder"];
+  }
+  return id;
+};
+
+var checkDesc = function(results) {
+  var id = 0;
+  if (results[1].match(/^descent$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Descent"];
+  }
+  return id;
+};
+
+var checkDeta = function(results) {
+  var id = 0;
+  if (results[1].match(/^detached$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Detached"];
+  }
+  return id;
+};
+
+var checkElev = function(results) {
+  var id = 0;
+  if (results[1].match(/^elevation$/i)) {
+    id = jsondata.officialmapids["Challenge"]["Elevation"];
+  }
+  return id;
+};
+
+var individualMaps = [
+  checkBS,
+  checkLS,
+  checkNS,
+  checkDep,
+  checkFric,
+  checkAft,
+  checkMachines,
+  checkAmus,
+  checkCorrup,
+  checkObs,
+  checkDiss,
+  checkFall,
+  checkMon,
+  checkUncanny,
+  checkDodge,
+  checkThunder,
+  checkGrind,
+  checkDesc,
+  checkDeta,
+  checkElev
+];
+
 var checkMapID = function checkMapID(message, results) {
   var mapid = 0;
-  var totalMaps = Object.keys(jsondata.officialmapids["Sprint"]).length + Object.keys(jsondata.officialmapids["Challenge"]).length;
+  var totalMaps = individualMaps.length;
   i = 0;
   for (i; i < totalMaps + 1; i++) {
+    console.log(i);
     if (typeof mapid === "string") {
       return mapid;
     }
-    else if (i === 0 && mapid === 0) {
-      mapid = checkBS(results);
+    else if (i < totalMaps && mapid === 0) {
+      console.log("ping");
+      mapid = individualMaps[i](results);
     }
-    else if (i === 1 && mapid === 0) {
-      mapid = checkLS(results);
-    }
-    else if (i === 2 && mapid === 0) {
-      mapid = checkNS(results);
-    }
-    else if (i === 3 && mapid === 0) {
-      mapid = checkDep(results);
-    }
-    else if (i === 4 && mapid === 0) {
-      mapid = checkFric(results);
-    }
-    else if (i === 5 && mapid === 0) {
-      mapid = checkAft(results);
-    }
-    else if (i === 6 && mapid === 0) {
-      mapid = checkMachines(results);
-    }
-    else if (i === 7 && mapid === 0) {
-      mapid = checkAmus(results);
-    }
-    else if (i === 8 && mapid === 0) {
-      mapid = checkCorrup(results);
-    }
-    else if (i === 9 && mapid === 0) {
-      mapid = checkObs(results);
-    }
-    else if (i === 10 && mapid === 0) {
-      mapid = checkDiss(results);
-    }
-    else if (i === 11 && mapid === 0) {
-      mapid = checkFall(results);
-    }
-    else if (i === 12 && mapid === 0) {
-      mapid = checkMon(results);
-    }
-    else if (i === 13 && mapid === 0) {
-      mapid = checkUncanny(results);
-    }
-    else if (i === 14 && mapid === 0) {
-      if (results[1].match(/^dodge$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Dodge"];
-      }
-    }
-    else if (i === 15 && mapid === 0) {
-      if (results[1].match(/^thunder$/i)) {
-        if (typeof results[2] === "string" && results[2].match(/^struck$/i)) {
-          mapid = jsondata.officialmapids["Challenge"]["Thunder Struck"];
-        }
-      }
-      else if (results[1].match(/^thunderstruck$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Thunder Struck"];
-      }
-      else if (results[1].match(/^ts$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Thunder Struck"];
-      }
-    }
-    else if (i === 16 && mapid === 0) {
-      if (results[1].match(/^grinder$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Grinder"];
-      }
-    }
-    else if (i === 17 && mapid === 0) {
-      if (results[1].match(/^descent$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Descent"];
-      }
-    }
-    else if (i === 18 && mapid === 0) {
-      if (results[1].match(/^detached$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Detached"];
-      }
-    }
-    else if (i === 19 && mapid === 0) {
-      if (results[1].match(/^elevation$/i)) {
-        mapid = jsondata.officialmapids["Challenge"]["Elevation"];
-      }
-    }
-    else if (i === 20 && mapid === 0) {
+    else if (i === totalMaps && mapid === 0) {
+      console.log("hit");
       return mapid;
     }
-    else {
-      console.log("Wut? " + i + " " + totalMaps);
-    }
   }
+  console.log("nope");
   return mapid;
 };
 
