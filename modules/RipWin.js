@@ -155,7 +155,7 @@ var ripWin = function(message, prefix, modrolename, connection, ripwin) {
     randomQuote(message, ripwin, connection);
   }
   else if (results[1] === "add" && message.member.roles.exists("name", modrolename)) {
-    addQuote(message, results, ripwin, prefix, connection)
+    addQuote(message, results, ripwin, prefix, connection);
   }
   else if (results[1] === "add") { //non-moderator
     message.member.reply(message, "You do not have permission to add new " + ripwin + " quotes.");
