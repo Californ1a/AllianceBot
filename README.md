@@ -68,23 +68,6 @@ Delete a custom command.
 
 ---
 
-#### Syntax: `delrole <username> <discriminator> <role>`
-Removes an assigned role from a user.
-
-##### Parameters
-* `username`
-  * Name of the user to have the role removed from. Case-sensitive.
-* `discriminator`
-  * Number given next to a user's name (Ex. The Alliance`#5209`). The # symbol can be used but is not required.
-* `role`
-  * Name of the role to be removed from the user. Case-sensitive.
-
-##### Example
-* ModUser: `!delrole Cal 5209 Member`
-  * If both the bot and the Moderator using the command have the permission to do so, this will remove the role *Member* from the user *Cal#5209*.
-
----
-
 #### Syntax: `dist <map name> (<mode>)`
 Return the current \#1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.
 
@@ -158,20 +141,22 @@ Obtain or manipulate rip/win quotes. Using no parameters returns a random quote.
 
 ---
 
-#### Syntax: `setrole <username> <discriminator> <role>`
-Assign a role to a user.
+#### Syntax: `role set|del @<mention> <role name>`
+Moderators can assign and remove roles from other users by \@mentioning them, if they have permission to do so.
 
 ##### Parameters
-* `username`
-  * Name of the user to have the role set to. Case-sensitive.
-* `discriminator`
-  * Number given next to a user's name (Ex. The Alliance`#5209`). The # symbol can be used but is not required.
-* `role`
-  * Name of the role to be added to the user. Case-sensitive.
+* `set|del`
+  * Whether to assign or remove the role.
+* `@mention`
+  * The user you want to assign or remove the role to/from.
+* `role name`
+  * The name of the role to assign or remove, case-sensitive.
 
-##### Example
-* ModUser: `!setrole Cal 5209 Member`
-  * If both the bot and the Moderator using the command have the permission to do so, this will add the role *Member* to the user *Cal#5209*.
+##### Examples
+* ModUser: `!role set @Cali Member`
+  * This will assign the role `Member` to the user `Cali`.
+* ModUser: `!role del @Cali Member`
+  * This will remove the role `Member` from the user `Cali`.
 
 ---
 
