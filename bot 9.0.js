@@ -546,7 +546,6 @@ bot.on("message", (message) => {
 				else if (message.content.startsWith(prefix + "dist")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							var mapid = null;
 							if (typeof results[1] !== "string") {
 								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "dist help` for syntax help.");
 							}
@@ -554,11 +553,13 @@ bot.on("message", (message) => {
 								message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 							}
 							else {
-								mapid = CheckMapID.checkMapID(message, colors, results, jsondata, mapid);
+								var mapid = CheckMapID.checkMapID(message, results);
 								if (mapid === 0) {
 									message.channel.sendMessage("Incorrect syntax.");
 								}
 								else if (typeof mapid === "string" && mapid !== "") {
+									var lburl = "http://steamcommunity.com/stats/233610/leaderboards/" + mapid;
+									message.channel.sendMessage(lburl);
 									var optionsac = {
 										hostname: "steamcommunity.com",
 										path: "/stats/233610/leaderboards/" + mapid + "/?xml=1&start=1&end=1",
