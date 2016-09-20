@@ -1,6 +1,6 @@
 var md = require("./messagedate.js");
 var fs = require("fs-extra");
-var logLocation = "E:/OtherStuff/DiscordChatlogs2/";
+var logLocation = require("../config/options.json").logLocation;
 
 var getMaxRole = function(user) {
 	var nick = null;

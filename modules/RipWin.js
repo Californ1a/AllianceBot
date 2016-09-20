@@ -2,6 +2,8 @@ var ripWin = function(message, prefix, modrolename, colors, connection, bot, rip
   var str = message.content.toString();
   var results = str.split(" ");
   var qu = "";
+  var recombined = "";
+  var info = "";
 
   // <editor-fold desc='get random rip/win quote if no parameters given'>
   if (typeof results[1] !== "object") {
@@ -25,9 +27,9 @@ var ripWin = function(message, prefix, modrolename, colors, connection, bot, rip
 
   // <editor-fold desc='add quote if member is moderator'>
   else if (results[1] === "add" && message.member.roles.exists("name", modrolename)) {
+    recombined = "";
+    info = "";
     if (results.length >= 3) {
-      var recombined = "";
-      var info = "";
       //console.log(results.length);
       for (var i = 0; i < results.length-2; i++) {
         if (i !== results.length-3) {
@@ -71,7 +73,7 @@ var ripWin = function(message, prefix, modrolename, colors, connection, bot, rip
   // <editor-fold desc='del quote if member is moderator'>
   else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
     if (results.length >= 3) {
-      var recombined = "";
+      recombined = "";
       //console.log(results.length);
       for (var i = 0; i < results.length-2; i++) {
         if (i !== results.length-3) {

@@ -22,7 +22,8 @@ var cl = require("./modules/chatinfo.js"); //local js
 // </editor-fold>
 
 var hardCode = [];
-for (var i = 0; i < commandList.length; i++) {
+var i = 0;
+for (i; i < commandList.length; i++) {
 	hardCode[i] = new Command(commandList[i]);
 }
 
@@ -43,6 +44,8 @@ var stream = T.stream("statuses/filter", { follow: ["628034104", "241371699"]});
 var tweetcount = 0;
 var eventDate = null;
 var eventName = null;
+var quotespm = "";
+var quotespm2 = "";
 // </editor-fold>
 
 
@@ -148,31 +151,34 @@ bot.on("serverDeleted", (server) => {
 
 // <editor-fold desc='bot on message edit'>
 bot.on("messageUpdate", (oldMessage, newMessage) => {
+	if (bot.user !== message.author) {
 
-	var newc = cl.formatChatlog(newMessage);
-	var oldc = cl.formatChatlog(oldMessage);
+		var newc = cl.formatChatlog(newMessage);
+		var oldc = cl.formatChatlog(oldMessage);
 
-	fs.readFile(oldc.currentLog, function(error, data) {
-		if (error) {
-			console.log(error);
-		}
-		else {
-			var array = data.toString().split("\r\n");
-			for(var i = 0; i < array.length; i++) {
-				if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
-					array[i] = "(Edited) " + newc.chatlinedata;
-				}
+		fs.readFile(oldc.currentLog, function(error, data) {
+			if (error) {
+				console.log(error);
 			}
-			fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
-				if (error) {
-					console.log(error);
+			else {
+				var array = data.toString().split("\r\n");
+				i = 0;
+				for(i; i < array.length; i++) {
+					if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
+						array[i] = "(Edited) " + newc.chatlinedata;
+					}
 				}
-				else {
-					console.log(colors.white.dim("Edited --> " + newc.consoleChat));
-				}
-			});
-		}
-	});
+				fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
+					if (error) {
+						console.log(error);
+					}
+					else {
+						console.log(colors.white.dim("Edited --> " + newc.consoleChat));
+					}
+				});
+			}
+		});
+	}
 });
 // </editor-fold>
 
@@ -269,7 +275,8 @@ bot.on("message", (message) => {
 			var results = str.split(" ");
 			results[0] = results[0].replace(prefix, "");
 			var ref = 0;
-			for (var i = 0; i < hardCode.length; i++) {
+			i = 0;
+			for (i; i < hardCode.length; i++) {
 				if (hardCode[i].name === results[0].replace(prefix,"")) {
 					ref = i;
 				}
@@ -331,7 +338,8 @@ bot.on("message", (message) => {
 							}
 							else {
 								var iscommand = false;
-								for (var i = 0; i < hardCode.length; i++) {
+								i = 0;
+								for (i; i < hardCode.length; i++) {
 									if (hardCode[i].name === results[1]) {
 										iscommand = true;
 									}
@@ -440,7 +448,8 @@ bot.on("message", (message) => {
 								}
 								else {
 									var recombined = "";
-									for (i = 0; i < results.length-4; i++) {
+									i = 0;
+									for (i; i < results.length-4; i++) {
 										if (i !== results.length-5) {
 											recombined += results[i+4] + " ";
 										}
@@ -622,7 +631,8 @@ bot.on("message", (message) => {
 								var str2 = message.content.toString();
 								str2 = str2.substr(str2.indexOf(" ") + 1);
 								str2 = str2.toLowerCase().split(" ");
-								for (var i = 0; i < str2.length; i++) {
+								i = 0;
+								for (i; i < str2.length; i++) {
 									str2[i] = str2[i].split("");
 									str2[i][0] = str2[i][0].toUpperCase();
 									str2[i] = str2[i].join("");
@@ -712,7 +722,8 @@ bot.on("message", (message) => {
 									if (typeof results[3] === "string") {
 										eventName = null;
 										eventDate = results[2];
-										for (var i = 0; i < results.length; i++) {
+										i = 0;
+										for (i; i < results.length; i++) {
 											if (i === 3) {
 												eventName = results[i];
 											}
@@ -782,14 +793,14 @@ bot.on("message", (message) => {
 									return;
 								}
 								else {
-									var quotespm = "";
 									if (typeof quotes[0] !== "object") {
 										quotespm = "";
 									}
 									if (typeof quotes[0] === "object") {
 										console.log(colors.red("Success."));
 										quotespm = "`" + prefix;
-										for (i = 0; i < quotes.length; i++) {
+										i = 0;
+										for (i; i < quotes.length; i++) {
 											if (i === quotes.length-1) {
 												quotespm += quotes[i].commandname + "`";
 											}
@@ -804,14 +815,14 @@ bot.on("message", (message) => {
 												return;
 											}
 											else {
-												var quotespm2 = "";
 												if (typeof quotes2[0] !== "object") {
 													quotespm2 = "";
 												}
 												else {
 													console.log(colors.red("Success."));
 													quotespm2 = "`" + prefix;
-													for (i = 0; i < quotes2.length; i++) {
+													i = 0;
+													for (i; i < quotes2.length; i++) {
 														if (!(i === quotes2.length-1)) {
 															quotespm2 += quotes2[i].comname + "`, `" + prefix;
 														}
