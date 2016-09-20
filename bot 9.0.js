@@ -880,7 +880,7 @@ bot.on("message", (message) => {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
 							ripwin = results[0].replace(prefix, "");
-							RipWin.ripWin(message, prefix, modrolename, colors, connection, bot, ripwin);
+							RipWin.ripWin(message, prefix, modrolename, connection, ripwin);
 							hardCode[ref].timeout();
 						}
 					}).catch ((error) => console.error(error));

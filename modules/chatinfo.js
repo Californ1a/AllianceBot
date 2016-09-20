@@ -85,7 +85,34 @@ var formatChatlog = function(message) {
 	};
 };
 
+var escapeChars = function(word) {
+  var escapechars = true;
+  var tempWord = word;
+  while (escapechars) {
+    if (tempWord.includes("\'") && !tempWord.includes("\\\'")) {
+      tempWord = tempWord.replace("\'", "\\\'", "g");
+    }
+    else if (tempWord.includes("\"") && !tempWord.includes("\\\"")) {
+      tempWord = tempWord.replace("\"", "\\\"", "g");
+    }
+    else if (tempWord.includes("\\") && !tempWord.includes("\\\\")) {
+      tempWord = tempWord.replace("\\", "\\\\", "g");
+    }
+    else if (tempWord.includes("\%") && !tempWord.includes("\\\%")) {
+      tempWord = tempWord.replace("\%", "\\\%", "g");
+    }
+    else if (tempWord.includes("\_") && !tempWord.includes("\\\_")) {
+      tempWord = tempWord.replace("\_", "\\\_", "g");
+    }
+    else {
+      escapechars = false;
+    }
+  }
+  return tempWord;
+};
+
 module.exports = {
   formatChatlog,
-  getMaxRole
+  getMaxRole,
+  escapeChars
 };
