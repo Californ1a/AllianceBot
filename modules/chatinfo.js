@@ -2,6 +2,43 @@ var md = require("./messagedate.js");
 var fs = require("fs-extra");
 var logLocation = "E:/OtherStuff/DiscordChatlogs2/";
 
+var getMaxRole = function(user) {
+	var nick = null;
+	var isbot = "";
+	var toprole = "";
+	//console.log(user.roles);
+	if (user.roles.size === 1) {
+		//user = "Guest";
+    //console.log(user.roles.find("name","@everyone").position);
+		toprole = {
+			"position": 0,
+			"name": "Guest"
+		};
+		if (user.user.bot) {
+			isbot = "{BOT}";
+		}
+	}
+	else {
+    //console.log(user.bot);
+		if (user.user.bot) {
+			isbot = "{BOT}";
+		}
+		var maxpos = 0;
+		for (var i = 0; i < user.guild.roles.size+1; i++) {
+			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
+		}
+		toprole = user.guild.roles.find("position", maxpos);
+		if (user.nickname) {
+			nick = user.nickname;
+		}
+	}
+	return {
+		toprole,
+		isbot,
+		nick
+	};
+};
+
 var formatChatlog = function(message) {
 	var messageTime = md.messageDate(message);
 	var user = getMaxRole(message.guild.members.get(message.author.id));
@@ -41,43 +78,6 @@ var formatChatlog = function(message) {
 		consoleChat,
 		"atturls": att,
 		formattedAtturls
-	};
-};
-
-var getMaxRole = function(user) {
-	var nick = null;
-	var isbot = "";
-	var toprole = "";
-	//console.log(user.roles);
-	if (user.roles.size === 1) {
-		//user = "Guest";
-    //console.log(user.roles.find("name","@everyone").position);
-		toprole = {
-			"position": 0,
-			"name": "Guest"
-		};
-		if (user.user.bot) {
-			isbot = "{BOT}";
-		}
-	}
-	else {
-    //console.log(user.bot);
-		if (user.user.bot) {
-			isbot = "{BOT}";
-		}
-		var maxpos = 0;
-		for (var i = 0; i < user.guild.roles.size+1; i++) {
-			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
-		}
-		toprole = user.guild.roles.find("position", maxpos);
-		if (user.nickname) {
-			nick = user.nickname;
-		}
-	}
-	return {
-		toprole,
-		isbot,
-		nick
 	};
 };
 

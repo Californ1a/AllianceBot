@@ -1,5 +1,14 @@
 var cl = require("./chatinfo.js");
 
+var canUserAndBotAssign = function(assigner, assignee, buer) {
+  if (assigner.toprole.name !== "Guest" && buer.toprole.name !== "Guest" && assigner.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && buer.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && assigner.toprole.position > assignee.toprole.position && buer.toprole.position > assignee.toprole.position) {
+    return true;
+  }
+  else {
+    return false;
+  }
+};
+
 var setDelRole = function(bot, message, modrolename, membrolename, prefix) {
   var user = cl.getMaxRole(message.guild.members.get(message.author.id));
   var bu = cl.getMaxRole(message.guild.members.get(bot.user.id));
@@ -53,15 +62,6 @@ var setDelRole = function(bot, message, modrolename, membrolename, prefix) {
     else {
       message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "role help` for syntax.");
     }
-  }
-};
-
-var canUserAndBotAssign = function(assigner, assignee, buer) {
-  if (assigner.toprole.name !== "Guest" && buer.toprole.name !== "Guest" && assigner.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && buer.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && assigner.toprole.position > assignee.toprole.position && buer.toprole.position > assignee.toprole.position) {
-    return true;
-  }
-  else {
-    return false;
   }
 };
 

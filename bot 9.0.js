@@ -251,7 +251,7 @@ bot.on("message", (message) => {
 							return;
 						}
 						else {
-							console.log(colors.red("Bot does not have permission to assign " + membrolename + "."))
+							console.log(colors.red("Bot does not have permission to assign " + membrolename + "."));
 						}
 					}
 				}
