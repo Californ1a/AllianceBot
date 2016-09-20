@@ -36,11 +36,7 @@
     "timeout": 5000
   },
   {
-    "name": "setrole",
-    "timeout": 5000
-  },
-  {
-    "name": "delrole",
+    "name": "role",
     "timeout": 5000
   },
   {

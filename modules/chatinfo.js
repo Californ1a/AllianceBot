@@ -16,10 +16,10 @@ var formatChatlog = function(message) {
 			return;
 		}
 	});
-
-	if (user.nick) {
-		chatlinedata += user.nick + ": " + message.cleanContent;
-		consoleChat += user.nick + ": " + message.cleanContent;
+  //console.log(message.member);
+	if (message.member.nickname) {
+		chatlinedata += message.member.nickname + ": " + message.cleanContent;
+		consoleChat += message.member.nickname + ": " + message.cleanContent;
 	}
 	else {
 		chatlinedata += message.author.username + ": " + message.cleanContent;
@@ -70,8 +70,8 @@ var getMaxRole = function(user) {
 			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
 		}
 		toprole = user.guild.roles.find("position", maxpos);
-		if (user.guild.members.get(user.id).nick) {
-			nick = user.guild.members.get(user.id).nick;
+		if (user.nickname) {
+			nick = user.nickname;
 		}
 	}
 	return {

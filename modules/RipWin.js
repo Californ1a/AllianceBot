@@ -1,4 +1,4 @@
-var ripWin = function ripWin(message, prefix, modrolename, colors, connection, bot, ripwin) {
+var ripWin = function(message, prefix, modrolename, colors, connection, bot, ripwin) {
   var str = message.content.toString();
   var results = str.split(" ");
   var qu = "";

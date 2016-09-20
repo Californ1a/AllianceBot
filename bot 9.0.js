@@ -12,13 +12,12 @@ var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
 var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
 var RipWin = require("./modules/RipWin.js"); //local js
-var setDelRole = require ("./modules/setdelrole.js"); //local js
+var sdr = require("./modules/setdelrole.js"); //local js
 var CheckMapID = require("./modules/checkmapid.js"); //local js
 var timers = require("./modules/timers.js"); //local js
 var Command = require("./modules/command.js"); //local js
 var commandList = require("./config/commands.json"); //local json
 var md = require("./modules/messagedate.js"); //local js
-var pbtoken = require("./config/logins/pushbullet.json").access; //local json
 var cl = require("./modules/chatinfo.js"); //local js
 // </editor-fold>
 
@@ -849,19 +848,10 @@ bot.on("message", (message) => {
 
 
 				//setdelrole
-				else if (message.content.startsWith(prefix + "setrole")) {
+				else if (message.content.startsWith(prefix + "role")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							setDelRole.setRole(message, modrolename, membrolename, prefix, bot, cl.user.toprole);
-							hardCode[ref].timeout();
-						}
-					});
-				}
-
-				else if (message.content.startsWith(prefix + "delrole")) {
-					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-						if (response && !hardCode[ref].onCooldown) {
-							setDelRole.delRole(message, modrolename, membrolename, prefix, bot, cl.user.toprole);
+							sdr.setDelRole(bot, message, modrolename, membrolename, prefix);
 							hardCode[ref].timeout();
 						}
 					});
