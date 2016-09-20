@@ -151,7 +151,7 @@ bot.on("serverDeleted", (server) => {
 
 // <editor-fold desc='bot on message edit'>
 bot.on("messageUpdate", (oldMessage, newMessage) => {
-	if (bot.user !== message.author) {
+	if (bot.user !== oldMessage.author || bot.user !== newMessage.author) {
 
 		var newc = cl.formatChatlog(newMessage);
 		var oldc = cl.formatChatlog(oldMessage);

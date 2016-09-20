@@ -35,7 +35,7 @@ var ripWin = function(message, prefix, modrolename, colors, connection, bot, rip
         if (i !== results.length-3) {
           recombined += results[i+2] + " ";
         }
-        else {
+        else if (i === results.length-3) {
           recombined += results[i+2];
         }
       }
