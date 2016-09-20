@@ -4,12 +4,16 @@ var i = 0;
 
 var getMapID = function(results, mapname) {
   i = 0;
+  var id = 0;
   for (i; i < results.length; i++) {
     if (typeof results[i] === "string" && (results[i].match(/^sas$/i) || results[i].match(/^speed$/i) || results[i].match(/^sns$/i) || results[i].match(/^s&s$/i))) {
       id = jsondata.officialmapids["Speed and Style"][mapname];
     }
     else if (typeof results[i] === "string" && (results[i].match(/^s$/i) || results[i].match(/^sprint$/i))) {
       id = jsondata.officialmapids["Sprint"][mapname];
+    }
+    else {
+      console.log("Wut?");
     }
   }
   return id;
@@ -23,7 +27,6 @@ var checkBS = function(results) {
     }
   }
   else if (results[1].match(/^bs$/i)) {
-    mapname = "Broken Symmetry";
     id = getMapID(results, "Broken Symmetry");
   }
   return id;
@@ -117,7 +120,7 @@ var checkAmus = function(results) {
 var checkCorrup = function(results) {
   var id = 0;
   if (results[1].match(/^corruption$/i)) {
-    id = getMapID(results, "Coppuption");
+    id = getMapID(results, "Corruption");
   }
   return id;
 };
@@ -267,8 +270,7 @@ var checkMapID = function checkMapID(message, results) {
       return mapid;
     }
     else {
-      var total = jsondata.officialmapids["Sprint"].length+jsondata.officialmapids["Challenge"].length;
-      console.log("Wut? " + i + " " + total);
+      console.log("Wut? " + i + " " + totalMaps);
     }
   }
   return mapid;
