@@ -47,6 +47,7 @@ desktop.ini
 # Logins, chatlogs, backups
 config/logins/*
 tweet.json
+tweet*.json
 userinfo.txt
 DiscordChatlogs/*
 backups/*

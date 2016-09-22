@@ -54,16 +54,17 @@ var quotespm2 = "";
 stream.on("tweet", function (tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
-	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name)) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
+	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
-		if (tweetcount < 4) {
-			tweetcount += 1;
-			fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		}
-		else {
-			fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-			tweetcount = 0;
-		}
+		fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		// if (tweetcount < 4) {
+		// 	tweetcount += 1;
+		// 	fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		// }
+		// else {
+		// 	fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		// 	tweetcount = 0;
+		// }
 		var mediaurl = "";
 		var vine = "";
 		if (tweet.entities.media) {
@@ -80,10 +81,66 @@ stream.on("tweet", function (tweet) {
 // </editor-fold>
 
 
+// <editor-fold desc='twitter API disconnected'>
+stream.on("disconnect", function(disconnectMessage) {
+	console.log("Twitter stream disconnected: \r\n" + disconnectMessage);
+});
+// </editor-fold>
+
+
+// <editor-fold desc='twitter API connection attempt'>
+stream.on("connect", function(request) {
+	console.log(colors.red("Twitter stream connection attempt."));
+});
+// </editor-fold>
+
+
+// <editor-fold desc='twitter API connected'>
+stream.on("connected", function(response) {
+	console.log(colors.red("Twitter stream connected."));
+});
+// </editor-fold>
+
+
+// <editor-fold desc='twitter API reconnect attempt'>
+stream.on("reconnect", function(request, response, connectInterval) {
+	console.log(colors.red("Twitter stream attemptng reconnect in " + connectInterval + "ms."));
+});
+// </editor-fold>
+
+
+// <editor-fold desc='twitter API error'>
+stream.on("error", function(error) {
+	console.log("Twitter stream error: \r\n" + error);
+});
+// </editor-fold>
+
+
 // <editor-fold desc='mysql database connect'>
 //connect to mysql server
 var connection = mysql.createConnection(sqlconfig);
 connection.connect();
+// </editor-fold>
+
+
+// <editor-fold desc='bot error catching'>
+bot.on("error", (error) => {
+	console.log("Discord.js Error: \r\n" + error);
+});
+// </editor-fold>
+
+
+// <editor-fold desc='server unavailable'>
+bot.on("guildUnavailable", (guild) => {
+	console.log(guild.name + " unavailable.");
+});
+// </editor-fold>
+
+
+// <editor-fold desc='bot reconnecting'>
+bot.on("reconnecting", () => {
+	console.log(colors.red("Reconnecting..."));
+});
 // </editor-fold>
 
 
@@ -110,12 +167,12 @@ bot.on("disconnected", () => {
 
 // <editor-fold desc='bot on server join'>
 //add new servers to mysql database when bot added to new server
-bot.on("serverCreated", (server) => {
-	console.log(colors.red("Trying to insert server '" + server.name + "' into database."));
+bot.on("guildCreate", (guild) => {
+	console.log(colors.red("Trying to insert server '" + guild.name + "' into database."));
 	var info = {
-		"servername": "'" + server.name + "'",
-		"serverid": server.id,
-		"ownerid": server.owner.id,
+		"servername": "'" + guild.name + "'",
+		"serverid": guild.id,
+		"ownerid": guild.owner.id,
 		"prefix": "!"
 	};
 	// connection.query("INSERT INTO servers SET ?", info, function(error) {
@@ -134,9 +191,9 @@ bot.on("serverCreated", (server) => {
 
 // <editor-fold desc='bot on server kicked'>
 //remove server from mysql database when bot kicked
-bot.on("serverDeleted", (server) => {
-	console.log(colors.red("Attempting to remove " + server.name + " from the database."));
-	// connection.query("DELETE FROM servers WHERE serverid = '" + server.id + "'", function(error) {
+bot.on("guildDelete", (guild) => {
+	console.log(colors.red("Attempting to remove " + guild.name + " from the database."));
+	// connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
 	// 	if (error) {
 	// 		console.log(error);
 	// 		return;
@@ -905,9 +962,9 @@ bot.on("message", (message) => {
 
 
 //catch errors
-bot.on("error", (e) => { console.error(e); });
-bot.on("warn", (e) => { console.warn(e); });
-bot.on("debug", (e) => { console.info(e); });
+bot.on("error", (e) => { console.error(colors.green(e)); });
+bot.on("warn", (e) => { console.warn(colors.blue(e)); });
+bot.on("debug", (e) => { console.info(colors.yellow(e)); });
 
 
 
