@@ -56,15 +56,15 @@ stream.on("tweet", function (tweet) {
 	var tweetuser = tweet.user.screen_name;
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
-		fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		// if (tweetcount < 4) {
-		// 	tweetcount += 1;
-		// 	fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		// }
-		// else {
-		// 	fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		// 	tweetcount = 0;
-		// }
+		//fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		if (tweetcount < 4) {
+			tweetcount += 1;
+			fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		}
+		else {
+			fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+			tweetcount = 0;
+		}
 		var mediaurl = "";
 		var vine = "";
 		if (tweet.entities.media) {
@@ -175,15 +175,15 @@ bot.on("guildCreate", (guild) => {
 		"ownerid": guild.owner.id,
 		"prefix": "!"
 	};
-	// connection.query("INSERT INTO servers SET ?", info, function(error) {
-	// 	if (error) {
-	// 		console.log(error);
-	// 		return;
-	// 	}
-	// 	else {
-	// 		console.log(colors.red("Successfully inserted server."));
-	// 	}
-	// });
+	connection.query("INSERT INTO servers SET ?", info, function(error) {
+		if (error) {
+			console.log(error);
+			return;
+		}
+		else {
+			console.log(colors.red("Successfully inserted server."));
+		}
+	});
 	console.log("inserted");
 });
 // </editor-fold>
@@ -193,13 +193,13 @@ bot.on("guildCreate", (guild) => {
 //remove server from mysql database when bot kicked
 bot.on("guildDelete", (guild) => {
 	console.log(colors.red("Attempting to remove " + guild.name + " from the database."));
-	// connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
-	// 	if (error) {
-	// 		console.log(error);
-	// 		return;
-	// 	}
-	// 	console.log(colors.red("Successfully removed server."));
-	// });
+	connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
+		if (error) {
+			console.log(error);
+			return;
+		}
+		console.log(colors.red("Successfully removed server."));
+	});
 	console.log("removed");
 });
 // </editor-fold>
