@@ -51,3 +51,4 @@ userinfo.txt
 DiscordChatlogs/*
 backups/*
 *.bat
+disconnectedServers.json
