@@ -90,7 +90,9 @@ bot.on("ready", function() {
 
 //handle disconnect
 bot.on("disconnected", function() {
-	console.log(bot.servers);
+	//console.log(bot.servers);
+	var disconnectedjson = JSON.stringify(bot.servers,null,2);
+	fs.appendFile("disconnectedServers.json", disconnectedjson + "\r\n\r\n\r\n\r\n\r\n");
 	console.log(colors.red("Bot disconnected from server."));
 });
 
