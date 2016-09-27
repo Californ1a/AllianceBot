@@ -43,6 +43,7 @@ var getMaxRole = function(user) {
 
 var formatChatlog = function(message) {
 	var messageTime = md.messageDate(message);
+	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1");
 	var user = getMaxRole(message.guild.members.get(message.author.id));
 	var chatlog = logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
 	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole.name + ")";
@@ -57,12 +58,12 @@ var formatChatlog = function(message) {
 	});
   //console.log(message.member);
 	if (message.member.nickname) {
-		chatlinedata += message.member.nickname + ": " + message.cleanContent;
-		consoleChat += message.member.nickname + ": " + message.cleanContent;
+		chatlinedata += message.member.nickname + ": " + messageContent;
+		consoleChat += message.member.nickname + ": " + messageContent;
 	}
 	else {
-		chatlinedata += message.author.username + ": " + message.cleanContent;
-		consoleChat += message.author.username + ": " + message.cleanContent;
+		chatlinedata += message.author.username + ": " + messageContent;
+		consoleChat += message.author.username + ": " + messageContent;
 	}
 	if (message.attachments.size > 0) {
 		var attc = message.attachments.array();
