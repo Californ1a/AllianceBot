@@ -47,13 +47,14 @@ var eventName = null;
 var quotespm = "";
 var quotespm2 = "";
 // </editor-fold>
-
+//:torcht:
 
 // <editor-fold desc='twitter stream'>
 //on new tweet matching filter
 stream.on("tweet", function (tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
+	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet,null,2);
 		//fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
@@ -70,11 +71,17 @@ stream.on("tweet", function (tweet) {
 		if (tweet.entities.media) {
 			mediaurl = "\r" + tweet.entities.media[0].media_url;
 		}
+		if (tweet.extended_tweet) {
+			if (tweet.extended_tweet.entities.media) {
+				mediaurl = "\r" + tweet.extended_tweet.entities.media[0].media_url;
+			}
+		}
 		if (tweet.entities.urls[0]) {
 			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
 				vine = "\r" + tweet.entities.urls[0].expanded_url;
 			}
 		}
+		bot.channels.get("83078957620002816").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
 		bot.channels.get("211599888222257152").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
 	}
 });
@@ -184,7 +191,26 @@ bot.on("guildCreate", (guild) => {
 			console.log(colors.red("Successfully inserted server."));
 		}
 	});
-	console.log("inserted");
+	console.log(colors.red("Trying to insert win quotes for server '" + guild.name + "'."));
+	connection.query("INSERT INTO win (server_id, quote) SELECT \"113151199963783168\", quote FROM win WHERE server_id = \"" + guild.id + "\"", function(error) {
+		if (error) {
+			console.log(error);
+			return;
+		}
+		else {
+			console.log(colors.red("Successfully inserted win quotes."));
+		}
+	});
+	console.log(colors.red("Trying to insert rip quotes for server '" + guild.name + "'."));
+	connection.query("INSERT INTO rip (server_id, quote) SELECT \"113151199963783168\", quote FROM win WHERE server_id = \"" + guild.id + "\"", function(error) {
+		if (error) {
+			console.log(error);
+			return;
+		}
+		else {
+			console.log(colors.red("Successfully inserted win quotes."));
+		}
+	});
 });
 // </editor-fold>
 
@@ -192,15 +218,16 @@ bot.on("guildCreate", (guild) => {
 // <editor-fold desc='bot on server kicked'>
 //remove server from mysql database when bot kicked
 bot.on("guildDelete", (guild) => {
-	console.log(colors.red("Attempting to remove " + guild.name + " from the database."));
-	connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
-		if (error) {
-			console.log(error);
-			return;
-		}
-		console.log(colors.red("Successfully removed server."));
-	});
-	console.log("removed");
+	if (guild.available) { //ensure kick rather than server outtage
+		console.log(colors.red("Attempting to remove " + guild.name + " from the database."));
+		connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
+			if (error) {
+				console.log(error);
+				return;
+			}
+			console.log(colors.red("Successfully removed server."));
+		});
+	}
 });
 // </editor-fold>
 
@@ -208,32 +235,34 @@ bot.on("guildDelete", (guild) => {
 // <editor-fold desc='bot on message edit'>
 bot.on("messageUpdate", (oldMessage, newMessage) => {
 	if (bot.user !== oldMessage.author || bot.user !== newMessage.author) {
+		if (oldMessage.content !== newMessage.content) {
 
-		var newc = cl.formatChatlog(newMessage);
-		var oldc = cl.formatChatlog(oldMessage);
+			var newc = cl.formatChatlog(newMessage);
+			var oldc = cl.formatChatlog(oldMessage);
 
-		fs.readFile(oldc.currentLog, function(error, data) {
-			if (error) {
-				console.log(error);
-			}
-			else {
-				var array = data.toString().split("\r\n");
-				i = 0;
-				for(i; i < array.length; i++) {
-					if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
-						array[i] = "(Edited) " + newc.chatlinedata;
-					}
+			fs.readFile(oldc.currentLog, function(error, data) {
+				if (error) {
+					console.log(error);
 				}
-				fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
-					if (error) {
-						console.log(error);
+				else {
+					var array = data.toString().split("\r\n");
+					i = 0;
+					for(i; i < array.length; i++) {
+						if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
+							array[i] = "(Edited) " + newc.chatlinedata;
+						}
 					}
-					else {
-						console.log(colors.white.dim("Edited --> " + newc.consoleChat));
-					}
-				});
-			}
-		});
+					fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
+						if (error) {
+							console.log(error);
+						}
+						else {
+							console.log(colors.white.dim("Edited --> " + newc.consoleChat));
+						}
+					});
+				}
+			});
+		}
 	}
 });
 // </editor-fold>
