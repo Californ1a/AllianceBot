@@ -38,7 +38,6 @@ var moment = require("moment"); //requirements
     var secs=0;
     var out="";
     if (forSS.bool) {
-      utc = localTime+localOffset;
       amount = getNextSSDay(dateNow, 6, currentlyHappening).getTime() - dateNow.getTime(); //calc milliseconds between dates
     }
     else {
@@ -53,7 +52,7 @@ var moment = require("moment"); //requirements
       //after event starts
       //currentss = 1;
       if (forSS.bool) {
-        return getCount(false, "SS is currently happening! It will end in "); //start second countdown
+        return getCount(true, "SS is currently happening! It will end in ", forSS); //start second countdown
       }
       else {
         out = forSS.eventName + " is currently happening or has passed.";
