@@ -12,7 +12,7 @@ var cl = require("./chatinfo.js");
 var timers = require("./timers.js");
 var sdr = require("./setdelrole.js");
 var rw = require("./RipWin.js");
-var CheckMapID = require("./modules/checkmapid.js");
+var CheckMapID = require("./checkmapid.js");
 var info;
 var currentss;
 
