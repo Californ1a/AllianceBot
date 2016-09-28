@@ -12,6 +12,9 @@ var cl = require("./chatinfo.js");
 var timers = require("./timers.js");
 var sdr = require("./setdelrole.js");
 var rw = require("./RipWin.js");
+var CheckMapID = require("./modules/checkmapid.js");
+var info;
+var currentss;
 
 var hardCode = [];
 var i = 0;
@@ -162,7 +165,7 @@ var newcom = function(message, results, connection) {
             }
           }
           console.log(colors.red("Attempting to add the command `" + prefix + results[1] + "` with the resulting message `" + recombined + "` to server `" + message.guild.name + "`."));
-          var info = {
+          info = {
             "comname": results[1],
             "comtext": "'" + recombined + "'",
             "modonly": results[2],
@@ -599,7 +602,7 @@ var help = function(message, results, connection) {
   }).catch ((error) => console.error(error));
 };
 
-var role = function(message, results, connection) {
+var role = function(bot, message, results, connection) {
   ref = cl.getComRef(hardCode, results);
   hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
     if (response && !hardCode[ref].onCooldown) {
@@ -613,7 +616,7 @@ var ripwin = function(message, results, connection) {
   ref = cl.getComRef(hardCode, results);
   hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
     if (response && !hardCode[ref].onCooldown) {
-      riporwin = results[0].replace(prefix, "");
+      var riporwin = results[0].replace(prefix, "");
       rw.ripWin(message, prefix, modrolename, connection, riporwin);
       hardCode[ref].timeout();
     }

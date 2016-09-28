@@ -437,7 +437,7 @@ bot.on("message", (message) => {
 					cmds.help(message, results, connection);
 				}
 				else if (message.content.startsWith(prefix + "role")) {
-					cmds.role(message, results, connection);
+					cmds.role(bot, message, results, connection);
 				}
 				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")) {
 					cmds.ripwin(message, results, connection);
