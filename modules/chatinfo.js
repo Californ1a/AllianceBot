@@ -1,6 +1,7 @@
 var md = require("./messagedate.js");
 var fs = require("fs-extra");
 var logLocation = require("../config/options.json").logLocation;
+var prefix = require("../config/options.json").prefix;
 var i = 0;
 
 var getMaxRole = function(user) {
@@ -112,8 +113,20 @@ var escapeChars = function(word) {
   return tempWord;
 };
 
+var getComRef = function(hardCode, results) {
+	var ref = 0;
+	i = 0;
+  for (i; i < hardCode.length; i++) {
+    if (hardCode[i].name === results[0].replace(prefix,"")) {
+      ref = i;
+    }
+  }
+	return ref;
+};
+
 module.exports = {
   formatChatlog,
   getMaxRole,
-  escapeChars
+  escapeChars,
+	getComRef
 };
