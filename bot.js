@@ -46,6 +46,7 @@ var eventDate = null;
 var eventName = null;
 var quotespm = "";
 var quotespm2 = "";
+var info = "";
 // </editor-fold>
 //:torcht:
 
@@ -176,7 +177,7 @@ bot.on("disconnected", () => {
 //add new servers to mysql database when bot added to new server
 bot.on("guildCreate", (guild) => {
 	console.log(colors.red("Trying to insert server '" + guild.name + "' into database."));
-	var info = {
+	info = {
 		"servername": "'" + guild.name + "'",
 		"serverid": guild.id,
 		"ownerid": guild.owner.id,
@@ -436,7 +437,7 @@ bot.on("message", (message) => {
 									else {
 										//database
 										console.log(colors.red("Trying to insert command '" + results[1] + "' into database."));
-										var info = {
+										info = {
 											"commandname": results[1],
 											"server_id": message.guild.id,
 										};
@@ -543,7 +544,7 @@ bot.on("message", (message) => {
 										}
 									}
 									console.log(colors.red("Attempting to add the command `" + prefix + results[1] + "` with the resulting message `" + recombined + "` to server `" + message.guild.name + "`."));
-									var info = {
+									info = {
 										"comname": results[1],
 										"comtext": "'" + recombined + "'",
 										"modonly": results[2],
@@ -803,53 +804,101 @@ bot.on("message", (message) => {
 				else if (message.content.startsWith(prefix + "advent")) {
 					hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 						if (response && !hardCode[ref].onCooldown) {
-							if (results[1] === "set" && message.member.roles.exists("name", modrolename)) {
-								if (typeof results[2] === "string") {
-									if (typeof results[3] === "string") {
-										eventName = null;
-										eventDate = results[2];
-										i = 0;
-										for (i; i < results.length; i++) {
-											if (i === 3) {
-												eventName = results[i];
+							connection.query("SELECT * FROM advent WHERE server_id=" + message.guild.id, function(error, eventInfo) {
+								if (error) {
+									message.channel.sendMessage("Failed.");
+									console.log(error);
+									return;
+								}
+								else {
+
+									// console.log(typeof eventInfo);
+									// console.log(eventInfo);
+									// console.log(typeof eventInfo[0]);
+
+									if (typeof eventInfo[0] !== "object" && typeof results[1] !== "string") {
+										message.channel.sendMessage("No event set.");
+									}
+									else if (results[1] === "set" && message.member.roles.exists("name", modrolename)) {
+										if (typeof results[2] === "string" && typeof eventInfo[0] !== "object") {
+											if (typeof results[3] === "string") {
+												eventName = null;
+												eventDate = results[2];
+												i = 0;
+												for (i; i < results.length; i++) {
+													if (i === 3) {
+														eventName = results[i];
+													}
+													else if (i > 3) {
+														eventName = eventName + " " + results[i];
+													}
+												}
+												console.log(colors.red("Trying to insert '" + eventName + "' event into database."));
+												info = {
+													"name": eventName,
+													"time": eventDate,
+													"server_id": message.guild.id
+												};
+												connection.query("INSERT INTO advent SET ?", info, function(error) {
+													if (error) {
+														message.channel.sendMessage("Failed");
+														console.log(error);
+														return;
+													}
+													else {
+														console.log(colors.red("Successfully inserted event."));
+														message.channel.sendMessage("Event name set to: " + eventName + "\r\nEvent date set to: " + eventDate);
+													}
+												});
 											}
-											else if (i > 3) {
-												eventName = eventName + " " + results[i];
+											else {
+												message.channel.sendMessage("Incorrect syntax.");
 											}
 										}
-										message.channel.sendMessage("Event date set to: " + eventDate + "\r\nEvent name set to: " + eventName);
+										else if (typeof results[2] !== "string") {
+											message.channel.sendMessage("Syntax: __**`" + prefix + "advent set <date> <event name>`**__\rCreate an event countdown. Only one event at a time is supported.\r\r`date`\rThe date and time when the event begins. ISO8601 format with no spaces - use T instead of a space to denote the time. Times must be given in Eastern Time unless an offset is defined.\r\r`event name`\rThe name of the event.\r\r**Example**\r`" + prefix + "advent set 2016-02-08T13:30:20 Some Name`\rThis would set an event named `Some Name` to start at February 8th, 2016 at 1:30:20 PM.");
+										}
+										else if (typeof eventInfo[0] === "object") {
+											message.channel.sendMessage("You must delete the current event before creating a new one.");
+										}
+										else {
+											message.channel.sendMessage("Error.");
+											console.log("Something happened.");
+										}
+									}
+									else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
+										console.log(colors.red("Attempting to remove event from the database."));
+										connection.query("DELETE FROM advent WHERE server_id=" + message.guild.id, function(error) {
+											if (error) {
+												message.channel.sendMessage("Failed.");
+												console.log(error);
+												return;
+											}
+											else {
+												console.log(colors.red("Successfully removed event."));
+												message.channel.sendMessage("Event removed.");
+											}
+										});
+									}
+									else if (typeof eventInfo[0] === "object" && typeof results[1] !== "string") {
+										var forSS = {
+											"bool": false,
+											"eventDate": eventInfo[0].time,
+											"eventName": eventInfo[0].name
+										};
+										var startMessage = eventInfo[0].name + " will begin in ";
+										var currentstream = timers.getCount(false, startMessage, forSS);
+										message.channel.sendMessage(currentstream + "");
+									}
+									else if (typeof eventInfo[0] === "object") {
+										message.channel.sendMessage("There is already an event sent. Use `" + prefix + "advent` to view it.");
 									}
 									else {
-										message.channel.sendMessage("Incorrect syntax.");
+										console.log("Something happened.");
 									}
+									hardCode[ref].timeout();
 								}
-								else {
-									message.channel.sendMessage("Syntax: __**`" + prefix + "advent set <date> <event name>`**__\rCreate an event countdown. Only one event at a time is supported.\r\r`date`\rThe date and time when the event begins. ISO8601 format with no spaces - use T instead of a space to denote the time. Times must be given in Eastern Time unless an offset is defined.\r\r`event name`\rThe name of the event.\r\r**Example**\r`" + prefix + "advent set 2016-02-08T13:30:20 Some Name`\rThis would set an event named `Some Name` to start at February 8th, 2016 at 1:30:20 PM.");
-								}
-							}
-							else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
-								if (typeof eventDate === "string") {
-									eventDate = null;
-									message.channel.sendMessage("Event removed.");
-								}
-								else {
-									message.channel.sendMessage("No event set.");
-								}
-							}
-							else if (typeof results[1] !== "string" && eventDate !== null) {
-								var forSS = {
-									"bool": false,
-									eventDate,
-									eventName
-								};
-								var startMessage = eventName + " will begin in ";
-								var currentstream = timers.getCount(false, startMessage, forSS);
-								message.channel.sendMessage(currentstream + "");
-							}
-							else {
-								message.channel.sendMessage("No event set.");
-							}
-							hardCode[ref].timeout();
+							});
 						}
 					});
 				}
