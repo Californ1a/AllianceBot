@@ -116,8 +116,8 @@ Disable a specific hardcoded command on a server. Only usable by the bot owner o
 
 ---
 
-#### Syntax: `rip|win (<key>|list|add|del) (<quote>)`
-Obtain or manipulate rip/win quotes. Using no parameters returns a random quote.
+#### Syntax: `rip|win|tf (<key>|list|add|del) (<quote>)`
+Obtain or manipulate rip/win/tableflip quotes. Using no parameters returns a random quote.
 
 ##### Parameters
 * `key`
