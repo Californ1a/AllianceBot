@@ -48,6 +48,10 @@
     "timeout": 100
   },
   {
+    "name": "tf",
+    "timeout": 100
+  },
+  {
     "name": "test",
     "timeout": 0
   },

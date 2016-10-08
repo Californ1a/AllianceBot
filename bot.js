@@ -8,6 +8,7 @@ var fs = require("fs-extra"); //requirements
 var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
 var util = require("util"); //requirements
+var MySQLConnectionManager = require("mysql-connection-manager"); //requirements
 var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
 var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
@@ -43,6 +44,7 @@ var eventName = null;
 var quotespm = "";
 var quotespm2 = "";
 var info = "";
+var connection;
 // </editor-fold>
 
 
@@ -65,21 +67,21 @@ stream.on("tweet", function (tweet) {
 		}
 		var mediaurl = "";
 		var vine = "";
-		if (tweet.entities.media) {
-			mediaurl = "\r" + tweet.entities.media[0].media_url;
-		}
-		if (tweet.extended_tweet) {
-			if (tweet.extended_tweet.entities.media) {
-				mediaurl = "\r" + tweet.extended_tweet.entities.media[0].media_url;
-			}
-		}
-		if (tweet.entities.urls[0]) {
-			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
-				vine = "\r" + tweet.entities.urls[0].expanded_url;
-			}
-		}
+		// if (tweet.entities.media) {
+		// 	mediaurl = "\r" + tweet.entities.media[0].media_url;
+		// }
+		// if (tweet.extended_tweet) {
+		// 	if (tweet.extended_tweet.entities.media) {
+		// 		mediaurl = "\r" + tweet.extended_tweet.entities.media[0].media_url;
+		// 	}
+		// }
+		// if (tweet.entities.urls[0]) {
+		// 	if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
+		// 		vine = "\r" + tweet.entities.urls[0].expanded_url;
+		// 	}
+		// }
 		bot.channels.get("83078957620002816").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
-		bot.channels.get("211599888222257152").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
+		//bot.channels.get("211599888222257152").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
 	}
 });
 // </editor-fold>
@@ -122,14 +124,36 @@ stream.on("error", function(error) {
 
 // <editor-fold desc='mysql database connect'>
 //connect to mysql server
-var connection = mysql.createConnection(sqlconfig);
+connection = mysql.createConnection(sqlconfig);
+var manager = new MySQLConnectionManager(sqlconfig, connection);
 connection.connect();
 // </editor-fold>
 
 
-// <editor-fold desc='bot error catching'>
-bot.on("error", (error) => {
-	console.log("Discord.js Error: \r\n" + error);
+// <editor-fold desc='mysql error'>
+connection.on("error", function(error) {
+	console.log("MySQL error: \r\n" + error);
+});
+// </editor-fold>
+
+
+// <editor-fold desc='mysql manager connect'>
+manager.on("connect", function(connection) {
+	console.info(colors.red("MySQL connected."));
+});
+// </editor-fold>
+
+
+// <editor-fold desc='mysql manager connect'>
+manager.on("reconnect", function(connection) {
+	console.log(colors.red("MySQL reconnected."));
+});
+// </editor-fold>
+
+
+// <editor-fold desc='mysql manager connect'>
+manager.on("disconnect", function() {
+	console.log("MySQL disconnected.");
 });
 // </editor-fold>
 
@@ -163,7 +187,7 @@ bot.on("ready", () => {
 
 // <editor-fold desc='bot on disconnect'>
 //handle disconnect
-bot.on("disconnected", () => {
+bot.on("disconnect", () => {
 	console.log(colors.red("Bot disconnected from server."));
 });
 // </editor-fold>
@@ -439,7 +463,7 @@ bot.on("message", (message) => {
 				else if (message.content.startsWith(prefix + "role")) {
 					cmds.role(bot, message, results, connection);
 				}
-				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")) {
+				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")|| message.content.startsWith(prefix + "tf")) {
 					cmds.ripwin(message, results, connection);
 				}
 			}
