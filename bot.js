@@ -324,12 +324,12 @@ bot.on("guildMemberUpdate", (guild, oldMember, newMember) => {
 				i = 0;
 				for(i; i < guildChannels.length; i++) {
 					if (guildChannels[i].type === "text") {
-						fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
+						fs.appendFile(jsondata.logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
 							if (error) {
 								console.log(error);
 							}
 						});
-						fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
+						fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
 							if (error) {
 								console.log(error);
 							}
@@ -346,12 +346,12 @@ bot.on("guildMemberUpdate", (guild, oldMember, newMember) => {
 			i = 0;
 			for(i; i < guildChannels.length; i++) {
 				if (guildChannels[i].type === "text") {
-					fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
+					fs.appendFile(jsondata.logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
 						if (error) {
 							console.log(error);
 						}
 					});
-					fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
+					fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
 						if (error) {
 							console.log(error);
 						}
@@ -368,12 +368,12 @@ bot.on("guildMemberUpdate", (guild, oldMember, newMember) => {
 		i = 0;
 		for(i; i < guildChannels.length; i++) {
 			if (guildChannels[i].type === "text") {
-				fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
+				fs.appendFile(jsondata.logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
 					if (error) {
 						console.log(error);
 					}
 				});
-				fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
+				fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
 					if (error) {
 						console.log(error);
 					}
