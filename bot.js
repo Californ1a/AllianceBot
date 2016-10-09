@@ -311,6 +311,84 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 // </editor-fold>
 
 
+// <editor-fold desc='when server user updates'>
+bot.on("guildMemberUpdate", (guild, oldMember, newMember) => {
+	var guildChannels = guild.channels.array();
+	var currentDate = new Date();
+	var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+	var currentYear = currentDate.getFullYear();
+	var currentMonth = monthNames[currentDate.getMonth()];
+	if (oldMember.nickname) {
+		if (newMember.nickname) {
+			if (oldMember.nickname !== newMember.nickname) {
+				i = 0;
+				for(i; i < guildChannels.length; i++) {
+					if (guildChannels[i].type === "text") {
+						fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
+							if (error) {
+								console.log(error);
+							}
+						});
+						fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.nickname + "\r\n", function(error) {
+							if (error) {
+								console.log(error);
+							}
+							else {
+								//console.log(colors.white.dim("* " + oldMember.nickname + " is now known as " + newMember.nickname));
+							}
+						});
+					}
+				}
+				console.log(colors.white.dim("* " + oldMember.nickname + " is now known as " + newMember.nickname));
+			}
+		}
+		else {
+			i = 0;
+			for(i; i < guildChannels.length; i++) {
+				if (guildChannels[i].type === "text") {
+					fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
+						if (error) {
+							console.log(error);
+						}
+					});
+					fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.nickname + " is now known as " + newMember.user.username + "\r\n", function(error) {
+						if (error) {
+							console.log(error);
+						}
+						else {
+							//console.log(colors.white.dim("* " + oldMember.nickname + " is now known as " + newMember.user.username));
+						}
+					});
+				}
+			}
+			console.log(colors.white.dim("* " + oldMember.nickname + " is now known as " + newMember.user.username));
+		}
+	}
+	else if (newMember.nickname) {
+		i = 0;
+		for(i; i < guildChannels.length; i++) {
+			if (guildChannels[i].type === "text") {
+				fs.appendFile(jsondata.logLocation + guild.name + "/" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
+					if (error) {
+						console.log(error);
+					}
+				});
+				fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/" + guildChannels[i].name + ".log", "* " + oldMember.user.username + " is now known as " + newMember.nickname + "\r\n", function(error) {
+					if (error) {
+						console.log(error);
+					}
+					else {
+						//console.log(colors.white.dim("* " + oldMember.nickname + " is now known as " + newMember.user.username));
+					}
+				});
+			}
+		}
+		console.log(colors.white.dim("* " + oldMember.user.username + " is now known as " + newMember.nickname));
+	}
+});
+// </editor-fold>
+
+
 //--------------------------Begin bot commands--------------------------
 bot.on("message", (message) => {
 	if (message.guild) { //non-pm messages
