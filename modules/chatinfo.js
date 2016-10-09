@@ -46,9 +46,10 @@ var formatChatlog = function(message) {
 	var messageTime = md.messageDate(message);
 	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1");
 	var user = getMaxRole(message.guild.members.get(message.author.id));
-	var chatlog = logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".txt";
+	var chatlog = logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".log";
+	var fullLog = logLocation + message.guild.name + "/full logs/" + message.channel.name + ".log";
 	var chatlinedata = messageTime.formattedDate + " | " + user.isbot + "(" + user.toprole.name + ")";
-	var consoleChat = messageTime.hour + ":" + messageTime.minute + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole.name + ")";
+	var consoleChat = messageTime.hour + ":" + messageTime.minute + " " + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole.name + ")";
 	var att = [];
 	var formattedAtturls = "";
 	fs.mkdirsSync(logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
@@ -74,12 +75,13 @@ var formatChatlog = function(message) {
 		}
     i = 0;
 		for (i; i < att.length; i++) {
-			formattedAtturls += "\r\n" + att[i];
+			formattedAtturls += " " + att[i];
 		}
 	}
 	return {
 		user,
 		"currentLog": chatlog,
+		fullLog,
 		chatlinedata,
 		consoleChat,
 		"atturls": att,

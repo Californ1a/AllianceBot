@@ -27,7 +27,7 @@ var messageDate = function messageDate (message) {
 	var day = d.getDate();
 	var monthIndex = d.getMonth();
 	var year = d.getFullYear();
-	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + ampm;
+	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + " " + ampm;
 	return {
 		"formattedDate": thedate,
 		year,

@@ -283,6 +283,28 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					});
 				}
 			});
+			fs.readFile(oldc.fullLog, function(error, data) {
+				if (error) {
+					console.log(error);
+				}
+				else {
+					var array = data.toString().split("\r\n");
+					i = 0;
+					for(i; i < array.length; i++) {
+						if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
+							array[i] = "(Edited) " + newc.chatlinedata;
+						}
+					}
+					fs.writeFile(oldc.fullLog, array.join("\r\n"), function(error) {
+						if (error) {
+							console.log(error);
+						}
+						else {
+							console.log(colors.white.dim("Edited --> " + newc.consoleChat));
+						}
+					});
+				}
+			});
 		}
 	}
 });
@@ -302,6 +324,12 @@ bot.on("message", (message) => {
 			}
 			else {
 				console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
+			}
+		});
+		fs.appendFile(cha.fullLog, cha.chatlinedata + cha.formattedAtturls + "\r\n", function(error) {
+			if (error) {
+				console.log(message.content);
+				console.log(error);
 			}
 		});
 
