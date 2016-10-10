@@ -19,9 +19,10 @@ var Command = require("./modules/command.js"); //local js
 var commandList = require("./config/commands.json"); //local json
 var md = require("./modules/messagedate.js"); //local js
 var cl = require("./modules/chatinfo.js"); //local js
-var cmds = require("./modules/commands.js"); //local js
+//var cmds = require("./modules/commands.js"); //local js
 var connection = require("./modules/mysqlmanager.js"); //local js
 var guests = require("./modules/guestToMemb.js"); //local js
+var checkCmds = require("./modules/checkforcommands.js");
 // </editor-fold>
 
 
@@ -121,34 +122,6 @@ stream.on("error", function(error) {
 	console.log("Twitter stream error: \r\n" + error);
 });
 // </editor-fold>
-
-
-// // <editor-fold desc='mysql error'>
-// connection.on("error", function(error) {
-// 	console.log("MySQL error: \r\n" + error);
-// });
-// // </editor-fold>
-//
-//
-// // <editor-fold desc='mysql manager connect'>
-// connection.on("connect", function(connection) {
-// 	console.info(colors.red("MySQL connected."));
-// });
-// // </editor-fold>
-//
-//
-// // <editor-fold desc='mysql manager connect'>
-// connection.on("reconnect", function(connection) {
-// 	console.log(colors.red("MySQL reconnected."));
-// });
-// // </editor-fold>
-//
-//
-// // <editor-fold desc='mysql manager connect'>
-// connection.on("disconnect", function() {
-// 	console.log("MySQL disconnected.");
-// });
-// // </editor-fold>
 
 
 // <editor-fold desc='server unavailable'>
@@ -467,45 +440,7 @@ bot.on("message", (message) => {
 
 
 			if(!messagesent) {
-				if (message.content.startsWith(prefix + "addcomtoserv")) {
-					cmds.addcomtoserv(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "remcomfromserv")) {
-					cmds.delcomfromserv(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "newcom")) {
-					cmds.newcom(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "delcom")) {
-					cmds.delcom(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "test")) {
-					cmds.test(message);
-				}
-				else if (message.content.startsWith(prefix + "dist")) {
-					cmds.dist(message, results, connection, http);
-				}
-				else if (message.content.startsWith(prefix + "wr")) {
-					cmds.wr(message, results, connection, http);
-				}
-				else if (message.content.startsWith(prefix + "ss")) {
-					cmds.ss(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "advent")) {
-					cmds.advent(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "speedy")) {
-					cmds.speedy(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "commands") || message.content.startsWith(prefix + "cmds") || message.content.startsWith(prefix + "help")) {
-					cmds.help(message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "role")) {
-					cmds.role(bot, message, results, connection);
-				}
-				else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip")|| message.content.startsWith(prefix + "tf")) {
-					cmds.ripwin(message, results, connection);
-				}
+				checkCmds.checkForCommands(message, results, connection);
 			}
 		}
 
