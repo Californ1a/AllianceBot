@@ -21,6 +21,7 @@ var md = require("./modules/messagedate.js"); //local js
 var cl = require("./modules/chatinfo.js"); //local js
 var cmds = require("./modules/commands.js"); //local js
 var connection = require("./modules/mysqlmanager.js"); //local js
+var guests = require("./modules/guestToMemb.js"); //local js
 // </editor-fold>
 
 
@@ -261,7 +262,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					var array = data.toString().split("\r\n");
 					i = 0;
 					for(i; i < array.length; i++) {
-						if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
+						if (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata) {
 							array[i] = "(Edited) " + newc.chatlinedata;
 						}
 					}
@@ -406,66 +407,7 @@ bot.on("message", (message) => {
 
 		//add new members to member role
 		if (!message.guild.members.get(message.author.id).roles.exists("name", membrolename)) {
-			//console.log(message.guild.roles.find("name", modrolename));
-			connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " AND commandname='automemb'", function(error, enabledforserver) {
-				if (error) {
-					message.channel.sendMessage(message, "Failed.");
-					console.log(error);
-					return;
-				}
-				else {
-					if (typeof enabledforserver[0] !== "object") {
-						if (cha.user.isbot !== "{BOT}") {
-							console.log(colors.red("Automemb not enabled for this server."));
-						}
-					}
-					else {
-
-						if (cha.user.toprole.name !== "Guest" && cha.user.isbot !== "{BOT}") {
-							console.log("User isn't guest?");
-						}
-
-						var botcanassign = false;
-						var bu = cl.getMaxRole(message.guild.members.get(bot.user.id));
-						if (bu.toprole.name === "Guest") {
-							console.log(colors.red("Bot cannot assign (Bot is guest)."));
-						}
-						else {
-
-							if (bu.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
-								if (bu.toprole.position <= cha.user.toprole.position) {
-									botcanassign = false;
-								}
-								else if (bu.toprole.position - 1 === cha.user.toprole.position) {
-									botcanassign = false;
-								}
-								else {
-									botcanassign = true;
-								}
-							}
-							else {
-								botcanassign = false;
-							}
-						}
-						if (botcanassign && cha.user.isbot !== "{BOT}") {
-							message.member.addRole(message.guild.roles.find("name", membrolename));
-							if (message.guild.id === "83078957620002816") {
-								message.reply("Welcome to the discord! You are now a " + membrolename + ". Make sure to read the #rules_and_info channel.");
-							}
-							else {
-								message.reply("Welcome to the discord! You are now a " + membrolename + ".");
-							}
-
-						}
-						else if (cha.user.isbot === "{BOT}") {
-							return;
-						}
-						else {
-							console.log(colors.red("Bot does not have permission to assign " + membrolename + "."));
-						}
-					}
-				}
-			});
+			guests.addGuestToMemb(connection, message, cha, bot);
 		}
 
 
