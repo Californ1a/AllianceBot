@@ -33,7 +33,7 @@ var recombineQuote = function(results) {
     }
   }
   return recombined;
-}
+};
 
 var addQuote = function(message, results, rw, prefix, c) {
   var recombined = "";
