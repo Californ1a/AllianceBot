@@ -1,6 +1,5 @@
 var colors = require("colors");
 var cl = require("./chatinfo.js");
-var recombined = "";
 var i = 0;
 var qu = "";
 var info = "";
@@ -22,20 +21,26 @@ var randomQuote = function(message, rw, c) {
   });
 };
 
+var recombineQuote = function(results) {
+  var recombined = "";
+  i = 0;
+  for (i; i < results.length-2; i++) {
+    if (i !== results.length-3) {
+      recombined += results[i+2] + " ";
+    }
+    else {
+      recombined += results[i+2];
+    }
+  }
+  return recombined;
+}
+
 var addQuote = function(message, results, rw, prefix, c) {
-  recombined = "";
+  var recombined = "";
   info = "";
   if (results.length >= 3) {
     //console.log(results.length);
-    i = 0;
-    for (i; i < results.length-2; i++) {
-      if (i !== results.length-3) {
-        recombined += results[i+2] + " ";
-      }
-      else {
-        recombined += results[i+2];
-      }
-    }
+    recombined = recombineQuote(results);
     console.log(colors.red("Trying to insert " + rw + " message '" + recombined + "' into database."));
     info = {
       "quote": recombined,
@@ -60,18 +65,10 @@ var addQuote = function(message, results, rw, prefix, c) {
 };
 
 var delQuote = function(message, results, rw, prefix, c) {
+  var recombined = "";
   if (results.length >= 3) {
-    recombined = "";
     //console.log(results.length);
-    i = 0;
-    for (i; i < results.length-2; i++) {
-      if (i !== results.length-3) {
-        recombined += results[i+2] + " ";
-      }
-      else {
-        recombined += results[i+2];
-      }
-    }
+    recombined = recombineQuote(results);
     console.log(colors.red("Attempting to remove " + rw + " message '" + recombined + "' from the database."));
     c.query("DELETE FROM " + rw + " WHERE quote = '" + recombined + "' AND server_id=" + message.guild.id, function(error) {
       if (error) {
@@ -158,13 +155,13 @@ var ripWin = function(message, prefix, modrolename, connection, ripwin) {
     addQuote(message, results, ripwin, prefix, connection);
   }
   else if (results[1] === "add") { //non-moderator
-    message.member.reply(message, "You do not have permission to add new " + ripwin + " quotes.");
+    message.reply("You do not have permission to add new " + ripwin + " quotes.");
   }
   else if (results[1] === "del" && message.member.roles.exists("name", modrolename)) {
     delQuote(message, results, ripwin, prefix, connection);
   }
   else if (results[1] === "del") { //non-moderator
-    message.member.reply(message, "You do not have permission to remove " + ripwin + " quotes.");
+    message.reply("You do not have permission to remove " + ripwin + " quotes.");
   }
   else if (results[1] === "help") {
     helpText(message, prefix, ripwin, modrolename);
