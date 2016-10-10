@@ -1,7 +1,7 @@
 var prefix = require("../config/options.json").prefix;
 var cmds = require("./commands.js");
 
-var checkForCommands = function(message, results, connection) {
+var checkForCommands = function(message, results, connection, http, bot) {
 	if (message.content.startsWith(prefix + "addcomtoserv")) {
 		cmds.addcomtoserv(message, results, connection);
 	}

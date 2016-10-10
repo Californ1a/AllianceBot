@@ -440,7 +440,7 @@ bot.on("message", (message) => {
 
 
 			if(!messagesent) {
-				checkCmds.checkForCommands(message, results, connection);
+				checkCmds.checkForCommands(message, results, connection, http, bot);
 			}
 		}
 
