@@ -1,6 +1,6 @@
 // <editor-fold desc='requirements'>
 var Discord = require("discord.js"); //requirements
-var mysql = require("mysql"); //requirements
+//var mysql = require("mysql"); //requirements
 var colors = require("colors"); //requirements
 var jsondata = require("./config/options.json"); //local options
 var http = require("http"); //requirements
@@ -8,7 +8,6 @@ var fs = require("fs-extra"); //requirements
 var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
 var util = require("util"); //requirements
-var MySQLConnectionManager = require("mysql-connection-manager"); //requirements
 var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
 var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
@@ -21,6 +20,7 @@ var commandList = require("./config/commands.json"); //local json
 var md = require("./modules/messagedate.js"); //local js
 var cl = require("./modules/chatinfo.js"); //local js
 var cmds = require("./modules/commands.js"); //local js
+var connection = require("./modules/mysqlmanager.js"); //local js
 // </editor-fold>
 
 
@@ -122,40 +122,32 @@ stream.on("error", function(error) {
 // </editor-fold>
 
 
-// <editor-fold desc='mysql database connect'>
-//connect to mysql server
-connection = mysql.createConnection(sqlconfig);
-var manager = new MySQLConnectionManager(sqlconfig, connection);
-connection.connect();
-// </editor-fold>
-
-
-// <editor-fold desc='mysql error'>
-connection.on("error", function(error) {
-	console.log("MySQL error: \r\n" + error);
-});
-// </editor-fold>
-
-
-// <editor-fold desc='mysql manager connect'>
-manager.on("connect", function(connection) {
-	console.info(colors.red("MySQL connected."));
-});
-// </editor-fold>
-
-
-// <editor-fold desc='mysql manager connect'>
-manager.on("reconnect", function(connection) {
-	console.log(colors.red("MySQL reconnected."));
-});
-// </editor-fold>
-
-
-// <editor-fold desc='mysql manager connect'>
-manager.on("disconnect", function() {
-	console.log("MySQL disconnected.");
-});
-// </editor-fold>
+// // <editor-fold desc='mysql error'>
+// connection.on("error", function(error) {
+// 	console.log("MySQL error: \r\n" + error);
+// });
+// // </editor-fold>
+//
+//
+// // <editor-fold desc='mysql manager connect'>
+// connection.on("connect", function(connection) {
+// 	console.info(colors.red("MySQL connected."));
+// });
+// // </editor-fold>
+//
+//
+// // <editor-fold desc='mysql manager connect'>
+// connection.on("reconnect", function(connection) {
+// 	console.log(colors.red("MySQL reconnected."));
+// });
+// // </editor-fold>
+//
+//
+// // <editor-fold desc='mysql manager connect'>
+// connection.on("disconnect", function() {
+// 	console.log("MySQL disconnected.");
+// });
+// // </editor-fold>
 
 
 // <editor-fold desc='server unavailable'>
@@ -300,7 +292,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 							console.log(error);
 						}
 						else {
-							console.log(colors.white.dim("Edited --> " + newc.consoleChat));
+							//console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 						}
 					});
 				}

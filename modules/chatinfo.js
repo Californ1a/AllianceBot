@@ -44,7 +44,7 @@ var getMaxRole = function(user) {
 
 var formatChatlog = function(message) {
 	var messageTime = md.messageDate(message);
-	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1");
+	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm," ");
 	var user = getMaxRole(message.guild.members.get(message.author.id));
 	var chatlog = logLocation + message.guild.name + "/#" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".log";
 	var fullLog = logLocation + message.guild.name + "/full_logs/#" + message.channel.name + ".log";
@@ -52,7 +52,7 @@ var formatChatlog = function(message) {
 	var consoleChat = messageTime.hour + ":" + messageTime.minute + " " + messageTime.ampm + " [" + message.guild.name + "/#" + message.channel.name + "] " + user.isbot + "(" + user.toprole.name + ")";
 	var att = [];
 	var formattedAtturls = "";
-	fs.mkdirsSync(logLocation + message.guild.name + "/" + message.channel.name + "/" + messageTime.year, function(error) {
+	fs.mkdirsSync(logLocation + message.guild.name + "/#" + message.channel.name + "/" + messageTime.year, function(error) {
 		if (error) {
 			console.log(error);
 			return;
