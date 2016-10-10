@@ -44,7 +44,7 @@ var eventName = null;
 var quotespm = "";
 var quotespm2 = "";
 var info = "";
-var connection;
+//var connection;
 // </editor-fold>
 
 
