@@ -238,6 +238,8 @@ var test = function(message, results, connection) {
   hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
     if (response && !hardCode[ref].onCooldown) {
       console.log("test");
+      var emoji = message.guild.emojis.find("name", "torcht");
+      message.channel.sendMessage(emoji);
     }
   }).catch ((error) => console.error(error));
 };

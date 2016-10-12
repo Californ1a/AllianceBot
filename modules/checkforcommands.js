@@ -15,7 +15,7 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		cmds.delcom(message, results, connection);
 	}
 	else if (message.content.startsWith(prefix + "test")) {
-		cmds.test(message);
+		cmds.test(message, results, connection);
 	}
 	else if (message.content.startsWith(prefix + "dist")) {
 		cmds.dist(message, results, connection, http);
