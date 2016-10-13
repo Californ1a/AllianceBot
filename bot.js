@@ -77,19 +77,19 @@ stream.on("tweet", function (tweet) {
 		else {
 			text += "\r" + tweet.text;
 		}
-		if (tweet.entities.media) {
-			text += "\r" + tweet.entities.media[0].media_url;
-		}
-		if (tweet.extended_tweet) {
-			if (tweet.extended_tweet.entities.media) {
-				text += "\r" + tweet.extended_tweet.entities.media[0].media_url;
-			}
-		}
-		if (tweet.entities.urls[0]) {
-			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
-				text += "\r" + tweet.entities.urls[0].expanded_url;
-			}
-		}
+		// if (tweet.entities.media) {
+		// 	text += "\r" + tweet.entities.media[0].media_url;
+		// }
+		// if (tweet.extended_tweet) {
+		// 	if (tweet.extended_tweet.entities.media) {
+		// 		text += "\r" + tweet.extended_tweet.entities.media[0].media_url;
+		// 	}
+		// }
+		// if (tweet.entities.urls[0]) {
+		// 	if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
+		// 		text += "\r" + tweet.entities.urls[0].expanded_url;
+		// 	}
+		// }
 		bot.channels.get("83078957620002816").sendMessage(text); //channelid, write message with link to tweet
 		//bot.channels.get("211599888222257152").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
 	}
