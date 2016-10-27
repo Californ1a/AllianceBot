@@ -2,7 +2,10 @@ var ampm = "AM";
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
 var messageDate = function messageDate (message) {
-	var d = message.timestamp;
+	var d = message.createdAt;
+
+	//console.log(d);
+
 	var hournow = d.getHours();
 	ampm = "AM";
 	if (hournow === 0) {
