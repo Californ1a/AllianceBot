@@ -299,7 +299,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 // <editor-fold desc='when server user updates'>
 bot.on("guildMemberUpdate", (oldMember, newMember) => {
 	if (cl.getDisplayName(oldMember) !== cl.getDisplayName(newMember) && !newMember.user.bot) {
-		cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(oldMember) + " is now known as " + getDisplayName(newMember));
+		cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(oldMember) + " is now known as " + cl.getDisplayName(newMember));
 	}
 });
 // </editor-fold>
