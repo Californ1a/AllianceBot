@@ -2,7 +2,45 @@ var md = require("./messagedate.js");
 var fs = require("fs-extra");
 var logLocation = require("../config/options.json").logLocation;
 var prefix = require("../config/options.json").prefix;
+var colors = require("colors");
 var i = 0;
+
+var writeLineToAllLogs = function(bot, guild, line) {
+	var guildChannels = guild.channels.array();
+	var currentDate = new Date();
+	var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+	var currentYear = currentDate.getFullYear();
+	var currentMonth = monthNames[currentDate.getMonth()];
+	i = 0;
+	for(i; i < guildChannels.length; i++) {
+		//fs.appendFile("channelperms.json", util.inspect(guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).serialize()) + "\r\n\r\n");
+		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
+			fs.appendFile(logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + line + "\r\n", function(error) {
+				if (error) {
+					console.log(error);
+				}
+			});
+			fs.appendFile(logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + line + "\r\n", function(error) {
+				if (error) {
+					console.log(error);
+				}
+				else {
+					//console.log(colors.white.dim("* " + line));
+				}
+			});
+		}
+	}
+	console.log(colors.white.dim("* " + line + " on the '" + guild.name + "' server."));
+};
+
+var getDisplayName = function(guildMember) {
+	if (guildMember.nickname) {
+		return guildMember.nickname;
+	}
+	else {
+		return guildMember.user.username;
+	}
+};
 
 var getMaxRole = function(user) {
 	var nick = null;
@@ -130,5 +168,7 @@ module.exports = {
   formatChatlog,
   getMaxRole,
   escapeChars,
-	getComRef
+	getComRef,
+	writeLineToAllLogs,
+	getDisplayName
 };

@@ -223,22 +223,15 @@ bot.on("guildDelete", (guild) => {
 });
 // </editor-fold>
 
-var somenum = 0
 
 // <editor-fold desc='member changes status'>
 bot.on("presenceUpdate", (oldMember, newMember) => {
 	if (!newMember.user.bot) {
 		if (oldMember.presence.status === "offline" && newMember.presence.status !== "offline") {
-			writeLineToAllLogs(newMember.guild, getDisplayName(newMember) + " has come online");
-			// if (somenum < 2) {
-			// 	console.log("Wrote presence");
-			// 	fs.appendFile("presence.json", getDisplayName(newMember) + " " + util.inspect(oldMember.presence) + "\r\n\r\n");
-			// 	fs.appendFile("presence.json", getDisplayName(newMember) + " " + util.inspect(newMember.presence) + "\r\n\r\n");
-			// 	somenum += 1;
-			// }
+			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " has come online");
 		}
 		else if (oldMember.presence.status !== "offline" && newMember.presence.status === "offline") {
-			writeLineToAllLogs(newMember.guild, getDisplayName(newMember) + " went offline");
+			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " went offline");
 		}
 	}
 });
@@ -305,8 +298,8 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 // <editor-fold desc='when server user updates'>
 bot.on("guildMemberUpdate", (oldMember, newMember) => {
-	if (getDisplayName(oldMember) !== getDisplayName(newMember) && !newMember.user.bot) {
-		writeLineToAllLogs(newMember.guild, getDisplayName(oldMember) + " is now known as " + getDisplayName(newMember));
+	if (cl.getDisplayName(oldMember) !== cl.getDisplayName(newMember) && !newMember.user.bot) {
+		cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(oldMember) + " is now known as " + getDisplayName(newMember));
 	}
 });
 // </editor-fold>
@@ -430,40 +423,3 @@ bot.on("debug", (e) => {
 
 //discord login
 bot.login(token);
-
-var writeLineToAllLogs = function(guild, line) {
-	var guildChannels = guild.channels.array();
-	var currentDate = new Date();
-	var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-	var currentYear = currentDate.getFullYear();
-	var currentMonth = monthNames[currentDate.getMonth()];
-	i = 0;
-	for(i; i < guildChannels.length; i++) {
-		//fs.appendFile("channelperms.json", util.inspect(guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).serialize()) + "\r\n\r\n");
-		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
-			fs.appendFile(jsondata.logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + line + "\r\n", function(error) {
-				if (error) {
-					console.log(error);
-				}
-			});
-			fs.appendFile(jsondata.logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + line + "\r\n", function(error) {
-				if (error) {
-					console.log(error);
-				}
-				else {
-					//console.log(colors.white.dim("* " + line));
-				}
-			});
-		}
-	}
-	console.log(colors.white.dim("* " + line + " on the '" + guild.name + "' server."));
-};
-
-var getDisplayName = function(guildMember) {
-	if (guildMember.nickname) {
-		return guildMember.nickname;
-	}
-	else {
-		return guildMember.user.username;
-	}
-};
