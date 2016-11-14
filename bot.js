@@ -1,15 +1,15 @@
 // <editor-fold desc='requirements'>
-var Discord = require("discord.js"); //requirements
+const Discord = require("discord.js"); //requirements
 //var mysql = require("mysql"); //requirements
-var colors = require("colors"); //requirements
-var jsondata = require("./config/options.json"); //local options
-var http = require("http"); //requirements
-var fs = require("fs-extra"); //requirements
+const colors = require("colors"); //requirements
+const jsondata = require("./config/options.json"); //local options
+const http = require("http"); //requirements
+const fs = require("fs-extra"); //requirements
 //var parseString = require("xml2js").parseString; //requirements
-var Twit = require("twit"); //requirements
+const Twit = require("twit"); //requirements
 //var util = require("util"); //requirements
-var token = require("./config/logins/discordtoken.json").token;
-var twitconfig = require("./config/logins/twitconfig.js"); //local js
+const token = require("./config/logins/discordtoken.json").token;
+const twitconfig = require("./config/logins/twitconfig.js"); //local js
 //var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
 //var RipWin = require("./modules/RipWin.js"); //local js
 //var sdr = require("./modules/setdelrole.js"); //local js
@@ -18,27 +18,27 @@ var twitconfig = require("./config/logins/twitconfig.js"); //local js
 //var Command = require("./modules/command.js"); //local js
 //var commandList = require("./config/commands.json"); //local json
 //var md = require("./modules/messagedate.js"); //local js
-var cl = require("./modules/chatinfo.js"); //local js
+const cl = require("./modules/chatinfo.js"); //local js
 //var cmds = require("./modules/commands.js"); //local js
-var connection = require("./modules/mysqlmanager.js"); //local js
-var guests = require("./modules/guestToMemb.js"); //local js
-var checkCmds = require("./modules/checkforcommands.js");
+const connection = require("./modules/mysqlmanager.js"); //local js
+const guests = require("./modules/guestToMemb.js"); //local js
+const checkCmds = require("./modules/checkforcommands.js");
 // </editor-fold>
 
 
 // <editor-fold desc='variables'>
-var T = new Twit(twitconfig); //new twitter object
-var bot = new Discord.Client(); //create bot
-var prefix = jsondata.prefix;
-var modrolename = jsondata.modrolename;
-var membrolename = jsondata.membrolename;
+const T = new Twit(twitconfig); //new twitter object
+const bot = new Discord.Client(); //create bot
+const prefix = jsondata.prefix;
+const modrolename = jsondata.modrolename;
+const membrolename = jsondata.membrolename;
 //var botowner = jsondata.botownerid;
 //var currentss = 0;
 //var ripwin = null;
 //var commandname = "";
 //var isit = false;
 //var cooldown = false;
-var stream = T.stream("statuses/filter", {
+const stream = T.stream("statuses/filter", {
 	follow: ["628034104", "241371699"]
 }); //create tweet filter, first two are refract and torcht, any others for testing
 var tweetcount = 0;
@@ -47,7 +47,7 @@ var i = 0;
 //var eventName = null;
 //var quotespm = "";
 //var quotespm2 = "";
-var info = "";
+//var info = "";
 //var connection;
 // </editor-fold>
 
@@ -168,7 +168,7 @@ bot.on("disconnect", () => {
 //add new servers to mysql database when bot added to new server
 bot.on("guildCreate", (guild) => {
 	console.log(colors.red("Trying to insert server '" + guild.name + "' into database."));
-	info = {
+	var info = {
 		"servername": "'" + guild.name + "'",
 		"serverid": guild.id,
 		"ownerid": guild.owner.id,
@@ -325,6 +325,7 @@ bot.on("message", (message) => {
 			}
 		});
 
+		if (message.author.bot) return; //no reply to bots below this line
 
 		//add new members to member role
 		if (!message.guild.members.get(message.author.id).roles.exists("name", membrolename)) {

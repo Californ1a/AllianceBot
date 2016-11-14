@@ -1,7 +1,7 @@
-var mysql = require("mysql");
-var sqlconfig = require("../config/logins/sqlconfig.js");
+const mysql = require("mysql");
+const sqlconfig = require("../config/logins/sqlconfig.js");
 
-var pool = mysql.createPool(sqlconfig);
+const pool = mysql.createPool(sqlconfig);
 
 module.exports = {
 	query() {

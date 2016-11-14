@@ -1,4 +1,4 @@
-var colors = require("colors");
+const colors = require("colors");
 
 var commandCount = 0;
 

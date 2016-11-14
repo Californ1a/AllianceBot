@@ -60,6 +60,10 @@
     "timeout": 5000
   },
   {
+    "name": "uptime",
+    "timeout": 5000
+  },
+  {
     "name": "automemb",
     "timeout": 0
   }

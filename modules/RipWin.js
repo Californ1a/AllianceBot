@@ -1,5 +1,5 @@
-var colors = require("colors");
-var cl = require("./chatinfo.js");
+const colors = require("colors");
+const cl = require("./chatinfo.js");
 var i = 0;
 var qu = "";
 var info = "";

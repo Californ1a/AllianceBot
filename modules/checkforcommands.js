@@ -1,5 +1,5 @@
-var prefix = require("../config/options.json").prefix;
-var cmds = require("./commands.js");
+const prefix = require("../config/options.json").prefix;
+const cmds = require("./commands.js");
 
 var checkForCommands = function(message, results, connection, http, bot) {
 	if (message.content.startsWith(prefix + "addcomtoserv")) {
@@ -28,6 +28,8 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		cmds.role(bot, message, results, connection);
 	} else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip") || message.content.startsWith(prefix + "tf")) {
 		cmds.ripwin(message, results, connection);
+	} else if (message.content.startsWith(prefix + "uptime")) {
+		cmds.uptime(message, results, connection);
 	}
 };
 

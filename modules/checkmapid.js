@@ -1,5 +1,5 @@
-//var colors = require("colors");
-var jsondata = require("../config/options.json");
+//const colors = require("colors");
+const jsondata = require("../config/options.json");
 var i = 0;
 
 var getMapID = function(results, mapname) {

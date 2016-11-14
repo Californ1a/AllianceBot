@@ -1,4 +1,4 @@
-var moment = require("moment"); //requirements
+const moment = require("moment"); //requirements
 
 var getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
 

@@ -1,18 +1,18 @@
-var colors = require("colors");
-var http = require("http");
-var parseString = require("xml2js").parseString;
-var jsondata = require("../config/options.json");
-var prefix = jsondata.prefix;
-var modrolename = jsondata.modrolename;
-var membrolename = jsondata.membrolename;
-var botowner = jsondata.botownerid;
-var commandList = require("../config/commands.json");
-var Command = require("./command.js");
-var cl = require("./chatinfo.js");
-var timers = require("./timers.js");
-var sdr = require("./setdelrole.js");
-var rw = require("./RipWin.js");
-var CheckMapID = require("./checkmapid.js");
+const colors = require("colors");
+const http = require("http");
+const parseString = require("xml2js").parseString;
+const jsondata = require("../config/options.json");
+const prefix = jsondata.prefix;
+const modrolename = jsondata.modrolename;
+const membrolename = jsondata.membrolename;
+const botowner = jsondata.botownerid;
+const commandList = require("../config/commands.json");
+const Command = require("./command.js");
+const cl = require("./chatinfo.js");
+const timers = require("./timers.js");
+const sdr = require("./setdelrole.js");
+const rw = require("./RipWin.js");
+const CheckMapID = require("./checkmapid.js");
 var info;
 var currentss;
 
@@ -22,6 +22,7 @@ for (i; i < commandList.length; i++) {
 	hardCode[i] = new Command(commandList[i]);
 }
 var ref;
+//console.log(hardCode);
 
 
 var addcomtoserv = function(message, results, connection) {
@@ -38,7 +39,7 @@ var addcomtoserv = function(message, results, connection) {
 						var iscommand = false;
 						i = 0;
 						for (i; i < hardCode.length; i++) {
-							if (hardCode[ref].name === results[1]) {
+							if (hardCode[i].name === results[1]) {
 								iscommand = true;
 							}
 						}
@@ -209,9 +210,8 @@ var test = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if (response && !hardCode[ref].onCooldown) {
-			console.log("test");
-			var emoji = message.guild.emojis.find("name", "torcht");
-			message.channel.sendMessage(emoji);
+			var uptime = process.uptime();
+			console.log(cl.formatUptime(uptime));
 		}
 	}).catch((error) => console.error(error));
 };
@@ -567,6 +567,17 @@ var ripwin = function(message, results, connection) {
 	}).catch((error) => console.error(error));
 };
 
+var uptime = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			var uptime = process.uptime();
+			message.channel.sendMessage(cl.formatUptime(uptime));
+			hardCode[ref].timeout();
+		}
+	}).catch((error) => console.error(error));
+};
+
 module.exports = {
 	addcomtoserv,
 	remcomfromserv,
@@ -580,5 +591,6 @@ module.exports = {
 	speedy,
 	help,
 	role,
-	ripwin
+	ripwin,
+	uptime
 };

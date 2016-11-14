@@ -1,4 +1,4 @@
-var cl = require("./chatinfo.js");
+const cl = require("./chatinfo.js");
 
 var canUserAndBotAssign = function(assigner, assignee, buer) {
 	if (assigner.toprole.name !== "Guest" && buer.toprole.name !== "Guest" && assigner.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && buer.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && assigner.toprole.position > assignee.toprole.position && buer.toprole.position > assignee.toprole.position) {

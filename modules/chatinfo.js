@@ -1,9 +1,33 @@
-var md = require("./messagedate.js");
-var fs = require("fs-extra");
-var logLocation = require("../config/options.json").logLocation;
-var prefix = require("../config/options.json").prefix;
-var colors = require("colors");
+const md = require("./messagedate.js");
+const fs = require("fs-extra");
+const logLocation = require("../config/options.json").logLocation;
+const prefix = require("../config/options.json").prefix;
+const colors = require("colors");
 var i = 0;
+
+function formatUptime(seconds) {
+	var out = "Bot uptime: ";
+	// function pad(s) {
+	// 	return (s < 10 ? "0" : "") + s;
+	// }
+	var days = Math.floor(seconds / (60 * 60 * 24));
+	var hours = Math.floor(seconds / (60 * 60));
+	var minutes = Math.floor(seconds % (60 * 60) / 60);
+	seconds = Math.floor(seconds % 60);
+
+	if (days !== 0) {
+		out += days + " day" + ((days !== 1) ? "s" : "") + ", ";
+	}
+	if (days !== 0 || hours !== 0) {
+		out += hours + " hour" + ((hours !== 1) ? "s" : "") + ", ";
+	}
+	if (days !== 0 || hours !== 0 || minutes !== 0) {
+		out += minutes + " minute" + ((minutes !== 1) ? "s" : "") + ", ";
+	}
+	out += seconds + " seconds";
+	return out;
+
+}
 
 var writeLineToAllLogs = function(bot, guild, line) {
 	var guildChannels = guild.channels.array();
@@ -161,5 +185,6 @@ module.exports = {
 	escapeChars,
 	getComRef,
 	writeLineToAllLogs,
-	getDisplayName
+	getDisplayName,
+	formatUptime
 };

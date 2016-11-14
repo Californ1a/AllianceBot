@@ -1,6 +1,6 @@
-var colors = require("colors");
-var cl = require("./chatinfo.js");
-var membrolename = require("../config/options.json").membrolename;
+const colors = require("colors");
+const cl = require("./chatinfo.js");
+const membrolename = require("../config/options.json").membrolename;
 
 var addGuestToMemb = function(connection, message, cha, bot) {
 	//console.log(message.guild.roles.find("name", modrolename));
