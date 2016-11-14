@@ -5,19 +5,19 @@ var colors = require("colors"); //requirements
 var jsondata = require("./config/options.json"); //local options
 var http = require("http"); //requirements
 var fs = require("fs-extra"); //requirements
-var parseString = require("xml2js").parseString; //requirements
+//var parseString = require("xml2js").parseString; //requirements
 var Twit = require("twit"); //requirements
-var util = require("util"); //requirements
+//var util = require("util"); //requirements
 var token = require("./config/logins/discordtoken.json").token;
 var twitconfig = require("./config/logins/twitconfig.js"); //local js
-var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
-var RipWin = require("./modules/RipWin.js"); //local js
-var sdr = require("./modules/setdelrole.js"); //local js
-var CheckMapID = require("./modules/checkmapid.js"); //local js
-var timers = require("./modules/timers.js"); //local js
-var Command = require("./modules/command.js"); //local js
-var commandList = require("./config/commands.json"); //local json
-var md = require("./modules/messagedate.js"); //local js
+//var sqlconfig = require("./config/logins/sqlconfig.js"); //local js
+//var RipWin = require("./modules/RipWin.js"); //local js
+//var sdr = require("./modules/setdelrole.js"); //local js
+//var CheckMapID = require("./modules/checkmapid.js"); //local js
+//var timers = require("./modules/timers.js"); //local js
+//var Command = require("./modules/command.js"); //local js
+//var commandList = require("./config/commands.json"); //local json
+//var md = require("./modules/messagedate.js"); //local js
 var cl = require("./modules/chatinfo.js"); //local js
 //var cmds = require("./modules/commands.js"); //local js
 var connection = require("./modules/mysqlmanager.js"); //local js
@@ -32,19 +32,21 @@ var bot = new Discord.Client(); //create bot
 var prefix = jsondata.prefix;
 var modrolename = jsondata.modrolename;
 var membrolename = jsondata.membrolename;
-var botowner = jsondata.botownerid;
-var currentss = 0;
-var ripwin = null;
-var commandname = "";
-var isit = false;
-var cooldown = false;
-var stream = T.stream("statuses/filter", { follow: ["628034104", "241371699"]}); //create tweet filter, first two are refract and torcht, any others for testing
+//var botowner = jsondata.botownerid;
+//var currentss = 0;
+//var ripwin = null;
+//var commandname = "";
+//var isit = false;
+//var cooldown = false;
+var stream = T.stream("statuses/filter", {
+	follow: ["628034104", "241371699"]
+}); //create tweet filter, first two are refract and torcht, any others for testing
 var tweetcount = 0;
 var i = 0;
-var eventDate = null;
-var eventName = null;
-var quotespm = "";
-var quotespm2 = "";
+//var eventDate = null;
+//var eventName = null;
+//var quotespm = "";
+//var quotespm2 = "";
 var info = "";
 //var connection;
 // </editor-fold>
@@ -52,20 +54,19 @@ var info = "";
 
 // <editor-fold desc='twitter stream'>
 //on new tweet matching filter
-stream.on("tweet", function (tweet) {
+stream.on("tweet", function(tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
 	var text = emoji + " <https://twitter.com/" + tweetuser + "/status/" + tweetid + ">";
 	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
-		var tweetjson = JSON.stringify(tweet,null,2);
+		var tweetjson = JSON.stringify(tweet, null, 2);
 		//fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
 		if (tweetcount < 4) {
 			tweetcount += 1;
 			fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		}
-		else {
+		} else {
 			fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
 			tweetcount = 0;
 		}
@@ -73,8 +74,7 @@ stream.on("tweet", function (tweet) {
 			if (tweet.extended_tweet.full_text) {
 				text += "\r" + tweet.extended_tweet.full_text;
 			}
-		}
-		else {
+		} else {
 			text += "\r" + tweet.text;
 		}
 		// if (tweet.entities.media) {
@@ -106,14 +106,14 @@ stream.on("disconnect", function(disconnectMessage) {
 
 // <editor-fold desc='twitter API connection attempt'>
 stream.on("connect", function(request) {
-	console.log(colors.red("Twitter stream connection attempt."));
+	console.log(colors.red("Twitter stream connection attempt: " + request));
 });
 // </editor-fold>
 
 
 // <editor-fold desc='twitter API connected'>
 stream.on("connected", function(response) {
-	console.log(colors.red("Twitter stream connected."));
+	console.log(colors.red("Twitter stream connected: " + response));
 });
 // </editor-fold>
 
@@ -178,8 +178,7 @@ bot.on("guildCreate", (guild) => {
 		if (error) {
 			console.log(error);
 			return;
-		}
-		else {
+		} else {
 			console.log(colors.red("Successfully inserted server."));
 		}
 	});
@@ -188,8 +187,7 @@ bot.on("guildCreate", (guild) => {
 		if (error) {
 			console.log(error);
 			return;
-		}
-		else {
+		} else {
 			console.log(colors.red("Successfully inserted win quotes."));
 		}
 	});
@@ -198,8 +196,7 @@ bot.on("guildCreate", (guild) => {
 		if (error) {
 			console.log(error);
 			return;
-		}
-		else {
+		} else {
 			console.log(colors.red("Successfully inserted win quotes."));
 		}
 	});
@@ -229,11 +226,17 @@ bot.on("presenceUpdate", (oldMember, newMember) => {
 	if (!newMember.user.bot) {
 		if (oldMember.presence.status === "offline" && newMember.presence.status !== "offline") {
 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " has come online");
-		}
-		else if (oldMember.presence.status !== "offline" && newMember.presence.status === "offline") {
+		} else if (oldMember.presence.status !== "offline" && newMember.presence.status === "offline") {
 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " went offline");
 		}
 	}
+});
+// </editor-fold>
+
+
+// <editor-fold desc='on message delete'>
+bot.on("messageDelete", (message) => {
+	console.log("Message deleted: " + message.content);
 });
 // </editor-fold>
 
@@ -249,11 +252,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 			fs.readFile(oldc.currentLog, function(error, data) {
 				if (error) {
 					console.log(error);
-				}
-				else {
+				} else {
 					var array = data.toString().split("\r\n");
 					i = 0;
-					for(i; i < array.length; i++) {
+					for (i; i < array.length; i++) {
 						if (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata) {
 							array[i] = "(Edited) " + newc.chatlinedata;
 						}
@@ -261,8 +263,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
 						if (error) {
 							console.log(error);
-						}
-						else {
+						} else {
 							console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 						}
 					});
@@ -271,11 +272,10 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 			fs.readFile(oldc.fullLog, function(error, data) {
 				if (error) {
 					console.log(error);
-				}
-				else {
+				} else {
 					var array = data.toString().split("\r\n");
 					i = 0;
-					for(i; i < array.length; i++) {
+					for (i; i < array.length; i++) {
 						if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
 							array[i] = "(Edited) " + newc.chatlinedata;
 						}
@@ -283,8 +283,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					fs.writeFile(oldc.fullLog, array.join("\r\n"), function(error) {
 						if (error) {
 							console.log(error);
-						}
-						else {
+						} else {
 							//console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 						}
 					});
@@ -315,8 +314,7 @@ bot.on("message", (message) => {
 			if (error) {
 				console.log(message.content);
 				console.log(error);
-			}
-			else {
+			} else {
 				console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 			}
 		});
@@ -350,33 +348,28 @@ bot.on("message", (message) => {
 				if (error) {
 					console.log(error);
 					return;
-				}
-				else {
+				} else {
 					//console.log(typeof returntext[0]);
 					if (typeof returntext[0] === "object") {
 						if (returntext[0].modonly === "true" && message.member.roles.exists("name", modrolename)) {
 							var strs = returntext[0].comtext;
-							results = strs.slice(1,strs.length-1);
+							results = strs.slice(1, strs.length - 1);
 							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
-							}
-							else if (returntext[0].inpm === "false") {
+							} else if (returntext[0].inpm === "false") {
 								message.channel.sendMessage(message, results);
 							}
 							messagesent = true;
-						}
-						else if (returntext[0].modonly === "false") {
+						} else if (returntext[0].modonly === "false") {
 							var stre = returntext[0].comtext;
-							results = stre.slice(1,stre.length-1);
+							results = stre.slice(1, stre.length - 1);
 							if (returntext[0].inpm === "true") {
 								message.author.sendMessage(results);
-							}
-							else if (returntext[0].inpm === "false") {
+							} else if (returntext[0].inpm === "false") {
 								message.channel.sendMessage(results);
 							}
 							messagesent = true;
-						}
-						else {
+						} else {
 							message.channel.sendMessage("This is a " + modrolename + "-only command.");
 						}
 					}
@@ -389,16 +382,14 @@ bot.on("message", (message) => {
 
 
 
-			if(!messagesent) {
+			if (!messagesent) {
 				checkCmds.checkForCommands(message, results, connection, http, bot);
 			}
 		}
 
 		//-----------------------------------------------
 
-	}
-
-	else { //pm messages
+	} else { //pm messages
 		console.log(colors.grey("(Private) " + message.author.username + ": " + message.cleanContent));
 		if (message.content.startsWith(prefix)) {
 			message.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use `" + prefix + "cmds` within that server.");
@@ -410,8 +401,12 @@ bot.on("message", (message) => {
 
 
 //catch errors
-bot.on("error", (e) => { console.error(colors.green(e)); });
-bot.on("warn", (e) => { console.warn(colors.blue(e)); });
+bot.on("error", (e) => {
+	console.error(colors.green(e));
+});
+bot.on("warn", (e) => {
+	console.warn(colors.blue(e));
+});
 bot.on("debug", (e) => {
 	if (!e.toLowerCase().includes("heartbeat")) { //suppress heartbeat messages
 		console.info(colors.yellow(e));

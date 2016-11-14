@@ -1,7 +1,7 @@
 var ampm = "AM";
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-var messageDate = function messageDate (message) {
+var messageDate = function messageDate(message) {
 	var d = message.createdAt;
 
 	//console.log(d);
@@ -11,8 +11,7 @@ var messageDate = function messageDate (message) {
 	if (hournow === 0) {
 		hournow = 12;
 		ampm = "AM";
-	}
-	else if (hournow >= 13) {
+	} else if (hournow >= 13) {
 		hournow -= 12;
 		ampm = "PM";
 	}
@@ -42,5 +41,5 @@ var messageDate = function messageDate (message) {
 };
 
 module.exports = {
-  messageDate
+	messageDate
 };

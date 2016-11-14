@@ -9,14 +9,12 @@ var addGuestToMemb = function(connection, message, cha, bot) {
 			message.channel.sendMessage(message, "Failed.");
 			console.log(error);
 			return;
-		}
-		else {
+		} else {
 			if (typeof enabledforserver[0] !== "object") {
 				if (cha.user.isbot !== "{BOT}") {
 					console.log(colors.red("Automemb not enabled for this server."));
 				}
-			}
-			else {
+			} else {
 
 				if (cha.user.toprole.name !== "Guest" && cha.user.isbot !== "{BOT}") {
 					console.log("User isn't guest?");
@@ -26,21 +24,17 @@ var addGuestToMemb = function(connection, message, cha, bot) {
 				var bu = cl.getMaxRole(message.guild.members.get(bot.user.id));
 				if (bu.toprole.name === "Guest") {
 					console.log(colors.red("Bot cannot assign (Bot is guest)."));
-				}
-				else {
+				} else {
 
 					if (bu.toprole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
 						if (bu.toprole.position <= cha.user.toprole.position) {
 							botcanassign = false;
-						}
-						else if (bu.toprole.position - 1 === cha.user.toprole.position) {
+						} else if (bu.toprole.position - 1 === cha.user.toprole.position) {
 							botcanassign = false;
-						}
-						else {
+						} else {
 							botcanassign = true;
 						}
-					}
-					else {
+					} else {
 						botcanassign = false;
 					}
 				}
@@ -48,16 +42,13 @@ var addGuestToMemb = function(connection, message, cha, bot) {
 					message.member.addRole(message.guild.roles.find("name", membrolename));
 					if (message.guild.id === "83078957620002816") {
 						message.reply("Welcome to the discord! You are now a " + membrolename + ". Make sure to read the #rules_and_info channel.");
-					}
-					else {
+					} else {
 						message.reply("Welcome to the discord! You are now a " + membrolename + ".");
 					}
 
-				}
-				else if (cha.user.isbot === "{BOT}") {
+				} else if (cha.user.isbot === "{BOT}") {
 					return;
-				}
-				else {
+				} else {
 					console.log(colors.red("Bot does not have permission to assign " + membrolename + "."));
 				}
 			}
@@ -66,5 +57,5 @@ var addGuestToMemb = function(connection, message, cha, bot) {
 };
 
 module.exports = {
-  addGuestToMemb
+	addGuestToMemb
 };

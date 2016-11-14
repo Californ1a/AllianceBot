@@ -12,7 +12,7 @@ var writeLineToAllLogs = function(bot, guild, line) {
 	var currentYear = currentDate.getFullYear();
 	var currentMonth = monthNames[currentDate.getMonth()];
 	i = 0;
-	for(i; i < guildChannels.length; i++) {
+	for (i; i < guildChannels.length; i++) {
 		//fs.appendFile("channelperms.json", util.inspect(guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).serialize()) + "\r\n\r\n");
 		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
 			fs.appendFile(logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + line + "\r\n", function(error) {
@@ -23,8 +23,7 @@ var writeLineToAllLogs = function(bot, guild, line) {
 			fs.appendFile(logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + line + "\r\n", function(error) {
 				if (error) {
 					console.log(error);
-				}
-				else {
+				} else {
 					//console.log(colors.white.dim("* " + line));
 				}
 			});
@@ -36,8 +35,7 @@ var writeLineToAllLogs = function(bot, guild, line) {
 var getDisplayName = function(guildMember) {
 	if (guildMember.nickname) {
 		return guildMember.nickname;
-	}
-	else {
+	} else {
 		return guildMember.user.username;
 	}
 };
@@ -49,7 +47,7 @@ var getMaxRole = function(user) {
 	//console.log(user.roles);
 	if (user.roles.size === 1) {
 		//user = "Guest";
-    //console.log(user.roles.find("name","@everyone").position);
+		//console.log(user.roles.find("name","@everyone").position);
 		toprole = {
 			"position": 0,
 			"name": "Guest"
@@ -57,16 +55,15 @@ var getMaxRole = function(user) {
 		if (user.user.bot) {
 			isbot = "{BOT}";
 		}
-	}
-	else {
-    //console.log(user.bot);
+	} else {
+		//console.log(user.bot);
 		if (user.user.bot) {
 			isbot = "{BOT}";
 		}
 		var maxpos = 0;
-    i = 0;
-		for (i; i < user.guild.roles.size+1; i++) {
-			maxpos = user.roles.exists("position",i) && user.roles.find("position",i).position > maxpos ? user.roles.find("position",i).position : maxpos;
+		i = 0;
+		for (i; i < user.guild.roles.size + 1; i++) {
+			maxpos = user.roles.exists("position", i) && user.roles.find("position", i).position > maxpos ? user.roles.find("position", i).position : maxpos;
 		}
 		toprole = user.guild.roles.find("position", maxpos);
 		if (user.nickname) {
@@ -82,7 +79,7 @@ var getMaxRole = function(user) {
 
 var formatChatlog = function(message) {
 	var messageTime = md.messageDate(message);
-	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm," ");
+	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
 	var user = getMaxRole(message.guild.members.get(message.author.id));
 	var chatlog = logLocation + message.guild.name + "/#" + message.channel.name + "/" + messageTime.year + "/" + messageTime.month + ".log";
 	var fullLog = logLocation + message.guild.name + "/full_logs/#" + message.channel.name + ".log";
@@ -96,22 +93,21 @@ var formatChatlog = function(message) {
 			return;
 		}
 	});
-  //console.log(message.member);
+	//console.log(message.member);
 	if (message.member.nickname) {
 		chatlinedata += message.member.nickname + ": " + messageContent;
 		consoleChat += message.member.nickname + ": " + messageContent;
-	}
-	else {
+	} else {
 		chatlinedata += message.author.username + ": " + messageContent;
 		consoleChat += message.author.username + ": " + messageContent;
 	}
 	if (message.attachments.size > 0) {
 		var attc = message.attachments.array();
-    i = 0;
+		i = 0;
 		for (i; i < attc.length; i++) {
 			att.push(attc[i].url);
 		}
-    i = 0;
+		i = 0;
 		for (i; i < att.length; i++) {
 			formattedAtturls += " " + att[i];
 		}
@@ -128,46 +124,41 @@ var formatChatlog = function(message) {
 };
 
 var escapeChars = function(word) {
-  var escapechars = true;
-  var tempWord = word;
-  while (escapechars) {
-    if (tempWord.includes("\'") && !tempWord.includes("\\\'")) {
-      tempWord = tempWord.replace("\'", "\\\'", "g");
-    }
-    else if (tempWord.includes("\"") && !tempWord.includes("\\\"")) {
-      tempWord = tempWord.replace("\"", "\\\"", "g");
-    }
-    else if (tempWord.includes("\\") && !tempWord.includes("\\\\")) {
-      tempWord = tempWord.replace("\\", "\\\\", "g");
-    }
-    else if (tempWord.includes("\%") && !tempWord.includes("\\\%")) {
-      tempWord = tempWord.replace("\%", "\\\%", "g");
-    }
-    else if (tempWord.includes("\_") && !tempWord.includes("\\\_")) {
-      tempWord = tempWord.replace("\_", "\\\_", "g");
-    }
-    else {
-      escapechars = false;
-    }
-  }
-  return tempWord;
+	var escapechars = true;
+	var tempWord = word;
+	while (escapechars) {
+		if (tempWord.includes("\'") && !tempWord.includes("\\\'")) {
+			tempWord = tempWord.replace("\'", "\\\'", "g");
+		} else if (tempWord.includes("\"") && !tempWord.includes("\\\"")) {
+			tempWord = tempWord.replace("\"", "\\\"", "g");
+		} else if (tempWord.includes("\\") && !tempWord.includes("\\\\")) {
+			tempWord = tempWord.replace("\\", "\\\\", "g");
+		} else if (tempWord.includes("\%") && !tempWord.includes("\\\%")) {
+			tempWord = tempWord.replace("\%", "\\\%", "g");
+		} else if (tempWord.includes("\_") && !tempWord.includes("\\\_")) {
+			tempWord = tempWord.replace("\_", "\\\_", "g");
+		} else {
+			escapechars = false;
+		}
+	}
+	return tempWord;
 };
 
 var getComRef = function(hardCode, results) {
 	var ref = 0;
 	i = 0;
-  for (i; i < hardCode.length; i++) {
-    if (hardCode[i].name === results[0].replace(prefix,"")) {
-      ref = i;
-    }
-  }
+	for (i; i < hardCode.length; i++) {
+		if (hardCode[i].name === results[0].replace(prefix, "")) {
+			ref = i;
+		}
+	}
 	return ref;
 };
 
 module.exports = {
-  formatChatlog,
-  getMaxRole,
-  escapeChars,
+	formatChatlog,
+	getMaxRole,
+	escapeChars,
 	getComRef,
 	writeLineToAllLogs,
 	getDisplayName
