@@ -53,7 +53,11 @@ var writeLineToAllLogs = function(bot, guild, line) {
 			});
 		}
 	}
-	console.log(colors.white.dim("* " + line + " on the '" + guild.name + "' server."));
+	if (line.includes("has come online") || line.includes("went offline")) {
+		return;
+	} else {
+		console.log(colors.white.dim("* " + line + " on the '" + guild.name + "' server."));
+	}
 };
 
 var getDisplayName = function(guildMember) {
@@ -138,6 +142,7 @@ var formatChatlog = function(message) {
 	}
 	return {
 		user,
+		messageTime,
 		"currentLog": chatlog,
 		fullLog,
 		chatlinedata,

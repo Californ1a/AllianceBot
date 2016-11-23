@@ -210,8 +210,7 @@ var test = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if (response && !hardCode[ref].onCooldown) {
-			var uptime = process.uptime();
-			console.log(cl.formatUptime(uptime));
+			console.log("test");
 		}
 	}).catch((error) => console.error(error));
 };

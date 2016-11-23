@@ -2,33 +2,34 @@ const prefix = require("../config/options.json").prefix;
 const cmds = require("./commands.js");
 
 var checkForCommands = function(message, results, connection, http, bot) {
-	if (message.content.startsWith(prefix + "addcomtoserv")) {
+	let command = results[0].slice(prefix.length);
+	if (command === "addcomtoserv") {
 		cmds.addcomtoserv(message, results, connection);
-	} else if (message.content.startsWith(prefix + "remcomfromserv")) {
+	} else if (command === "remcomfromserv") {
 		cmds.delcomfromserv(message, results, connection);
-	} else if (message.content.startsWith(prefix + "newcom")) {
+	} else if (command === "newcom") {
 		cmds.newcom(message, results, connection);
-	} else if (message.content.startsWith(prefix + "delcom")) {
+	} else if (command === "delcom") {
 		cmds.delcom(message, results, connection);
-	} else if (message.content.startsWith(prefix + "test")) {
+	} else if (command === "test") {
 		cmds.test(message, results, connection);
-	} else if (message.content.startsWith(prefix + "dist")) {
+	} else if (command === "dist") {
 		cmds.dist(message, results, connection, http);
-	} else if (message.content.startsWith(prefix + "wr")) {
+	} else if (command === "wr") {
 		cmds.wr(message, results, connection, http);
-	} else if (message.content.startsWith(prefix + "ss")) {
+	} else if (command === "ss") {
 		cmds.ss(message, results, connection);
-	} else if (message.content.startsWith(prefix + "advent")) {
+	} else if (command === "advent") {
 		cmds.advent(message, results, connection);
-	} else if (message.content.startsWith(prefix + "speedy")) {
+	} else if (command === "speedy") {
 		cmds.speedy(message, results, connection);
-	} else if (message.content.startsWith(prefix + "commands") || message.content.startsWith(prefix + "cmds") || message.content.startsWith(prefix + "help")) {
+	} else if (command === "commands" || command === "cmds" || command === "help") {
 		cmds.help(message, results, connection);
-	} else if (message.content.startsWith(prefix + "role")) {
+	} else if (command === "role") {
 		cmds.role(bot, message, results, connection);
-	} else if (message.content.startsWith(prefix + "win") || message.content.startsWith(prefix + "rip") || message.content.startsWith(prefix + "tf")) {
+	} else if (command === "win" || command === "rip" || command === "tf") {
 		cmds.ripwin(message, results, connection);
-	} else if (message.content.startsWith(prefix + "uptime")) {
+	} else if (command === "uptime") {
 		cmds.uptime(message, results, connection);
 	}
 };

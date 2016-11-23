@@ -58,8 +58,8 @@ stream.on("tweet", function(tweet) {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
-	var text = emoji + " <https://twitter.com/" + tweetuser + "/status/" + tweetid + ">";
-	console.log(colors.red("Found matching tweet: https://twitter.com/" + tweetuser + "/status/" + tweetid));
+	var text = `${emoji} <https://twitter.com/${tweetuser}/status/${tweetid}>`;
+	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid}`));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet, null, 2);
 		//fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
@@ -106,14 +106,14 @@ stream.on("disconnect", function(disconnectMessage) {
 
 // <editor-fold desc='twitter API connection attempt'>
 stream.on("connect", function(request) {
-	console.log(colors.red("Twitter stream connection attempt: " + request));
+	console.log(colors.red("Twitter stream connection attempt: " + request.method));
 });
 // </editor-fold>
 
 
 // <editor-fold desc='twitter API connected'>
 stream.on("connected", function(response) {
-	console.log(colors.red("Twitter stream connected: " + response));
+	console.log(colors.red("Twitter stream connected: " + response.request.method));
 });
 // </editor-fold>
 
@@ -325,7 +325,9 @@ bot.on("message", (message) => {
 			}
 		});
 
-		if (message.author.bot) return; //no reply to bots below this line
+		if (message.author.bot) {
+			return; //no reply to bots below this line
+		}
 
 		//add new members to member role
 		if (!message.guild.members.get(message.author.id).roles.exists("name", membrolename)) {
@@ -339,13 +341,11 @@ bot.on("message", (message) => {
 
 		//check for command
 		if (message.content.startsWith(prefix)) {
-			var str = message.content;
-			var results = str.split(" ");
-			results[0] = results[0].replace(prefix, "");
+			var results = message.content.split(" ");
 
 
 			//check for custom server command
-			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[0] + "'", function(error, returntext) {
+			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[0].slice(prefix.length) + "'", function(error, returntext) {
 				if (error) {
 					console.log(error);
 					return;
