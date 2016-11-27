@@ -72,10 +72,10 @@ stream.on("tweet", function(tweet) {
 		}
 		if (tweet.extended_tweet) {
 			if (tweet.extended_tweet.full_text) {
-				text += "\r" + tweet.extended_tweet.full_text.replace(/(https?://t.co/[\w]+)$/, "");
+				text += "\r" + tweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
 			}
 		} else {
-			text += "\r" + tweet.text.replace(/(https?://t.co/[\w]+)$/, "");
+			text += "\r" + tweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
 		}
 		if (tweet.entities.media) {
 			text += "\r" + tweet.entities.media[0].media_url;
