@@ -10,10 +10,13 @@ function formatUptime(seconds) {
 	// function pad(s) {
 	// 	return (s < 10 ? "0" : "") + s;
 	// }
-	var days = Math.floor(seconds / (60 * 60 * 24));
-	var hours = Math.floor(seconds / (60 * 60));
-	var minutes = Math.floor(seconds % (60 * 60) / 60);
-	seconds = Math.floor(seconds % 60);
+	var days = Math.floor(seconds / 86400);
+	seconds %= 86400;
+	var hours = Math.floor(seconds / 3600);
+	seconds %= 3600;
+	var minutes = Math.floor(seconds % 60);
+	seconds %= 60;
+	seconds = Math.floor(seconds);
 
 	if (days !== 0) {
 		out += days + " day" + ((days !== 1) ? "s" : "") + ", ";
