@@ -5,18 +5,21 @@ const prefix = require("../config/options.json").prefix;
 const colors = require("colors");
 var i = 0;
 
-function formatUptime(seconds) {
+function formatUptime(amount) {
 	var out = "Bot uptime: ";
-	// function pad(s) {
-	// 	return (s < 10 ? "0" : "") + s;
-	// }
-	var days = Math.floor(seconds / 86400);
-	seconds %= 86400;
-	var hours = Math.floor(seconds / 3600);
-	seconds %= 3600;
-	var minutes = Math.floor(seconds % 60);
-	seconds %= 60;
-	seconds = Math.floor(seconds);
+	var days = 0;
+	var hours = 0;
+	var mins = 0;
+	var secs = 0;
+
+	amount = Math.floor(amount);
+	days = Math.floor(amount / 86400); //days
+	amount %= 86400;
+	hours = Math.floor(amount / 3600); //hours
+	amount %= 3600;
+	mins = Math.floor(amount / 60); //minutes
+	amount %= 60;
+	secs = Math.floor(amount); //seconds
 
 	if (days !== 0) {
 		out += days + " day" + ((days !== 1) ? "s" : "") + ", ";
@@ -24,10 +27,10 @@ function formatUptime(seconds) {
 	if (days !== 0 || hours !== 0) {
 		out += hours + " hour" + ((hours !== 1) ? "s" : "") + ", ";
 	}
-	if (days !== 0 || hours !== 0 || minutes !== 0) {
-		out += minutes + " minute" + ((minutes !== 1) ? "s" : "") + ", ";
+	if (days !== 0 || hours !== 0 || mins !== 0) {
+		out += mins + " minute" + ((mins !== 1) ? "s" : "") + ", ";
 	}
-	out += seconds + " seconds";
+	out += secs + " seconds.";
 	return out;
 
 }
