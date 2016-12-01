@@ -41,7 +41,7 @@ const membrolename = jsondata.membrolename;
 const stream = T.stream("statuses/filter", {
 	follow: ["628034104", "241371699"]
 }); //create tweet filter, first two are refract and torcht, any others for testing
-var tweetcount = 0;
+//var tweetcount = 0;
 var i = 0;
 //var eventDate = null;
 //var eventName = null;
@@ -55,43 +55,96 @@ var i = 0;
 // <editor-fold desc='twitter stream'>
 //on new tweet matching filter
 stream.on("tweet", function(tweet) {
+	// var tweetid = tweet.id_str;
+	// var tweetuser = tweet.user.screen_name;
+	// var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
+	// var text = `${emoji} <https://twitter.com/${tweetuser}/status/${tweetid}>`;
+
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
-	var text = `${emoji} <https://twitter.com/${tweetuser}/status/${tweetid}>`;
+	var intent = "https://twitter.com/intent";
+	var profilelink = `https://twitter.com/${tweetuser}`;
+	var tweetlink = `${profilelink}/status/${tweetid}`;
+	var text = "";
+	var medialink = "";
+
 	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid}`));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet, null, 2);
 		//fs.appendFile("tweet2.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		if (tweetcount < 4) {
-			tweetcount += 1;
-			fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-		} else {
-			fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
-			tweetcount = 0;
-		}
-		if (tweet.extended_tweet) {
-			if (tweet.extended_tweet.full_text) {
-				text += "\r" + tweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
-			}
-		} else {
-			text += "\r" + tweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
-		}
+
+		// if (tweetcount < 4) {
+		// 	tweetcount += 1;
+		// 	fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		// } else {
+		// 	fs.writeFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+		// 	tweetcount = 0;
+		// }
+
+		fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
+
 		if (tweet.entities.media) {
-			text += "\r" + tweet.entities.media[0].media_url;
+			medialink = tweet.entities.media[0].media_url;
 		}
 		if (tweet.extended_tweet) {
 			if (tweet.extended_tweet.entities.media) {
-				text += "\r" + tweet.extended_tweet.entities.media[0].media_url;
+				medialink = tweet.extended_tweet.entities.media[0].media_url;
 			}
 		}
-		if (tweet.entities.urls[0]) {
-			if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
-				text += "\r" + tweet.entities.urls[0].expanded_url;
+		if (tweet.extended_tweet) {
+			if (tweet.extended_tweet.full_text) {
+				text = tweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
 			}
+		} else {
+			text = tweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
 		}
-		bot.channels.get("83078957620002816").sendMessage(text); //channelid, write message with link to tweet
+
+		// if (tweet.extended_tweet) {
+		// 	if (tweet.extended_tweet.full_text) {
+		// 		text += "\r" + tweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
+		// 	}
+		// } else {
+		// 	text += "\r" + tweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, "<$1>");
+		// }
+		// if (tweet.entities.media) {
+		// 	text += "\r" + tweet.entities.media[0].media_url;
+		// }
+		// if (tweet.extended_tweet) {
+		// 	if (tweet.extended_tweet.entities.media) {
+		// 		text += "\r" + tweet.extended_tweet.entities.media[0].media_url;
+		// 	}
+		// }
+		// if (tweet.entities.urls[0]) {
+		// 	if (tweet.entities.urls[0].display_url.startsWith("vine.")) {
+		// 		text += "\r" + tweet.entities.urls[0].expanded_url;
+		// 	}
+		// }
+		// bot.channels.get("83078957620002816").sendMessage(text); //channelid, write message with link to tweet
 		//bot.channels.get("211599888222257152").sendMessage("https://twitter.com/" + tweetuser + "/status/" + tweetid + mediaurl + vine); //channelid, write message with link to tweet
+
+		bot.channels.get("83078957620002816").sendMessage(`${emoji} <${tweetlink}>`, {
+			embed: {
+				color: 3447003,
+				author: {
+					name: tweet.user.name,
+					url: profilelink,
+					icon_url: tweet.user.profile_image_url
+				},
+				//title: "This is an embed",
+				url: tweetlink,
+				description: `${text}\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`,
+				image: {
+					url: medialink
+				},
+				timestamp: new Date(tweet.created_at),
+				footer: {
+					//icon_url: tweet.user.profile_image_url,
+					text: `@${tweet.user.screen_name}`
+				}
+			}
+		}).catch((error) => console.error(error));
+
 	}
 });
 // </editor-fold>
@@ -222,15 +275,15 @@ bot.on("guildDelete", (guild) => {
 
 
 // <editor-fold desc='member changes status'>
-bot.on("presenceUpdate", (oldMember, newMember) => {
-	if (!newMember.user.bot) {
-		if (oldMember.presence.status === "offline" && newMember.presence.status !== "offline") {
-			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " has come online");
-		} else if (oldMember.presence.status !== "offline" && newMember.presence.status === "offline") {
-			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " went offline");
-		}
-	}
-});
+// bot.on("presenceUpdate", (oldMember, newMember) => {
+// 	if (!newMember.user.bot) {
+// 		if (oldMember.presence.status === "offline" && newMember.presence.status !== "offline") {
+// 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " has come online");
+// 		} else if (oldMember.presence.status !== "offline" && newMember.presence.status === "offline") {
+// 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " went offline");
+// 		}
+// 	}
+// });
 // </editor-fold>
 
 

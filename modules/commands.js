@@ -13,6 +13,7 @@ const timers = require("./timers.js");
 const sdr = require("./setdelrole.js");
 const rw = require("./RipWin.js");
 const CheckMapID = require("./checkmapid.js");
+const testtweet = require("../tweet2.json"); //test
 var info;
 var currentss;
 
@@ -202,15 +203,6 @@ var delcom = function(message, results, connection) {
 				message.reply(message, "Only " + modrolename + "s can delete commands.");
 			}
 			hardCode[ref].timeout();
-		}
-	}).catch((error) => console.error(error));
-};
-
-var test = function(message, results, connection) {
-	ref = cl.getComRef(hardCode, results);
-	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if (response && !hardCode[ref].onCooldown) {
-			console.log("test");
 		}
 	}).catch((error) => console.error(error));
 };
@@ -573,6 +565,80 @@ var uptime = function(message, results, connection) {
 			var uptime = process.uptime();
 			message.channel.sendMessage(cl.formatUptime(uptime));
 			hardCode[ref].timeout();
+		}
+	}).catch((error) => console.error(error));
+};
+
+var test = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			var tweetid = testtweet.id_str;
+			var tweetuser = testtweet.user.screen_name;
+			var emoji = message.guild.emojis.find("name", "torcht");
+			var intent = "https://twitter.com/intent";
+			var profilelink = `https://twitter.com/${tweetuser}`;
+			var tweetlink = `${profilelink}/status/${tweetid}`;
+			var text = "";
+			var medialink = "";
+			var videolink = "";
+			if (testtweet.entities.media) {
+				medialink = testtweet.entities.media[0].media_url;
+			}
+			if (testtweet.extended_entities) {
+				if (testtweet.extended_entities.media) {
+					medialink = testtweet.extended_entities.media[0].media_url;
+					if (testtweet.extended_entities.media[0].type === "video") {
+						i = 0;
+						for (i; i < testtweet.extended_entities.media[0].video_info.variants.length; i++) {
+							if (testtweet.extended_entities.media[0].video_info.variants[i].content_type === "video/mp4") {
+								videolink = testtweet.extended_entities.media[0].video_info.variants[i].url;
+								medialink = "";
+							}
+						}
+					}
+				}
+			}
+			if (testtweet.extended_tweet) {
+				if (testtweet.extended_tweet.full_text) {
+					text = testtweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
+				}
+			} else {
+				text = testtweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
+			}
+			message.channel.sendMessage(`${emoji}`, {
+				embed: {
+					color: 3447003,
+					author: {
+						name: testtweet.user.name,
+						url: profilelink,
+						icon_url: testtweet.user.profile_image_url
+					},
+					//title: "This is an embed",
+					url: tweetlink,
+					description: `${text}\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`,
+					image: {
+						url: medialink
+					},
+					video: {
+						url: videolink
+					},
+					// provider: {
+					// 	name: "Twitter",
+					// 	url: "http://twitter.com"
+					// },
+					// fields: [{
+					// 	name: "y",
+					// 	value: "[View Tweet](" + tweetlink + ")"
+					// }],
+					timestamp: new Date(testtweet.created_at),
+					footer: {
+						//icon_url: testtweet.user.profile_image_url,
+						text: `@${testtweet.user.screen_name}`
+					}
+				}
+			}).catch((error) => console.error(error));
+			//console.log("test");
 		}
 	}).catch((error) => console.error(error));
 };
