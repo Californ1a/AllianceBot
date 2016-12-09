@@ -116,8 +116,9 @@ var listQuotes = function(message, c, rw) {
 
 var searchQuotes = function(message, results, rw, c) {
 	console.log(colors.red("Trying to find " + rw + " message matching '" + results[1] + "' in database."));
-	results[1] = cl.escapeChars(results[1]);
-	c.query("SELECT * FROM " + rw + " WHERE server_id=" + message.guild.id + " AND quote LIKE '%" + results[1] + "%' COLLATE utf8_unicode_ci ORDER BY RAND() LIMIT 1", function(error, quotes) {
+	let args = message.content.split(" ").slice(1).join(" ");
+	let searchKey = cl.escapeChars(args);
+	c.query("SELECT * FROM " + rw + " WHERE server_id=" + message.guild.id + " AND quote LIKE '%" + searchKey + "%' COLLATE utf8_unicode_ci ORDER BY RAND() LIMIT 1", function(error, quotes) {
 		if (error) {
 			message.channel.sendMessage("Failed to find any matching quotes, with errors.");
 			console.log(error);
@@ -125,7 +126,7 @@ var searchQuotes = function(message, results, rw, c) {
 		} else {
 			if (typeof quotes[0] !== "object") {
 				console.log(colors.red("Failed to find any matching."));
-				message.channel.sendMessage("Unable to find any " + rw + " quotes matching '" + results[1] + "'.");
+				message.channel.sendMessage("Unable to find any " + rw + " quotes matching '" + searchKey + "'.");
 			} else {
 				console.log(colors.red("Successfully found a quote."));
 				message.channel.sendMessage(quotes[0].quote);
@@ -152,14 +153,15 @@ var ripWin = function(message, prefix, modrolename, connection, ripwin) {
 	} else if (results[1] === "list") {
 		listQuotes(message, connection, ripwin);
 	} else {
-		if (results.length === 2) {
-			searchQuotes(message, results, ripwin, connection);
-		} else if (results.length > 2) { //tried to search with >1 keyword
-			message.channel.sendMessage("You can only use one keyword in the quote search. Use `" + prefix + ripwin + " help` for syntax help.");
-		} else { //somehow this thing that happend
-			message.channel.sendMessage("Something happened.");
-			console.log(message.content);
-		}
+		// if (results.length === 2) {
+		// 	searchQuotes(message, results, ripwin, connection);
+		// } else if (results.length > 2) { //tried to search with >1 keyword
+		// 	message.channel.sendMessage("You can only use one keyword in the quote search. Use `" + prefix + ripwin + " help` for syntax help.");
+		// } else { //somehow this thing that happend
+		// 	message.channel.sendMessage("Something happened.");
+		// 	console.log(message.content);
+		// }
+		searchQuotes(message, results, ripwin, connection);
 	}
 	ripwin = null;
 };

@@ -8,6 +8,10 @@
     "timeout": 5000
   },
   {
+    "name": "editcom",
+    "timeout": 5000
+  },
+  {
     "name": "dist",
     "timeout": 5000
   },
@@ -52,6 +56,10 @@
     "timeout": 100
   },
   {
+    "name": "sign",
+    "timeout": 100
+  },
+  {
     "name": "test",
     "timeout": 0
   },
@@ -62,6 +70,10 @@
   {
     "name": "uptime",
     "timeout": 5000
+  },
+  {
+    "name": "evalu",
+    "timeout": 0
   },
   {
     "name": "automemb",

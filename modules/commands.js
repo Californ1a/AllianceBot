@@ -26,92 +26,84 @@ var ref;
 //console.log(hardCode);
 
 
-var addcomtoserv = function(message, results, connection) {
-	ref = cl.getComRef(hardCode, results);
-	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if (response && !hardCode[ref].onCooldown) {
-			if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
-				if (results.length <= 2) {
-					if (typeof results[1] !== "string") {
-						message.channel.sendMessage("To view the help for this command use `" + prefix + "addcomtoserv help`.");
-					} else if (results[1] === "help") {
-						message.channel.sendMessage("Syntax: __**`" + prefix + "addcometoserv <command name>`**__\rUsed to enable hardcoded commands on the server, only available to the bot owner and server owner.\r\r`command name`\rName of command without prefix.\r\r**Example**\r`" + prefix + "addcomtoserv advent`\rThis will enable the hardcoded `" + prefix + "advent` command.");
+var enable = function(message, results, connection) {
+	if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
+		if (results.length <= 2) {
+			if (typeof results[1] !== "string") {
+				message.channel.sendMessage("To view the help for this command use `" + prefix + "addcomtoserv help`.");
+			} else if (results[1] === "help") {
+				message.channel.sendMessage("Syntax: __**`" + prefix + "addcometoserv <command name>`**__\rUsed to enable hardcoded commands on the server, only available to the bot owner and server owner.\r\r`command name`\rName of command without prefix.\r\r**Example**\r`" + prefix + "addcomtoserv advent`\rThis will enable the hardcoded `" + prefix + "advent` command.");
+			} else {
+				var iscommand = false;
+				i = 0;
+				for (i; i < hardCode.length; i++) {
+					if (hardCode[i].name === results[1]) {
+						iscommand = true;
+					}
+				}
+				if (iscommand) {
+					if (results[1].includes(prefix)) {
+						message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "remcomfromserv help` to view the syntax help.");
 					} else {
-						var iscommand = false;
-						i = 0;
-						for (i; i < hardCode.length; i++) {
-							if (hardCode[i].name === results[1]) {
-								iscommand = true;
-							}
-						}
-						if (iscommand) {
-							if (results[1].includes(prefix)) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "remcomfromserv help` to view the syntax help.");
+						//database
+						console.log(colors.red("Trying to insert command '" + results[1] + "' into database."));
+						info = {
+							"commandname": results[1],
+							"server_id": message.guild.id,
+						};
+						connection.query("INSERT INTO commands SET ?", info, function(error) {
+							if (error) {
+								console.log(error);
+								message.channel.sendMessage("Failed.");
+								return;
 							} else {
-								//database
-								console.log(colors.red("Trying to insert command '" + results[1] + "' into database."));
-								info = {
-									"commandname": results[1],
-									"server_id": message.guild.id,
-								};
-								connection.query("INSERT INTO commands SET ?", info, function(error) {
-									if (error) {
-										console.log(error);
-										message.channel.sendMessage("Failed.");
-										return;
-									} else {
-										console.log(colors.red("Successfully added command to server."));
-										message.channel.sendMessage("Successfully added command to server.");
-									}
-								});
+								console.log(colors.red("Successfully added command to server."));
+								message.channel.sendMessage("Successfully added command to server.");
 							}
-						} else {
-							message.channel.sendMessage("`" + results[1] + "` is not a recognized command.");
-						}
+						});
 					}
 				} else {
-					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "addcomtoserv help` to view the syntax help.");
+					message.channel.sendMessage("`" + results[1] + "` is not a recognized command.");
 				}
 			}
+		} else {
+			message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "addcomtoserv help` to view the syntax help.");
 		}
-	}).catch((error) => console.error(error));
+	}
 };
 
-var remcomfromserv = function(message, results, connection) {
-	ref = cl.getComRef(hardCode, results);
-	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if (response && !hardCode[ref].onCooldown) {
-			if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
-				if (results.length <= 2) {
-					if (typeof results[1] !== "string") {
-						message.channel.sendMessage("To view the help for this command use `" + prefix + "remcomfromserv help`.");
-					} else if (results[1] === "help") {
-						message.channel.sendMessage("Syntax: __**`" + prefix + "remcomefromserv <command name>`**__\rDisables a hardcoded command on this server. Only available for bot owner and server owner.\r\r`command name`\rName of the command to be disabled without the prefix.\r\r**Example**\r`" + prefix + "remcomfromserv advent`\rThis will disable the `" + prefix + "advent` command.");
-					} else {
-						if (results[1].includes(prefix)) {
-							message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "remcomfromserv help` to view the syntax help.");
-						} else {
-							//database
-							console.log(colors.red("Trying to remove command '" + results[1] + "' from database."));
-							connection.query("DELETE FROM commands WHERE commandname='" + results[1] + "' AND server_id=" + message.guild.id, function(error) {
-								if (error) {
-									console.log(error);
-									message.channel.sendMessage("Failed.");
-									return;
-								} else {
-									console.log(colors.red("Successfully removed command from server."));
-									message.channel.sendMessage("Successfully removed command from server.");
-								}
-							});
-						}
-					}
-				} else {
+
+var disable = function(message, results, connection) {
+	if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
+		if (results.length <= 2) {
+			if (typeof results[1] !== "string") {
+				message.channel.sendMessage("To view the help for this command use `" + prefix + "remcomfromserv help`.");
+			} else if (results[1] === "help") {
+				message.channel.sendMessage("Syntax: __**`" + prefix + "remcomefromserv <command name>`**__\rDisables a hardcoded command on this server. Only available for bot owner and server owner.\r\r`command name`\rName of the command to be disabled without the prefix.\r\r**Example**\r`" + prefix + "remcomfromserv advent`\rThis will disable the `" + prefix + "advent` command.");
+			} else {
+				if (results[1].includes(prefix)) {
 					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "remcomfromserv help` to view the syntax help.");
+				} else {
+					//database
+					console.log(colors.red("Trying to remove command '" + results[1] + "' from database."));
+					connection.query("DELETE FROM commands WHERE commandname='" + results[1] + "' AND server_id=" + message.guild.id, function(error) {
+						if (error) {
+							console.log(error);
+							message.channel.sendMessage("Failed.");
+							return;
+						} else {
+							console.log(colors.red("Successfully removed command from server."));
+							message.channel.sendMessage("Successfully removed command from server.");
+						}
+					});
 				}
 			}
+		} else {
+			message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "remcomfromserv help` to view the syntax help.");
 		}
-	}).catch((error) => console.error(error));
+	}
 };
+
 
 var newcom = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
@@ -167,6 +159,81 @@ var newcom = function(message, results, connection) {
 				}
 			} else {
 				message.reply(message, "Only " + modrolename + "s can add commands.");
+			}
+			hardCode[ref].timeout();
+		}
+	}).catch((error) => console.error(error));
+};
+
+var editcom = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			if (message.member.roles.exists("name", modrolename)) {
+				connection.query("SELECT idservcom FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[1] + "'", function(error, result) {
+					if (error) {
+						message.channel.sendMessage("Failed.");
+						console.log(error);
+						return;
+					} else {
+						if (typeof result[0] !== "object") {
+							console.log(colors.red("Command does not exist."));
+						} else {
+							console.log(colors.red("Command exists."));
+							var str = message.content.toString();
+							results = str.split(" ");
+							if (typeof results[1] !== "string") {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
+							} else if (results[1] === "help") {
+								message.channel.sendMessage("Syntax: __**`" + prefix + "editcom <command name> <mod-only> <reply-in-pm> <message>`**__\rUsed to edit pre-existing custom commands.\r\r`command name`\rName of command without prefix\r\r`mod-only (true|false)`\rOnly " + modrolename + "s can use the command.\r\r`reply-in-pm (true|false)`\rReply to command in a PM rather than in-channel.\r\r`message`\rThe message to be sent when command is given.\r\r**Example**\r`" + prefix + "editcom spook false false BOO! Scared now?`\rThe edited command would be `" + prefix + "spook` (enabled for all members, not just " + modrolename + "s & would reply in-channel) and the returned message would be `BOO! Scared now?`");
+							} else if (results[1].includes(prefix)) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+							} else if (results.length === 2) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+							} else if (results.length === 3) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+							} else if (results.length === 4) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+							} else if ((results[2] !== "true") && (results[2] !== "false")) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
+							} else if ((results[3] !== "true") && (results[3] !== "false")) {
+								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
+							} else {
+								var recombined = "";
+								i = 0;
+								for (i; i < results.length - 4; i++) {
+									if (i !== results.length - 5) {
+										recombined += results[i + 4] + " ";
+									} else {
+										recombined += results[i + 4];
+									}
+								}
+								console.log(colors.red("Attempting to edit the command `" + prefix + results[1] + "` with the resulting message `" + recombined + "` on server `" + message.guild.name + "`."));
+								// info = {
+								// 	"comname": results[1],
+								// 	"comtext": recombined,
+								// 	"modonly": results[2],
+								// 	"inpm": results[3],
+								// 	"server_id": message.guild.id
+								// };
+								recombined = "''" + recombined + "''";
+								console.log(result[0]);
+								connection.query("UPDATE servcom SET comtext='" + recombined + "', modonly='" + results[2] + "', inpm='" + results[3] + "' WHERE idservcom=" + result[0].idservcom, function(error) {
+									if (error) {
+										console.log(error);
+										message.channel.sendMessage("Failed.");
+										return;
+									} else {
+										console.log(colors.red("Successfully edited command."));
+										message.channel.sendMessage("Success.");
+									}
+								});
+							}
+						}
+					}
+				});
+			} else {
+				message.reply(message, "Only " + modrolename + "s can edit commands.");
 			}
 			hardCode[ref].timeout();
 		}
@@ -569,6 +636,35 @@ var uptime = function(message, results, connection) {
 	}).catch((error) => console.error(error));
 };
 
+var evalu = function(message, bot) {
+	if (message.author.id !== botowner) {
+		return;
+	} else {
+		try {
+			let args = message.content.split(" ").slice(1);
+			var code = args.join(" ");
+			var evaled = eval(code);
+
+			if (typeof evaled !== "string") {
+				evaled = require("util").inspect(evaled);
+			}
+			message.channel.sendCode("xl", clean(evaled));
+		} catch (err) {
+			message.channel.sendMessage(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
+		}
+	}
+};
+
+
+function clean(text) {
+	if (typeof text === "string") {
+		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+	}
+	else {
+		return text;
+	}
+}
+
 var test = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
@@ -644,9 +740,10 @@ var test = function(message, results, connection) {
 };
 
 module.exports = {
-	addcomtoserv,
-	remcomfromserv,
+	enable,
+	disable,
 	newcom,
+	editcom,
 	delcom,
 	test,
 	dist,
@@ -657,5 +754,6 @@ module.exports = {
 	help,
 	role,
 	ripwin,
-	uptime
+	uptime,
+	evalu
 };

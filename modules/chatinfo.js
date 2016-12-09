@@ -158,26 +158,31 @@ var formatChatlog = function(message) {
 	};
 };
 
-var escapeChars = function(word) {
-	var escapechars = true;
-	var tempWord = word;
-	while (escapechars) {
-		if (tempWord.includes("\'") && !tempWord.includes("\\\'")) {
-			tempWord = tempWord.replace("\'", "\\\'", "g");
-		} else if (tempWord.includes("\"") && !tempWord.includes("\\\"")) {
-			tempWord = tempWord.replace("\"", "\\\"", "g");
-		} else if (tempWord.includes("\\") && !tempWord.includes("\\\\")) {
-			tempWord = tempWord.replace("\\", "\\\\", "g");
-		} else if (tempWord.includes("\%") && !tempWord.includes("\\\%")) {
-			tempWord = tempWord.replace("\%", "\\\%", "g");
-		} else if (tempWord.includes("\_") && !tempWord.includes("\\\_")) {
-			tempWord = tempWord.replace("\_", "\\\_", "g");
-		} else {
-			escapechars = false;
-		}
-	}
-	return tempWord;
+var specials = ["-", "[", "]", "/", "{", "}", "(", ")", "*", "+", "'", "?", ".", "\\", "^", "$", "|"];
+var regex = RegExp("[" + specials.join("\\") + "]", "g");
+var escapeChars = function(str) {
+	// var escapechars = true;
+	// var tempWord = word;
+	// while (escapechars) {
+	// 	if (tempWord.includes("\'") && !tempWord.includes("\\\'")) {
+	// 		tempWord = tempWord.replace("\'", "\\\'", "g");
+	// 	} else if (tempWord.includes("\"") && !tempWord.includes("\\\"")) {
+	// 		tempWord = tempWord.replace("\"", "\\\"", "g");
+	// 	} else if (tempWord.includes("\\") && !tempWord.includes("\\\\")) {
+	// 		tempWord = tempWord.replace("\\", "\\\\", "g");
+	// 	} else if (tempWord.includes("\%") && !tempWord.includes("\\\%")) {
+	// 		tempWord = tempWord.replace("\%", "\\\%", "g");
+	// 	} else if (tempWord.includes("\_") && !tempWord.includes("\\\_")) {
+	// 		tempWord = tempWord.replace("\_", "\\\_", "g");
+	// 	} else {
+	// 		escapechars = false;
+	// 	}
+	// }
+	// return tempWord;
+	console.log(str);
+	return str.replace(regex, "\\$&");
 };
+
 
 var getComRef = function(hardCode, results) {
 	var ref = 0;
