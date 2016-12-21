@@ -204,7 +204,7 @@ bot.on("reconnecting", () => {
 bot.on("ready", () => {
 	console.log(colors.red("Bot online and ready on " + bot.guilds.size + " server(s)."));
 	bot.user.setStatus("online").catch(console.log);
-	bot.user.setGame("Distance").catch(console.log);
+	bot.user.setGame("Distance | !cmds").catch(console.log);
 });
 // </editor-fold>
 
