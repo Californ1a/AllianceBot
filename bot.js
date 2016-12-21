@@ -286,9 +286,13 @@ bot.on("presenceUpdate", (oldMember, newMember) => {
 			}
 
 			if (newMember.user.presence.game && newMember.user.presence.game.name === "Distance") {
-				newMember.addRole(playRole).catch(console.error);
+				newMember.addRole(playRole).then(
+					console.log(colors.white.dim(`${cl.getDisplayName(newMember)} has been added to the ${playRole.name} role.`));
+				).catch(console.error);
 			} else if ((!newMember.user.presence.game || !newMember.user.presence.game === "Distance") && newMember.roles.has(playRole.id)) {
-				newMember.removeRole(playRole).catch(console.error);
+				newMember.removeRole(playRole).then(
+					console.log(colors.white.dim(`${cl.getDisplayName(newMember)} has been removed from the ${playRole.name} role.`));
+				).catch(console.error);
 			}
 		}
 	}
