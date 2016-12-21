@@ -275,7 +275,20 @@ bot.on("guildDelete", (guild) => {
 
 
 // <editor-fold desc='member changes status'>
-// bot.on("presenceUpdate", (oldMember, newMember) => {
+bot.on("presenceUpdate", (oldMember, newMember) => {
+	let guild = newMember.guild;
+	if (guild.id === "211599888222257152") {
+		let playRole = guild.roles.find("name", "Playing Distance");
+		if (!playRole) {
+			return;
+		}
+
+		if (newMember.user.presence.game && newMember.user.presence.game.name === "Distance") {
+	    newMember.addRole(playRole).catch(console.error);
+		} else if (!newMember.user.presence.game && newMember.roles.has(playRole.id)) {
+	    newMember.removeRole(playRole).catch(console.error);
+		}
+	}
 // 	if (!newMember.user.bot) {
 // 		if (oldMember.presence.status === "offline" && newMember.presence.status !== "offline") {
 // 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " has come online");
@@ -283,7 +296,7 @@ bot.on("guildDelete", (guild) => {
 // 			cl.writeLineToAllLogs(bot, newMember.guild, cl.getDisplayName(newMember) + " went offline");
 // 		}
 // 	}
-// });
+});
 // </editor-fold>
 
 

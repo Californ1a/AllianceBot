@@ -636,6 +636,15 @@ var uptime = function(message, results, connection) {
 	}).catch((error) => console.error(error));
 };
 
+function clean(text) {
+	if (typeof text === "string") {
+		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+	}
+	else {
+		return text;
+	}
+}
+
 var evalu = function(message, bot) {
 	if (message.author.id !== botowner) {
 		return;
@@ -654,16 +663,6 @@ var evalu = function(message, bot) {
 		}
 	}
 };
-
-
-function clean(text) {
-	if (typeof text === "string") {
-		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-	}
-	else {
-		return text;
-	}
-}
 
 var test = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
