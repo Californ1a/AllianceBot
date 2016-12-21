@@ -277,7 +277,7 @@ bot.on("guildDelete", (guild) => {
 // <editor-fold desc='member changes status'>
 bot.on("presenceUpdate", (oldMember, newMember) => {
 	let guild = newMember.guild;
-	if (guild.id === "211599888222257152") {
+	if (guild.id === "83078957620002816") {
 		let playRole = guild.roles.find("name", "Playing Distance");
 		if (!playRole) {
 			return;
