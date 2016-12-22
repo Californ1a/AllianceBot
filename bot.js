@@ -280,6 +280,7 @@ bot.on("presenceUpdate", (oldMember, newMember) => {
 	if (guild.id === "83078957620002816") {
 		let botMember = guild.members.get(bot.user.id);
 		if (botMember.hasPermission("MANAGE_ROLES") && botMember.highestRole.position > newMember.highestRole.position) {
+			meberName =cl.getDisplayName(newMember);
 			let playRole = guild.roles.find("name", "Playing Distance");
 			if (!playRole) {
 				return;
@@ -287,11 +288,11 @@ bot.on("presenceUpdate", (oldMember, newMember) => {
 
 			if (newMember.user.presence.game && newMember.user.presence.game.name === "Distance") {
 				newMember.addRole(playRole).then(
-					console.log(colors.white.dim(`${cl.getDisplayName(newMember)} has been added to the ${playRole.name} role.`));
+					console.log(colors.white.dim(memberName + " has been added to the + " playRole.name + " role."));
 				).catch(console.error);
 			} else if ((!newMember.user.presence.game || !newMember.user.presence.game === "Distance") && newMember.roles.has(playRole.id)) {
 				newMember.removeRole(playRole).then(
-					console.log(colors.white.dim(`${cl.getDisplayName(newMember)} has been removed from the ${playRole.name} role.`));
+					console.log(colors.white.dim(memberName + " has been removed from the + " playRole.name + " role."));
 				).catch(console.error);
 			}
 		}
