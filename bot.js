@@ -280,7 +280,7 @@ bot.on("presenceUpdate", (oldMember, newMember) => {
 	if (guild.id === "83078957620002816") {
 		let botMember = guild.members.get(bot.user.id);
 		if (botMember.hasPermission("MANAGE_ROLES") && botMember.highestRole.position > newMember.highestRole.position) {
-			meberName =cl.getDisplayName(newMember);
+			let memberName = cl.getDisplayName(newMember);
 			let playRole = guild.roles.find("name", "Playing Distance");
 			if (!playRole) {
 				return;
