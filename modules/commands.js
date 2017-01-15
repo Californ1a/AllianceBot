@@ -281,7 +281,7 @@ var dist = function(message, results, connection) {
 			if (typeof results[1] !== "string") {
 				message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "dist help` for syntax help.");
 			} else if (results[1] === "help") {
-				message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request can be slow at times.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Speed and Style map (it will default to Sprint because they have the same name, however S&S is currently not supported because the map IDs aren't listed on Steam). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
+				message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time/score on a specified map. May take a few seconds to reply, the Steam request can be slow at times.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Speed and Style map (it will default to Sprint because they have the same name, however S&S is currently not supported because the map IDs aren't listed on Steam). Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs` or `" + prefix + "dist broken symmetry`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 			} else {
 				var mapid = CheckMapID.checkMapID(message, results);
 				if (mapid === 0) {
@@ -304,15 +304,27 @@ var dist = function(message, results, connection) {
 								if (error) {
 									console.log(error);
 								} else {
+									var fulltime = "";
 									var sometest = result.response.entries[0].entry[0].score;
 									var somesteamid = result.response.entries[0].entry[0].steamid.toString();
 									var working = parseInt(sometest.toString(), 10);
-									var wrmin = ((working / 1000) / 60) >> 0;
-									var wrsec = (working / 1000) - (wrmin * 60) >> 0;
-									var wrmil = (working / 1000).toFixed(3).split(".");
-									wrmil = wrmil[1];
-									if (wrsec < 10) {
-										wrsec = "0" + wrsec;
+									var checkForStunt = false;
+									Object.keys(jsondata.officialmapids["Stunt"]).forEach(function(key) {
+										if (mapid === jsondata.officialmapids["Stunt"][key]) {
+											checkForStunt = true;
+										}
+									});
+									if (!checkForStunt) {
+										var wrmin = ((working / 1000) / 60) >> 0;
+										var wrsec = (working / 1000) - (wrmin * 60) >> 0;
+										var wrmil = (working / 1000).toFixed(3).split(".");
+										wrmil = wrmil[1];
+										if (wrsec < 10) {
+											wrsec = "0" + wrsec;
+										}
+										fulltime = `${wrmin}:${wrsec}.${wrmil}`;
+									} else {
+										fulltime = working.toLocaleString("en-US", {minimumFractionDigits: 0});
 									}
 									//begin convert steamid64 to profile name
 									var optionsac2 = {
@@ -331,7 +343,7 @@ var dist = function(message, results, connection) {
 													console.log(error);
 												} else {
 													var profilename = result2.profile.steamID.toString();
-													message.channel.sendMessage(wrmin + ":" + wrsec + "." + wrmil + " by " + profilename);
+													message.channel.sendMessage(fulltime + " by " + profilename);
 												}
 											});
 										});

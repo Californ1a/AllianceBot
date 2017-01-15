@@ -241,6 +241,60 @@ var checkElev = function(results) {
 	return id;
 };
 
+var checkCredits = function(results) {
+	var mapname = "Credits";
+	var id = 0;
+	if (results[1].match(/^credits$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
+var checkRefrac = function(results) {
+	var mapname = "Refraction";
+	var id = 0;
+	if (results[1].match(/^refraction$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
+var checkSpace = function(results) {
+	var mapname = "Space Skate";
+	var id = 0;
+	if (results[1].match(/^space$/i) && results[2].match(/^skate$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
+var checkSpooky = function(results) {
+	var mapname = "Spooky Town";
+	var id = 0;
+	if (results[1].match(/^spooky$/i) && results[2].match(/^town$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
+var checkPlay = function(results) {
+	var mapname = "Stunt Playground";
+	var id = 0;
+	if (results[1].match(/^stunt$/i) && results[2].match(/^playground$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
+var checkTagtastic = function(results) {
+	var mapname = "Tagtastic";
+	var id = 0;
+	if (results[1].match(/^tagtastic$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname];
+	}
+	return id;
+};
+
 var individualMaps = [
 	checkBS,
 	checkLS,
@@ -261,7 +315,13 @@ var individualMaps = [
 	checkGrind,
 	checkDesc,
 	checkDeta,
-	checkElev
+	checkElev,
+	checkCredits,
+	checkRefrac,
+	checkSpace,
+	checkSpooky,
+	checkPlay,
+	checkTagtastic
 ];
 
 var checkMapID = function checkMapID(message, results) {
