@@ -281,13 +281,13 @@ var dist = function(message, results, connection) {
 			if (typeof results[1] !== "string") {
 				message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "dist help` for syntax help.");
 			} else if (results[1] === "help") {
-				message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request is fairly slow.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Sprint or Speed and Style map (because they have the same map name). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
+				message.channel.sendMessage("Syntax: __**`" + prefix + "dist <map name> <mode>`**__\rReturn the current #1 time on a specified map. May take a few seconds to reply, the Steam request can be slow at times.\r\r`map name`\rThe name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\r\r`mode`\rThe mode. This is only necessary when requesting a Speed and Style map (it will default to Sprint because they have the same name, however S&S is currently not supported because the map IDs aren't listed on Steam). The mode will be ignored if a Challenge-mode map name is given. Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\r\r**Example**\r`" + prefix + "dist bs s` or `" + prefix + "dist broken symmetry sprint`\rBoth would return the best time for Broken Symmetry in Sprint mode.");
 			} else {
 				var mapid = CheckMapID.checkMapID(message, results);
 				if (mapid === 0) {
 					message.channel.sendMessage("Incorrect syntax.");
 				} else if (typeof mapid === "string" && mapid !== "") {
-					var lburl = "http://steamcommunity.com/stats/233610/leaderboards/" + mapid;
+					var lburl = "<http://steamcommunity.com/stats/233610/leaderboards/" + mapid + ">";
 					message.channel.sendMessage(lburl);
 					var optionsac = {
 						hostname: "steamcommunity.com",
@@ -645,7 +645,7 @@ function clean(text) {
 	}
 }
 
-var evalu = function(message, bot) {
+var evalu = function(message) {
 	if (message.author.id !== botowner) {
 		return;
 	} else {

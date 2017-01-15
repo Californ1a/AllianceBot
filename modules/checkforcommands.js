@@ -37,7 +37,7 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		if (message.author.id !== "83264808022970368") {
 			return;
 		} else {
-			cmds.evalu(message, bot);
+			cmds.evalu(message);
 		}
 	}
 };

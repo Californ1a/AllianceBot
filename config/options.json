@@ -6,20 +6,20 @@
   "logLocation": "E:/OtherStuff/DiscordChatlogs/",
   "officialmapids": {
     "Sprint": {
-      "Broken Symmetry": "280609",
-      "Lost Society": "318898",
-      "Negative Space": "447655",
-      "Departure": "447656",
-      "Friction": "",
-      "Aftermath": "447657",
-      "The Thing About Machines": "447658",
-      "Amusement": "",
-      "Corruption": "252032",
-      "The Observer Effect": "194839",
-      "Dissolution": "194976",
-      "Falling Through": "194977",
-      "Monolith": "359423",
-      "Uncanny Valley": ""
+      "Broken Symmetry": "1558337",
+      "Lost Society": "1558158",
+      "Negative Space": "1558398",
+      "Departure": "1558402",
+      "Friction": "1558436",
+      "Aftermath": "1558394",
+      "The Thing About Machines": "1558441",
+      "Amusement": "1558304",
+      "Corruption": "1558416",
+      "The Observer Effect": "1558453",
+      "Dissolution": "1558428",
+      "Falling Through": "1558435",
+      "Monolith": "1558429",
+      "Uncanny Valley": "1558467"
     },
     "Speed and Style": {
       "Broken Symmetry": "288411",
@@ -38,12 +38,12 @@
       "Uncanny Valley": ""
     },
     "Challenge": {
-      "Dodge": "500646",
-      "Thunder Struck": "259139",
-      "Grinder": "430714",
-      "Descent": "500881",
-      "Detached": "502241",
-      "Elevation": "500054"
+      "Dodge": "1558764",
+      "Thunder Struck": "1558769",
+      "Grinder": "1558800",
+      "Descent": "1558836",
+      "Detached": "1558817",
+      "Elevation": "1558823"
     }
   }
 }
