@@ -158,7 +158,7 @@ var newcom = function(message, results, connection) {
 					});
 				}
 			} else {
-				message.reply(message, "Only " + modrolename + "s can add commands.");
+				message.reply("Only " + modrolename + "s can add commands.");
 			}
 			hardCode[ref].timeout();
 		}
@@ -170,35 +170,33 @@ var editcom = function(message, results, connection) {
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if (response && !hardCode[ref].onCooldown) {
 			if (message.member.roles.exists("name", modrolename)) {
-				connection.query("SELECT idservcom FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[1] + "'", function(error, result) {
-					if (error) {
-						message.channel.sendMessage("Failed.");
-						console.log(error);
-						return;
-					} else {
-						if (typeof result[0] !== "object") {
-							console.log(colors.red("Command does not exist."));
+				if (typeof results[1] !== "string") {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+				} else if (results[1] === "help") {
+					message.channel.sendMessage("Syntax: __**`" + prefix + "editcom <command name> <mod-only> <reply-in-pm> <message>`**__\rUsed to edit pre-existing custom commands.\r\r`command name`\rName of command without prefix\r\r`mod-only (true|false)`\rOnly " + modrolename + "s can use the command.\r\r`reply-in-pm (true|false)`\rReply to command in a PM rather than in-channel.\r\r`message`\rThe message to be sent when command is given.\r\r**Example**\r`" + prefix + "editcom spook false false BOO! Scared now?`\rThe edited command would be `" + prefix + "spook` (enabled for all members, not just " + modrolename + "s & would reply in-channel) and the returned message would be `BOO! Scared now?`");
+				} else if (results[1].includes(prefix)) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+				} else if (results.length === 2) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+				} else if (results.length === 3) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+				} else if (results.length === 4) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
+				} else if ((results[2] !== "true") && (results[2] !== "false")) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
+				} else if ((results[3] !== "true") && (results[3] !== "false")) {
+					message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
+				} else {
+					connection.query("SELECT idservcom FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[1] + "'", function(error, result) {
+						if (error) {
+							message.channel.sendMessage("Failed.");
+							console.log(error);
+							return;
 						} else {
-							console.log(colors.red("Command exists."));
-							var str = message.content.toString();
-							results = str.split(" ");
-							if (typeof results[1] !== "string") {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "newcom help` for help.");
-							} else if (results[1] === "help") {
-								message.channel.sendMessage("Syntax: __**`" + prefix + "editcom <command name> <mod-only> <reply-in-pm> <message>`**__\rUsed to edit pre-existing custom commands.\r\r`command name`\rName of command without prefix\r\r`mod-only (true|false)`\rOnly " + modrolename + "s can use the command.\r\r`reply-in-pm (true|false)`\rReply to command in a PM rather than in-channel.\r\r`message`\rThe message to be sent when command is given.\r\r**Example**\r`" + prefix + "editcom spook false false BOO! Scared now?`\rThe edited command would be `" + prefix + "spook` (enabled for all members, not just " + modrolename + "s & would reply in-channel) and the returned message would be `BOO! Scared now?`");
-							} else if (results[1].includes(prefix)) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
-							} else if (results.length === 2) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
-							} else if (results.length === 3) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
-							} else if (results.length === 4) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help.");
-							} else if ((results[2] !== "true") && (results[2] !== "false")) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
-							} else if ((results[3] !== "true") && (results[3] !== "false")) {
-								message.channel.sendMessage("Incorrect syntax. Use `" + prefix + "editcom help` for help. " + results[2]);
+							if (typeof result[0] !== "object") {
+								console.log(colors.red("Command does not exist."));
 							} else {
+								console.log(colors.red("Command exists."));
 								var recombined = "";
 								i = 0;
 								for (i; i < results.length - 4; i++) {
@@ -230,10 +228,10 @@ var editcom = function(message, results, connection) {
 								});
 							}
 						}
-					}
-				});
+					});
+				}
 			} else {
-				message.reply(message, "Only " + modrolename + "s can edit commands.");
+				message.reply("Only " + modrolename + "s can edit commands.");
 			}
 			hardCode[ref].timeout();
 		}
@@ -267,7 +265,7 @@ var delcom = function(message, results, connection) {
 					});
 				}
 			} else {
-				message.reply(message, "Only " + modrolename + "s can delete commands.");
+				message.reply("Only " + modrolename + "s can delete commands.");
 			}
 			hardCode[ref].timeout();
 		}
@@ -324,7 +322,9 @@ var dist = function(message, results, connection) {
 										}
 										fulltime = `${wrmin}:${wrsec}.${wrmil}`;
 									} else {
-										fulltime = working.toLocaleString("en-US", {minimumFractionDigits: 0});
+										fulltime = working.toLocaleString("en-US", {
+											minimumFractionDigits: 0
+										});
 									}
 									//begin convert steamid64 to profile name
 									var optionsac2 = {
@@ -651,8 +651,7 @@ var uptime = function(message, results, connection) {
 function clean(text) {
 	if (typeof text === "string") {
 		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-	}
-	else {
+	} else {
 		return text;
 	}
 }
