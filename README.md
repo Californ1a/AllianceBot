@@ -11,7 +11,7 @@ Within a syntax, `(parenthesis)` denotes optional parameters (use exact word(s) 
 
 ---
 
-#### Syntax: `addcomtoserv <command name>`
+#### Syntax: `enable <command name>`
 Enable a specific hardcoded command on a server. Only usable by the bot owner or the server owner.
 
 ##### Parameter
@@ -19,7 +19,7 @@ Enable a specific hardcoded command on a server. Only usable by the bot owner or
   * Command name to be enabled on that server, without the prefix.
 
 ##### Example:
-* ServOwner: `!addcomtoserv advent`
+* ServOwner: `!enable advent`
   * Enable the `!advent` hardcoded command on the server.
 
 ---
@@ -103,7 +103,7 @@ Create custom commands.
 
 ---
 
-#### Syntax: `remcomfromserv <command name>`
+#### Syntax: `disable <command name>`
 Disable a specific hardcoded command on a server. Only usable by the bot owner or the server owner.
 
 ##### Parameter
