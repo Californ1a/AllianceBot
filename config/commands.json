@@ -60,6 +60,10 @@
     "timeout": 100
   },
   {
+    "name": "checkrole",
+    "timeout": 100
+  },
+  {
     "name": "test",
     "timeout": 0
   },

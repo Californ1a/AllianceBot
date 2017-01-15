@@ -648,6 +648,35 @@ var uptime = function(message, results, connection) {
 	}).catch((error) => console.error(error));
 };
 
+var checkrole = function(message, results, connection, bot) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			let newMember = message.guild.members.get(message.author.id);
+			let guild = newMember.guild;
+			if (guild.id === "83078957620002816") {
+				let botMember = guild.members.get(bot.user.id);
+				if (botMember.hasPermission(10000000) && botMember.highestRole.position > newMember.highestRole.position) {
+					let memberName = cl.getDisplayName(newMember);
+					let playRole = guild.roles.find("name", "Playing Distance");
+					if (!playRole) {
+						return;
+					}
+
+					if (newMember.user.presence.game && newMember.user.presence.game.name === "Distance") {
+						newMember.addRole(playRole).then(console.log(colors.white.dim("* " + memberName + " added to " + playRole.name + " role on " + guild.name + " server."))).catch(console.error);
+					} else if (!newMember.user.presence.game && newMember.roles.has(playRole.id)) {
+						newMember.removeRole(playRole).then(console.log(colors.white.dim("* " + memberName + " removed from " + playRole.name + " role on " + guild.name + " server."))).catch(console.error);
+					} else if ((newMember.user.presence.game && newMember.user.presence.game !== "Distance") && newMember.roles.has(playRole.id)) {
+						newMember.removeRole(playRole).then(console.log(colors.white.dim("* " + memberName + " removed from " + playRole.name + " role on " + guild.name + " server."))).catch(console.error);
+					}
+				}
+			}
+			hardCode[ref].timeout();
+		}
+	}).catch((error) => console.error(error));
+};
+
 function clean(text) {
 	if (typeof text === "string") {
 		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
@@ -764,6 +793,7 @@ module.exports = {
 	help,
 	role,
 	ripwin,
+	checkrole,
 	uptime,
 	evalu
 };
