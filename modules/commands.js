@@ -656,7 +656,7 @@ function clean(text) {
 	}
 }
 
-var evalu = function(message) {
+var evalu = function(message, bot) {
 	if (message.author.id !== botowner) {
 		return;
 	} else {
