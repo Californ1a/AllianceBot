@@ -27,7 +27,7 @@ var ref;
 
 
 var enable = function(message, results, connection) {
-	if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
+	if (message.author.id === botowner || message.guild.ownerID === message.author.id) {
 		if (results.length <= 2) {
 			if (typeof results[1] !== "string") {
 				message.channel.sendMessage("To view the help for this command use `" + prefix + "addcomtoserv help`.");
@@ -74,7 +74,7 @@ var enable = function(message, results, connection) {
 
 
 var disable = function(message, results, connection) {
-	if (message.author.id === botowner || message.guild.owner.equals(message.author)) {
+	if (message.author.id === botowner || message.guild.ownerID === message.author.id) {
 		if (results.length <= 2) {
 			if (typeof results[1] !== "string") {
 				message.channel.sendMessage("To view the help for this command use `" + prefix + "remcomfromserv help`.");
