@@ -412,6 +412,72 @@ bot.on("message", (message) => {
 		var messagesent = false;
 
 
+		var twitExpression = /(https?:\/\/)?(www.)?twitter.com\/(\w+)\/status\/(\d+)/gi;
+		var twitRegex = new RegExp(twitExpression);
+		if (message.content.match(twitRegex)) {
+			var match = twitExpression.exec(message.content);
+			T.get("statuses/show/:id", {id:match[4]}, function (err, data) {
+				if (err) {
+					console.error(colors.green(err));
+				} else if (message.deletable) {
+					message.delete(0);
+					var tweetid2 = data.id_str;
+					var tweetuser2 = data.user.screen_name;
+					var intent2 = "https://twitter.com/intent";
+					var profilelink2 = `https://twitter.com/${tweetuser2}`;
+					var tweetlink2 = `${profilelink2}/status/${tweetid2}`;
+					var text2 = "";
+					var medialink2 = "";
+
+
+					if (data.entities.media) {
+						medialink2 = data.entities.media[0].media_url;
+					}
+					if (data.extended_tweet) {
+						if (data.extended_tweet.entities.media) {
+							medialink2 = data.extended_tweet.entities.media[0].media_url;
+						}
+					}
+					if (data.extended_tweet) {
+						if (data.extended_tweet.full_text) {
+							text2 = data.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
+						}
+					} else {
+						text2 = data.text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
+					}
+
+//cl.getDisplayName(message.guild.members.get(message.author.id))
+					message.channel.sendMessage(`Tweet Cleanup - ${message.author.toString()} said:\r\n${message.content}`, {
+						embed: {
+							color: 3447003,
+							author: {
+								name: data.user.name,
+								url: profilelink2,
+								icon_url: data.user.profile_image_url
+							},
+							//title: "This is an embed",
+							url: tweetlink2,
+							description: `${text2}\r\n\r\n**[View Tweet](${tweetlink2})\r\n\r\n[Reply](${intent2}/tweet?in_reply_to=${tweetid2}) | [Retweet](${intent2}/retweet?tweet_id=${tweetid2}) | [Like](${intent2}/like?tweet_id=${tweetid2})**`,
+							image: {
+								url: medialink2
+							},
+							timestamp: new Date(data.created_at),
+							footer: {
+								//icon_url: tweet.user.profile_image_url,
+								text: `@${data.user.screen_name}`
+							}
+						}
+					}).catch((error) => console.error(error));
+
+
+					//message.channel.sendMessage(`${cl.getDisplayName(message.author)} said:\r\n${message.content} ${data.text}`);
+				} else {
+					console.log("Twitter message isn't deletable.");
+				}
+			});
+		}
+
+
 		//check for command
 		if (message.content.startsWith(prefix)) {
 			var results = message.content.split(" ");

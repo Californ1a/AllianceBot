@@ -315,7 +315,7 @@ var dist = function(message, results, connection) {
 									if (!checkForStunt) {
 										var wrmin = ((working / 1000) / 60) >> 0;
 										var wrsec = (working / 1000) - (wrmin * 60) >> 0;
-										var wrmil = (working / 1000).toFixed(3).split(".");
+										var wrmil = (working / 1000).toFixed(2).split(".");
 										wrmil = wrmil[1];
 										if (wrsec < 10) {
 											wrsec = "0" + wrsec;
