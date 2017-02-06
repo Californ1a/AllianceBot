@@ -2,7 +2,7 @@ const prefix = require("../config/options.json").prefix;
 const cmds = require("./commands.js");
 
 var checkForCommands = function(message, results, connection, http, bot) {
-	let command = results[0].slice(prefix.length);
+	let command = results[0].slice(prefix.length).toLowerCase();
 	if (command === "enable") {
 		cmds.enable(message, results, connection);
 	} else if (command === "disable") {
@@ -29,12 +29,16 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		cmds.help(message, results, connection);
 	} else if (command === "role") {
 		cmds.role(bot, message, results, connection);
-	} else if (command === "win" || command === "rip" || command === "tf" || command === "sign") {
+	} else if (command === "win" || command === "rip" || command === "tf" || command === "sign" || command === "hype") {
 		cmds.ripwin(message, results, connection);
 	} else if (command === "uptime") {
 		cmds.uptime(message, results, connection);
 	} else if (command === "checkrole") {
 		cmds.checkrole(message, results, connection, bot);
+	} else if (command === "strivia") {
+		cmds.strivia(message);
+	} else if (command === "tscore") {
+		cmds.tscore(message, results, connection);
 	} else if (command === "evalu") {
 		if (message.author.id !== "83264808022970368") {
 			return;

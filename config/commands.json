@@ -60,6 +60,10 @@
     "timeout": 100
   },
   {
+    "name": "hype",
+    "timeout": 100
+  },
+  {
     "name": "checkrole",
     "timeout": 100
   },
@@ -81,6 +85,14 @@
   },
   {
     "name": "automemb",
+    "timeout": 0
+  },
+  {
+    "name": "strivia",
+    "timeout": 0
+  },
+  {
+    "name": "tscore",
     "timeout": 0
   }
 ]

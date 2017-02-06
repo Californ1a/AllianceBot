@@ -14,8 +14,10 @@ const sdr = require("./setdelrole.js");
 const rw = require("./RipWin.js");
 const CheckMapID = require("./checkmapid.js");
 const testtweet = require("../tweet2.json"); //test
+const trivia = require("../config/trivia.json");
 var info;
 var currentss;
+var triviaOn = false;
 
 var hardCode = [];
 var i = 0;
@@ -677,6 +679,72 @@ var checkrole = function(message, results, connection, bot) {
 	}).catch((error) => console.error(error));
 };
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function goTrivia(channel) {
+	var max = trivia.length-1;
+	var min = 0;
+	if (triviaOn) {
+		var quesNum = Math.floor(Math.random() * (max - min + 1) + min);
+
+
+
+		channel.sendMessage(`Q: ${trivia[quesNum].question}`)
+			.then(() => {
+				channel.awaitMessages(response => response.content.toLowerCase() === trivia[quesNum].answer, {
+					max: 1,
+					time: 10000,
+					errors: ["time"],
+				}).then((collected) => {
+					if (triviaOn) {
+						channel.sendMessage(`${collected.first().author} guessed correctly!`).then(setTimeout(goTrivia, 5000, channel));
+					}
+				}).catch(() => {
+					if (triviaOn) {
+						channel.sendMessage(`H: ${trivia[quesNum].hint}`)
+						.then(() => {
+							channel.awaitMessages(response => response.content.toLowerCase() === trivia[quesNum].answer, {
+								max: 1,
+								time: 5000,
+								errors: ["time"],
+							}).then((collected) => {
+								if (triviaOn) {
+									channel.sendMessage(`${collected.first().author} guessed correctly!`).then(setTimeout(goTrivia, 5000, channel));
+								}
+							}).catch(() => {
+								if (triviaOn) {
+									channel.sendMessage(`No one guessed correctly. A: ${trivia[quesNum].answer}`).then(setTimeout(goTrivia, 5000, channel));
+								}
+							});
+						});
+					}
+				});
+			});
+
+
+
+
+	}
+}
+
+
+
+var strivia = function(message) {
+
+	if (message.member.roles.exists("name", modrolename)) {
+		triviaOn = !triviaOn;
+		if (triviaOn) {
+			goTrivia(message.channel);
+		}
+	}
+
+
+
+};
+
+
 function clean(text) {
 	if (typeof text === "string") {
 		return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
@@ -795,5 +863,6 @@ module.exports = {
 	ripwin,
 	checkrole,
 	uptime,
-	evalu
+	evalu,
+	strivia
 };
