@@ -1,15 +1,15 @@
 [
   {
     "name": "newcom",
-    "cooldown": 5000
+    "cooldown": 100
   },
   {
     "name": "delcom",
-    "timeout": 5000
+    "timeout": 100
   },
   {
     "name": "editcom",
-    "timeout": 5000
+    "timeout": 100
   },
   {
     "name": "dist",
@@ -25,19 +25,19 @@
   },
   {
     "name": "speedy",
-    "timeout": 1000
+    "timeout": 0
   },
   {
     "name": "cmds",
-    "timeout": 5000
+    "timeout": 0
   },
   {
     "name": "commands",
-    "timeout": 5000
+    "timeout": 0
   },
   {
     "name": "help",
-    "timeout": 5000
+    "timeout": 0
   },
   {
     "name": "role",
@@ -89,10 +89,10 @@
   },
   {
     "name": "strivia",
-    "timeout": 0
+    "timeout": 20000
   },
   {
     "name": "tscore",
-    "timeout": 0
+    "timeout": 100
   }
 ]

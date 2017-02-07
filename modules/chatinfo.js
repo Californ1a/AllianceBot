@@ -47,12 +47,12 @@ var writeLineToAllLogs = function(bot, guild, line) {
 		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
 			fs.appendFile(logLocation + guild.name + "/#" + guildChannels[i].name + "/" + currentYear + "/" + currentMonth + ".log", "* " + line + "\r\n", function(error) {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				}
 			});
 			fs.appendFile(logLocation + guild.name + "/full_logs/#" + guildChannels[i].name + ".log", "* " + line + "\r\n", function(error) {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				} else {
 					//console.log(colors.white.dim("* " + line));
 				}
@@ -123,7 +123,7 @@ var formatChatlog = function(message) {
 	var formattedAtturls = "";
 	fs.mkdirsSync(logLocation + message.guild.name + "/#" + message.channel.name + "/" + messageTime.year, function(error) {
 		if (error) {
-			console.log(error);
+			console.error(error);
 			return;
 		}
 	});

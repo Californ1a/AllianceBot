@@ -229,7 +229,7 @@ bot.on("guildCreate", (guild) => {
 	};
 	connection.query("INSERT INTO servers SET ?", info, function(error) {
 		if (error) {
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			console.log(colors.red("Successfully inserted server."));
@@ -238,7 +238,7 @@ bot.on("guildCreate", (guild) => {
 	console.log(colors.red("Trying to insert win quotes for server '" + guild.name + "'."));
 	connection.query("INSERT INTO win (server_id, quote) SELECT \"113151199963783168\", quote FROM win WHERE server_id = \"" + guild.id + "\"", function(error) {
 		if (error) {
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			console.log(colors.red("Successfully inserted win quotes."));
@@ -247,7 +247,7 @@ bot.on("guildCreate", (guild) => {
 	console.log(colors.red("Trying to insert rip quotes for server '" + guild.name + "'."));
 	connection.query("INSERT INTO rip (server_id, quote) SELECT \"113151199963783168\", quote FROM win WHERE server_id = \"" + guild.id + "\"", function(error) {
 		if (error) {
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			console.log(colors.red("Successfully inserted win quotes."));
@@ -264,7 +264,7 @@ bot.on("guildDelete", (guild) => {
 		console.log(colors.red("Attempting to remove " + guild.name + " from the database."));
 		connection.query("DELETE FROM servers WHERE serverid = '" + guild.id + "'", function(error) {
 			if (error) {
-				console.log(error);
+				console.error(error);
 				return;
 			}
 			console.log(colors.red("Successfully removed server."));
@@ -324,7 +324,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 
 			fs.readFile(oldc.currentLog, function(error, data) {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				} else {
 					var array = data.toString().split("\r\n");
 					i = 0;
@@ -335,7 +335,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					}
 					fs.writeFile(oldc.currentLog, array.join("\r\n"), function(error) {
 						if (error) {
-							console.log(error);
+							console.error(error);
 						} else {
 							console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 						}
@@ -344,7 +344,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 			});
 			fs.readFile(oldc.fullLog, function(error, data) {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				} else {
 					var array = data.toString().split("\r\n");
 					i = 0;
@@ -355,7 +355,7 @@ bot.on("messageUpdate", (oldMessage, newMessage) => {
 					}
 					fs.writeFile(oldc.fullLog, array.join("\r\n"), function(error) {
 						if (error) {
-							console.log(error);
+							console.error(error);
 						} else {
 							//console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 						}
@@ -386,7 +386,7 @@ bot.on("message", (message) => {
 		fs.appendFile(cha.currentLog, cha.chatlinedata + cha.formattedAtturls + "\r\n", function(error) {
 			if (error) {
 				console.log(message.content);
-				console.log(error);
+				console.error(error);
 			} else {
 				console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 			}
@@ -394,7 +394,7 @@ bot.on("message", (message) => {
 		fs.appendFile(cha.fullLog, cha.chatlinedata + cha.formattedAtturls + "\r\n", function(error) {
 			if (error) {
 				console.log(message.content);
-				console.log(error);
+				console.error(error);
 			}
 		});
 
@@ -487,7 +487,7 @@ bot.on("message", (message) => {
 			//check for custom server command
 			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[0].slice(prefix.length) + "'", function(error, returntext) {
 				if (error) {
-					console.log(error);
+					console.error(error);
 					return;
 				} else {
 					//console.log(typeof returntext[0]);

@@ -22,7 +22,7 @@ Command.prototype.isEnabledForServer = function(message, connection, prefix) {
 		connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " AND commandname='" + commandname + "'", function(error, enabledforserver) {
 			if (error) {
 				message.channel.sendMessage("Failed.");
-				console.log(error);
+				console.error(error);
 				return;
 			} else {
 				if (typeof enabledforserver[0] !== "object") {

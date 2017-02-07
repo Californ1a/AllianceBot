@@ -7,7 +7,7 @@ var info = "";
 var randomQuote = function(message, rw, c) {
 	c.query("SELECT quote FROM " + rw + " WHERE server_id=" + message.guild.id + " ORDER BY RAND() LIMIT 1", function(error, quotes) {
 		if (error) {
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			if (typeof quotes[0].quote !== "string") {
@@ -46,7 +46,7 @@ var addQuote = function(message, results, rw, prefix, c) {
 		c.query("INSERT INTO " + rw + " SET ?", info, function(error) {
 			if (error) {
 				message.channel.sendMessage("Failed");
-				console.log(error);
+				console.error(error);
 				return;
 			} else {
 				console.log(colors.red("Successfully inserted " + rw + " message."));
@@ -67,7 +67,7 @@ var delQuote = function(message, results, rw, prefix, c) {
 		console.log(colors.red("Attempting to remove " + rw + " message '" + recombined + "' from the database."));
 		c.query("DELETE FROM " + rw + " WHERE quote = '" + recombined + "' AND server_id=" + message.guild.id, function(error) {
 			if (error) {
-				console.log(error);
+				console.error(error);
 				return;
 			}
 			console.log(colors.red("Successfully removed " + rw + " message."));
@@ -94,7 +94,7 @@ var listQuotes = function(message, c, rw) {
 	c.query("SELECT quote FROM " + rw + " WHERE server_id=" + message.guild.id + " order by quote asc", function(error, quotes) {
 		if (error) {
 			message.channel.sendMessage("Failed to find any, with errors.");
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			if (typeof quotes[0] !== "object") {
@@ -121,7 +121,7 @@ var searchQuotes = function(message, results, rw, c) {
 	c.query("SELECT * FROM " + rw + " WHERE server_id=" + message.guild.id + " AND quote LIKE '%" + searchKey + "%' COLLATE utf8_unicode_ci ORDER BY RAND() LIMIT 1", function(error, quotes) {
 		if (error) {
 			message.channel.sendMessage("Failed to find any matching quotes, with errors.");
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			if (typeof quotes[0] !== "object") {

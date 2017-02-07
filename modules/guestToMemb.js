@@ -7,7 +7,7 @@ var addGuestToMemb = function(connection, message, cha, bot) {
 	connection.query("SELECT commandname FROM commands WHERE server_id=" + message.guild.id + " AND commandname='automemb'", function(error, enabledforserver) {
 		if (error) {
 			message.channel.sendMessage(message, "Failed.");
-			console.log(error);
+			console.error(error);
 			return;
 		} else {
 			if (typeof enabledforserver[0] !== "object") {

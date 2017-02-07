@@ -1,22 +1,242 @@
 [
   {
-    "question": "some q?",
-    "hint": "some h",
-    "answer": "some a"
+    "question": "Jordan (\"______\") Hemenway",
+    "hint": "t_____",
+    "answer": "torcht"
   },
   {
-    "question": "some q2?",
-    "hint": "some h2",
-    "answer": "some a2"
+    "question": "What is the first map released on the workshop?",
+    "hint": "Made by a developer",
+    "answer": "Purple Flave"
   },
   {
-    "question": "some q3?",
-    "hint": "some h3",
-    "answer": "some a3"
+    "question": "What is the name of the music used in the Kickstarter trailer?",
+    "hint": "E_____",
+    "answer": "Engage"
   },
   {
-    "question": "some q4?",
-    "hint": "some h4",
-    "answer": "some a4"
+    "question": "What is the name of the standard car?",
+    "hint": "Refract",
+    "answer": "Refractor"
+  },
+  {
+    "question": "Which of the following was a real (public) build number: 3650, 3520, 4219, or 5034",
+    "hint": "It includes a 3",
+    "answer": "3520"
+  },
+  {
+    "question": "What was the first Unity 5 (experimental) build number?",
+    "hint": "3xx0",
+    "answer": "3700"
+  },
+  {
+    "question": "What is the last-known name of the second public vehicle?",
+    "hint": "drive",
+    "answer": "Flash Drive"
+  },
+  {
+    "question": "How many individual maps were completed during the first Distathon (2015)?",
+    "hint": ">300",
+    "answer": "355"
+  },
+  {
+    "question": "How many people are listed on the first poster in the Credits map?",
+    "hint": "<10",
+    "answer": "8"
+  },
+  {
+    "question": "Which of the following is NOT a Trackmogrify modifier: Triad, Marine, Perlin, or Diamond",
+    "hint": "It includes an A.",
+    "answer": "Diamond"
+  },
+  {
+    "question": "Who made the current most-subscribed workshop map?",
+    "hint": "Double Rainbow",
+    "answer": "Krispy"
+  },
+  {
+    "question": "What is the current most-subscribed workshop map?",
+    "hint": "Krispy",
+    "answer": "Rainbow Road"
+  },
+  {
+    "question": "Who made the current top-rated (all-time) workshop map?",
+    "hint": "Strike",
+    "answer": "Phimeek"
+  },
+  {
+    "question": "What is the current top-rated (all-time) workshop map?",
+    "hint": "Phimeek",
+    "answer": "Striker"
+  },
+  {
+    "question": "What is the diamond time for Broken Symmetry?",
+    "hint": "1:xx.00",
+    "answer": "1:29.00"
+  },
+  {
+    "question": "What is the diamond time for Lost Society?",
+    "hint": "1:xx.00",
+    "answer": "1:26.00"
+  },
+  {
+    "question": "What is the diamond time for Negative Space?",
+    "hint": "1:xx.00",
+    "answer": "1:33.00"
+  },
+  {
+    "question": "What is the diamond time for Departure?",
+    "hint": "2:xx.00",
+    "answer": "2:09.00"
+  },
+  {
+    "question": "What is the diamond time for Aftermath?",
+    "hint": "2:xx.00",
+    "answer": "2:32.00"
+  },
+  {
+    "question": "What is the diamond time for Friction?",
+    "hint": "2:xx.00",
+    "answer": "2:01.00"
+  },
+  {
+    "question": "What is the diamond time for The Thing About Machines?",
+    "hint": "2:xx.00",
+    "answer": "2:16.00"
+  },
+  {
+    "question": "What is the diamond time for Amusement?",
+    "hint": "1:xx.00",
+    "answer": "1:36.00"
+  },
+  {
+    "question": "What is the diamond time for Corruption?",
+    "hint": "2:xx.00",
+    "answer": "2:35.00"
+  },
+  {
+    "question": "What is the diamond time for The Observer Effect?",
+    "hint": "1:xx.00",
+    "answer": "1:39.00"
+  },
+  {
+    "question": "What is the diamond time for Dissolution?",
+    "hint": "1:xx.00",
+    "answer": "1:36.00"
+  },
+  {
+    "question": "What is the diamond time for Falling Through?",
+    "hint": "1:xx.00",
+    "answer": "1:10.00"
+  },
+  {
+    "question": "What is the diamond time for Monolith?",
+    "hint": "2:xx.00",
+    "answer": "2:16.00"
+  },
+  {
+    "question": "What is the diamond time for Uncanny Valley?",
+    "hint": "1:xx.00",
+    "answer": "1:16.00"
+  },
+  {
+    "question": "What was the default car color scheme name before it was changed to \"default\"?",
+    "hint": "Snow",
+    "answer": "Snow Top"
+  },
+  {
+    "question": "What is the name of the bike in Nitronic Rush?",
+    "hint": "Cycle",
+    "answer": "Knight Cycle"
+  },
+  {
+    "question": "What is the name of the skeleton car in Distance?",
+    "hint": "Skele",
+    "answer": "Skeletron"
+  },
+  {
+    "question": "How much did the first Distathon (2015) raise for Child's Play (in USD)?",
+    "hint": "$20xx.42",
+    "answer": "$2067.42"
+  },
+  {
+    "question": "How much did the second Distathon (2016) raise for Child's Play (in USD)?",
+    "hint": "$40xx.04",
+    "answer": "$4024.04"
+  },
+  {
+    "question": "How many deaths did Fork have during the first Distathon (2015)?",
+    "hint": ">1000",
+    "answer": "1184"
+  },
+  {
+    "question": "What month did the Distance Discord start in?",
+    "hint": "After June",
+    "answer": "August"
+  },
+  {
+    "question": "Who created the \"O man eye\" meme?",
+    "hint": "Twitch chat user",
+    "answer": "woodcoal2"
+  },
+  {
+    "question": "What build number introduced the grip ability?",
+    "hint": "4xx2",
+    "answer": "4302"
+  },
+  {
+    "question": "What was the name of beginner tutorial map in the early private alpha?",
+    "hint": "New",
+    "answer": "New Beginnings"
+  },
+  {
+    "question": "What was the name of the advanced tutorial map in the early private alpha?",
+    "hint": "Forces",
+    "answer": "Opposing Forces"
+  },
+  {
+    "question": "What was the orignal map name for Negative Space?",
+    "hint": "Euphoric",
+    "answer": "Euphoric Emptiness"
+  },
+  {
+    "question": "What was the original map name for Departure?",
+    "hint": "Unstable",
+    "answer": "Unstable Superposition"
+  },
+  {
+    "question": "What was the original map name for The Thing About Machines?",
+    "hint": "Frag",
+    "answer": "Fragmented"
+  },
+  {
+    "question": "What was the original map name for Aftermath?",
+    "hint": "Grey",
+    "answer": "Grey Matters"
+  },
+  {
+    "question": "Jason (\"____\") Nolan",
+    "hint": "C___",
+    "answer": "Cluh"
+  },
+  {
+    "question": "Andrew (\"______\") Nolan",
+    "hint": "2",
+    "answer": "Cluh 2"
+  },
+  {
+    "question": "Ellie (\"___________\") Hemenway",
+    "hint": "Cool Beans",
+    "answer": "elcoolbeans"
+  },
+  {
+    "question": "Laura (\"______\") Borgen",
+    "hint": "Art",
+    "answer": "LBoArt"
+  },
+  {
+    "question": "Eddie (\"_______\") Peters",
+    "hint": "Art",
+    "answer": "EdboArt"
   }
 ]
