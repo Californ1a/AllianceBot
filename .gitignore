@@ -53,4 +53,3 @@ DiscordChatlogs/*
 backups/*
 *.bat
 process.json
-config/trivia.json
