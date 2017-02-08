@@ -36,7 +36,7 @@ var checkForCommands = function(message, results, connection, http, bot) {
 	} else if (command === "checkrole") {
 		cmds.checkrole(message, results, connection, bot);
 	} else if (command === "strivia") {
-		cmds.strivia(message, connection);
+		cmds.strivia(message, results, connection);
 	} else if (command === "tscore") {
 		cmds.tscore(message, results, connection);
 	} else if (command === "evalu") {

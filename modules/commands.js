@@ -15,6 +15,11 @@ const rw = require("./RipWin.js");
 const CheckMapID = require("./checkmapid.js");
 const testtweet = require("../tweet2.json"); //test
 const trivia = require("../config/trivia.json");
+const delayBeforeNextQ = 5000;
+const delayBeforeH = 20000;
+const delayBeforeNoA = 20000;
+const maxQs = 5;
+var nextQuestion;
 var incompleteQuestions = [""];
 var i = 0;
 for (i; i < trivia.length; i++) {
@@ -704,131 +709,178 @@ function removeQuestion(quesNum) {
 	}
 }
 
-var countQsMissed = 0;
-function goTrivia(channel, c) {
-	var delayBeforeNextQ = 5000;
-	var delayBeforeH = 20000;
-	var delayBeforeNoA = 10000;
-	var maxQs = 5;
-	if (triviaOn) {
-		var quesNum = getRndmFromSet(incompleteQuestions);
-		console.log(countQsMissed);
-		channel.sendMessage(`Q: ${trivia[quesNum].question.replace(/_/g,"\\_")}`)
-			.then(() => {
-				channel.awaitMessages(response => response.content.toLowerCase() === trivia[quesNum].answer.toLowerCase(), {
-					max: 1,
-					time: delayBeforeH,
-					errors: ["time"],
-				}).then((collected) => {
-					var winnerid = collected.first().author.id;
-					console.log(typeof winnerid);
-					if (triviaOn) {
-						var score = 2;
-						c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
-							if (error) {
-								console.error(error);
-								return;
-							} else if (response[0]) {
-								score = response[0].score + 2;
-								c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "'", function(error) {
-									if (error) {
-										console.error(error);
-										return;
-									}
-								});
-							} else {
-								info = {
-									"userid": winnerid,
-									"score": score
-								};
-								c.query("INSERT INTO triviascore SET ?", info, function(error) {
-									if (error) {
-										console.error(error);
-										return;
-									}
-								});
-							}
-							removeQuestion(quesNum);
-							countQsMissed = 0;
-							channel.sendMessage(`${collected.first().author} guessed correctly (+2)! Your score is now ${score}.`).then(setTimeout(goTrivia, delayBeforeNextQ, channel, c));
-						});
-					}
-				}).catch(() => {
-					if (triviaOn) {
-						channel.sendMessage(`H: ${trivia[quesNum].hint.replace(/_/g,"\\_")}`)
-							.then(() => {
-								channel.awaitMessages(response => response.content.toLowerCase() === trivia[quesNum].answer.toLowerCase(), {
-									max: 1,
-									time: delayBeforeNoA,
-									errors: ["time"],
-								}).then((collected) => {
-									var winnerid = collected.first().author.id;
-									if (triviaOn) {
-										var score = 1;
-										c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
-											if (error) {
-												console.error(error);
-												return;
-											} else if (response[0]) {
-												score = response[0].score + 1;
-												c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "'", function(error) {
-													if (error) {
-														console.error(error);
-														return;
-													}
-												});
-											} else {
-												info = {
-													"userid": winnerid,
-													"score": score
-												};
-												c.query("INSERT INTO triviascore SET ?", info, function(error) {
-													if (error) {
-														console.error(error);
-														return;
-													}
-												});
-											}
-											removeQuestion(quesNum);
-											countQsMissed = 0;
-											channel.sendMessage(`${collected.first().author} guessed correctly (+1)! Your score is now ${score}.`).then(setTimeout(goTrivia, delayBeforeNextQ, channel, c));
-										});
-									}
-								}).catch(() => {
-									if (triviaOn) {
-										removeQuestion(quesNum);
-										countQsMissed += 1;
-										channel.sendMessage("No one guessed correctly!").then(() => {
-											if (countQsMissed < maxQs) {
-												setTimeout(goTrivia, delayBeforeNextQ, channel, c);
-											} else {
-												channel.sendMessage("Trivia has been automatically stopped.");
-												triviaOn = !triviaOn;
-											}
-										});
-									}
-								});
-							});
-					}
-				});
+function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum) {
+	var score;
+	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
+		if (error) {
+			console.error(error);
+			return;
+		} else if (response[0]) {
+			score = response[0].score + scoreAdd;
+			c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "'", function(error) {
+				if (error) {
+					console.error(error);
+					return;
+				}
 			});
-	}
+		} else {
+			score = scoreAdd;
+			info = {
+				"userid": winnerid,
+				"score": scoreAdd
+			};
+			c.query("INSERT INTO triviascore SET ?", info, function(error) {
+				if (error) {
+					console.error(error);
+					return;
+				}
+			});
+		}
+		removeQuestion(quesNum);
+		countQsMissed = 0;
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! Your score is now ${score}.`).then(() => {
+			nextQuestion = setTimeout(goTrivia, delayBeforeNextQ, channel, c, -1);
+		});
+	});
 }
 
 
-var strivia = function(message, connection) {
-	if (message.member.roles.exists("name", modrolename) && message.channel.id === "211599888222257152") {
-		triviaOn = !triviaOn;
-		if (triviaOn) {
-			message.channel.sendMessage("Trivia Started!");
-			goTrivia(message.channel, connection);
+var countQsMissed = 0;
+function goTrivia(channel, c, manualNumber) {
+	var alreadyAnswered = [];
+	if (triviaOn) {
+		var quesNum = -1;
+		if (manualNumber === -1) {
+			quesNum = getRndmFromSet(incompleteQuestions);
+		} else if (manualNumber < trivia.length) {
+			quesNum = manualNumber;
 		} else {
-			message.channel.sendMessage("Trivia stopped!");
+			quesNum = getRndmFromSet(incompleteQuestions);
 		}
-	} else {
-		message.channel.sendMessage("You do not have permission to start/stop trivia.");
+		var answerFilter = function(message) {
+			i = 0;
+			for (i; i < trivia[quesNum].answers.length; i++) {
+				if (message.content.toLowerCase() === trivia[quesNum].answers[i].toLowerCase()) {
+					return true;
+				}
+			}
+			return false;
+		};
+		var answerHintFilter = function(message) {
+			var dontCount = false;
+			i = 0;
+			var answeredLength = alreadyAnswered.length;
+			for (i; i < answeredLength; i++) {
+				if (alreadyAnswered[i] === message.author.id) {
+					dontCount = true;
+				}
+			}
+			if (!dontCount) {
+				alreadyAnswered[answeredLength] = message.author.id;
+			}
+			if (trivia[quesNum].hanswers) {
+				if (dontCount) {
+					return false;
+				} else {
+					i = 0;
+					for (i; i < trivia[quesNum].hanswers.length; i++) {
+						if (message.content.toLowerCase() === trivia[quesNum].hanswers[i].toLowerCase()) {
+							return true;
+						}
+					}
+					for (i; i < trivia[quesNum].answers.length; i++) {
+						if (message.content.toLowerCase() === trivia[quesNum].answers[i].toLowerCase()) {
+							return true;
+						}
+					}
+					return false;
+				}
+			} else {
+				i = 0;
+				for (i; i < trivia[quesNum].answers.length; i++) {
+					if (message.content.toLowerCase() === trivia[quesNum].answers[i].toLowerCase()) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		//var filter = response => response.content.toLowerCase() === trivia[quesNum].answer.toLowerCase();
+		channel.sendMessage(`Question:\r\n**${trivia[quesNum].question.replace(/_/g,"\\_")}**`).then(() => {
+			channel.awaitMessages(answerFilter, {
+				max: 1,
+				time: delayBeforeH,
+				errors: ["time"],
+			}).then((collected) => {
+				var winnerid = collected.first().author.id;
+				if (triviaOn) {
+					var scoreAdd = 2;
+					manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum);
+				}
+			}).catch(() => {
+				if (triviaOn) {
+					channel.sendMessage(`Hint:\r\n${trivia[quesNum].hint.replace(/_/g,"\\_")}`).then(() => {
+						channel.awaitMessages(answerHintFilter, {
+							max: 1,
+							time: delayBeforeNoA,
+							errors: ["time"],
+						}).then((collected) => {
+							var winnerid = collected.first().author.id;
+							if (triviaOn) {
+								var scoreAdd = 1;
+								manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum);
+							}
+						}).catch(() => {
+							if (triviaOn) {
+								removeQuestion(quesNum);
+								countQsMissed += 1;
+								channel.sendMessage("No one guessed correctly!").then(() => {
+									if (countQsMissed < maxQs) {
+										nextQuestion = setTimeout(goTrivia, delayBeforeNextQ, channel, c, -1);
+									} else {
+										channel.sendMessage("Trivia has been automatically stopped.");
+										triviaOn = !triviaOn;
+									}
+								});
+							}
+						});
+					});
+				}
+			});
+		});
 	}
+}
+
+var strivia = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			if (message.member.roles.exists("name", modrolename) && message.channel.id === "211599888222257152") {
+				triviaOn = !triviaOn;
+				if (results[1]) {
+					if (triviaOn) {
+						message.channel.sendMessage("Trivia Started with manual question number!");
+						goTrivia(message.channel, connection, results[1]);
+					} else {
+						clearTimeout(nextQuestion);
+						message.channel.sendMessage("Trivia stopped!");
+					}
+				} else {
+					if (triviaOn) {
+						message.channel.sendMessage("Trivia Started!");
+						goTrivia(message.channel, connection, -1);
+					} else {
+						clearTimeout(nextQuestion);
+						message.channel.sendMessage("Trivia stopped!");
+					}
+				}
+			} else {
+				message.channel.sendMessage("You do not have permission to start/stop trivia.");
+			}
+		}
+	});
 };
+
 
 var tscore = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
@@ -858,7 +910,8 @@ var tscore = function(message, results, connection) {
 					}
 					message.channel.sendMessage(`Rank: ${usersRank}, Score: ${usersScore}`);
 				});
-			} else if (results.length === 2 && results[1] === "board" || "b") {
+			} else if (results.length === 2 && (results[1] === "board" || results[1] === "b") && !message.mentions.users.array()[0]) {
+				console.log(results.length);
 				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
 					if (error) {
 						console.error(error);
@@ -871,13 +924,12 @@ var tscore = function(message, results, connection) {
 							console.error(error);
 							return;
 						} else if (response[0]) {
-							var text = "";
+							//var text = "";
 							var nameArray = [""];
 							var scoreArray = [0];
 							var rankArray = [0];
 							i = 0;
 							for (i; i < response.length; i++) {
-								console.log(text);
 								nameArray[i] = cl.getDisplayName(message.guild.members.get(response[i].userid));
 								scoreArray[i] = response[i].score;
 								rankArray[i] = response[i].rank;
@@ -900,28 +952,34 @@ var tscore = function(message, results, connection) {
 						}
 					});
 				});
-			} else if (results[1] === "set") {
+			} else if (results.length === 4 && results[1] === "set") {
 				if (message.member.roles.exists("name", modrolename)) {
 					if (results.length === 4) {
 						mentionedMember = message.guild.members.get(message.mentions.users.first().id);
-						if (results[3] > 0) {
+						if (!isNaN(results[3]) && results[3] > 0) {
 							connection.query("UPDATE triviascore SET score=" + results[3] + " WHERE userid='" + mentionedMember.id + "'", function(error) {
 								if (error) {
 									message.channel.sendMessage("Failed");
 									console.error(error);
 									return;
 								} else {
-									message.channel.sendMessage("Success");
+									message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}.`);
 								}
 							});
 						} else {
-							connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error) {
+							connection.query("SELECT score FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
 								if (error) {
-									message.channel.sendMessage("Failed");
 									console.error(error);
-									return;
 								} else {
-									message.channel.sendMessage("Success");
+									connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error) {
+										if (error) {
+											message.channel.sendMessage("Failed");
+											console.error(error);
+											return;
+										} else {
+											message.channel.sendMessage(`Removed ${cl.getDisplayName(mentionedMember)} from the trivia board. Their previous score was ${response[0].score}.`);
+										}
+									});
 								}
 							});
 						}
