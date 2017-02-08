@@ -1,0 +1,6 @@
+{
+  "delayBeforeNextQuestion": 5000,
+  "delayBeforeHint": 20000,
+  "delayBeforeNoAnswer": 20000,
+  "maxUnansweredQuestionsBeforeAutoStop": 5
+}

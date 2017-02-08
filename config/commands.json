@@ -89,7 +89,7 @@
   },
   {
     "name": "strivia",
-    "timeout": 20000
+    "timeout": 30000
   },
   {
     "name": "tscore",

@@ -15,10 +15,11 @@ const rw = require("./RipWin.js");
 const CheckMapID = require("./checkmapid.js");
 const testtweet = require("../tweet2.json"); //test
 const trivia = require("../config/trivia.json");
-const delayBeforeNextQ = 5000;
-const delayBeforeH = 20000;
-const delayBeforeNoA = 20000;
-const maxQs = 5;
+var triviaconfig = require("../config/triviaconfig.json");
+var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
+var delayBeforeH = triviaconfig.delayBeforeHint;
+var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
+var maxQs = triviaconfig.maxUnansweredQuestionsBeforeAutoStop;
 var nextQuestion;
 var incompleteQuestions = [""];
 var i = 0;
@@ -232,7 +233,7 @@ var editcom = function(message, results, connection) {
 								// 	"server_id": message.guild.id
 								// };
 								recombined = "''" + recombined + "''";
-								console.log(result[0]);
+								//console.log(result[0]);
 								connection.query("UPDATE servcom SET comtext='" + recombined + "', modonly='" + results[2] + "', inpm='" + results[3] + "' WHERE idservcom=" + result[0].idservcom, function(error) {
 									if (error) {
 										console.error(error);
@@ -868,7 +869,7 @@ var strivia = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if (response && !hardCode[ref].onCooldown) {
-			if (message.member.roles.exists("name", modrolename) && message.channel.id === "211599888222257152") {
+			if (message.member.roles.exists("name", modrolename)) {
 				triviaOn = !triviaOn;
 				if (results[1]) {
 					if (triviaOn) {
@@ -894,6 +895,13 @@ var strivia = function(message, results, connection) {
 	});
 };
 
+var clearFilter = function(message) {
+	if (message.content === "yes" || message.content === "no" || message.content === "n" || message.content === "y") {
+		return true;
+	} else {
+		return false;
+	}
+};
 
 var tscore = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
@@ -924,7 +932,7 @@ var tscore = function(message, results, connection) {
 					message.channel.sendMessage(`Rank: ${usersRank}, Score: ${usersScore}`);
 				});
 			} else if (results.length === 2 && (results[1] === "board" || results[1] === "b") && !message.mentions.users.array()[0]) {
-				console.log(results.length);
+				//console.log(results.length);
 				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
 					if (error) {
 						console.error(error);
@@ -950,8 +958,12 @@ var tscore = function(message, results, connection) {
 							}
 							var fieldsArray = [""];
 							i = 0;
-							for (i; i <nameArray.length; i++) {
-								fieldsArray[i] = {name: nameArray[i], value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`, inline: true};
+							for (i; i < nameArray.length; i++) {
+								fieldsArray[i] = {
+									name: nameArray[i],
+									value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`,
+									inline: true
+								};
 							}
 							message.channel.sendMessage(`Your Rank: ${usersRank}, Your Score: ${usersScore}`, {
 								embed: {
@@ -969,47 +981,88 @@ var tscore = function(message, results, connection) {
 				if (message.member.roles.exists("name", modrolename)) {
 					if (results.length === 4) {
 						mentionedMember = message.guild.members.get(message.mentions.users.first().id);
-						if (!isNaN(results[3]) && results[3] > 0) {
-							connection.query("UPDATE triviascore SET score=" + results[3] + " WHERE userid='" + mentionedMember.id + "'", function(error) {
-								if (error) {
-									message.channel.sendMessage("Failed");
-									console.error(error);
-									return;
+						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
+							if (error) {
+								console.error(error);
+							} else {
+								if (response[0]) {
+									if (!isNaN(results[3]) && results[3] > 0) {
+										connection.query("UPDATE triviascore SET score=" + results[3] + " WHERE userid='" + mentionedMember.id + "'", function(error) {
+											if (error) {
+												message.channel.sendMessage("Failed");
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}.`);
+											}
+										});
+									} else {
+										connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error) {
+											if (error) {
+												message.channel.sendMessage("Failed");
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`Removed ${cl.getDisplayName(mentionedMember)} from the trivia board. Their previous score was ${response[0].score}.`);
+											}
+										});
+									}
 								} else {
-									message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}.`);
+									if (!isNaN(results[3]) && results[3] > 0) {
+										info = {
+											"userid": mentionedMember.id,
+											"score": results[3]
+										};
+										connection.query("INSERT INTO triviascore SET ?", info, function(error) {
+											if (error) {
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`Added ${cl.getDisplayName(mentionedMember)} to the trivia board with a score of ${results[3]}.`);
+											}
+										});
+									}
 								}
-							});
-						} else {
-							connection.query("SELECT score FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
-								if (error) {
-									console.error(error);
-								} else {
-									connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error) {
-										if (error) {
-											message.channel.sendMessage("Failed");
-											console.error(error);
-											return;
-										} else {
-											message.channel.sendMessage(`Removed ${cl.getDisplayName(mentionedMember)} from the trivia board. Their previous score was ${response[0].score}.`);
-										}
-									});
-								}
-							});
-						}
+							}
+						});
 					}
 				} else {
 					message.channel.sendMessage("You do not have permission to set scores.");
 				}
+			} else if (results[1] === "clear") {
+				if (message.member.roles.exists("name", modrolename)) {
+					message.channel.sendMessage("Are you absolutely sure you want to completely clear the trivia leaderboards? y/n");
+					message.channel.awaitMessages(clearFilter, {
+						max: 1,
+						time: 10000,
+						errors: ["time"],
+					}).then((collected) => {
+						if (collected.first().content === "yes" || collected.first().content === "y") {
+							connection.query("TRUNCATE TABLE triviascore", function(error) {
+								if (error) {
+									console.error(error);
+									return;
+								} else {
+									message.channel.sendMessage("Successfully cleared the trivia leaderboard.");
+								}
+							});
+						} else {
+							message.channel.sendMessage("Boards remain intact.");
+						}
+					}).catch(() => {
+						message.channel.sendMessage("Did not reply in time. Boards left unchanged.");
+					});
+				} else {
+					message.channel.sendMessage("You do not have permission to clear the leaderboards.");
+				}
 			}
-
-
-
-
-
 			hardCode[ref].timeout();
 		}
 	}).catch((error) => console.error(error));
 };
+
+
+
 
 function clean(text) {
 	if (typeof text === "string") {
