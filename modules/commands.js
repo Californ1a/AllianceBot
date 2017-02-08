@@ -709,6 +709,8 @@ function removeQuestion(quesNum) {
 	}
 }
 
+var scoreAdd = 0;
+var countQsMissed = 0;
 function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum) {
 	var score;
 	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
@@ -738,21 +740,22 @@ function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum)
 		}
 		removeQuestion(quesNum);
 		countQsMissed = 0;
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! Your score is now ${score}.`).then(() => {
+		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${trivia[quesNum].bonusText}! ` : "";
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}Your score is now ${score}.`).then(() => {
 			nextQuestion = setTimeout(goTrivia, delayBeforeNextQ, channel, c, -1);
 		});
 	});
 }
 
 
-var countQsMissed = 0;
 function goTrivia(channel, c, manualNumber) {
+	scoreAdd = 0;
 	var alreadyAnswered = [];
 	if (triviaOn) {
 		var quesNum = -1;
 		if (manualNumber === -1) {
 			quesNum = getRndmFromSet(incompleteQuestions);
-		} else if (manualNumber < trivia.length) {
+		} else if (manualNumber < trivia.length && manualNumber > -1) {
 			quesNum = manualNumber;
 		} else {
 			quesNum = getRndmFromSet(incompleteQuestions);
@@ -762,6 +765,15 @@ function goTrivia(channel, c, manualNumber) {
 			for (i; i < trivia[quesNum].answers.length; i++) {
 				if (message.content.toLowerCase() === trivia[quesNum].answers[i].toLowerCase()) {
 					return true;
+				}
+			}
+			if (trivia[quesNum].banswers) {
+				i = 0;
+				for (i; i < trivia[quesNum].banswers.length; i++) {
+					if (message.content.toLowerCase() === trivia[quesNum].banswers[i].toLowerCase()) {
+						scoreAdd = 1; //set to 1 from default 0 to give bonus +1
+						return true;
+					}
 				}
 			}
 			return false;
@@ -807,6 +819,7 @@ function goTrivia(channel, c, manualNumber) {
 		};
 		//var filter = response => response.content.toLowerCase() === trivia[quesNum].answer.toLowerCase();
 		channel.sendMessage(`Question:\r\n**${trivia[quesNum].question.replace(/_/g,"\\_")}**`).then(() => {
+			scoreAdd = 0;
 			channel.awaitMessages(answerFilter, {
 				max: 1,
 				time: delayBeforeH,
@@ -814,7 +827,7 @@ function goTrivia(channel, c, manualNumber) {
 			}).then((collected) => {
 				var winnerid = collected.first().author.id;
 				if (triviaOn) {
-					var scoreAdd = 2;
+					scoreAdd += 2;
 					manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum);
 				}
 			}).catch(() => {
@@ -827,7 +840,7 @@ function goTrivia(channel, c, manualNumber) {
 						}).then((collected) => {
 							var winnerid = collected.first().author.id;
 							if (triviaOn) {
-								var scoreAdd = 1;
+								scoreAdd += 1;
 								manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum);
 							}
 						}).catch(() => {
