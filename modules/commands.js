@@ -16,6 +16,7 @@ const CheckMapID = require("./checkmapid.js");
 const testtweet = require("../tweet2.json"); //test
 const trivia = require("../config/trivia.json");
 var triviaconfig = require("../config/triviaconfig.json");
+var delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
 var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
 var delayBeforeH = triviaconfig.delayBeforeHint;
 var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
@@ -866,10 +867,49 @@ function goTrivia(channel, c, manualNumber) {
 	}
 }
 
+function getTriviaLB(message, connection, topMessage) {
+	connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s LIMIT 6", function(error, response) {
+		if (error) {
+			console.error(error);
+			return;
+		} else if (response[0]) {
+			//var text = "";
+			var nameArray = [""];
+			var scoreArray = [0];
+			var rankArray = [0];
+			i = 0;
+			for (i; i < response.length; i++) {
+				nameArray[i] = cl.getDisplayName(message.guild.members.get(response[i].userid));
+				scoreArray[i] = response[i].score;
+				rankArray[i] = response[i].rank;
+				//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
+			}
+			var fieldsArray = [""];
+			i = 0;
+			for (i; i < nameArray.length; i++) {
+				fieldsArray[i] = {
+					name: nameArray[i],
+					value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`,
+					inline: true
+				};
+			}
+			message.channel.sendMessage(topMessage, {
+				embed: {
+					color: 3447003,
+					title: `__**Top ${fieldsArray.length} Leaderboard**__`,
+					fields: fieldsArray
+				}
+			}).catch((error) => console.error(error));
+		} else {
+			message.channel.sendMessage("There are no trivia scores yet.");
+		}
+	});
+}
+
 var strivia = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if (response && !hardCode[ref].onCooldown) {
+		if ((response && !hardCode[ref].onCooldown) || triviaOn) {
 			if (message.member.roles.exists("name", modrolename)) {
 				triviaOn = !triviaOn;
 				if (results[1]) {
@@ -882,11 +922,13 @@ var strivia = function(message, results, connection) {
 					}
 				} else {
 					if (triviaOn) {
-						message.channel.sendMessage("```markdown\r\n# TRIVIA STARTED!```");
-						goTrivia(message.channel, connection, -1);
+						message.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ/1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH/1000) + "s after the question. There is no hint command.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!tscore\" command to view your current leaderboard rank and score.  \r\n*  You can use \"!tscore b\" or \"!tscore board\" to view the current top players.  \r\n*  You can also use \"!tscore @mention\" to view that specific player's rank and score.```");
+						nextQuestion = setTimeout(goTrivia, delayBeforeFirstQ, message.channel, connection, -1);
 					} else {
 						clearTimeout(nextQuestion);
-						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```");
+						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
+							getTriviaLB(message, connection, "**Final Standings:**");
+						});
 					}
 				}
 			} else {
@@ -941,42 +983,7 @@ var tscore = function(message, results, connection) {
 						usersRank = response[0].rank;
 						usersScore = response[0].score;
 					}
-					connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s LIMIT 6", function(error, response) {
-						if (error) {
-							console.error(error);
-							return;
-						} else if (response[0]) {
-							//var text = "";
-							var nameArray = [""];
-							var scoreArray = [0];
-							var rankArray = [0];
-							i = 0;
-							for (i; i < response.length; i++) {
-								nameArray[i] = cl.getDisplayName(message.guild.members.get(response[i].userid));
-								scoreArray[i] = response[i].score;
-								rankArray[i] = response[i].rank;
-								//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
-							}
-							var fieldsArray = [""];
-							i = 0;
-							for (i; i < nameArray.length; i++) {
-								fieldsArray[i] = {
-									name: nameArray[i],
-									value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`,
-									inline: true
-								};
-							}
-							message.channel.sendMessage(`Your Rank: ${usersRank}, Your Score: ${usersScore}`, {
-								embed: {
-									color: 3447003,
-									title: `__**Top ${fieldsArray.length} Leaderboard**__`,
-									fields: fieldsArray
-								}
-							}).catch((error) => console.error(error));
-						} else {
-							message.channel.sendMessage("There are no trivia scores yet.");
-						}
-					});
+					getTriviaLB(message, connection, `Your Rank: ${usersRank}, Your Score: ${usersScore}`);
 				});
 			} else if (results.length === 4 && results[1] === "set") {
 				if (message.member.roles.exists("name", modrolename)) {
@@ -994,7 +1001,7 @@ var tscore = function(message, results, connection) {
 												console.error(error);
 												return;
 											} else {
-												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}.`);
+												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}. Their previous score was ${response[0].score}.`);
 											}
 										});
 									} else {

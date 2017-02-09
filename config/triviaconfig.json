@@ -1,6 +1,7 @@
 {
-  "delayBeforeNextQuestion": 5000,
-  "delayBeforeHint": 20000,
+  "delayBeforeFirstQuestion": 60000,
+  "delayBeforeNextQuestion": 10000,
+  "delayBeforeHint": 18000,
   "delayBeforeNoAnswer": 20000,
   "maxUnansweredQuestionsBeforeAutoStop": 5
 }
