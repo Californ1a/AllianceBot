@@ -1,7 +1,7 @@
 [
   {
     "name": "newcom",
-    "cooldown": 100
+    "timeout": 100
   },
   {
     "name": "delcom",
@@ -89,7 +89,7 @@
   },
   {
     "name": "strivia",
-    "timeout": 30000
+    "timeout": 61000
   },
   {
     "name": "tscore",

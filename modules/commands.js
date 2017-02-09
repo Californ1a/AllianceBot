@@ -868,7 +868,7 @@ function goTrivia(channel, c, manualNumber) {
 }
 
 function getTriviaLB(message, connection, topMessage) {
-	connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s LIMIT 6", function(error, response) {
+	connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s LIMIT 9", function(error, response) {
 		if (error) {
 			console.error(error);
 			return;
@@ -918,7 +918,10 @@ var strivia = function(message, results, connection) {
 						goTrivia(message.channel, connection, results[1]);
 					} else {
 						clearTimeout(nextQuestion);
-						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```");
+						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
+							getTriviaLB(message, connection, "**Final Standings:**");
+							hardCode[ref].timeout();
+						});
 					}
 				} else {
 					if (triviaOn) {
@@ -928,13 +931,13 @@ var strivia = function(message, results, connection) {
 						clearTimeout(nextQuestion);
 						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
 							getTriviaLB(message, connection, "**Final Standings:**");
+							hardCode[ref].timeout();
 						});
 					}
 				}
 			} else {
 				message.channel.sendMessage("You do not have permission to start/stop trivia.");
 			}
-			hardCode[ref].timeout();
 		}
 	});
 };

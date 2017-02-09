@@ -6,7 +6,7 @@ function Command(o) {
 	this.id = commandCount;
 	this.name = o.name;
 	this.onCooldown = false;
-	this.cooldownTimer = o.cooldown;
+	this.cooldownTimer = o.timeout;
 	commandCount++;
 
 }
