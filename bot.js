@@ -211,8 +211,9 @@ bot.on("ready", () => {
 
 // <editor-fold desc='bot on disconnect'>
 //handle disconnect
-bot.on("disconnect", () => {
-	console.log(colors.red("Bot disconnected from server."));
+bot.on("disconnect", (event) => {
+	console.log(colors.red(`Bot disconnected from server with status code ${event.code}.`));
+	console.log(`Reason: ${event.reason}`);
 });
 // </editor-fold>
 
