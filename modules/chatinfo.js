@@ -67,8 +67,12 @@ var writeLineToAllLogs = function(bot, guild, line) {
 };
 
 var getDisplayName = function(guildMember) {
-	if (guildMember.nickname) {
-		return guildMember.nickname;
+	if (guildMember) {
+		if (guildMember.nickname) {
+			return guildMember.nickname;
+		} else {
+			return guildMember.user.username;
+		}
 	} else {
 		return guildMember.user.username;
 	}

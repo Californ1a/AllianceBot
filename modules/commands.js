@@ -730,7 +730,8 @@ function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum)
 			score = scoreAdd;
 			info = {
 				"userid": winnerid,
-				"score": scoreAdd
+				"score": scoreAdd,
+				"server_id": channel.guild.id
 			};
 			c.query("INSERT INTO triviascore SET ?", info, function(error) {
 				if (error) {
@@ -877,15 +878,15 @@ var strivia = function(message, results, connection) {
 						goTrivia(message.channel, connection, results[1]);
 					} else {
 						clearTimeout(nextQuestion);
-						message.channel.sendMessage("Trivia stopped!");
+						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```");
 					}
 				} else {
 					if (triviaOn) {
-						message.channel.sendMessage("Trivia Started!");
+						message.channel.sendMessage("```markdown\r\n# TRIVIA STARTED!```");
 						goTrivia(message.channel, connection, -1);
 					} else {
 						clearTimeout(nextQuestion);
-						message.channel.sendMessage("Trivia stopped!");
+						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```");
 					}
 				}
 			} else {
@@ -911,7 +912,7 @@ var tscore = function(message, results, connection) {
 			var usersScore = 0;
 			var usersRank = "unranked";
 			if (!results[1]) {
-				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
+				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
 					if (error) {
 						console.error(error);
 					} else if (response[0]) {
@@ -922,7 +923,7 @@ var tscore = function(message, results, connection) {
 				});
 			} else if (results.length === 2 && message.mentions.users.array()[0]) {
 				mentionedMember = message.guild.members.get(message.mentions.users.first().id);
-				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s WHERE userid='" + mentionedMember.id + "'", function(error, response) {
+				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s WHERE userid='" + mentionedMember.id + "'", function(error, response) {
 					if (error) {
 						console.error(error);
 					} else if (response[0]) {
@@ -933,14 +934,14 @@ var tscore = function(message, results, connection) {
 				});
 			} else if (results.length === 2 && (results[1] === "board" || results[1] === "b") && !message.mentions.users.array()[0]) {
 				//console.log(results.length);
-				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
+				connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s WHERE userid='" + message.author.id + "'", function(error, response) {
 					if (error) {
 						console.error(error);
 					} else if (response[0]) {
 						usersRank = response[0].rank;
 						usersScore = response[0].score;
 					}
-					connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r ORDER BY score DESC) s LIMIT 6", function(error, response) {
+					connection.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + message.guild.id + "' ORDER BY score DESC) s LIMIT 6", function(error, response) {
 						if (error) {
 							console.error(error);
 							return;
@@ -997,7 +998,7 @@ var tscore = function(message, results, connection) {
 											}
 										});
 									} else {
-										connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error) {
+										connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error) {
 											if (error) {
 												message.channel.sendMessage("Failed");
 												console.error(error);
@@ -1011,7 +1012,8 @@ var tscore = function(message, results, connection) {
 									if (!isNaN(results[3]) && results[3] > 0) {
 										info = {
 											"userid": mentionedMember.id,
-											"score": results[3]
+											"score": results[3],
+											"server_id": message.guild.id
 										};
 										connection.query("INSERT INTO triviascore SET ?", info, function(error) {
 											if (error) {
@@ -1038,7 +1040,7 @@ var tscore = function(message, results, connection) {
 						errors: ["time"],
 					}).then((collected) => {
 						if (collected.first().content === "yes" || collected.first().content === "y") {
-							connection.query("TRUNCATE TABLE triviascore", function(error) {
+							connection.query("DELETE FROM triviascore WHERE server_id='" + message.guild.id + "'", function(error) {
 								if (error) {
 									console.error(error);
 									return;
