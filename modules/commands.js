@@ -896,7 +896,7 @@ function getTriviaLB(message, connection, topMessage) {
 			message.channel.sendMessage(topMessage, {
 				embed: {
 					color: 3447003,
-					title: `__**Top ${fieldsArray.length} Leaderboard**__`,
+					title: `__**Top ${fieldsArray.length} Trivia Leaderboard**__`,
 					fields: fieldsArray
 				}
 			}).catch((error) => console.error(error));
@@ -922,7 +922,7 @@ var strivia = function(message, results, connection) {
 					}
 				} else {
 					if (triviaOn) {
-						message.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ/1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH/1000) + "s after the question. There is no hint command.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!tscore\" command to view your current leaderboard rank and score.  \r\n*  You can use \"!tscore b\" or \"!tscore board\" to view the current top players.  \r\n*  You can also use \"!tscore @mention\" to view that specific player's rank and score.```");
+						message.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ/1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH/1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH/1000) + "s between question and hint, " + Math.floor(delayBeforeNoA/1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ/1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!tscore\" command to view your current leaderboard rank and score.  \r\n*  You can use \"!tscore b\" or \"!tscore board\" to view the current top players.  \r\n*  You can also use \"!tscore @mention\" to view that specific player's rank and score.```");
 						nextQuestion = setTimeout(goTrivia, delayBeforeFirstQ, message.channel, connection, -1);
 					} else {
 						clearTimeout(nextQuestion);
@@ -934,6 +934,7 @@ var strivia = function(message, results, connection) {
 			} else {
 				message.channel.sendMessage("You do not have permission to start/stop trivia.");
 			}
+			hardCode[ref].timeout();
 		}
 	});
 };
@@ -1004,7 +1005,7 @@ var tscore = function(message, results, connection) {
 												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}. Their previous score was ${response[0].score}.`);
 											}
 										});
-									} else {
+									} else if (!isNaN(results[3])) {
 										connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error) {
 											if (error) {
 												message.channel.sendMessage("Failed");
@@ -1014,6 +1015,8 @@ var tscore = function(message, results, connection) {
 												message.channel.sendMessage(`Removed ${cl.getDisplayName(mentionedMember)} from the trivia board. Their previous score was ${response[0].score}.`);
 											}
 										});
+									} else {
+										message.channel.sendMessage("The score must be a number.");
 									}
 								} else {
 									if (!isNaN(results[3]) && results[3] > 0) {
@@ -1030,6 +1033,66 @@ var tscore = function(message, results, connection) {
 												message.channel.sendMessage(`Added ${cl.getDisplayName(mentionedMember)} to the trivia board with a score of ${results[3]}.`);
 											}
 										});
+									}
+								}
+							}
+						});
+					}
+				} else {
+					message.channel.sendMessage("You do not have permission to set scores.");
+				}
+			} else if (results.length === 4 && results[1] === "give") {
+				if (message.member.roles.exists("name", modrolename)) {
+					if (results.length === 4) {
+						mentionedMember = message.guild.members.get(message.mentions.users.first().id);
+						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
+							if (error) {
+								console.error(error);
+							} else {
+								if (response[0]) {
+									if (!isNaN(results[3])) {
+										var newScore = "" + (parseInt(response[0].score) + parseInt(results[3]));
+										if (newScore > 0) {
+											connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + mentionedMember.id + "'", function(error) {
+												if (error) {
+													message.channel.sendMessage("Failed");
+													console.error(error);
+													return;
+												} else {
+													message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${newScore}. Their previous score was ${response[0].score}.`);
+												}
+											});
+										} else {
+											connection.query("DELETE FROM triviascore WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error) {
+												if (error) {
+													message.channel.sendMessage("Failed");
+													console.error(error);
+													return;
+												} else {
+													message.channel.sendMessage(`Removed ${cl.getDisplayName(mentionedMember)} from the trivia board. Their previous score was ${response[0].score}.`);
+												}
+											});
+										}
+									} else {
+										message.channel.sendMessage("The score must be a number.");
+									}
+								} else {
+									if (!isNaN(results[3]) && results[3] > 0) {
+										info = {
+											"userid": mentionedMember.id,
+											"score": results[3],
+											"server_id": message.guild.id
+										};
+										connection.query("INSERT INTO triviascore SET ?", info, function(error) {
+											if (error) {
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`Added ${cl.getDisplayName(mentionedMember)} to the trivia board with a score of ${results[3]}.`);
+											}
+										});
+									} else {
+										message.channel.sendMessage("The score for this user must be a positive number; they are already not on the board.");
 									}
 								}
 							}
