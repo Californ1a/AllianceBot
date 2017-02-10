@@ -1,5 +1,5 @@
 {
-  "delayBeforeFirstQuestion": 60000,
+  "delayBeforeFirstQuestion": 50000,
   "delayBeforeNextQuestion": 10000,
   "delayBeforeHint": 18000,
   "delayBeforeNoAnswer": 20000,

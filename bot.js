@@ -532,7 +532,7 @@ bot.on("message", (message) => {
 		//-----------------------------------------------
 
 	} else { //pm messages
-		console.log(colors.grey("(Private) " + message.author.username + ": " + message.cleanContent));
+		console.log(colors.grey("(Private) " + message.author.username + ": " + message.content));
 		if (message.content.startsWith(prefix)) {
 			message.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use `" + prefix + "cmds` within that server.");
 		}

@@ -183,7 +183,7 @@ var escapeChars = function(str) {
 	// 	}
 	// }
 	// return tempWord;
-	console.log(str);
+	//console.log(str);
 	return str.replace(regex, "\\$&");
 };
 

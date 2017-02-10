@@ -45,23 +45,23 @@
   },
   {
     "name": "win",
-    "timeout": 100
+    "timeout": 0
   },
   {
     "name": "rip",
-    "timeout": 100
+    "timeout": 0
   },
   {
     "name": "tf",
-    "timeout": 100
+    "timeout": 0
   },
   {
     "name": "sign",
-    "timeout": 100
+    "timeout": 0
   },
   {
     "name": "hype",
-    "timeout": 100
+    "timeout": 0
   },
   {
     "name": "checkrole",
@@ -93,6 +93,6 @@
   },
   {
     "name": "tscore",
-    "timeout": 100
+    "timeout": 1000
   }
 ]
