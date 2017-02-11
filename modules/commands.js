@@ -21,7 +21,7 @@ var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
 var delayBeforeH = triviaconfig.delayBeforeHint;
 var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
 var nextQuestion;
-var stref;
+//var stref;
 var info;
 var currentss;
 
@@ -30,7 +30,7 @@ var i = 0;
 for (i; i < commandList.length; i++) {
 	hardCode[i] = new Command(commandList[i]);
 	if (hardCode[i].name === "strivia") {
-		stref = i;
+		//stref = i;
 	}
 }
 var ref;
@@ -41,9 +41,9 @@ var enable = function(message, results, connection) {
 	if (message.author.id === botowner || message.guild.ownerID === message.author.id) {
 		if (results.length <= 2) {
 			if (typeof results[1] !== "string") {
-				message.channel.sendMessage("To view the help for this command use `" + prefix + "addcomtoserv help`.");
+				message.channel.sendMessage("To view the help for this command use `" + prefix + "enable help`.");
 			} else if (results[1] === "help") {
-				message.channel.sendMessage("Syntax: __**`" + prefix + "addcometoserv <command name>`**__\rUsed to enable hardcoded commands on the server, only available to the bot owner and server owner.\r\r`command name`\rName of command without prefix.\r\r**Example**\r`" + prefix + "addcomtoserv advent`\rThis will enable the hardcoded `" + prefix + "advent` command.");
+				message.channel.sendMessage("Syntax: __**`" + prefix + "enable <command name>`**__\rUsed to enable hardcoded commands on the server, only available to the bot owner and server owner.\r\r`command name`\rName of command without prefix.\r\r**Example**\r`" + prefix + "enable advent`\rThis will enable the hardcoded `" + prefix + "advent` command.");
 			} else {
 				var iscommand = false;
 				i = 0;
@@ -688,6 +688,87 @@ var checkrole = function(message, results, connection, bot) {
 	}).catch((error) => console.error(error));
 };
 
+var numOn = false;
+function numManageCorrect(channel, c, collected, winnerid, scoreAdd) {
+	var score;
+	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
+		if (error) {
+			console.error(error);
+			return;
+		} else if (response[0]) {
+			score = response[0].score + scoreAdd;
+			c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "' AND server_id='" + channel.guild.id + "'", function(error) {
+				if (error) {
+					console.error(error);
+					return;
+				}
+			});
+		} else {
+			score = scoreAdd;
+			var info = {
+				"userid": winnerid,
+				"score": scoreAdd,
+				"server_id": channel.guild.id
+			};
+			c.query("INSERT INTO triviascore SET ?", info, function(error) {
+				if (error) {
+					console.error(error);
+					return;
+				}
+			});
+		}
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! Your score is now ${score}.`).then(() => {
+			numOn = !numOn;
+		});
+	});
+}
+
+var num = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			var max = 10;
+			var min = 1;
+			if (results[1] && results[2] && !isNaN(results[1]) && !isNaN(results[2])) {
+				if (parseInt(results[2]) < (parseInt(results[1]) - 50)) {
+					max = results[1];
+					min = results[2];
+				} else {
+					message.channel.sendMessage("The minimum must be at least 50 under the max.");
+					return;
+				}
+			}
+			var rndm;
+			numOn = !numOn;
+			if (numOn) {
+				message.channel.sendMessage("Started random number");
+				rndm = Math.floor(Math.random() * max) + min;
+				message.channel.awaitMessages(response => response.content === `${rndm}`, {
+					max: 1,
+					time: 15000,
+					errors: ["time"],
+				}).then((collected) => {
+					var winnerid = collected.first().author.id;
+					var scoreAdd = 1;
+					if (numOn) {
+						numManageCorrect(message.channel, connection, collected, winnerid, scoreAdd);
+					}
+				}).catch(() => {
+					if (numOn) {
+						message.channel.sendMessage("No one guessed correctly!").then(() => {
+							numOn = !numOn;
+						});
+					}
+				});
+			} else {
+				message.channel.sendMessage("Stopped random number");
+			}
+
+			hardCode[ref].timeout();
+		}
+	});
+};
+
 var strivia = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
@@ -791,7 +872,7 @@ var tscore = function(message, results, connection) {
 												console.error(error);
 												return;
 											} else {
-												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${results[3]}. Their previous score was ${response[0].score}.`);
+												message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s score to ${results[3]}. Their previous score was ${response[0].score}.`);
 											}
 										});
 									} else if (!isNaN(results[3])) {
@@ -848,7 +929,7 @@ var tscore = function(message, results, connection) {
 													console.error(error);
 													return;
 												} else {
-													message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s trivia score to ${newScore}. Their previous score was ${response[0].score}.`);
+													message.channel.sendMessage(`Set ${cl.getDisplayName(mentionedMember)}'s score to ${newScore}. Their previous score was ${response[0].score}.`);
 												}
 											});
 										} else {
@@ -983,6 +1064,7 @@ var test = function(message, results, connection) {
 					}
 				}
 			}
+			console.log(videolink);
 			if (testtweet.extended_tweet) {
 				if (testtweet.extended_tweet.full_text) {
 					text = testtweet.extended_tweet.full_text.replace(/(https?:\/\/t.co\/[\w]+)$/, " ");
@@ -1007,10 +1089,10 @@ var test = function(message, results, connection) {
 					video: {
 						url: videolink
 					},
-					// provider: {
-					// 	name: "Twitter",
-					// 	url: "http://twitter.com"
-					// },
+					provider: {
+						name: "Twitter",
+						url: "http://twitter.com"
+					},
 					// fields: [{
 					// 	name: "y",
 					// 	value: "[View Tweet](" + tweetlink + ")"
@@ -1046,5 +1128,6 @@ module.exports = {
 	uptime,
 	evalu,
 	strivia,
-	tscore
+	tscore,
+	num
 };

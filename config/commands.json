@@ -94,5 +94,9 @@
   {
     "name": "tscore",
     "timeout": 1000
+  },
+  {
+    "name": "num",
+    "timeout": 1000
   }
 ]

@@ -63,7 +63,7 @@ function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum)
 			return;
 		} else if (response[0]) {
 			score = response[0].score + scoreAdd;
-			c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "'", function(error) {
+			c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "' AND server_id='" + channel.guild.id + "'", function(error) {
 				if (error) {
 					console.error(error);
 					return;
@@ -167,7 +167,19 @@ var goTrivia = function (channel, c, manualNumber) {
 			}
 		};
 		//var filter = response => response.content.toLowerCase() === trivia[quesNum].answer.toLowerCase();
-		channel.sendMessage(`Question:\r\n**${trivia[quesNum].question.replace(/_/g,"\\_")}**`).then(() => {
+		var emojiExpression = /:(\S+):/;
+		//var emojiRegex = new RegExp(emojiExpression);
+		var match = emojiExpression.exec(trivia[quesNum].question);
+		var question;
+		if (match) {
+			var emoji = channel.guild.emojis.find("name", match[1]);
+			question = trivia[quesNum].question.replace(/_/g,"\\_");
+			question = question.replace(/:\S+:/, emoji.toString());
+		} else {
+			question = trivia[quesNum].question.replace(/_/g,"\\_");
+		}
+		console.log(quesNum);
+		channel.sendMessage(`Question:\r\n**${question}**`).then(() => {
 			scoreAdd = 0;
 			channel.awaitMessages(answerFilter, {
 				max: 1,

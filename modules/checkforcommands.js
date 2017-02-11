@@ -39,7 +39,9 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		cmds.strivia(message, results, connection);
 	} else if (command === "tscore") {
 		cmds.tscore(message, results, connection);
-	} else if (command === "evalu") {
+	} else if (command === "num") {
+		cmds.num(message, results, connection)
+	}	else if (command === "evalu") {
 		if (message.author.id !== "83264808022970368") {
 			return;
 		} else {

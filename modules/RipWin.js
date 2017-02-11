@@ -103,9 +103,18 @@ var listQuotes = function(message, c, rw) {
 			} else {
 				console.log(colors.red("Success."));
 				var quotespm = "\n**Here are all the current " + rw + " quotes:**\n--------------------\n```";
+				var lengthCheck;
 				i = 0;
 				for (i; i < quotes.length; i++) {
-					quotespm += quotes[i].quote + "\r";
+					lengthCheck = quotespm + quotes[i].quote + "\r";
+					if (lengthCheck.length < 1996) {
+						quotespm += quotes[i].quote + "\r";
+					} else {
+						quotespm += "```";
+						message.author.sendMessage(quotespm);
+						quotespm = "\n**Remaining " + rw + " quotes:**\n--------------------\n```";
+						quotespm += quotes[i].quote + "\r";
+					}
 				}
 				quotespm += "```";
 				message.author.sendMessage(quotespm);
@@ -118,7 +127,7 @@ var searchQuotes = function(message, results, rw, c) {
 	console.log(colors.red("Trying to find " + rw + " message matching '" + results[1] + "' in database."));
 	let args = message.content.split(" ").slice(1).join(" ");
 	let searchKey = cl.escapeChars(args);
-	c.query("SELECT * FROM " + rw + " WHERE server_id=" + message.guild.id + " AND quote LIKE '%" + searchKey + "%' COLLATE utf8_unicode_ci ORDER BY RAND() LIMIT 1", function(error, quotes) {
+	c.query("SELECT * FROM " + rw + " WHERE server_id=" + message.guild.id + " AND quote LIKE '%" + searchKey + "%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1", function(error, quotes) {
 		if (error) {
 			message.channel.sendMessage("Failed to find any matching quotes, with errors.");
 			console.error(error);

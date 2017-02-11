@@ -486,7 +486,8 @@ bot.on("message", (message) => {
 
 
 			//check for custom server command
-			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + results[0].slice(prefix.length) + "'", function(error, returntext) {
+			var escabedCom = cl.escapeChars(results[0].slice(prefix.length));
+			connection.query("SELECT comtext, modonly, inpm FROM servcom WHERE server_id=" + message.guild.id + " AND comname='" + escabedCom + "'", function(error, returntext) {
 				if (error) {
 					console.error(error);
 					return;
@@ -532,7 +533,7 @@ bot.on("message", (message) => {
 		//-----------------------------------------------
 
 	} else { //pm messages
-		console.log(colors.grey("(Private) " + message.author.username + ": " + message.content));
+		console.log(colors.grey("(Private) " + message.author.username + ": " + message.cleanContent));
 		if (message.content.startsWith(prefix)) {
 			message.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use `" + prefix + "cmds` within that server.");
 		}
@@ -549,9 +550,10 @@ bot.on("error", (e) => {
 bot.on("warn", (e) => {
 	console.warn(colors.blue(e));
 });
+var regToken = /[\w\d]{24}\.[\w\d]{6}\.[\w\d-_]{27}/g;
 bot.on("debug", (e) => {
 	if (!e.toLowerCase().includes("heartbeat")) { //suppress heartbeat messages
-		console.info(colors.yellow(e));
+		console.info(colors.yellow(e.replace(regToken, "[Redacted]")));
 	}
 });
 
