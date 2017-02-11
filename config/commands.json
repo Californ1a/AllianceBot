@@ -98,5 +98,13 @@
   {
     "name": "num",
     "timeout": 1000
+  },
+  {
+    "name": "dice",
+    "timeout": 1000
+  },
+  {
+    "name": "d",
+    "timeout": 1000
   }
 ]

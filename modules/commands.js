@@ -688,10 +688,91 @@ var checkrole = function(message, results, connection, bot) {
 	}).catch((error) => console.error(error));
 };
 
+var dice = function(message, results, connection) {
+	ref = cl.getComRef(hardCode, results);
+	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
+		if (response && !hardCode[ref].onCooldown) {
+			connection.query("SELECT * FROM triviascore WHERE userid=" + message.author.id + " AND server_id='" + message.guild.id + "' LIMIT 1", function(error, response) {
+				if (error) {
+					console.error(error);
+					return;
+				} else if (response[0]) {
+					if (results[1] && results[2]) {
+						if (!isNaN(results[1]) && !isNaN(results[2])) {
+							var dieType = 6;
+							var newScore = 0;
+							var amount = parseInt(results[1]);
+							if (amount < 1) {
+								message.channel.sendMessage("You must bet more than one point.");
+								return;
+							}
+							if (response[0].score >= amount) {
+								var side = parseInt(results[2]);
+								if (!(side > 0) && !(side < dieType)) {
+									message.channel.sendMessage("It is a 6-sided dice, you can only use 1-6.");
+									return;
+								}
+								var die = Math.floor(Math.random() * dieType) + 1;
+								if (side === die) {
+									var scoreAdd = Math.floor(amount / 2);
+									newScore = response[0].score + scoreAdd;
+									connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + message.author.id + "'", function(error) {
+										if (error) {
+											message.channel.sendMessage("Failed");
+											console.error(error);
+											return;
+										} else {
+											message.channel.sendMessage(`${message.author}, The dice lands on ${die}! You win 50% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
+										}
+									});
+								} else {
+									newScore = response[0].score - amount;
+									if (newScore <= 0) {
+										connection.query("DELETE FROM triviascore WHERE userid='" + message.author.id + "' AND server_id='" + message.guild.id + "'", function(error) {
+											if (error) {
+												message.channel.sendMessage("Failed");
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`${message.author}, The dice lands on ${die}. You lose your bet (-${amount})! You have been removed from the scoreboard.`);
+											}
+										});
+									} else {
+										connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + message.author.id + "'", function(error) {
+											if (error) {
+												message.channel.sendMessage("Failed");
+												console.error(error);
+												return;
+											} else {
+												message.channel.sendMessage(`${message.author}, The dice lands on ${die}. You lose your bet (-${amount})! Your score is now ${newScore}`);
+											}
+										});
+									}
+								}
+							} else {
+								message.channel.sendMessage("You do not have enough points to bet that much.");
+							}
+						} else {
+							message.channel.sendMessage("Your gamble amount and dice side must be a number.");
+						}
+					} else {
+						message.channel.sendMessage("You must specify an amount to gamble and a dice side to bet on.");
+					}
+				} else {
+					message.channel.sendMessage("You do not have any points to gamble with.");
+				}
+				hardCode[ref].timeout();
+			});
+		}
+	});
+};
+
+
+
 var numOn = false;
 function numManageCorrect(channel, c, collected, winnerid, scoreAdd) {
 	var score;
-	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
+	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " AND server_id='" + channel.guild.id + "' LIMIT 1", function(error, response) {
 		if (error) {
 			console.error(error);
 			return;
@@ -726,7 +807,7 @@ function numManageCorrect(channel, c, collected, winnerid, scoreAdd) {
 var num = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if (response && !hardCode[ref].onCooldown) {
+		if (response && !hardCode[ref].onCooldown && !trivia.getTriviaStatus()) {
 			var max = 10;
 			var min = 1;
 			if (results[1] && results[2] && !isNaN(results[1]) && !isNaN(results[2])) {
@@ -772,7 +853,7 @@ var num = function(message, results, connection) {
 var strivia = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
-		if ((response && !hardCode[ref].onCooldown) || trivia.getTriviaStatus()) {
+		if ((response && !hardCode[ref].onCooldown) || trivia.getTriviaStatus() && !numOn) {
 			if (message.member.roles.exists("name", modrolename)) {
 				trivia.toggleTrivia();
 				if (results[1]) {
@@ -1129,5 +1210,6 @@ module.exports = {
 	evalu,
 	strivia,
 	tscore,
-	num
+	num,
+	dice
 };

@@ -57,7 +57,7 @@ function removeQuestion(quesNum) {
 
 function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum) {
 	var score;
-	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " LIMIT 1", function(error, response) {
+	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " AND server_id='" + channel.guild.id + "' LIMIT 1", function(error, response) {
 		if (error) {
 			console.error(error);
 			return;
