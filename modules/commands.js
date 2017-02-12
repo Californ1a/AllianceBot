@@ -21,7 +21,7 @@ var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
 var delayBeforeH = triviaconfig.delayBeforeHint;
 var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
 var nextQuestion;
-//var stref;
+var stref;
 var info;
 var currentss;
 
@@ -30,7 +30,7 @@ var i = 0;
 for (i; i < commandList.length; i++) {
 	hardCode[i] = new Command(commandList[i]);
 	if (hardCode[i].name === "strivia") {
-		//stref = i;
+		stref = i;
 	}
 }
 var ref;
@@ -850,17 +850,20 @@ var num = function(message, results, connection) {
 	});
 };
 
+var trivStartUser = false;
+
 var strivia = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if ((response && !hardCode[ref].onCooldown) || trivia.getTriviaStatus() && !numOn) {
-			if (message.member.roles.exists("name", modrolename)) {
+			var category = "default";
+			if (message.member.roles.exists("name", modrolename) && (message.channel.id === "279033061490950146" || message.guild.id === "211599888222257152")) {
 				trivia.toggleTrivia();
 				if (results[1]) {
 					if (trivia.getTriviaStatus()) {
-						trivia.populateTriviaQuestions("default");
+						trivia.populateTriviaQuestions(category);
 						message.channel.sendMessage("Trivia Started with manual question number!");
-						trivia.goTrivia(message.channel, connection, results[1]);
+						trivia.goTrivia(message.channel, connection, results[1], category);
 					} else {
 						clearTimeout(nextQuestion);
 						message.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
@@ -871,9 +874,9 @@ var strivia = function(message, results, connection) {
 				} else {
 					if (trivia.getTriviaStatus()) {
 						trivia.populateTriviaQuestions("default");
-						message.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ/1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH/1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH/1000) + "s between question and hint, " + Math.floor(delayBeforeNoA/1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ/1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!tscore\" command to view your current leaderboard rank and score.  \r\n*  You can use \"!tscore b\" or \"!tscore board\" to view the current top players.  \r\n*  You can also use \"!tscore @mention\" to view that specific player's rank and score.```");
+						message.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH / 1000) + "s between question and hint, " + Math.floor(delayBeforeNoA / 1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 						setTimeout(function() {
-							trivia.goTrivia(message.channel, connection, -1);
+							trivia.goTrivia(message.channel, connection, -1, category);
 						}, delayBeforeFirstQ);
 					} else {
 						clearTimeout(nextQuestion);
@@ -883,12 +886,84 @@ var strivia = function(message, results, connection) {
 						});
 					}
 				}
+			} else if (results[1] && (message.channel.id === "279033061490950146" || message.guild.id === "211599888222257152")) {
+				if (!isNaN(results[1])) {
+					connection.query("SELECT * FROM triviascore WHERE userid='" + message.author.id + "' AND server_id='" + message.guild.id + "'", function(error, response) {
+						if (error) {
+							console.error(error);
+						} else if (response[0]) {
+							var cost = parseInt(results[1]);
+							var minutes = Math.floor((cost-4)/3);
+							if (cost > response[0].score) {
+								message.channel.sendMessage(`You do not have enough points. You would need ${cost} points to keep trivia going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
+							} else if (minutes < 1) {
+								message.channel.sendMessage(`You can't start trivia with that few points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game (minimum 10 points).`);
+							}	else {
+								message.channel.sendMessage(`Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of trivia time. Are you sure you want to start trivia?`).then(() => {
+									message.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && message.author.id === r.author.id, {
+										max: 1,
+										time: 30000,
+										errors: ["time"],
+									}).then((collected) => {
+										if (collected.first().content === "n" || collected.first().content === "no") {
+											message.channel.sendMessage("Trivia will not be started, no points deducted.");
+											return;
+										}
+										trivStartUser = collected.first().author;
+
+
+										var newScore = parseInt(response[0].score) - cost;
+										if (newScore > 0) {
+											connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + trivStartUser.id + "' AND server_id='" + message.guild.id + "'", function(error) {
+												if (error) {
+													message.channel.sendMessage("Failed");
+													console.error(error);
+													return;
+												} else {
+													message.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
+														trivia.timedTrivia(message.channel, minutes, connection, hardCode, stref, category);
+													});
+												}
+											});
+										} else {
+											connection.query("DELETE FROM triviascore WHERE userid='" + trivStartUser.id + "' AND server_id='" + message.guild.id + "'", function(error) {
+												if (error) {
+													message.channel.sendMessage("Failed");
+													console.error(error);
+													return;
+												} else {
+													message.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
+														trivia.timedTrivia(message.channel, minutes, connection, hardCode, stref, category);
+													});
+												}
+											});
+										}
+
+
+									}).catch(() => {
+										message.channel.sendMessage("You took too long to respond. Trivia will not be started, no points deducted.");
+									});
+								});
+							}
+						} else {
+							message.channel.sendMessage("You don't have any points.");
+						}
+					});
+				}
+			} else if (trivStartUser && message.author.id === trivStartUser.id && trivia.getTriviaStatus()) {
+				message.channel.sendMessage(`Everyone thank ${trivStartUser} for the trivia round! \`\`\`markdown\r\n# TRIVIA STOPPED!\`\`\``).then(() => {
+					trivia.toggleTrivia();
+					trivia.getTriviaLB(message.channel, connection, "**Final Standings:**");
+					hardCode[ref].timeout();
+				});
 			} else {
-				message.channel.sendMessage("You do not have permission to start/stop trivia.");
+				message.channel.sendMessage("You do not have permission to start trivia without paying.");
 			}
 		}
 	});
 };
+
+
 
 var clearFilter = function(message) {
 	if (message.content === "yes" || message.content === "no" || message.content === "n" || message.content === "y") {
@@ -898,7 +973,7 @@ var clearFilter = function(message) {
 	}
 };
 
-var tscore = function(message, results, connection) {
+var score = function(message, results, connection) {
 	ref = cl.getComRef(hardCode, results);
 	hardCode[ref].isEnabledForServer(message, connection, prefix).then((response) => {
 		if (response && !hardCode[ref].onCooldown) {
@@ -941,13 +1016,13 @@ var tscore = function(message, results, connection) {
 				if (message.member.roles.exists("name", modrolename)) {
 					if (results.length === 4) {
 						mentionedMember = message.guild.members.get(message.mentions.users.first().id);
-						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
+						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error, response) {
 							if (error) {
 								console.error(error);
 							} else {
 								if (response[0]) {
 									if (!isNaN(results[3]) && results[3] > 0) {
-										connection.query("UPDATE triviascore SET score=" + results[3] + " WHERE userid='" + mentionedMember.id + "'", function(error) {
+										connection.query("UPDATE triviascore SET score=" + results[3] + " WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error) {
 											if (error) {
 												message.channel.sendMessage("Failed");
 												console.error(error);
@@ -996,15 +1071,15 @@ var tscore = function(message, results, connection) {
 				if (message.member.roles.exists("name", modrolename)) {
 					if (results.length === 4) {
 						mentionedMember = message.guild.members.get(message.mentions.users.first().id);
-						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "'", function(error, response) {
+						connection.query("SELECT * FROM triviascore WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error, response) {
 							if (error) {
 								console.error(error);
 							} else {
 								if (response[0]) {
 									if (!isNaN(results[3])) {
-										var newScore = "" + (parseInt(response[0].score) + parseInt(results[3]));
+										var newScore = parseInt(response[0].score) + parseInt(results[3]);
 										if (newScore > 0) {
-											connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + mentionedMember.id + "'", function(error) {
+											connection.query("UPDATE triviascore SET score=" + newScore + " WHERE userid='" + mentionedMember.id + "' AND server_id='" + message.guild.id + "'", function(error) {
 												if (error) {
 													message.channel.sendMessage("Failed");
 													console.error(error);
@@ -1209,7 +1284,7 @@ module.exports = {
 	uptime,
 	evalu,
 	strivia,
-	tscore,
+	score,
 	num,
 	dice
 };

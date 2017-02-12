@@ -37,12 +37,12 @@ var checkForCommands = function(message, results, connection, http, bot) {
 		cmds.checkrole(message, results, connection, bot);
 	} else if (command === "strivia") {
 		cmds.strivia(message, results, connection);
-	} else if (command === "tscore") {
-		cmds.tscore(message, results, connection);
+	} else if (command === "score") {
+		cmds.score(message, results, connection);
 	} else if (command === "num") {
-		cmds.num(message, results, connection)
+		cmds.num(message, results, connection);
 	}	else if (command === "dice" || command === "d") {
-		cmds.dice(message, results, connection)
+		cmds.dice(message, results, connection);
 	}	else if (command === "evalu") {
 		if (message.author.id !== "83264808022970368") {
 			return;

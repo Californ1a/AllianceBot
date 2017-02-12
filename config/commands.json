@@ -92,7 +92,7 @@
     "timeout": 61000
   },
   {
-    "name": "tscore",
+    "name": "score",
     "timeout": 1000
   },
   {
