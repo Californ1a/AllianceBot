@@ -65,16 +65,16 @@ bot.reload = function(command) {
 bot.elevation = function(msg) {
 	let permlvl = 0;
 	if (msg.guild) {
-		let memb_role = msg.guild.roles.find("name", membrolename);
-		if (memb_role && msg.member.roles.has(memb_role.id)) {
+		let membRole = msg.guild.roles.find("name", membrolename);
+		if (membRole && msg.member.roles.has(membRole.id)) {
 			permlvl = 1;
 		}
-		let mod_role = msg.guild.roles.find("name", modrolename);
-		if (mod_role && msg.member.roles.has(mod_role.id)) {
+		let modRole = msg.guild.roles.find("name", modrolename);
+		if (modRole && msg.member.roles.has(modRole.id)) {
 			permlvl = 2;
 		}
-		let admin_role = msg.guild.roles.find("name", adminrolename);
-		if (admin_role && msg.member.roles.has(admin_role.id)) {
+		let adminRole = msg.guild.roles.find("name", adminrolename);
+		if (adminRole && msg.member.roles.has(adminRole.id)) {
 			permlvl = 3;
 		}
 	}

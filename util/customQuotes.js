@@ -23,7 +23,6 @@ function randomQuote(message, type) {
 
 function addQuote(msg, args, type) {
 	var recombined = "";
-	info = "";
 	if (args.length >= 2) {
 		recombined = recombineQuote(args);
 		console.log(colors.red(`Trying to insert ${type} message '${recombined}' into database.`));

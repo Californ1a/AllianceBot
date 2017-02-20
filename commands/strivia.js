@@ -56,7 +56,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 			if (cost > response[0].score) {
 				return msg.channel.sendMessage(`You do not have enough points. You would need ${cost} points to keep trivia going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
 			} else if (minutes < 1) {
-				return msg.channel.sendMessage(`You can't start trivia with that few points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game (minimum 7 points).`);
+				return msg.channel.sendMessage("You can't start trivia with that few points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game (minimum 7 points).");
 			}
 			msg.channel.sendMessage(`Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of trivia time. Are you sure you want to start trivia?\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
 			msg.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && msg.author.id === r.author.id, {

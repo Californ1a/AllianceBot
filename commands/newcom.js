@@ -13,18 +13,18 @@ exports.run = (bot, msg, args) => {
 	if (!isNaN(args[0]) || args[0].includes(pre) || args.length < 4 || isNaN(args[1]) || parseInt(args[1]) > 4 || parseInt(args[1]) < 0 || (args[2] !== "true" && args[2] !== "false")) {
 		msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help newcom\` for help.`);
 	} else {
-		var comname = escape.chars(args[0]);
+		var cmdname = escape.chars(args[0]);
 		var permslvl = parseInt(args[1]);
-		var inpm = args[2];
+		var inpms = args[2];
 		var fullmsg = args;
 		fullmsg.splice(0,3);
 		var escdMsg = escape.chars(fullmsg.join(" "));
-		console.log(colors.red(`Attempting to add the command \`${comname}\` with the resulting message \`${escdMsg}\` to server \`${msg.guild.name}\`.`));
+		console.log(colors.red(`Attempting to add the command \`${cmdname}\` with the resulting message \`${escdMsg}\` to server \`${msg.guild.name}\`.`));
 		var info = {
-			"comname": comname,
+			"comname": cmdname,
 			"comtext": `'${escdMsg}'`,
 			"permlvl": permslvl,
-			"inpm": inpm,
+			"inpm": inpms,
 			"server_id": msg.guild.id
 		};
 		connection.insert("servcom", info).then(() => {
