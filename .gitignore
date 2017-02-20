@@ -45,12 +45,10 @@ Desktop.ini
 desktop.ini
 
 # Logins, chatlogs, backups
-config/logins/*
-tweet.json
-tweet*.json
+logins/*
 userinfo.txt
 DiscordChatlogs/*
 backups/*
 *.bat
 process.json
-config/trivia.json
+trivia.json
