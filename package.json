@@ -1,10 +1,10 @@
 {
-  "name": "discord_bot9",
-  "version": "1.0.0",
+  "name": "AllianceBot",
+  "version": "2.0.0",
   "description": "Discord bot",
-  "main": "bot 9.0.js",
+  "main": "bot.js",
   "scripts": {
-    "start": "node bot 9.0.js"
+    "start": "node bot.js"
   },
   "author": "Californ1a",
   "license": "ISC",
@@ -12,8 +12,9 @@
     "colors": "^1.1.2",
     "discord.js": "^11.0.0",
     "fs-extra": "^0.30.0",
+    "html-entities": "^1.2.0",
     "http": "0.0.0",
-    "moment": "^2.15.0",
+    "moment": "^2.17.1",
     "mysql": "^2.11.1",
     "mysql-connection-manager": "0.0.14",
     "twit": "^2.2.4",

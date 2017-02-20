@@ -1,18 +1,18 @@
-const trivia = require("../config/trivia.json");
-const cl = require("./chatinfo.js");
-var triviaconfig = require("../config/triviaconfig.json");
+const trivia = require("../trivia.json");
+const connection = require("./connection.js");
+var triviaconfig = require("../config.json").trivia;
 var delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
 var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
 var delayBeforeH = triviaconfig.delayBeforeHint;
 var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
 var maxQs = triviaconfig.maxUnansweredQuestionsBeforeAutoStop;
 var i = 0;
-var incompleteQuestions = [""];
+var incompleteQuestions = [];
 var scoreAdd = 0;
 var countQsMissed = 0;
 var triviaOn = false;
 
-var getTriviaStatus = function() {
+var getStatus = function() {
 	return triviaOn;
 };
 
@@ -22,11 +22,12 @@ function getRndmFromSet(set) {
 	return set[rndm];
 }
 
-var populateTriviaQuestions = function (category) {
+var populateQuestions = function (category) {
 	if (category === "default") {
 		category = "Distance";
 	}
 	//var j = 0;
+	incompleteQuestions = [];
 	i = 0;
 	for (i; i < trivia.length; i++) {
 		if (trivia[i].question !== "") {
@@ -45,7 +46,7 @@ var populateTriviaQuestions = function (category) {
 
 function removeQuestion(quesNum, category) {
 	if (incompleteQuestions.length === 1) {
-		populateTriviaQuestions(category);
+		populateQuestions(category);
 	} else {
 		var index = incompleteQuestions.indexOf(quesNum);
 		if (index > -1) {
@@ -55,20 +56,12 @@ function removeQuestion(quesNum, category) {
 	//console.log(incompleteQuestions);
 }
 
-function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum, category) {
+function manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category) {
 	var score;
-	c.query("SELECT * FROM triviascore WHERE userid=" + winnerid + " AND server_id='" + channel.guild.id + "' LIMIT 1", function(error, response) {
-		if (error) {
-			console.error(error);
-			return;
-		} else if (response[0]) {
+	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
+		if (response[0]) {
 			score = response[0].score + scoreAdd;
-			c.query("UPDATE triviascore SET score=" + score + " WHERE userid='" + winnerid + "' AND server_id='" + channel.guild.id + "'", function(error) {
-				if (error) {
-					console.error(error);
-					return;
-				}
-			});
+			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
 		} else {
 			score = scoreAdd;
 			var info = {
@@ -76,35 +69,30 @@ function manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum,
 				"score": scoreAdd,
 				"server_id": channel.guild.id
 			};
-			c.query("INSERT INTO triviascore SET ?", info, function(error) {
-				if (error) {
-					console.error(error);
-					return;
-				}
-			});
+			connection.insert("triviascore", info).catch(e => console.error(e.stack));
 		}
 		removeQuestion(quesNum, category);
 		countQsMissed = 0;
 		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${trivia[quesNum].bonusText}! ` : "";
 		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}Your score is now ${score}.`).then(() => {
-			setTimeout(goTrivia, delayBeforeNextQ, channel, c, -1, category);
+			setTimeout(goTrivia, delayBeforeNextQ, channel, -1, category);
 		});
-	});
+	}).catch(e => console.error(e.stack));
 }
 
-var toggleTrivia = function() {
+var toggleStatus = function() {
 	triviaOn = !triviaOn;
 };
 
 
-var goTrivia = function (channel, c, manualNumber, category) {
+var goTrivia = function (channel, manualNumber, category) {
 	scoreAdd = 0;
 	var alreadyAnswered = [];
 	if (triviaOn) {
 		var quesNum = -1;
 		if (manualNumber === -1) {
 			if (incompleteQuestions.length <= 1) {
-				populateTriviaQuestions(category);
+				populateQuestions(category);
 				quesNum = getRndmFromSet(incompleteQuestions);
 			} else {
 				quesNum = getRndmFromSet(incompleteQuestions);
@@ -113,7 +101,7 @@ var goTrivia = function (channel, c, manualNumber, category) {
 			quesNum = manualNumber;
 		} else {
 			if (incompleteQuestions.length <= 1) {
-				populateTriviaQuestions(category);
+				populateQuestions(category);
 				quesNum = getRndmFromSet(incompleteQuestions);
 			} else {
 				quesNum = getRndmFromSet(incompleteQuestions);
@@ -185,7 +173,7 @@ var goTrivia = function (channel, c, manualNumber, category) {
 		if (trivia[quesNum]) {
 			match = emojiExpression.exec(trivia[quesNum].question);
 		} else {
-			populateTriviaQuestions(category);
+			populateQuestions(category);
 			quesNum = getRndmFromSet(incompleteQuestions);
 			match = emojiExpression.exec(trivia[quesNum].question);
 		}
@@ -209,7 +197,7 @@ var goTrivia = function (channel, c, manualNumber, category) {
 				var winnerid = collected.first().author.id;
 				if (triviaOn) {
 					scoreAdd += 2;
-					manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum, category);
+					manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category);
 				}
 			}).catch(() => {
 				if (triviaOn) {
@@ -222,7 +210,7 @@ var goTrivia = function (channel, c, manualNumber, category) {
 							var winnerid = collected.first().author.id;
 							if (triviaOn) {
 								scoreAdd += 1;
-								manageCorrectAnswer(channel, c, collected, winnerid, scoreAdd, quesNum, category);
+								manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category);
 							}
 						}).catch(() => {
 							if (triviaOn) {
@@ -230,10 +218,10 @@ var goTrivia = function (channel, c, manualNumber, category) {
 								countQsMissed += 1;
 								channel.sendMessage("No one guessed correctly!").then(() => {
 									if (countQsMissed < maxQs) {
-										setTimeout(goTrivia, delayBeforeNextQ, channel, c, -1, category);
+										setTimeout(goTrivia, delayBeforeNextQ, channel, -1, category);
 									} else {
 										channel.sendMessage("Trivia has been automatically stopped.");
-										toggleTrivia();
+										toggleStatus();
 									}
 								});
 							}
@@ -245,67 +233,70 @@ var goTrivia = function (channel, c, manualNumber, category) {
 	}
 };
 
-var getTriviaLB = function (channel, c, topMessage) {
-	c.query("SELECT userid, score, rank FROM (SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='" + channel.guild.id + "' ORDER BY score DESC) s LIMIT 9", function(error, response) {
-		if (error) {
-			console.error(error);
-			return;
-		} else if (response[0]) {
-			//var text = "";
-			var nameArray = [""];
-			var scoreArray = [0];
-			var rankArray = [0];
-			i = 0;
-			for (i; i < response.length; i++) {
-				nameArray[i] = cl.getDisplayName(channel.guild.members.get(response[i].userid));
-				scoreArray[i] = response[i].score;
-				rankArray[i] = response[i].rank;
-				//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
-			}
-			var fieldsArray = [""];
-			i = 0;
-			for (i; i < nameArray.length; i++) {
-				fieldsArray[i] = {
-					name: nameArray[i],
-					value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`,
-					inline: true
-				};
-			}
-			channel.sendMessage(topMessage, {
-				embed: {
-					color: 3447003,
-					title: `__**Top ${fieldsArray.length} Trivia Scoreboard**__`,
-					fields: fieldsArray
-				}
-			}).catch((error) => console.error(error));
-		} else {
-			channel.sendMessage("There are no trivia scores yet.");
+var getLB = function (channel, topMessage) {
+	connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${channel.guild.id}' ORDER BY score DESC) s LIMIT 9`).then(response => {
+		if (!response[0]) {
+			return channel.sendMessage("There are no trivia scores yet.");
 		}
-	});
+		//var text = "";
+		var nameArray = [""];
+		var scoreArray = [0];
+		var rankArray = [0];
+		i = 0;
+		for (i; i < response.length; i++) {
+			nameArray[i] = channel.guild.members.get(response[i].userid).displayName;
+			scoreArray[i] = response[i].score;
+			rankArray[i] = response[i].rank;
+			//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
+		}
+		var fieldsArray = [""];
+		i = 0;
+		for (i; i < nameArray.length; i++) {
+			fieldsArray[i] = {
+				name: nameArray[i],
+				value: `Rank: ${rankArray[i]}, Score: ${scoreArray[i]}`,
+				inline: true
+			};
+		}
+		channel.sendMessage(topMessage, {
+			embed: {
+				color: 3447003,
+				title: `__**Top ${fieldsArray.length} Trivia Scoreboard**__`,
+				fields: fieldsArray
+			}
+		}).catch((error) => console.error(error));
+	}).catch(e => console.error(e.stack));
 };
 
-function timedTrivia(channel, minutes, c, hardCode, stref, category) {
+function cooldown(cmd) {
+	cmd.conf.endGameCooldown = true;
+	setTimeout(() => {
+		cmd.conf.endGameCooldown = false;
+	}, cmd.conf.endGameTimer);
+}
+
+function timedTrivia(channel, minutes, trivStartUser, category, cmd) {
 	var time = (minutes*60)*1000;
-	toggleTrivia();
-	populateTriviaQuestions("default");
+	toggleStatus();
+	populateQuestions("default");
 	channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ/1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH/1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH/1000) + "s between question and hint, " + Math.floor(delayBeforeNoA/1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ/1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
-	setTimeout(goTrivia, delayBeforeFirstQ, channel, c, -1, category);
+	setTimeout(goTrivia, delayBeforeFirstQ, channel, -1, category);
 	setTimeout(function() {
 		if (triviaOn) {
-			toggleTrivia();
-			channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
-				getTriviaLB(channel, c, "**Final Standings:**");
-				hardCode[stref].timeout();
+			toggleStatus();
+			channel.sendMessage(`Everyone thank ${trivStartUser} for the trivia round! \`\`\`markdown\r\n# TRIVIA STOPPED!\`\`\``).then(() => {
+				getLB(channel, "**Final Standings:**");
+				cooldown(cmd);
 			});
 		}
 	}, time);
 }
 
 module.exports = {
-	populateTriviaQuestions,
-	getTriviaLB,
+	populateQuestions,
+	getLB,
 	goTrivia,
 	timedTrivia,
-	toggleTrivia,
-	getTriviaStatus
+	toggleStatus,
+	getStatus
 };

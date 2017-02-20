@@ -1,10 +1,5 @@
 {
-  "prefix": "!",
-  "modrolename": "Moderator",
-  "membrolename": "Member",
-  "botownerid": "83264808022970368",
-  "logLocation": "E:/OtherStuff/DiscordChatlogs/",
-  "officialmapids": {
+	"officialmapids": {
     "Sprint": {
       "Broken Symmetry": "1558337",
       "Lost Society": "1558158",

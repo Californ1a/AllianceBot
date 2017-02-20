@@ -1,5 +1,5 @@
 const mysql = require("mysql");
-const sqlconfig = require("../config/logins/sqlconfig.js");
+const sqlconfig = require("../logins/sqlconfig.js");
 
 const pool = mysql.createPool(sqlconfig);
 
