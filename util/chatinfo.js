@@ -111,11 +111,13 @@ var writeLineToAllLogs = function(bot, guild, line) {
 var formatChatlog = function(message) {
 	var messageTime = messageDate(message);
 	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
-	var user = getMaxRole(message.guild.members.get(message.author.id));
+	var member = message.guild.members.get(message.author.id);
+	var isbot = (member.user.bot)?"{BOT}":"";
+	//var user = getMaxRole(member);
 	var chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
 	var fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
-	var chatlinedata = `${messageTime.formattedDate} | ${user.isbot}(${user.toprole.name})`;
-	var consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${user.isbot}(${user.toprole.name})`;
+	var chatlinedata = `${messageTime.formattedDate} | ${isbot}(${member.highestRole.name})`;
+	var consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${member.highestRole.name})`;
 	var att = [];
 	var formattedAtturls = "";
 	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
@@ -130,8 +132,8 @@ var formatChatlog = function(message) {
 			return;
 		}
 	});
-	chatlinedata += `${message.member.displayName}: ${messageContent}`;
-	consoleChat += `${message.member.displayName}: ${messageContent}`;
+	chatlinedata += `${member.displayName}: ${messageContent}`;
+	consoleChat += `${member.displayName}: ${messageContent}`;
 	if (message.attachments.size > 0) {
 		var attc = message.attachments.array();
 		var i = 0;
@@ -144,7 +146,7 @@ var formatChatlog = function(message) {
 		}
 	}
 	return {
-		user,
+		//user,
 		messageTime,
 		"currentLog": chatlog,
 		fullLog,
