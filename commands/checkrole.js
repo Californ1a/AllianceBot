@@ -29,7 +29,7 @@ exports.run = (bot, msg) => {
 
 exports.conf = {
 	guildOnly: false,
-	aliases: [],
+	aliases: ["cr"],
 	permLevel: 0,
 	onCooldown: false,
 	cooldownTimer: 0
