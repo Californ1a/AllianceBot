@@ -27,9 +27,13 @@ exports.run = (bot, msg, args, perm) => {
 		getRankScore(msg.guild.id, mentionedMember.id).then(scores => {
 			msg.channel.sendMessage(`Rank: ${scores[0]}, Score: ${scores[1]}`);
 		}).catch(e => console.error(e.stack));
-	} else if (args.length === 1 && (args[0] === "board" || args[0] === "b")) {
+	} else if (args[0] === "board" || args[0] === "b") {
+		var limit = 9;
+		if (perm >= 2 && (args[1] === "full" || args[1] === "f")) {
+			limit = 999;
+		}
 		getRankScore(msg.guild.id, msg.author.id).then(scores => {
-			game.getLB(msg.channel, `Your Rank: ${scores[0]}, Your Score: ${scores[1]}`);
+			game.getLB(msg.channel, `Your Rank: ${scores[0]}, Your Score: ${scores[1]}`, limit);
 		}).catch(e => console.error(e.stack));
 		return;
 	} else if (args.length === 3 && args[0] === "set") {

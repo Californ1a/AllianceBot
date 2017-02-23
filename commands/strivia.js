@@ -17,30 +17,41 @@ function cooldown(cmd) {
 exports.run = (bot, msg, args, perm, cmd) => {
 	var category = "default";
 	if (perm >= 2 && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
-		game.toggleStatus();
 		if (args[0]) {
-			if (game.getStatus()) {
+			if (!game.getTriviaStatus() && !game.getScrambleStatus()) {
+				game.toggleTriviaStatus();
 				game.populateQuestions(category);
 				msg.channel.sendMessage("Trivia Started with manual question number!");
-				game.goTrivia(msg.channel, args[0], category);
-			} else {
+				game.goTrivia(msg.channel, args[0], category, triviaconfig);
+			} else if (game.getTriviaStatus() && !game.getScrambleStatus()) {
+				game.toggleTriviaStatus();
 				msg.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
-					game.getLB(msg.channel, "**Final Standings:**");
+					game.getLB(msg.channel, "**Final Standings:**", 9);
 					cooldown(cmd);
 				});
+			} else if (game.getScrambleStatus()) {
+				return msg.channel.sendMessage("Scramble is currently running, you cannot start a Trivia game.");
+			} else {
+				console.log("wut3");
 			}
 		} else {
-			if (game.getStatus()) {
+			if (!game.getTriviaStatus() && !game.getScrambleStatus()) {
+				game.toggleTriviaStatus();
 				game.populateQuestions("default");
 				msg.channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH / 1000) + "s between question and hint, " + Math.floor(delayBeforeNoA / 1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 				setTimeout(function() {
-					game.goTrivia(msg.channel, -1, category);
+					game.goTrivia(msg.channel, -1, category, triviaconfig);
 				}, delayBeforeFirstQ);
-			} else {
+			} else if (game.getTriviaStatus() && !game.getScrambleStatus()) {
+				game.toggleTriviaStatus();
 				msg.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
-					game.getLB(msg.channel, "**Final Standings:**");
+					game.getLB(msg.channel, "**Final Standings:**", 9);
 					cooldown(cmd);
 				});
+			} else if (game.getScrambleStatus()) {
+				return msg.channel.sendMessage("Scramble is currently running, you cannot start a Trivia game.");
+			} else {
+				console.log("wut4");
 			}
 		}
 	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
@@ -72,7 +83,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				if (newScore > 0) {
 					connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 						msg.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-							game.timedTrivia(msg.channel, minutes, trivStartUser, category, cmd);
+							game.timedTrivia(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig);
 						});
 					}).catch(e => {
 						msg.channel.sendMessage("Failed");
@@ -83,7 +94,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				}
 				connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-						game.timedTrivia(msg.channel, minutes, trivStartUser, category, cmd);
+						game.timedTrivia(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig);
 					});
 				}).catch(e => {
 					msg.channel.sendMessage("Failed");
@@ -94,10 +105,10 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				msg.channel.sendMessage("You took too long to respond. Trivia will not be started, no points deducted.");
 			});
 		}).catch(e => console.error(e.stack));
-	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.getStatus()) {
+	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.getTriviaStatus()) {
 		msg.channel.sendMessage("```markdown\r\n# TRIVIA STOPPED!```").then(() => {
-			game.toggleStatus();
-			game.getLB(msg.channel, "**Final Standings:**");
+			game.toggleTriviaStatus();
+			game.getLB(msg.channel, "**Final Standings:**", 9);
 			cooldown(cmd);
 		});
 	} else {
@@ -117,7 +128,7 @@ exports.conf = {
 
 exports.help = {
 	name: "strivia",
-	description: "trivia",
+	description: "Start trivia",
 	extendedDescription: "",
-	usage: "strivia <stuff>"
+	usage: "strivia <points>"
 };

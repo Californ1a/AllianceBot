@@ -11,5 +11,11 @@
 	  "delayBeforeHint": 18000,
 	  "delayBeforeNoAnswer": 20000,
 	  "maxUnansweredQuestionsBeforeAutoStop": 5
+	},
+	"scramble": {
+		"delayBeforeFirstQuestion": 50000,
+	  "delayBeforeNextQuestion": 10000,
+	  "delayBeforeNoAnswer": 120000,
+	  "maxUnansweredQuestionsBeforeAutoStop": 5
 	}
 }

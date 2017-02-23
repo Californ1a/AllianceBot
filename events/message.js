@@ -69,8 +69,8 @@ module.exports = (bot, msg) => {
 	}
 	if (cmd) {
 		if (perms < cmd.conf.permLevel || cmd.conf.onCooldown || cmd.conf.endGameCooldown) {
-			if (cmd.help.name === "strivia") {
-				msg.channel.sendMessage("This command is on cooldown (1 minute cooldown after trivia ends) or is otherwise unavailable at this time. Try again in a few minutes.");
+			if (cmd.help.name === "strivia" || cmd.help.name === "num" || cmd.help.name === "scramble") {
+				msg.channel.sendMessage("This command is on cooldown (1 minute cooldown after game ends) or is otherwise unavailable at this time. Try again in a few minutes.");
 			}
 			return;
 		}
