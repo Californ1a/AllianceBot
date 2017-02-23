@@ -52,3 +52,5 @@ backups/*
 *.bat
 process.json
 trivia.json
+scramble.json
+tweet.json
