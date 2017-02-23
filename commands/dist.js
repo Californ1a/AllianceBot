@@ -25,6 +25,11 @@ exports.run = (bot, msg, args) => {
 					str += chunk;
 				});
 				respond.on("end", function() {
+					if (!str || str == "") {
+						msg.channel.sendMessage("No data received.");
+						console.log("No data received.");
+						return;
+					}
 					parseString(str, function(error, result) {
 						if (error) {
 							console.error(error.stack);
