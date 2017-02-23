@@ -22,7 +22,7 @@ exports.run = (bot, msg, args) => {
 			return msg.channel.sendMessage("You do not have enough points to bet that much.");
 		}
 		var side = parseInt(args[1]);
-		if (!(side > 0 && side < dieType)) {
+		if (!(side > 0 && side <= dieType)) {
 			return msg.channel.sendMessage("It is a 6-sided dice, you can only use 1-6.");
 		}
 		var die = Math.floor(Math.random() * dieType) + 1;
