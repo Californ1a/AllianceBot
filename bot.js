@@ -1,3 +1,11 @@
+var pmx = require("pmx").init({
+	http: true, // HTTP routes logging (default: true)
+	ignore_routes: [/socket\.io/, /notFound/], // Ignore http routes with this pattern (Default: [])
+	errors: true, // Exceptions loggin (default: true)
+	custom_probes: true, // Auto expose JS Loop Latency and HTTP req/s as custom metrics
+	network: true, // Network monitoring at the application level
+	ports: true // Shows which ports your app is listening on (default: false)
+});
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const token = require("./logins/discordtoken.json").token;
@@ -87,6 +95,7 @@ bot.elevation = function(msg) {
 
 //catch errors
 bot.on("error", (e) => {
+	pmx.notify(new Error(e));
 	console.error(colors.green(e));
 });
 bot.on("warn", (e) => {
@@ -102,5 +111,6 @@ bot.on("debug", (e) => {
 bot.login(token);
 
 process.on("unhandledRejection", (reason, p) => {
+	pmx.notify(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
