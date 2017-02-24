@@ -1,0 +1,24 @@
+[
+	{
+    "categories": ["Sort of depreciated category support", "Basic question"],
+    "question": "Put in the question here?",
+    "hint": "A hint to apper, amount of time in config",
+    "answers": ["potential answer", "potential answer 2"]
+  },
+	{
+    "categories": ["Multiple choice"],
+    "question": "Basic Multiple choice question?",
+    "hint": "A. AnswerA\r\nB. AnswerB\r\nC. AnswerC\r\nD. AnswerD",
+    "answers": ["Answers that always work, before+after hint", "AnswerA"],
+    "hanswers":["Answer that only works after the hint is given", "A"]
+  },
+	{
+    "categories": ["Multiple choice2"],
+    "question": "Advanced Multiple choice question?",
+    "hint": "A. Answer A\r\nB. Answer B\r\nC. Answer C\r\nD. Answer D",
+    "answers": ["Answers that always work, before+after hint", "AnswerA"],
+    "hanswers": ["Answer that only works after the hint is given", "A"],
+		"banswers": ["Answer that only works before the hint"],
+		"bonusText": "banswers gives a bonus point, put the reason for the bonus point here, such as 'guessing the exact day'"
+  }
+]
