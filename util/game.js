@@ -173,9 +173,6 @@ var goScramble = (channel, config) => {
 			}
 			countQsMissed += 1;
 			channel.sendMessage("No one guessed correctly!").then(() => {
-				if (!getScrambleStatus()) {
-					return;
-				}
 				if (countQsMissed < config.maxUnansweredQuestionsBeforeAutoStop) {
 					removeScrambleTerm(orig);
 					setTimeout(goScramble, config.delayBeforeNextQuestion, channel, config);
