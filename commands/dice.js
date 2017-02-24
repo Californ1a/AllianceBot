@@ -16,7 +16,7 @@ exports.run = (bot, msg, args) => {
 		var newScore = 0;
 		var amount = parseInt(args[0]);
 		if (amount < 1) {
-			return msg.channel.sendMessage("You must bet more than one point.");
+			return msg.channel.sendMessage("Your bet amount must be a positive number.");
 		}
 		if (!(response[0].score >= amount)) {
 			return msg.channel.sendMessage("You do not have enough points to bet that much.");
@@ -27,10 +27,10 @@ exports.run = (bot, msg, args) => {
 		}
 		var die = Math.floor(Math.random() * dieType) + 1;
 		if (side === die) {
-			var scoreAdd = Math.floor(amount * (9/10));
+			var scoreAdd = Math.floor(amount * 2);
 			newScore = response[0].score + scoreAdd;
 			connection.update("triviascore", `score=${newScore}`, `userid='${msg.author.id}'`).then(() => {
-				msg.channel.sendMessage(`${msg.author}, The dice lands on ${die}! You win 90% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
+				msg.channel.sendMessage(`${msg.author}, The dice lands on ${die}! You win 200% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
 			}).catch(e => {
 				msg.channel.sendMessage("Failed");
 				console.error(e.stack);
