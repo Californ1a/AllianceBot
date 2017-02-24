@@ -62,13 +62,13 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				return msg.channel.sendMessage("You don't have any points.");
 			}
 			var cost = parseInt(args[0]);
-			var minutes = Math.floor((cost-4)/3);
+			var minutes = Math.floor((cost-5)/1);
 			if (cost > response[0].score) {
-				return msg.channel.sendMessage(`You do not have enough points. You would need ${cost} points to keep scramble going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\Scramble costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
+				return msg.channel.sendMessage(`You do not have enough points. You would need ${cost} points to keep scramble going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\Scramble costs 5 points to start and an additional 1 point for every minute you want to run the game.`);
 			} else if (minutes < 1) {
-				return msg.channel.sendMessage("You can't start scramble with that few points.\r\nScramble costs 4 points to start and an additional 3 points for every minute you want to run the game (minimum 7 points).");
+				return msg.channel.sendMessage("You can't start scramble with that few points.\r\nScramble costs 5 points to start and an additional 3 points for every minute you want to run the game (minimum 6 points).");
 			}
-			msg.channel.sendMessage(`Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of scramble time. Are you sure you want to start scramble?\r\nScramble costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
+			msg.channel.sendMessage(`Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of scramble time. Are you sure you want to start scramble?\r\nScramble costs 5 points to start and an additional 1 point for every minute you want to run the game.`);
 			msg.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && msg.author.id === r.author.id, {
 				max: 1,
 				time: 30000,
@@ -92,7 +92,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					return;
 				}
 				connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
-					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Scramble will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
+					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Scramble will begin and last for ${minutes} minute${(minutes > 1)?"s":""}.`).then(() => {
 						game.timedScramble(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
 					});
 				}).catch(e => {
