@@ -7,7 +7,7 @@ var randomNickChange = function(bot) {
 	var sec = Math.floor(Math.random() * 3600) + 1800;
 	var ms = sec * 1000;
 	var glitches = Math.floor(Math.random() * glitchNames.length);
-	var rndmName = glitchNames[glitches-1];
+	var rndmName = glitchNames[glitches];
 
 	setTimeout(() => {
 		console.log(glitches);
