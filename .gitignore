@@ -45,7 +45,9 @@ Desktop.ini
 desktop.ini
 
 # Logins, chatlogs, backups
-logins/*
+logins/discordtoken.json
+logins/sqlconfig.js
+logins/twitconfig.js
 userinfo.txt
 DiscordChatlogs/*
 backups/*
