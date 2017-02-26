@@ -6,6 +6,7 @@ var pmx = require("pmx").init({
 	network: true, // Network monitoring at the application level
 	ports: true // Shows which ports your app is listening on (default: false)
 });
+var probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 const token = require("./logins/discordtoken.json").token;
@@ -91,6 +92,31 @@ bot.elevation = function(msg) {
 	}
 	return permlvl;
 };
+
+probe.metric({
+	name: "Total Users",
+	value: function() {
+		var total = 0;
+		bot.users.forEach(u => {
+			if (u.presence.status.match(/^(online|idle)$/)) {
+				total +=1;
+			}
+		});
+		return total;
+	}
+});
+
+probe.metric({
+	name: "Heartbeat Ping",
+	value: function() {
+		return bot.ping;
+	}
+});
+
+pmx.action("throw err", function(reply) {
+	pmx.notify(new Error("This is an error."));
+	reply({success:false});
+});
 
 
 //catch errors
