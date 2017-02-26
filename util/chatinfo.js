@@ -116,8 +116,8 @@ var formatChatlog = function(message) {
 	//var user = getMaxRole(member);
 	var chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
 	var fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
-	var chatlinedata = `${messageTime.formattedDate} | ${isbot}(${member.highestRole.name})`;
-	var consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${member.highestRole.name})`;
+	var chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
+	var consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
 	var att = [];
 	var formattedAtturls = "";
 	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {

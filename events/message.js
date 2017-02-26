@@ -31,7 +31,7 @@ module.exports = (bot, msg) => {
 		}
 	});
 	if (!msg.guild.members.get(msg.author.id).roles.exists("name", config.membrolename)) {
-		guestToMemb(bot, msg, cha);
+		guestToMemb(bot, msg);
 	}
 	if (!msg.content.startsWith(config.prefix)) {
 		return;
