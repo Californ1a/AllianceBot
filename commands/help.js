@@ -49,7 +49,7 @@ exports.run = (bot, msg, args, perm) => {
 					helpLine += nextCmd;
 				} else {
 					msg.author.sendMessage(`${helpLine}\`\`\``);
-					helpLine = `\`\`\`asciidoc\n\n`;
+					helpLine = "```asciidoc\n\n";
 				}
 				i++;
 			});

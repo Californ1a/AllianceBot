@@ -25,7 +25,7 @@ exports.run = (bot, msg, args) => {
 					str += chunk;
 				});
 				respond.on("end", function() {
-					if (!str || str == "") {
+					if (!str || str === "") {
 						msg.channel.sendMessage("No data received.");
 						console.log("No data received.");
 						return;

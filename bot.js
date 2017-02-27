@@ -95,7 +95,7 @@ bot.elevation = function(msg) {
 
 probe.metric({
 	name: "Total Users",
-	value: function() {
+	value: () => {
 		var total = 0;
 		bot.users.forEach(u => {
 			if (u.presence.status.match(/^(online|idle)$/)) {
@@ -108,7 +108,7 @@ probe.metric({
 
 probe.metric({
 	name: "Heartbeat Ping",
-	value: function() {
+	value: () => {
 		return bot.ping;
 	}
 });
