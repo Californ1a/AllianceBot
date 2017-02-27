@@ -6,48 +6,41 @@ var delayBeforeNextQ = scrambleconfig.delayBeforeNextQuestion;
 var delayBeforeNoA = scrambleconfig.delayBeforeNoAnswer;
 var trivStartUser;
 
-function cooldown(cmd) {
-	cmd.conf.endGameCooldown = true;
-	setTimeout(() => {
-		cmd.conf.endGameCooldown = false;
-	}, cmd.conf.endGameTimer);
-}
-
 exports.run = (bot, msg, args, perm, cmd) => {
 	var category = "default";
 	if (perm >= 2 && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
 		if (args[0]) {
-			if (!game.getScrambleStatus() && !game.getTriviaStatus()) {
-				game.toggleScrambleStatus();
-				game.populateScramble();
+			if (!game.scramble.getStatus() && !game.trivia.getStatus()) {
+				game.scramble.toggleStatus();
+				game.scramble.populateQ();
 				msg.channel.sendMessage("Scramble Started with manual question number!");
-				game.goScramble(msg.channel, scrambleconfig);
-			} else if (game.getScrambleStatus() && !game.getTriviaStatus()) {
-				game.toggleScrambleStatus();
+				game.scramble.go(msg.channel, scrambleconfig);
+			} else if (game.scramble.getStatus() && !game.trivia.getStatus()) {
+				game.scramble.toggleStatus();
 				msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
 					game.getLB(msg.channel, "**Final Standings:**", 9);
-					cooldown(cmd);
+					game.cooldown(cmd);
 				});
-			} else if (game.getTriviaStatus()) {
+			} else if (game.trivia.getStatus()) {
 				return msg.channel.sendMessage("Trivia is currently running, you cannot start a Scramble game.");
 			} else {
 				console.log("wut");
 			}
 		} else {
-			if (!game.getScrambleStatus() && !game.getTriviaStatus()) {
-				game.toggleScrambleStatus();
-				game.populateScramble();
-				msg.channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n*  There are no hints.  \r\n*  There is " + Math.floor(delayBeforeNoA / 1000) + "s between scramble and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
+			if (!game.scramble.getStatus() && !game.trivia.getStatus()) {
+				game.scramble.toggleStatus();
+				game.scramble.populateQ();
+				msg.channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n*  There are no hints.  \r\n*  There is " + Math.floor(delayBeforeNoA / 1000) + "s between scramble and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 				setTimeout(function() {
-					game.goScramble(msg.channel, scrambleconfig);
+					game.scramble.go(msg.channel, scrambleconfig);
 				}, delayBeforeFirstQ);
-			} else if (game.getScrambleStatus() && !game.getTriviaStatus()) {
-				game.toggleScrambleStatus();
+			} else if (game.scramble.getStatus() && !game.trivia.getStatus()) {
+				game.scramble.toggleStatus();
 				msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
 					game.getLB(msg.channel, "**Final Standings:**", 9);
-					cooldown(cmd);
+					game.cooldown(cmd);
 				});
-			}else if (game.getTriviaStatus()) {
+			}else if (game.trivia.getStatus()) {
 				return msg.channel.sendMessage("Trivia is currently running, you cannot start a Scramble game.");
 			} else {
 				console.log("wut2");
@@ -82,7 +75,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				if (newScore > 0) {
 					connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 						msg.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Scramble will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-							game.timedScramble(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
+							game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
 						});
 					}).catch(e => {
 						msg.channel.sendMessage("Failed");
@@ -93,7 +86,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				}
 				connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Scramble will begin and last for ${minutes} minute${(minutes > 1)?"s":""}.`).then(() => {
-						game.timedScramble(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
+						game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
 					});
 				}).catch(e => {
 					msg.channel.sendMessage("Failed");
@@ -104,11 +97,11 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				msg.channel.sendMessage("You took too long to respond. Scramble will not be started, no points deducted.");
 			});
 		}).catch(e => console.error(e.stack));
-	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.getScrambleStatus() && !game.getTriviaStatus()) {
+	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.scramble.getStatus() && !game.trivia.getStatus()) {
 		msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
-			game.toggleScrambleStatus();
+			game.scramble.toggleStatus();
 			game.getLB(msg.channel, "**Final Standings:**", 9);
-			cooldown(cmd);
+			game.cooldown(cmd);
 		});
 	} else {
 		msg.channel.sendMessage("You do not have permission to start scramble without paying.");
