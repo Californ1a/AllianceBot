@@ -6,6 +6,8 @@ var triviaOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
 var scoreAdd = 0;
+var events = require("events");
+var eventEmitter = new events.EventEmitter();
 
 var getTriviaStatus = () => {
 	return triviaOn;
@@ -44,30 +46,6 @@ function removeQuestion(quesNum) {
 		}
 	}
 	//console.log(incompleteQuestions);
-}
-
-function manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category, config) {
-	var score;
-	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
-		if (response[0]) {
-			score = response[0].score + scoreAdd;
-			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
-		} else {
-			score = scoreAdd;
-			var info = {
-				"userid": winnerid,
-				"score": scoreAdd,
-				"server_id": channel.guild.id
-			};
-			connection.insert("triviascore", info).catch(e => console.error(e.stack));
-		}
-		removeQuestion(quesNum, category);
-		countQsMissed = 0;
-		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${trivia[quesNum].bonusText}! ` : "";
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
-			setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
-		});
-	}).catch(e => console.error(e.stack));
 }
 
 var goTrivia = (channel, manualNumber, category, config) => {
@@ -186,7 +164,7 @@ var goTrivia = (channel, manualNumber, category, config) => {
 				return;
 			}
 			scoreAdd += 2;
-			manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category, config);
+			eventEmitter.emit("manageCorrectAnswer", channel, collected, winnerid, scoreAdd, quesNum, category, config);
 		}).catch(() => {
 			if (!getTriviaStatus()) {
 				return;
@@ -202,7 +180,7 @@ var goTrivia = (channel, manualNumber, category, config) => {
 						return;
 					}
 					scoreAdd += 1;
-					manageCorrectAnswer(channel, collected, winnerid, scoreAdd, quesNum, category, config);
+					eventEmitter.emit("manageCorrectAnswer", channel, collected, winnerid, scoreAdd, quesNum, category, config);
 				}).catch(() => {
 					if (!getTriviaStatus()) {
 						return;
@@ -222,6 +200,30 @@ var goTrivia = (channel, manualNumber, category, config) => {
 		});
 	});
 };
+
+eventEmitter.on("manageCorrectAnswer", (channel, collected, winnerid, scoreAdd, quesNum, category, config) => {
+	var score;
+	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
+		if (response[0]) {
+			score = response[0].score + scoreAdd;
+			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
+		} else {
+			score = scoreAdd;
+			var info = {
+				"userid": winnerid,
+				"score": scoreAdd,
+				"server_id": channel.guild.id
+			};
+			connection.insert("triviascore", info).catch(e => console.error(e.stack));
+		}
+		removeQuestion(quesNum, category);
+		countQsMissed = 0;
+		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${trivia[quesNum].bonusText}! ` : "";
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
+			setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
+		});
+	}).catch(e => console.error(e.stack));
+});
 
 var timedTrivia = function(channel, minutes, trivStartUser, category, cmd, config) {
 	var time = (minutes*60)*1000;

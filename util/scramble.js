@@ -5,6 +5,8 @@ var scrambleOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
 var scoreAdd = 0;
+var events = require("events");
+var eventEmitter = new events.EventEmitter();
 
 var getScrambleStatus = () => {
 	return scrambleOn;
@@ -43,29 +45,6 @@ function scramble(a) {
 	return ret;
 }
 
-function manageScrambleCorrect(channel, collected, winnerid, scoreAdd, config, orig) {
-	var score;
-	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
-		if (response[0]) {
-			score = response[0].score + scoreAdd;
-			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
-		} else {
-			score = scoreAdd;
-			var info = {
-				"userid": winnerid,
-				"score": scoreAdd,
-				"server_id": channel.guild.id
-			};
-			connection.insert("triviascore", info).catch(e => console.error(e.stack));
-		}
-		removeScrambleTerm(orig);
-		countQsMissed = 0;
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
-			setTimeout(goScramble, config.delayBeforeNextQuestion, channel, config);
-		});
-	}).catch(e => console.error(e.stack));
-}
-
 var toggleScrambleStatus = () => {
 	scrambleOn = !scrambleOn;
 };
@@ -94,7 +73,7 @@ var goScramble = (channel, config) => {
 				return;
 			}
 			scoreAdd += 1;
-			manageScrambleCorrect(channel, collected, winnerid, scoreAdd, config, orig);
+			eventEmitter.emit("manageScrambleCorrect", channel, collected, winnerid, scoreAdd, config, orig);
 		}).catch(() => {
 			if (!getScrambleStatus()) {
 				return;
@@ -112,6 +91,29 @@ var goScramble = (channel, config) => {
 		});
 	}).catch(e => console.error(e.stack));
 };
+
+eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd, config, orig) => {
+	var score;
+	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
+		if (response[0]) {
+			score = response[0].score + scoreAdd;
+			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
+		} else {
+			score = scoreAdd;
+			var info = {
+				"userid": winnerid,
+				"score": scoreAdd,
+				"server_id": channel.guild.id
+			};
+			connection.insert("triviascore", info).catch(e => console.error(e.stack));
+		}
+		removeScrambleTerm(orig);
+		countQsMissed = 0;
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
+			setTimeout(goScramble, config.delayBeforeNextQuestion, channel, config);
+		});
+	}).catch(e => console.error(e.stack));
+});
 
 var timedScramble = (channel, minutes, trivStartUser, category, cmd, config) => {
 	var time = (minutes*60)*1000;

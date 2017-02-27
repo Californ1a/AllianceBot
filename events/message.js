@@ -75,7 +75,7 @@ module.exports = (bot, msg) => {
 			return;
 		}
 		connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='${cmd.help.name}'`).then(response => {
-			if (!response[0]) {
+			if (!response[0] && cmd.conf.perm < 4) {
 				console.log(colors.red("Command not enabled for this server."));
 				return;
 			}
