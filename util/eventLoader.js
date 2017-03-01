@@ -1,5 +1,5 @@
 const reqEvent = (event) => require(`../events/${event}`);
-module.exports = (bot, stream) => {
+module.exports = (bot, stream, meter) => {
 	bot.on("ready", () => reqEvent("ready")(bot));
 	bot.on("reconnecting", () => reqEvent("reconnecting")(bot));
 	bot.on("disconnect", (closeEvent) => reqEvent("disconnect")(bot, closeEvent));
@@ -10,7 +10,7 @@ module.exports = (bot, stream) => {
 	bot.on("messageDelete", (msg) => reqEvent("messageDelete")(bot, msg));
 	bot.on("messageUpdate", (oldMessage, newMessage) => reqEvent("messageUpdate")(bot, oldMessage, newMessage));
 	bot.on("guildMemberUpdate", (oldMember, newMember) => reqEvent("guildMemberUpdate")(bot, oldMember, newMember));
-	bot.on("message", (msg) => reqEvent("message")(bot, msg));
+	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
 	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
 	stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));

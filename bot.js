@@ -23,7 +23,11 @@ const stream = T.stream("statuses/filter", {
 const modrolename = config.modrolename;
 const membrolename = config.membrolename;
 const adminrolename = config.adminrolename;
-require("./util/eventLoader.js")(bot, stream);
+var meter = probe.meter({
+	name: "msg/min",
+	samples: 60
+});
+require("./util/eventLoader.js")(bot, stream, meter);
 
 const log = (msg) => {
 	console.log(`[${moment().format("YYY-MM-DD HH:mm:ss")}] ${msg}`);
@@ -94,7 +98,7 @@ bot.elevation = function(msg) {
 };
 
 probe.metric({
-	name: "Total Users",
+	name: "Online Users",
 	value: () => {
 		var total = 0;
 		bot.users.forEach(u => {
@@ -109,7 +113,7 @@ probe.metric({
 probe.metric({
 	name: "Heartbeat Ping",
 	value: () => {
-		return bot.ping;
+		return Math.ceil(bot.ping);
 	}
 });
 
@@ -139,4 +143,16 @@ bot.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	pmx.notify(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
+	console.log(p.code);
+	console.log(reason.code);
+	if (p.code && p.code === "ETIMEDOUT") {
+		process.exit();
+	}
+});
+
+process.on("rejectionHandled", (p) => {
+	console.log(`Handled Rejection: ${p}`);
+	if (p.code && p.code === "ETIMEDOUT") {
+		process.exit();
+	}
 });

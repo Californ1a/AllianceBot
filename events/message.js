@@ -6,7 +6,7 @@ const cl = require("../util/chatinfo.js");
 const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 
-module.exports = (bot, msg) => {
+module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
 		if (msg.content.startsWith(config.prefix)) {
@@ -15,7 +15,7 @@ module.exports = (bot, msg) => {
 		return;
 	}
 	var cha = cl.formatChatlog(msg);
-
+	meter.mark();
 	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
 		if (error) {
 			console.log(msg.content);
