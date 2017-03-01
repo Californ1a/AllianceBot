@@ -5,6 +5,7 @@ const scramble = require("./scramble.js");
 module.exports = {
 	getLB: game.getLB,
 	cooldown: game.cooldown,
+	getChanges: game.getChanges,
 	trivia: {
 		getStatus: trivia.getTriviaStatus,
 		populateQ: trivia.populateQuestions,
@@ -16,7 +17,6 @@ module.exports = {
 		getStatus: scramble.getScrambleStatus,
 		populateQ: scramble.populateScramble,
 		toggleStatus: scramble.toggleScrambleStatus,
-		go: scramble.goScramble,
 		timed: scramble.timedScramble
 	}
 };

@@ -115,7 +115,7 @@ eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd
 	}).catch(e => console.error(e.stack));
 });
 
-var timedScramble = (channel, minutes, trivStartUser, category, cmd, config) => {
+var timedScramble = (channel, minutes, trivStartUser, category, cmd, config, startingScores) => {
 	var time = (minutes*60)*1000;
 	toggleScrambleStatus();
 	populateScramble();
@@ -125,7 +125,7 @@ var timedScramble = (channel, minutes, trivStartUser, category, cmd, config) => 
 		if (getScrambleStatus()) {
 			toggleScrambleStatus();
 			channel.sendMessage(`Everyone thank ${trivStartUser} for the scramble round! \`\`\`markdown\r\n# SCRAMBLE STOPPED!\`\`\``).then(() => {
-				game.getLB(channel, "**Final Standings:**", 9);
+				game.getChanges(channel, startingScores, "**Final Standings:**", 9);
 				game.cooldown(cmd);
 			});
 		}
@@ -136,6 +136,5 @@ module.exports = {
 	getScrambleStatus,
 	populateScramble,
 	toggleScrambleStatus,
-	goScramble,
 	timedScramble
 };

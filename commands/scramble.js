@@ -5,6 +5,7 @@ var delayBeforeFirstQ = scrambleconfig.delayBeforeFirstQuestion;
 var delayBeforeNextQ = scrambleconfig.delayBeforeNextQuestion;
 var delayBeforeNoA = scrambleconfig.delayBeforeNoAnswer;
 var trivStartUser;
+var startingScores;
 
 exports.run = (bot, msg, args, perm, cmd) => {
 	var category = "default";
@@ -28,19 +29,23 @@ exports.run = (bot, msg, args, perm, cmd) => {
 			}
 		} else {
 			if (!game.scramble.getStatus() && !game.trivia.getStatus()) {
-				game.scramble.toggleStatus();
-				game.scramble.populateQ();
-				msg.channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n*  There are no hints.  \r\n*  There is " + Math.floor(delayBeforeNoA / 1000) + "s between scramble and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
-				setTimeout(function() {
-					game.scramble.go(msg.channel, scrambleconfig);
-				}, delayBeforeFirstQ);
+				startingScores = 0;
+				connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+					startingScores = response;
+					game.scramble.toggleStatus();
+					game.scramble.populateQ();
+					msg.channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n*  There are no hints.  \r\n*  There is " + Math.floor(delayBeforeNoA / 1000) + "s between scramble and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
+					setTimeout(() => {
+						game.scramble.go(msg.channel, scrambleconfig);
+					}, delayBeforeFirstQ);
+				}).catch(e => console.error(e.stack));
 			} else if (game.scramble.getStatus() && !game.trivia.getStatus()) {
 				game.scramble.toggleStatus();
 				msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
-					game.getLB(msg.channel, "**Final Standings:**", 9);
+					game.getChanges(msg.channel, startingScores, "**Final Standings:**", 9);
 					game.cooldown(cmd);
 				});
-			}else if (game.trivia.getStatus()) {
+			} else if (game.trivia.getStatus()) {
 				return msg.channel.sendMessage("Trivia is currently running, you cannot start a Scramble game.");
 			} else {
 				console.log("wut2");
@@ -75,7 +80,11 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				if (newScore > 0) {
 					connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 						msg.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Scramble will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-							game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
+							startingScores = 0;
+							connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+								startingScores = response;
+								game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig, startingScores);
+							});
 						});
 					}).catch(e => {
 						msg.channel.sendMessage("Failed");
@@ -86,7 +95,11 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				}
 				connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
 					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Scramble will begin and last for ${minutes} minute${(minutes > 1)?"s":""}.`).then(() => {
-						game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig);
+						startingScores = 0;
+						connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+							startingScores = response;
+							game.scramble.timed(msg.channel, minutes, trivStartUser, category, cmd, scrambleconfig, startingScores);
+						});
 					});
 				}).catch(e => {
 					msg.channel.sendMessage("Failed");
@@ -100,7 +113,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.scramble.getStatus() && !game.trivia.getStatus()) {
 		msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
 			game.scramble.toggleStatus();
-			game.getLB(msg.channel, "**Final Standings:**", 9);
+			game.getChanges(msg.channel, startingScores, "**Final Standings:**", 9);
 			game.cooldown(cmd);
 		});
 	} else {
