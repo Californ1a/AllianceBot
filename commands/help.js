@@ -29,7 +29,7 @@ exports.run = (bot, msg, args, perm) => {
 
 			i = 0;
 			var doneCmds = [];
-			var helpLine = `\`\`\`asciidoc\n= Command List =\n\n[Use ${pre}help <command-name> for details]\n\n`;
+			var helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n\n`;
 			bot.commands.forEach(cmd => {
 				var nextCmd = "";
 				if (perm === 4) {
