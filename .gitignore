@@ -53,6 +53,7 @@ DiscordChatlogs/*
 backups/*
 *.bat
 process.json
-trivia.json
-scramble.json
+gameconfigs/trivia.json
+gameconfigs/scramble.json
 tweet.json
+test.json
