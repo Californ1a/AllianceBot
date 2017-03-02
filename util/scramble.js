@@ -13,8 +13,8 @@ var getScrambleStatus = () => {
 };
 
 var populateScramble = () => {
-	delete require.cache[require.resolve("../scramble.json")];
-	incompleteQuestions = require("../scramble.json").filter(v => v !== "");
+	delete require.cache[require.resolve("../gameconfigs/scramble.json")];
+	incompleteQuestions = require("../gameconfigs/scramble.json").filter(v => v !== "");
 };
 
 function removeScrambleTerm(orig) {
@@ -39,7 +39,7 @@ function scramble(a) {
 		k[c] = d;
 	}
 	var ret = k.join("");
-	if (ret.charAt(0) === " " || ret.charAt(ret.length-1) === " " || ret.includes("  ")) {
+	if (ret.charAt(0) === " " || ret.charAt(ret.length - 1) === " " || ret.includes("  ")) {
 		ret = scramble(a);
 	}
 	return ret;
@@ -116,7 +116,7 @@ eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd
 });
 
 var timedScramble = (channel, minutes, trivStartUser, category, cmd, config, startingScores) => {
-	var time = (minutes*60)*1000;
+	var time = (minutes * 60) * 1000;
 	toggleScrambleStatus();
 	populateScramble();
 	channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n* There are no hints.  \r\n*  There is " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between scramble and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
