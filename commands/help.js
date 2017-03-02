@@ -30,11 +30,11 @@ exports.run = (bot, msg, args, perm) => {
 			i = 0;
 			var doneCmds = [];
 			var helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n\n`;
+			var nextCmd = "";
 			bot.commands.forEach(cmd => {
-				var nextCmd = "";
 				if (perm === 4) {
 					nextCmd = `${cmd.help.name} (${cmd.conf.permLevel})${" ".repeat(longest - cmd.help.name.length)} :: ${cmd.help.description}\n`;
-				} else if (cmd.conf.permLevel<=perm &&  arr3.has(cmd.help.name)) {
+				} else if (cmd.conf.permLevel <= perm && arr3.has(cmd.help.name)) {
 					nextCmd = `${cmd.help.name}${" ".repeat(longest - cmd.help.name.length)} :: ${cmd.help.description}\n`;
 				}
 				if (helpLine.length + nextCmd.length < 1990 && !doneCmds.includes(cmd.help.name)) {
@@ -49,7 +49,7 @@ exports.run = (bot, msg, args, perm) => {
 					helpLine += nextCmd;
 				} else {
 					msg.author.sendMessage(`${helpLine}\`\`\``);
-					helpLine = "```asciidoc\n\n";
+					helpLine = `\`\`\`asciidoc\n\n${(arr3.has(cmd.help.name))?"✓":"✗"} ${nextCmd}`;
 				}
 				i++;
 			});
