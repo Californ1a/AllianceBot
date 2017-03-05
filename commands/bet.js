@@ -2,6 +2,7 @@ const pre = require("../config.json").prefix;
 const possibleBets = require("../gameconfigs/possibleroulettebets.json");
 const connection = require("../util/connection.js");
 const numbProps = require("../gameconfigs/roulettenumberproperties.json");
+const rouletteconfig = require("../config.json").roulette;
 var running = false;
 var cantbet = false;
 
@@ -95,9 +96,9 @@ var manageBets = (msg, debugnum) => {
 	};
 	var rollBall = () => {
 		rollingMsg.edit(`The ball lands on ${displayNumber}.${(isZero)?"":` It is ${evenOrOdd} and ${color}.`}`);
-		setTimeout(afterRoll, 3000);
+		setTimeout(afterRoll, rouletteconfig.timeAfterRoll);
 	};
-	setTimeout(rollBall, 7000);
+	setTimeout(rollBall, rouletteconfig.timeBeforeRoll);
 };
 
 exports.run = (bot, msg, args, perm) => {
@@ -135,7 +136,7 @@ exports.run = (bot, msg, args, perm) => {
 				//console.log(betArray[betArray.length - 1]);
 				setTimeout(() => {
 					manageBets(msg, debugnum);
-				}, 30000);
+				}, rouletteconfig.timeBeforeEndBets);
 			});
 		} else if (!cantbet) {
 			betArray.push(new Bet(msg.author.id, amount, args[1], msg));

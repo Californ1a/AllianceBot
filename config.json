@@ -17,5 +17,10 @@
 	  "delayBeforeNextQuestion": 10000,
 	  "delayBeforeNoAnswer": 120000,
 	  "maxUnansweredQuestionsBeforeAutoStop": 5
+	},
+	"roulette": {
+		"timeAfterRoll": 3000,
+		"timeBeforeRoll": 7000,
+		"timeBeforeEndBets": 30000
 	}
 }
