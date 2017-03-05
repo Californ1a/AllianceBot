@@ -12,7 +12,6 @@ function arrayUnion(arr1, arr2) {
 	var union = arr1.concat(arr2);
 	var nameids = [];
 	var names = [];
-	console.log("union", union);
 	var i = 0;
 	for (i; i < union.length; i++) {
 		var sindex = union[i].sindex;
@@ -48,26 +47,31 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 		}
 		var i = 0;
 		for (i; i < response.length; i++) {
-			obj = {"rindex": i, "sindex": -1};
+			obj = {
+				"rindex": i,
+				"sindex": -1
+			};
 			Object.assign(response[i], obj);
 		}
 		i = 0;
 		for (i; i < startingScores.length; i++) {
-			obj = {"sindex": i, "rindex": -1};
+			obj = {
+				"sindex": i,
+				"rindex": -1
+			};
 			Object.assign(startingScores[i], obj);
 		}
 		var union = arrayUnion(response, startingScores);
-		console.log(union);
 		i = 0;
 		for (i; i < union.length; i++) {
 			if (channel.guild.members.get(union[i].userid)) {
 				var sindex = union[i].sindex;
-				var current = (union[i].rindex < 0)?0:union[i].score;
+				var current = (union[i].rindex < 0) ? 0 : union[i].score;
 				var change = current;
 				if (union[i].sindex >= 0 && union[i].rindex >= 0) {
 					change -= startingScores[sindex].score;
 				} else if (union[i].rindex < 0) {
-					change = union[i].score*-1;
+					change = union[i].score * -1;
 				}
 				if (change > 0) {
 					combined.push({
