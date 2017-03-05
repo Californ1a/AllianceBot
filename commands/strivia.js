@@ -61,7 +61,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				return msg.channel.sendMessage("You don't have any points.");
 			}
 			var cost = parseInt(args[0]);
-			var minutes = Math.floor((cost-4)/3);
+			var minutes = Math.floor((cost - 4) / 3);
 			if (cost > response[0].score) {
 				return msg.channel.sendMessage(`You do not have enough points. You would need ${cost} points to keep trivia going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
 			} else if (minutes < 1) {
@@ -79,10 +79,10 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				trivStartUser = collected.first().author;
 				var newScore = parseInt(response[0].score) - cost;
 				if (newScore > 0) {
-					connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
-						msg.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-							startingScores = 0;
-							connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+					startingScores = 0;
+					connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+						connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
+							msg.channel.sendMessage(`${trivStartUser}, Your score is now ${newScore}. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
 								startingScores = response;
 								game.trivia.timed(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig, startingScores);
 							});
@@ -94,10 +94,10 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					});
 					return;
 				}
-				connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
-					msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
-						startingScores = 0;
-						connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+				startingScores = 0;
+				connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${msg.channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+					connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
+						msg.channel.sendMessage(`${trivStartUser}, You have been removed from the scoreboard. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
 							startingScores = response;
 							game.trivia.timed(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig, startingScores);
 						});

@@ -39,7 +39,7 @@ function scramble(a) {
 		k[c] = d;
 	}
 	var ret = k.join("");
-	if (ret.charAt(0) === " " || ret.charAt(ret.length - 1) === " " || ret.includes("  ")) {
+	if (ret.charAt(0) === " " || ret.charAt(ret.length - 1) === " " || ret.includes("  ") || ret === a) {
 		ret = scramble(a);
 	}
 	return ret;
@@ -136,5 +136,6 @@ module.exports = {
 	getScrambleStatus,
 	populateScramble,
 	toggleScrambleStatus,
-	timedScramble
+	timedScramble,
+	goScramble
 };

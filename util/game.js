@@ -11,12 +11,13 @@ module.exports = {
 		populateQ: trivia.populateQuestions,
 		toggleStatus: trivia.toggleTriviaStatus,
 		go: trivia.goTrivia,
-		timed: trivia.goTrivia
+		timed: trivia.timedTrivia
 	},
 	scramble: {
 		getStatus: scramble.getScrambleStatus,
 		populateQ: scramble.populateScramble,
 		toggleStatus: scramble.toggleScrambleStatus,
+		go: scramble.goScramble,
 		timed: scramble.timedScramble
 	}
 };
