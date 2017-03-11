@@ -25,6 +25,9 @@ exports.run = (bot, msg, args, perm) => {
 	} else if (args.length === 1 && msg.mentions.users.first()) {
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
 		getRankScore(msg.guild.id, mentionedMember.id).then(scores => {
+			if (mentionedMember.id === bot.user.id) {
+				return msg.channel.sendMessage("Rank: Godlike, Score: Untouchable");
+			}
 			msg.channel.sendMessage(`Rank: ${scores[0]}, Score: ${scores[1]}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "board" || args[0] === "b") {
