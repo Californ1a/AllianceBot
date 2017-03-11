@@ -37,19 +37,21 @@ exports.run = (bot, msg, args, perm) => {
 				} else if (cmd.conf.permLevel <= perm && arr3.has(cmd.help.name)) {
 					nextCmd = `${cmd.help.name}${" ".repeat(longest - cmd.help.name.length)} :: ${cmd.help.description}\n`;
 				}
-				if (helpLine.length + nextCmd.length < 1990 && !doneCmds.includes(cmd.help.name)) {
-					doneCmds[i] = cmd.help.name;
-					if (perm === 4) {
-						if (arr3.has(cmd.help.name)) {
-							helpLine += "✓ ";
-						} else {
-							helpLine += "✗ ";
+				if (!doneCmds.includes(cmd.help.name) && !helpLine.includes(nextCmd)) {
+					if (helpLine.length + nextCmd.length < 1990) {
+						doneCmds.push(cmd.help.name);
+						if (perm === 4) {
+							if (arr3.has(cmd.help.name)) {
+								helpLine += "✓ ";
+							} else {
+								helpLine += "✗ ";
+							}
 						}
+						helpLine += nextCmd;
+					} else {
+						msg.author.sendMessage(`${helpLine}\`\`\``);
+						helpLine = `\`\`\`asciidoc\n\n${(arr3.has(cmd.help.name))?"✓":"✗"} ${nextCmd}`;
 					}
-					helpLine += nextCmd;
-				} else {
-					msg.author.sendMessage(`${helpLine}\`\`\``);
-					helpLine = `\`\`\`asciidoc\n\n${(arr3.has(cmd.help.name))?"✓":"✗"} ${nextCmd}`;
 				}
 				i++;
 			});
