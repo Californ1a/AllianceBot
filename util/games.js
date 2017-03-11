@@ -10,6 +10,8 @@ var getRndmFromSet = (set) => {
 
 function arrayUnion(arr1, arr2) {
 	var union = arr1.concat(arr2);
+	//console.log("arr1", arr1);
+	//console.log("arr2", arr2);
 	var nameids = [];
 	var names = [];
 	var i = 0;
@@ -62,6 +64,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 			Object.assign(startingScores[i], obj);
 		}
 		var union = arrayUnion(response, startingScores);
+		//console.log(union);
 		i = 0;
 		for (i; i < union.length; i++) {
 			if (channel.guild.members.get(union[i].userid)) {
@@ -73,7 +76,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 				} else if (union[i].rindex < 0) {
 					change = union[i].score * -1;
 				}
-				if (change > 0) {
+				if (Math.abs(change) > 0) {
 					combined.push({
 						"userid": union[i].userid,
 						"name": channel.guild.members.get(union[i].userid).displayName,
