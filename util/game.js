@@ -18,6 +18,7 @@ module.exports = {
 		populateQ: scramble.populateScramble,
 		toggleStatus: scramble.toggleScrambleStatus,
 		go: scramble.goScramble,
-		timed: scramble.timedScramble
+		timed: scramble.timedScramble,
+		timeout: scramble.timeout
 	}
 };

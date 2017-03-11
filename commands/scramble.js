@@ -18,6 +18,9 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				game.scramble.go(msg.channel, scrambleconfig);
 			} else if (game.scramble.getStatus() && !game.trivia.getStatus()) {
 				game.scramble.toggleStatus();
+				if (game.scramble.timeout) {
+					clearTimeout(game.scramble.timeout);
+				}
 				msg.channel.sendMessage("```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
 					game.getLB(msg.channel, "**Final Standings:**", 9);
 					game.cooldown(cmd);

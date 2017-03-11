@@ -7,6 +7,7 @@ var countQsMissed = 0;
 var scoreAdd = 0;
 var events = require("events");
 var eventEmitter = new events.EventEmitter();
+var timeout;
 
 var getScrambleStatus = () => {
 	return scrambleOn;
@@ -120,8 +121,8 @@ var timedScramble = (channel, minutes, trivStartUser, category, cmd, config, sta
 	toggleScrambleStatus();
 	populateScramble();
 	channel.sendMessage("```markdown\r\n# Scramble is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n* There are no hints.  \r\n*  There is " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between scramble and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
-	setTimeout(goScramble, config.delayBeforeFirstQuestion, channel, -1, category, config);
-	setTimeout(function() {
+	setTimeout(goScramble, config.delayBeforeFirstQuestion, channel, config);
+	timeout = setTimeout(function() {
 		if (getScrambleStatus()) {
 			toggleScrambleStatus();
 			channel.sendMessage(`Everyone thank ${trivStartUser} for the scramble round! \`\`\`markdown\r\n# SCRAMBLE STOPPED!\`\`\``).then(() => {
@@ -137,5 +138,6 @@ module.exports = {
 	populateScramble,
 	toggleScrambleStatus,
 	timedScramble,
-	goScramble
+	goScramble,
+	timeout
 };
