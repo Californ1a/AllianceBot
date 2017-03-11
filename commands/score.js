@@ -25,7 +25,7 @@ exports.run = (bot, msg, args, perm) => {
 			game.getLB(msg.channel, `Your Rank: ${s.rank}, Your Score: ${s.score}`, limit);
 		}).catch(e => console.error(e.stack));
 		return;
-	} else if (args.length === 3 && (args[0] === "set" || args[0] === "give")) {
+	} else if (args.length === 3 && (args[0].match(/^(set|give)$/))) {
 		if (!(perm >= 2)) {
 			return msg.channel.sendMessage("You do not have permission to set scores.");
 		}
