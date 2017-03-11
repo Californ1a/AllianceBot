@@ -35,7 +35,7 @@ const log = (msg) => {
 
 
 
-
+//Create and load commands and aliases
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 fs.readdir("./commands", (err, files) => {
@@ -53,6 +53,7 @@ fs.readdir("./commands", (err, files) => {
 	});
 });
 
+//Command reload function
 bot.reload = function(command) {
 	return new Promise((resolve, reject) => {
 		try {
@@ -75,6 +76,7 @@ bot.reload = function(command) {
 	});
 };
 
+//get the permission level of the member who sent message
 bot.elevation = function(msg) {
 	let permlvl = 0;
 	if (msg.guild) {
@@ -97,19 +99,21 @@ bot.elevation = function(msg) {
 	return permlvl;
 };
 
+//pm2 keymetrics meter for online suer count
 probe.metric({
 	name: "Online Users",
 	value: () => {
 		var total = 0;
 		bot.users.forEach(u => {
-			if (u.presence.status.match(/^(online|idle)$/)) {
-				total +=1;
+			if (!u.bot && u.presence.status.match(/^(online|idle|dnd)$/)) {
+				total += 1;
 			}
 		});
 		return total;
 	}
 });
 
+//pm2 keymetrics meter for heartbeat ping
 probe.metric({
 	name: "Heartbeat Ping",
 	value: () => {
@@ -117,9 +121,12 @@ probe.metric({
 	}
 });
 
+//pmx manual throw error button
 pmx.action("throw err", function(reply) {
 	pmx.notify(new Error("This is an error."));
-	reply({success:false});
+	reply({
+		success: false
+	});
 });
 
 
