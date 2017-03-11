@@ -1,45 +1,31 @@
 const connection = require("../util/connection.js");
 const game = require("../util/game.js");
-
-function getRankScore(guildid, userid) {
-	return new Promise((resolve, reject) => {
-		var usersScore = 0;
-		var usersRank = "unranked";
-		connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${guildid}' ORDER BY score DESC) s`, `userid='${userid}'`).then(response => {
-			if (response[0]) {
-				usersRank = response[0].rank;
-				usersScore = response[0].score;
-			}
-			var arr = [usersRank, usersScore];
-			resolve(arr);
-		}).catch(e => reject(e));
-	});
-}
+const sm = require("../util/scoremanager.js");
 
 exports.run = (bot, msg, args, perm) => {
 	var mentionedMember;
 	if (!args[0]) {
-		getRankScore(msg.guild.id, msg.author.id).then(scores => {
-			msg.reply(`Your Rank: ${scores[0]}, Your Score: ${scores[1]}`);
+		sm.getScore(msg.guild, msg.member).then(s => {
+			msg.reply(`Your Rank: ${s.rank}, Your Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args.length === 1 && msg.mentions.users.first()) {
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
-		getRankScore(msg.guild.id, mentionedMember.id).then(scores => {
+		sm.getScore(msg.guild, mentionedMember).then(s => {
 			if (mentionedMember.id === bot.user.id) {
 				return msg.channel.sendMessage("Rank: Godlike, Score: Untouchable");
 			}
-			msg.channel.sendMessage(`Rank: ${scores[0]}, Score: ${scores[1]}`);
+			msg.channel.sendMessage(`Rank: ${s.rank}, Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "board" || args[0] === "b") {
 		var limit = 9;
 		if (perm >= 2 && (args[1] === "full" || args[1] === "f")) {
 			limit = 999;
 		}
-		getRankScore(msg.guild.id, msg.author.id).then(scores => {
-			game.getLB(msg.channel, `Your Rank: ${scores[0]}, Your Score: ${scores[1]}`, limit);
+		sm.getScore(msg.guild, msg.author).then(s => {
+			game.getLB(msg.channel, `Your Rank: ${s.rank}, Your Score: ${s.score}`, limit);
 		}).catch(e => console.error(e.stack));
 		return;
-	} else if (args.length === 3 && args[0] === "set") {
+	} else if (args.length === 3 && (args[0] === "set" || args[0] === "give")) {
 		if (!(perm >= 2)) {
 			return msg.channel.sendMessage("You do not have permission to set scores.");
 		}
@@ -50,82 +36,9 @@ exports.run = (bot, msg, args, perm) => {
 			return msg.channel.sendMessage("The score must be a number.");
 		}
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
-		connection.select("*", "triviascore", `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(response => {
-			if (!response[0]) {
-				if (!isNaN(args[2]) && args[2] > 0) {
-					var info = {
-						"userid": mentionedMember.id,
-						"score": args[2],
-						"server_id": msg.guild.id
-					};
-					connection.insert("triviascore", info).then(() => {
-						return msg.channel.sendMessage(`Added ${mentionedMember.displayName} to the trivia board with a score of ${args[2]}.`);
-					}).catch(e => console.error(e.stack));
-				}
-				return;
-			}
-			if (args[2] > 0) {
-				connection.update("triviascore", `score=${args[2]}`, `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(() => {
-					return msg.channel.sendMessage(`Set ${mentionedMember.displayName}'s score to ${args[2]}. Their previous score was ${response[0].score}.`);
-				}).catch(e => {
-					msg.channel.sendMessage("Failed");
-					console.error(e.stack);
-					return;
-				});
-				return;
-			}
-			connection.del("triviascore", `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(() => {
-				return msg.channel.sendMessage(`Removed ${mentionedMember.displayName} from the trivia board. Their previous score was ${response[0].score}.`);
-			}).catch(e => {
-				msg.channel.sendMessage("Failed");
-				console.error(e.stack);
-				return;
-			});
-		}).catch(e => console.error(e.stack));
-	} else if (args.length === 3 && args[0] === "give") {
-		if (!(perm >= 2)) {
-			return msg.channel.sendMessage("You do not have permission to set scores.");
-		}
-		if (!msg.mentions.users.first()) {
-			return msg.channel.sendMessage("Incorrect syntax.");
-		}
-		if (isNaN(args[2])) {
-			return msg.channel.sendMessage("The score must be a number.");
-		}
-		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
-		connection.select("*", "triviascore", `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(response => {
-			if (!response[0]) {
-				if (!(args[2] > 0)) {
-					return msg.channel.sendMessage("The score for this user must be a positive number; they are already not on the board.");
-				}
-				var info = {
-					"userid": mentionedMember.id,
-					"score": args[2],
-					"server_id": msg.guild.id
-				};
-				connection.insert("triviascore", info).then(() => {
-					return msg.channel.sendMessage(`Added ${mentionedMember.displayName} to the trivia board with a score of ${args[2]}.`);
-				}).catch(e => console.error(e.stack));
-				return;
-			}
-			var newScore = parseInt(response[0].score) + parseInt(args[2]);
-			if (!(newScore > 0)) {
-				connection.del("triviascore", `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(() => {
-					return msg.channel.sendMessage(`Removed ${mentionedMember.displayName} from the trivia board. Their previous score was ${response[0].score}.`);
-				}).catch(e => {
-					msg.channel.sendMessage("Failed");
-					console.error(e.stack);
-					return;
-				});
-				return;
-			}
-			connection.update("triviascore", `score=${newScore}`, `userid='${mentionedMember.id}' AND server_id='${msg.guild.id}'`).then(() => {
-				return msg.channel.sendMessage(`Set ${mentionedMember.displayName}'s score to ${newScore}. Their previous score was ${response[0].score}.`);
-			}).catch(e => {
-				msg.channel.sendMessage("Failed");
-				console.error(e.stack);
-				return;
-			});
+		var type = (args[0] === "set") ? "set" : "add";
+		sm.setScore(msg.guild, mentionedMember, type, parseInt(args[2])).then(m => {
+			msg.channel.sendMessage(m.message);
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "clear") {
 		if (!(perm >= 2)) {

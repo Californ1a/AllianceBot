@@ -1,6 +1,7 @@
 const game = require("./games.js");
-const connection = require("./connection.js");
+//const connection = require("./connection.js");
 const colors = require("colors");
+const sm = require("./scoremanager.js");
 var scrambleOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
@@ -94,23 +95,11 @@ var goScramble = (channel, config) => {
 };
 
 eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd, config, orig) => {
-	var score;
-	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
-		if (response[0]) {
-			score = response[0].score + scoreAdd;
-			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
-		} else {
-			score = scoreAdd;
-			var info = {
-				"userid": winnerid,
-				"score": scoreAdd,
-				"server_id": channel.guild.id
-			};
-			connection.insert("triviascore", info).catch(e => console.error(e.stack));
-		}
+	var member = channel.guild.members.get(winnerid);
+	sm.setScore(channel.guild, member, "add", scoreAdd).then(m => {
 		removeScrambleTerm(orig);
 		countQsMissed = 0;
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${(m.message.startsWith("Set"))?`Your score is now ${m.score}`:`You have been added to the board with a score of ${m.score}`}.`).then(() => {
 			setTimeout(goScramble, config.delayBeforeNextQuestion, channel, config);
 		});
 	}).catch(e => console.error(e.stack));

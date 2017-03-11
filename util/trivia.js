@@ -1,5 +1,6 @@
-const connection = require("./connection.js");
+//const connection = require("./connection.js");
 //const trivia = require("../trivia.json");
+const sm = require("./scoremanager.js");
 const game = require("./games.js");
 const colors = require("colors");
 var triviaOn = false;
@@ -192,24 +193,12 @@ var goTrivia = (channel, manualNumber, category, config) => {
 };
 
 eventEmitter.on("manageCorrectAnswer", (channel, collected, winnerid, scoreAdd, category, config) => {
-	var score;
-	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
-		if (response[0]) {
-			score = response[0].score + scoreAdd;
-			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
-		} else {
-			score = scoreAdd;
-			var info = {
-				"userid": winnerid,
-				"score": scoreAdd,
-				"server_id": channel.guild.id
-			};
-			connection.insert("triviascore", info).catch(e => console.error(e.stack));
-		}
+	var member = channel.guild.members.get(winnerid);
+	sm.setScore(channel.guild, member, "add", scoreAdd).then(m => {
 		removeQuestion();
 		countQsMissed = 0;
 		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${quesNum.bonusText}! ` : "";
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(response[0])?`Your score is now ${score}`:`You have been added to the board with a score of ${score}`}.`).then(() => {
+		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(m.message.startsWith("Set"))?`Your score is now ${m.score}`:`You have been added to the board with a score of ${m.score}`}.`).then(() => {
 			setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
 		});
 	}).catch(e => console.error(e.stack));

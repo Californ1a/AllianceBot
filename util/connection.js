@@ -48,8 +48,7 @@ var update = function(table, info, where) {
 var insert = function(table, info) {
 	return new Promise((resolve, reject) => {
 		if (typeof info !== "object") {
-			var e = {stack: "Info must be an array."};
-			reject(e);
+			reject(new Error("Info must be an array."));
 		}
 		connection.query(`INSERT INTO ${table} SET ?`, info, (err) => {
 			if (err) {
