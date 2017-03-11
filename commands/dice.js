@@ -6,10 +6,10 @@ exports.run = (bot, msg, args) => {
 		if (!response[0]) {
 			return msg.channel.sendMessage("You do not have any points to gamble with.");
 		}
-		if (!(args[0] && args[1])) {
+		if (!args[1]) {
 			return msg.channel.sendMessage("You must specify an amount to gamble and a dice side to bet on.");
 		}
-		if (isNaN(args[0]) && isNaN(args[1])) {
+		if (isNaN(args[0]) || isNaN(args[1])) {
 			return msg.channel.sendMessage("Your gamble amount and dice side must be a number.");
 		}
 		var dieType = 6;
