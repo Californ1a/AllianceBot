@@ -55,7 +55,26 @@ exports.run = (bot, msg, args, perm) => {
 				}
 				i++;
 			});
-			msg.author.sendMessage(`${helpLine}\`\`\``);
+			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(response => {
+				if (!response[0]) {
+					return msg.author.sendMessage(`${helpLine}\`\`\``);
+				}
+				var customs = "Custom commands :: ";
+				i = 0;
+				for (i; i < response.length; i++) {
+					if ((response[i].permlvl <= perm || perm === 4) && i < response.length - 1) {
+						customs += `${response[i].comname}, `;
+					} else if (response[i].permlvl <= perm || perm === 4) {
+						customs += response[i].comname;
+					}
+				}
+				if (helpLine.length + customs.length < 1990) {
+					helpLine += customs;
+				} else {
+					msg.author.sendMessage(`${helpLine}\`\`\``);
+					msg.author.sendMessage(`\`\`\`asciidoc\n${customs}\`\`\``);
+				}
+			}).catch(e => console.error(e.stack));
 
 
 
