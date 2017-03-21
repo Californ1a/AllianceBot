@@ -48,6 +48,9 @@ exports.run = (bot, msg, args, perm) => {
 			if (perm < 2 && s.score < amount) {
 				return msg.channel.sendMessage("You do not have enough points to give away that many.");
 			}
+			if (amount > 0 && args[2].length > 9) {
+				return msg.channel.sendMessage("The score can only be nine digits maximum.");
+			}
 			sm.setScore(msg.guild, mentionedMember, type, amount).then(m => {
 				if (perm < 2) {
 					sm.setScore(msg.guild, msg.member, type, amount * -1).then(r => {
