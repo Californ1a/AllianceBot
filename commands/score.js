@@ -26,19 +26,37 @@ exports.run = (bot, msg, args, perm) => {
 		}).catch(e => console.error(e.stack));
 		return;
 	} else if (args.length === 3 && (args[0].match(/^(set|give)$/))) {
-		if (!(perm >= 2)) {
+		if (perm < 2 && args[0] === "set") {
 			return msg.channel.sendMessage("You do not have permission to set scores.");
 		}
 		if (!msg.mentions.users.first()) {
 			return msg.channel.sendMessage("Incorrect syntax.");
 		}
+		if (perm < 2 && msg.mentions.users.first() === msg.author) {
+			return msg.channel.sendMessage("You can't give points to yourself.");
+		}
 		if (isNaN(args[2])) {
 			return msg.channel.sendMessage("The score must be a number.");
 		}
+		var amount = parseInt(args[2]);
+		if (amount < 0 && perm < 2) {
+			return msg.channel.sendMessage("The score must be positive.");
+		}
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
 		var type = (args[0] === "set") ? "set" : "add";
-		sm.setScore(msg.guild, mentionedMember, type, parseInt(args[2])).then(m => {
-			msg.channel.sendMessage(m.message);
+		sm.getScore(msg.guild, msg.member).then(s => {
+			if (perm < 2 && s.score < amount) {
+				return msg.channel.sendMessage("You do not have enough points to give away that many.");
+			}
+			sm.setScore(msg.guild, mentionedMember, type, amount).then(m => {
+				if (perm < 2) {
+					sm.setScore(msg.guild, msg.member, type, amount * -1).then(r => {
+						return msg.channel.sendMessage(`${msg.member.displayName}(${r.pScore}-->${r.score}) gave ${amount} points to ${mentionedMember.displayName}(${m.pScore}-->${m.score}).`);
+					});
+				} else {
+					msg.channel.sendMessage(m.message);
+				}
+			}).catch(e => console.error(e.stack));
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "clear") {
 		if (!(perm >= 2)) {
