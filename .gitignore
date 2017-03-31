@@ -45,15 +45,16 @@ Desktop.ini
 desktop.ini
 
 # Logins, chatlogs, backups
-logins/discordtoken.json
-logins/sqlconfig.js
-logins/twitconfig.js
+config/logins/*
+tweet.json
+tweet*.json
 userinfo.txt
 DiscordChatlogs/*
 backups/*
 *.bat
 process.json
-gameconfigs/trivia.json
+config/trivia.json
+*.sqlite
 gameconfigs/scramble.json
-tweet.json
-test.json
+gameconfigs/trivia.json
+.env
