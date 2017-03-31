@@ -1,3 +1,4 @@
+require("dotenv").config();
 var pmx = require("pmx").init({
 	http: true, // HTTP routes logging (default: true)
 	ignore_routes: [/socket\.io/, /notFound/], // Ignore http routes with this pattern (Default: [])
@@ -6,23 +7,31 @@ var pmx = require("pmx").init({
 	network: true, // Network monitoring at the application level
 	ports: true // Shows which ports your app is listening on (default: false)
 });
+require("opbeat").start();
+const sql = require("sqlite");
+const connection = require("./util/connection.js");
 var probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const token = require("./logins/discordtoken.json").token;
+const token = process.env.DISCORD_TOKEN;
 const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
-const config = require("./config.json");
-const twitconfig = require("./logins/twitconfig.js");
+//const config = require("./config.json");
 const Twit = require("twit");
+const twitconfig = {
+	consumer_key: process.env.TWITTER_CONSUMER_KEY,
+	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+	access_token: process.env.TWITTER_ACCESS_TOKEN,
+	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+};
 const T = new Twit(twitconfig);
 const stream = T.stream("statuses/filter", {
 	follow: ["628034104", "241371699"]
 });
-const modrolename = config.modrolename;
-const membrolename = config.membrolename;
-const adminrolename = config.adminrolename;
+// const modrolename = config.modrolename;
+// const membrolename = config.membrolename;
+// const adminrolename = config.adminrolename;
 var meter = probe.meter({
 	name: "msg/min",
 	samples: 60
@@ -32,6 +41,7 @@ require("./util/eventLoader.js")(bot, stream, meter);
 const log = (msg) => {
 	console.log(`[${moment().format("YYY-MM-DD HH:mm:ss")}] ${msg}`);
 };
+
 
 
 
@@ -76,21 +86,47 @@ bot.reload = function(command) {
 	});
 };
 
+bot.servConf = new Discord.Collection();
+bot.confRefresh = () => {
+	return new Promise((resolve, reject) => {
+		connection.select("*", "servers").then(serv => {
+			var i = 0;
+			for (i; i < serv.length; i++) {
+				bot.servConf.set(serv[i].serverid, serv[i]);
+			}
+			resolve();
+		}).catch(e => reject(e));
+	});
+};
+sql.open("./alliancebot.sqlite").then(() => {
+	bot.confRefresh();
+}).catch(console.error);
+
 //get the permission level of the member who sent message
 bot.elevation = function(msg) {
+	var conf = bot.servConf.get(msg.guild.id);
+	var membrole = conf.membrole;
+	var modrole = conf.modrole;
+	var adminrole = conf.adminrole;
 	let permlvl = 0;
 	if (msg.guild) {
-		let membRole = msg.guild.roles.find("name", membrolename);
-		if (membRole && msg.member.roles.has(membRole.id)) {
-			permlvl = 1;
+		if (membrole) {
+			let membRole = msg.guild.roles.find("name", membrole);
+			if (membRole && msg.member.roles.has(membRole.id)) {
+				permlvl = 1;
+			}
 		}
-		let modRole = msg.guild.roles.find("name", modrolename);
-		if (modRole && msg.member.roles.has(modRole.id)) {
-			permlvl = 2;
+		if (modrole) {
+			let modRole = msg.guild.roles.find("name", modrole);
+			if (modRole && msg.member.roles.has(modRole.id)) {
+				permlvl = 2;
+			}
 		}
-		let adminRole = msg.guild.roles.find("name", adminrolename);
-		if (adminRole && msg.member.roles.has(adminRole.id)) {
-			permlvl = 3;
+		if (adminrole) {
+			let adminRole = msg.guild.roles.find("name", adminrole);
+			if (adminRole && msg.member.roles.has(adminRole.id)) {
+				permlvl = 3;
+			}
 		}
 	}
 	if (msg.author.id === require("./config.json").ownerid) {
@@ -123,7 +159,9 @@ probe.metric({
 
 //pmx manual throw error button
 pmx.action("throw err", function(reply) {
-	pmx.notify(new Error("This is an error."));
+	let err = new Error("This is an error.");
+	pmx.notify(err);
+	console.error(err);
 	reply({
 		success: false
 	});

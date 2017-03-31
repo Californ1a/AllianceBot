@@ -3,7 +3,8 @@ const colors = require("colors");
 const pre = require("../config.json").prefix;
 const timers = require("../util/timers.js");
 
-exports.run = (bot, msg, args, perm) => {
+exports.run = (bot, msg, args, perm, cmd, flags) => {
+	console.log(flags);
 	var eventName;
 	var eventDate;
 	var i = 0;
@@ -92,4 +93,9 @@ exports.help = {
 	description: "Get the time remaining until the preset event. Moderators can set a new event or delete the current event.",
 	extendedDescription: `<date>\n* The date and time when the event begins. ISO8601 format with no spaces - use T instead of a space to denote the time. Times must be given in Eastern Time unless an offset is defined.\n\n<event name>\n* The name of the event.\n\n= Examples =\n"${pre}advent set 2016-02-08T13:30:20 Some Name :: nThis would set an event named "Some Name" to start at February 8th, 2016 at 1:30:20 PM ET.`,
 	usage: "advent [set|del] [<date>] [<event-name>]"
+};
+
+exports.flags = {
+	datetime: ["date", "d", "dt", "t"],
+	name: ["name", "n"]
 };

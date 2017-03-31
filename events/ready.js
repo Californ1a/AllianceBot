@@ -28,5 +28,7 @@ module.exports = bot => {
 	console.log(colors.red(`Bot online and ready on ${bot.guilds.size} ${(bot.guilds.size >= 2) ? "servers" : "server"}.`));
 	bot.user.setStatus("online").catch(e => console.error(e.stack));
 	bot.user.setGame(`Distance | ${pre}help`).catch(e => console.error(e.stack));
-	randomNickChange(bot);
+	if (bot.guilds.get("83078957620002816")) {
+		randomNickChange(bot);
+	}
 };

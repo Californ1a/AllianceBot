@@ -4,7 +4,7 @@ var getScore = (guild, member) => {
 	return new Promise((resolve, reject) => {
 		var usersScore = 0;
 		var usersRank = "unranked";
-		connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${guild.id}' ORDER BY score DESC) s`, `userid='${member.id}'`).then(response => {
+		connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${guild.id}') as rank`, "triviascore as t1", `userid='${member.id}' AND server_id='${guild.id}' ORDER BY rank`).then(response => {
 			if (response[0]) {
 				usersRank = response[0].rank;
 				usersScore = response[0].score;

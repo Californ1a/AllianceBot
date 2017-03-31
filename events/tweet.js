@@ -7,10 +7,11 @@ module.exports = (bot, tweet) => {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
 	var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
-	var intent = "https://twitter.com/intent";
+	//var intent = "https://twitter.com/intent";
 	var profilelink = `https://twitter.com/${tweetuser}`;
 	var tweetlink = `${profilelink}/status/${tweetid}`;
 	var text = "";
+	var desc = "";
 	var medialink = "";
 
 	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid}`));
@@ -34,7 +35,8 @@ module.exports = (bot, tweet) => {
 		} else {
 			text = entities.decode(tweet.text.replace(/(https?:\/\/t.co\/[\w]+)$/, " "));
 		}
-
+		desc = `${text}`;
+		//desc += `\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`;
 		bot.channels.get("83078957620002816").sendMessage(`${emoji} <${tweetlink}>`, {
 			embed: {
 				color: 3447003,
@@ -44,7 +46,7 @@ module.exports = (bot, tweet) => {
 					icon_url: tweet.user.profile_image_url
 				},
 				url: tweetlink,
-				description: `${text}\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`,
+				description: `${desc}`,
 				image: {
 					url: medialink
 				},

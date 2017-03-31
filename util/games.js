@@ -43,7 +43,7 @@ function arrayUnion(arr1, arr2) {
 var getChanges = (channel, startingScores, topMessage, limit) => {
 	var combined = [];
 	var obj;
-	connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${channel.guild.id}' ORDER BY score DESC) s`).then(response => {
+	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank`).then(response => {
 		if (!response[0] && !startingScores[0]) {
 			return channel.sendMessage("There are no trivia scores yet.");
 		}
@@ -116,7 +116,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 };
 
 var getLB = (channel, topMessage, limit) => {
-	connection.select("userid, score, rank", `(SELECT userid, score, @curRank := IF(@prevRank = score, @curRank, @incRank) AS rank, @incRank := @incRank + 1, @prevRank := score FROM triviascore t, (SELECT @curRank :=0, @prevRank := NULL, @incRank := 1) r WHERE server_id='${channel.guild.id}' ORDER BY score DESC) s LIMIT ${limit}`).then(response => {
+	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank LIMIT ${limit}`).then(response => {
 		if (!response[0]) {
 			return channel.sendMessage("There are no trivia scores yet.");
 		}

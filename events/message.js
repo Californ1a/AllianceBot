@@ -5,15 +5,20 @@ const escape = require("../util/escapeChars.js");
 const cl = require("../util/chatinfo.js");
 const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
+const parseFlags = require("../util/parseFlags.js");
+var pre = config.prefix;
 
 module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
-		if (msg.content.startsWith(config.prefix)) {
-			msg.author.sendMessage(`Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use \`${config.prefix}help\` within that server.`);
+		if (msg.content.startsWith(pre) && !msg.author.bot) {
+			msg.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`help\` command within that server.");
 		}
 		return;
 	}
+	var conf = bot.servConf.get(msg.guild.id);
+	pre = conf.prefix;
+	var membrole = conf.membrole;
 	var cha = cl.formatChatlog(msg);
 	meter.mark();
 	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
@@ -30,17 +35,17 @@ module.exports = (bot, meter, msg) => {
 			console.error(error.stack);
 		}
 	});
-	if (!msg.guild.members.get(msg.author.id).roles.exists("name", config.membrolename)) {
+	if (membrole && !msg.guild.members.get(msg.author.id).roles.exists("name", membrole)) {
 		guestToMemb(bot, msg);
 	}
-	if (!msg.content.startsWith(config.prefix)) {
+	if (!msg.content.startsWith(pre)) {
 		return;
 	}
 	if (msg.author.bot) {
 		return;
 	}
 
-	let command = msg.content.split(" ")[0].slice(config.prefix.length);
+	let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
 	let perms = bot.elevation(msg);
 
 	let escapedCom = escape.chars(command);
@@ -81,7 +86,11 @@ module.exports = (bot, meter, msg) => {
 			}
 			console.log(colors.red("Command enabled for this server."));
 			cmd.conf.onCooldown = true;
-			cmd.run(bot, msg, args, perms, cmd);
+			var flags;
+			if (cmd.flags) {
+				flags = parseFlags(cmd, args);
+			}
+			cmd.run(bot, msg, args, perms, cmd, flags);
 			setTimeout(() => {
 				cmd.conf.onCooldown = false;
 			}, cmd.conf.cooldownTimer);

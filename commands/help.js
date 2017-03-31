@@ -55,21 +55,23 @@ exports.run = (bot, msg, args, perm) => {
 				}
 				i++;
 			});
-			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(response => {
-				if (!response[0]) {
+			console.log("yo");
+			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(res => {
+				console.log("yup", res);
+				if (!res[0]) {
 					return msg.author.sendMessage(`${helpLine}\`\`\``);
 				}
 				var customs = "Custom commands :: ";
 				i = 0;
-				for (i; i < response.length; i++) {
-					if ((response[i].permlvl <= perm || perm === 4) && i < response.length - 1) {
-						customs += `${response[i].comname}, `;
-					} else if (response[i].permlvl <= perm || perm === 4) {
-						customs += response[i].comname;
+				for (i; i < res.length; i++) {
+					if ((res[i].permlvl <= perm || perm === 4) && i < res.length - 1) {
+						customs += `${res[i].comname}, `;
+					} else if (res[i].permlvl <= perm || perm === 4) {
+						customs += res[i].comname;
 					}
 				}
 				if (helpLine.length + customs.length < 1990) {
-					helpLine += customs;
+					msg.author.sendMessage(`${helpLine}${customs}\`\`\``);
 				} else {
 					msg.author.sendMessage(`${helpLine}\`\`\``);
 					msg.author.sendMessage(`\`\`\`asciidoc\n${customs}\`\`\``);

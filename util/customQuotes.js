@@ -9,7 +9,7 @@ function recombineQuote(args) {
 }
 
 function randomQuote(message, type) {
-	connection.select("quote", type, `server_id=${message.guild.id} ORDER BY RAND() LIMIT 1`).then(response => {
+	connection.select("quote", type, `server_id=${message.guild.id} ORDER BY RANDOM() LIMIT 1`).then(response => {
 		if (!response[0]) {
 			message.channel.sendMessage("None found.");
 		} else {
@@ -97,7 +97,7 @@ function searchQuotes(msg, args, type) {
 	//let args = message.content.split(" ").slice(1).join(" ");
 	let searchKey = escape.chars(args.rejoin(" "));
 	console.log(colors.red(`Trying to find ${type} message matching '${searchKey}' in database.`));
-	connection.select("*", type, `server_id=${msg.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1`).then(response => {
+	connection.select("*", type, `server_id=${msg.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RANDOM() LIMIT 1`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red("Failed to find any matching."));
 			msg.channel.sendMessage(`Unable to find any ${type} quotes matching '${searchKey}'.`);
