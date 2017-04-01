@@ -103,7 +103,7 @@ exports.run = (bot, msg, args, perm) => {
 			} else {
 				command = bot.commands.get(command);
 				if (command.conf.permLevel <= perm) {
-					msg.author.sendCode("asciidoc", `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`);
+					msg.author.sendCode("asciidoc", `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription && command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`);
 				}
 			}
 		}

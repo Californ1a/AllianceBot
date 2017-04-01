@@ -57,6 +57,14 @@ fs.readdir("./commands", (err, files) => {
 		let props = require(`./commands/${f}`);
 		log(`Loading Command: ${props.help.name}.`);
 		bot.commands.set(props.help.name, props);
+		if (props.f) {
+			bot.commands.get(props.help.name).flags = new Discord.Collection();
+			for (var key in props.f) {
+				if (props.f.hasOwnProperty(key)) {
+					bot.commands.get(props.help.name).flags.set(key, props.f[key]);
+				}
+			}
+		}
 		props.conf.aliases.forEach(alias => {
 			bot.aliases.set(alias, props.help.name);
 		});
@@ -99,7 +107,9 @@ bot.confRefresh = () => {
 	});
 };
 sql.open("./alliancebot.sqlite").then(() => {
-	bot.confRefresh();
+	connection.createAllTables().then(() => {
+		bot.confRefresh();
+	});
 }).catch(console.error);
 
 //get the permission level of the member who sent message

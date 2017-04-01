@@ -9,33 +9,49 @@ function joinParts(arr, start, end) {
 }
 
 module.exports = (cmd, args) => {
-	if (!args) {
+	if (!args[0]) {
 		return;
 	}
 	var indexes = [];
 	var keyOrder = [];
-	cmd.flags.forEach(f => {
-		console.log("f", f);
+	cmd.flags.forEach((f, ke) => {
 		f.forEach(a => {
-			if (args.includes(`--${a}`) && !keyOrder.includes(a)) {
+			if (args.includes(`--${a}`) && !keyOrder.includes(ke)) {
 				indexes.push(args.indexOf(`--${a}`));
-				keyOrder.push(a);
+				keyOrder.push(ke);
 			}
 		});
 	});
-	if (!indexes) {
+	console.log("indexes", indexes);
+	console.log("keyOrder", keyOrder);
+	if (indexes.length === 0) {
 		return;
 	}
-	indexes.sort((a, b) => {
-		keyOrder.sort(() => {
-			return a - b;
+	if (indexes.length > 1) {
+
+		var list = [];
+		var j = 0;
+		for (j; j < indexes.length; j++) {
+			list.push({
+				"index": indexes[j],
+				"keyOrder": keyOrder[j]
+			});
+		}
+		list.sort((a, b) => {
+			return ((a.index < b.index) ? -1 : ((a.keyOrder === b.keyOrder) ? 0 : 1));
 		});
-		return a - b;
-	});
+		var k = 0;
+		for (k; k < list.length; k++) {
+			indexes[k] = list[k].index;
+			keyOrder[k] = list[k].keyOrder;
+		}
+	}
 	var obj = "{";
 	var val;
 	var i = 0;
 	for (i; i < indexes.length; i++) {
+		console.log(`indexes[${i}]`, indexes[i]);
+		console.log(`keyOrder[${i}]`, keyOrder[i]);
 		if (indexes[i + 1]) {
 			val = joinParts(args, indexes[i] + 1, indexes[i + 1]);
 		} else {
