@@ -4,7 +4,7 @@
 	"modrolename": "Moderator",
 	"membrolename": "Member",
 	"adminrolename": "Admin",
-	"loglocation": "./DiscordChatlogs/",
+	"loglocation": "DiscordChatlogs/",
 	"trivia": {
 		"delayBeforeFirstQuestion": 50000,
 	  "delayBeforeNextQuestion": 10000,

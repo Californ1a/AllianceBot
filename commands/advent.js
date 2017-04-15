@@ -3,8 +3,8 @@ const colors = require("colors");
 const pre = require("../config.json").prefix;
 const timers = require("../util/timers.js");
 
-exports.run = (bot, msg, args, perm, cmd, flags) => {
-	console.log(flags);
+exports.run = (bot, msg, args, perm) => {
+	//console.log(flags);
 	var eventName;
 	var eventDate;
 	var i = 0;
@@ -95,7 +95,7 @@ exports.help = {
 	usage: "advent [set|del] [<date>] [<event-name>]"
 };
 
-exports.flags = {
+exports.f = {
 	datetime: ["date", "d", "dt", "t"],
 	name: ["name", "n"]
 };

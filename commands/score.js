@@ -66,7 +66,7 @@ exports.run = (bot, msg, args, perm) => {
 			return msg.channel.sendMessage("You do not have permission to clear the leaderboards.");
 		}
 		msg.channel.sendMessage("Are you absolutely sure you want to completely clear the trivia leaderboards? y/n");
-		msg.channel.awaitMessages(respond => (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y"), {
+		msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 			max: 1,
 			time: 10000,
 			errors: ["time"],

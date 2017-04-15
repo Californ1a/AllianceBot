@@ -1,8 +1,9 @@
 const pre = require("../config.json").prefix;
 const possibleBets = require("../gameconfigs/possibleroulettebets.json");
-const connection = require("../util/connection.js");
+//const connection = require("../util/connection.js");
 const numbProps = require("../gameconfigs/roulettenumberproperties.json");
 const rouletteconfig = require("../config.json").roulette;
+const sm = require("../util/scoremanager.js");
 var running = false;
 var cantbet = false;
 
@@ -74,7 +75,7 @@ var manageBets = (msg, debugnum) => {
 				// 	index = winningBets.users.indexOf(betArray[i].id);
 				// 	winningBets.payouts[index] -= betArray[i].amnt;
 				// }
-				connection.update("triviascore", `score=score-${betArray[i].amnt}`, `userid='${betArray[i].id}' AND server_id='${msg.guild.id}'`).catch(e => console.error(e.stack));
+				//connection.update("triviascore", `score=score-${betArray[i].amnt}`, `userid='${betArray[i].id}' AND server_id='${msg.guild.id}'`).catch(e => console.error(e.stack));
 				//betArray.splice(i, 1);
 			}
 		}
@@ -88,7 +89,17 @@ var manageBets = (msg, debugnum) => {
 		for (i; i < winningBets.users.length; i++) {
 			ment = msg.guild.members.get(winningBets.users[i]).user;
 			textLine += `${ment}: +${winningBets.payouts[i]}\n`;
-			connection.update("triviascore", `score=score+${winningBets.payouts[i]}`, `userid='${winningBets.users[i]}' AND server_id='${msg.guild.id}'`).catch(e => console.error(e.stack));
+			sm.setScore(msg.guild, msg.guild.members.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
+			// sm.getScore(msg.guild, msg.guild.members.get(winningBets.users[i])).then(res => {
+			// 	if (res.score === 0) {
+			// 		var info = {
+			//
+			// 		};
+			// 		sm.
+			// 	} else {
+			// 		connection.update("triviascore", `score=score+${winningBets.payouts[i]}`, `userid='${winningBets.users[i]}' AND server_id='${msg.guild.id}'`).catch(e => console.error(e.stack));
+			// 	}
+			// });
 		}
 		msg.channel.sendMessage(textLine);
 
@@ -121,14 +132,15 @@ exports.run = (bot, msg, args, perm) => {
 	if (amount < 0) {
 		return msg.reply("Your bet amount must be a positive number.");
 	}
-	connection.select("*", "triviascore", `userid=${msg.author.id} AND server_id='${msg.guild.id}' LIMIT 1`).then(response => {
-		if (!response[0]) {
+	sm.getScore(msg.guild, msg.member).then(res => {
+		if (res.score === 0) {
 			return msg.reply("You do not have any points to bet with.");
 		}
-		if (amount > response[0].score) {
+		if (amount > res.score) {
 			return msg.reply("You cannot bet more points than you have.");
 		}
 		//console.log(running, cantbet);
+		sm.setScore(msg.guild, msg.member, "add", amount * -1).catch(console.error);
 		if (!running && !cantbet) {
 			running = true;
 			msg.channel.sendMessage(`${msg.member.displayName} has started roulette! Use \`${pre}help bet\` to get the list of possible bets and other information.`).then(() => {

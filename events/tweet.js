@@ -6,7 +6,7 @@ const fs = require("fs-extra");
 module.exports = (bot, tweet) => {
 	var tweetid = tweet.id_str;
 	var tweetuser = tweet.user.screen_name;
-	var emoji = bot.guilds.get("83078957620002816").emojis.find("name", "torcht");
+	var emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find("name", "torcht") : "";
 	//var intent = "https://twitter.com/intent";
 	var profilelink = `https://twitter.com/${tweetuser}`;
 	var tweetlink = `${profilelink}/status/${tweetid}`;
@@ -14,7 +14,7 @@ module.exports = (bot, tweet) => {
 	var desc = "";
 	var medialink = "";
 
-	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid}`));
+	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid} `));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
 		var tweetjson = JSON.stringify(tweet, null, 2);
 

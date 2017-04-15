@@ -22,8 +22,8 @@ module.exports = (cmd, args) => {
 			}
 		});
 	});
-	console.log("indexes", indexes);
-	console.log("keyOrder", keyOrder);
+	// console.log("indexes", indexes);
+	// console.log("keyOrder", keyOrder);
 	if (indexes.length === 0) {
 		return;
 	}
@@ -50,8 +50,8 @@ module.exports = (cmd, args) => {
 	var val;
 	var i = 0;
 	for (i; i < indexes.length; i++) {
-		console.log(`indexes[${i}]`, indexes[i]);
-		console.log(`keyOrder[${i}]`, keyOrder[i]);
+		// console.log(`indexes[${i}]`, indexes[i]);
+		// console.log(`keyOrder[${i}]`, keyOrder[i]);
 		if (indexes[i + 1]) {
 			val = joinParts(args, indexes[i] + 1, indexes[i + 1]);
 		} else {

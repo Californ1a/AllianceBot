@@ -86,6 +86,20 @@ var writeLineToAllLogs = function(bot, guild, line) {
 	var currentMonth = monthNames[currentDate.getMonth()];
 	var i = 0;
 	for (i; i < guildChannels.length; i++) {
+		fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
+			if (error) {
+				console.error(error.stack);
+				return;
+			}
+		});
+	}
+	fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function(error) {
+		if (error) {
+			console.error(error.stack);
+			return;
+		}
+	});
+	for (i; i < guildChannels.length; i++) {
 		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
 			fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
 				if (error) {
@@ -112,7 +126,7 @@ var formatChatlog = function(message) {
 	var messageTime = messageDate(message);
 	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
 	var member = message.guild.members.get(message.author.id);
-	var isbot = (member.user.bot)?"{BOT}":"";
+	var isbot = (member.user.bot) ? "{BOT}" : "";
 	//var user = getMaxRole(member);
 	var chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
 	var fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
@@ -142,7 +156,7 @@ var formatChatlog = function(message) {
 		}
 		i = 0;
 		for (i; i < att.length; i++) {
-			formattedAtturls += ` ${att[i]}`;
+			formattedAtturls += ` ${att[i]} `;
 		}
 	}
 	return {

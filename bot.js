@@ -8,7 +8,14 @@ var pmx = require("pmx").init({
 	ports: true // Shows which ports your app is listening on (default: false)
 });
 require("opbeat").start();
-const sql = require("sqlite");
+//const sql = require("sqlite");
+// var admin = require("firebase-admin");
+// var serviceAccount = require("./serviceAccount.json");
+// admin.initializeApp({
+// 	credential: admin.credential.cert(serviceAccount),
+// 	databaseURL: "https://alliancebot-e06ba.firebaseio.com/"
+// });
+// var db = admin.database();
 const connection = require("./util/connection.js");
 var probe = pmx.probe();
 const Discord = require("discord.js");
@@ -41,7 +48,7 @@ require("./util/eventLoader.js")(bot, stream, meter);
 const log = (msg) => {
 	console.log(`[${moment().format("YYY-MM-DD HH:mm:ss")}] ${msg}`);
 };
-
+console.log(colors.red("Starting"));
 
 
 
@@ -106,34 +113,32 @@ bot.confRefresh = () => {
 		}).catch(e => reject(e));
 	});
 };
-sql.open("./alliancebot.sqlite").then(() => {
-	connection.createAllTables().then(() => {
-		bot.confRefresh();
-	});
+connection.createAllTables().then(() => {
+	bot.confRefresh();
 }).catch(console.error);
 
 //get the permission level of the member who sent message
 bot.elevation = function(msg) {
 	var conf = bot.servConf.get(msg.guild.id);
-	var membrole = conf.membrole;
-	var modrole = conf.modrole;
-	var adminrole = conf.adminrole;
+	var memberrole = conf.membrole;
+	var moderatorrole = conf.modrole;
+	var administratorrole = conf.adminrole;
 	let permlvl = 0;
 	if (msg.guild) {
-		if (membrole) {
-			let membRole = msg.guild.roles.find("name", membrole);
+		if (memberrole) {
+			let membRole = msg.guild.roles.find("name", memberrole);
 			if (membRole && msg.member.roles.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
-		if (modrole) {
-			let modRole = msg.guild.roles.find("name", modrole);
+		if (moderatorrole) {
+			let modRole = msg.guild.roles.find("name", moderatorrole);
 			if (modRole && msg.member.roles.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
-		if (adminrole) {
-			let adminRole = msg.guild.roles.find("name", adminrole);
+		if (administratorrole) {
+			let adminRole = msg.guild.roles.find("name", administratorrole);
 			if (adminRole && msg.member.roles.has(adminRole.id)) {
 				permlvl = 3;
 			}

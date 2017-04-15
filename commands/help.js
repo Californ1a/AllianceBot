@@ -55,9 +55,9 @@ exports.run = (bot, msg, args, perm) => {
 				}
 				i++;
 			});
-			console.log("yo");
+			//console.log("yo");
 			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(res => {
-				console.log("yup", res);
+				//console.log("yup", res);
 				if (!res[0]) {
 					return msg.author.sendMessage(`${helpLine}\`\`\``);
 				}

@@ -59,3 +59,4 @@ npm-debug.log
 .env
 *.sqlite
 commands/test.js
+util/firebase.js

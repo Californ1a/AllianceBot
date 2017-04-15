@@ -1,5 +1,12 @@
 const mysql = require("mysql");
-const sqlconfig = require("../logins/sqlconfig.js");
+const sqlconfig = {
+	host: process.env.JAWSDB_HOST,
+	user: process.env.JAWSDB_USER,
+	password: process.env.JAWSDB_PASS,
+	database: process.env.JAWSDB_DB,
+	charset: "utf8mb4",
+	connectionLimit: 4
+};
 
 const pool = mysql.createPool(sqlconfig);
 
