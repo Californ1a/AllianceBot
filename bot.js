@@ -109,6 +109,7 @@ bot.confRefresh = () => {
 			for (i; i < serv.length; i++) {
 				bot.servConf.set(serv[i].serverid, serv[i]);
 			}
+			//console.log(colors.cyan("servConf", bot.servConf));
 			resolve();
 		}).catch(e => reject(e));
 	});

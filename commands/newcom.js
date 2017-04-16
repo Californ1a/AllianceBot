@@ -1,44 +1,105 @@
 const connection = require("../util/connection.js");
 const colors = require("colors");
-const config = require("../config.json");
+//var config;
 const escape = require("../util/escapeChars.js");
-const pre = config.prefix;
-const modrolename = config.modrolename;
-const membrolename = config.membrolename;
-const adminrolename = config.adminrolename;
+//const pre = config.prefix;
+// const modrolename = config.modrolename;
+// const membrolename = config.membrolename;
+// const adminrolename = config.adminrolename;
 
-
-exports.run = (bot, msg, args) => {
-	//let cmd = msg.content.split(" ")[0].slice(config.prefix.length);
-	if (!isNaN(args[0]) || args[0].includes(pre) || args.length < 4 || isNaN(args[1]) || parseInt(args[1]) > 4 || parseInt(args[1]) < 0 || (args[2] !== "true" && args[2] !== "false")) {
-		msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help newcom\` for help.`);
-	} else {
-		var cmdname = escape.chars(args[0]);
-		var permslvl = parseInt(args[1]);
-		var inpms = args[2];
-		var fullmsg = args;
-		fullmsg.splice(0,3);
-		var escdMsg = escape.chars(fullmsg.join(" "));
-		console.log(colors.red(`Attempting to add the command \`${cmdname}\` with the resulting message \`${escdMsg}\` to server \`${msg.guild.name}\`.`));
-		var info = {
-			"comname": cmdname,
-			"comtext": `'${escdMsg}'`,
-			"permlvl": permslvl,
-			"inpm": inpms,
-			"server_id": msg.guild.id
-		};
-		connection.insert("servcom", info).then(() => {
-			console.log(colors.red("Successfully inserted command."));
-			msg.channel.sendMessage("Success.");
-		}).catch(e => {
-			msg.channel.sendMessage("Failed.");
-			console.error(e.stack);
-			return;
-		});
-	}
+const send = (msg, m) => {
+	msg.channel.sendMessage(m);
 };
 
 
+exports.run = (bot, msg, args, perms, cmd, flags) => {
+	// const config = bot.servConf;
+	// const pre = config.prefix;
+
+	//checks for all the right flags to be assigned values by user
+	if (!flags) {
+		return send(msg, "You must specify flags.");
+	} else if (!flags.type) {
+		return send(msg, "You must specify a type.");
+	} else if (!flags.name) {
+		return send(msg, "You must specify a name.");
+	} else if (flags.name.includes(" ")) {
+		return send(msg, "The name cannot have any spaces.");
+	} else if (!flags.type.match(/^(simple|quote)$/)) {
+		return send(msg, "The command type must be \`simple\` or \`quote\`.");
+	} else if (flags.type === "simple" && !flags.message) {
+		return send(msg, "You must specify a message for simple-type commands.");
+	}
+
+
+	var cmdname = escape.chars(flags.name);
+	if (cmdname !== flags.name) {
+		return send(msg, "Invalid characters used in command name.");
+	}
+	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${cmdname}'`).then(r => {
+		if (r[0]) {
+			return send(msg, "This command already exists.");
+		}
+		//assign variables from flags
+		var type = flags.type;
+		var permslvl = 0;
+		if (flags.permlvl) {
+			permslvl = flags.permlvl;
+		}
+		var inpms = "false";
+		var fullmsg;
+		var escdMsg;
+		if (flags.message) {
+			fullmsg = flags.message;
+			escdMsg = escape.chars(fullmsg);
+		}
+		var info;
+		if (type === "simple") {
+			info = {
+				comname: cmdname,
+				comtext: `'${escdMsg}'`,
+				permlvl: permslvl,
+				inpm: inpms,
+				server_id: msg.guild.id
+			};
+		} else if (type === "quote") {
+			info = {
+				comname: cmdname,
+				type,
+				permlvl: permslvl,
+				inpm: inpms,
+				server_id: msg.guild.id
+			};
+		}
+
+		console.log(colors.red(`Attempting to add the command \`${cmdname}\` to server \`${msg.guild.name}\`.`));
+		// var info = {
+		// 	"comname": cmdname,
+		// 	"comtext": `'${escdMsg}'`,
+		// 	"permlvl": permslvl,
+		// 	"inpm": inpms,
+		// 	"server_id": msg.guild.id
+		// };
+		connection.insert("servcom", info).then(() => {
+			if (type === "quote") {
+				console.log(colors.red(`Attempting to create table \`${cmdname}\` if not already existing...`));
+				connection.query(`CREATE TABLE IF NOT EXISTS ${cmdname} (id${cmdname} INT(11) NOT NULL AUTO_INCREMENT, quote VARCHAR(255) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (id${cmdname}), UNIQUE INDEX id_${cmdname}_unique (quote, server_id), INDEX ${cmdname}_ibfk_1 (server_id), CONSTRAINT ${cmdname}_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB`).then(() => {
+					console.log(colors.red("Table existed or was successfully created."));
+				}).catch(e => {
+					send(msg, "Failed");
+					console.error(e);
+					return;
+				});
+			}
+			console.log(colors.red("Successfully inserted command."));
+			send(msg, "Success");
+		}).catch(e => {
+			send(msg, "Failed");
+			console.error(e);
+			return;
+		});
+	});
+};
 
 exports.conf = {
 	guildOnly: false,
@@ -51,6 +112,14 @@ exports.conf = {
 exports.help = {
 	name: "newcom",
 	description: "Create a simple custom command.",
-	extendedDescription: `<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is ${membrolename}s, 2 is ${modrolename}s, 3 is ${adminrolename}\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"${pre}newcom spook 0 false BOO! Scared ya!" :: The new command would be "${pre}spook" (enabled for all members and would reply in-channel) and the returned message would be "BOO! Scared ya!"`,
+	extendedDescription: `<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is Members, 2 is Moderators, 3 is Admins\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"newcom spook 0 false BOO! Scared ya!" :: The new command would be "spook" (enabled for all members and would reply in-channel) and the returned message would be "BOO! Scared ya!"`,
 	usage: "newcom <command-name> <perm-level> <reply-in-pm> <message>"
+};
+
+exports.f = {
+	name: ["n", "name"],
+	permlvl: ["permlvl", "perm", "p", "pl", "lvl", "l"],
+	inpm: ["inpm", "pm"],
+	type: ["t", "type"],
+	message: ["msg", "message", "m"]
 };

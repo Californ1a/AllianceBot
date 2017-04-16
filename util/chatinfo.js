@@ -146,8 +146,8 @@ var formatChatlog = function(message) {
 			return;
 		}
 	});
-	chatlinedata += `${member.displayName}: ${messageContent}`;
-	consoleChat += `${member.displayName}: ${messageContent}`;
+	chatlinedata += `${member.displayName}: ${messageContent} `;
+	consoleChat += `${member.displayName}: ${messageContent} `;
 	if (message.attachments.size > 0) {
 		var attc = message.attachments.array();
 		var i = 0;
@@ -156,7 +156,7 @@ var formatChatlog = function(message) {
 		}
 		i = 0;
 		for (i; i < att.length; i++) {
-			formattedAtturls += ` ${att[i]} `;
+			formattedAtturls += `${att[i]} `;
 		}
 	}
 	return {

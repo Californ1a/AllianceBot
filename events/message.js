@@ -1,4 +1,4 @@
-const config = require("../config.json");
+//const config = require("../config.json");
 const connection = require("../util/connection.js");
 const colors = require("colors");
 const escape = require("../util/escapeChars.js");
@@ -6,13 +6,14 @@ const cl = require("../util/chatinfo.js");
 const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 const parseFlags = require("../util/parseFlags.js");
-var pre = config.prefix;
+const customQuotes = require("../util/customQuotes.js").ripWin;
+var pre;
 
 module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
 		if (msg.content.startsWith(pre) && !msg.author.bot) {
-			msg.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`help\` command within that server.");
+			msg.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`${pre}help\` command within that server.");
 		}
 		return;
 	}
@@ -47,17 +48,27 @@ module.exports = (bot, meter, msg) => {
 
 	let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
 	let perms = bot.elevation(msg);
+	let args = msg.content.split(" ").slice(1);
 
 	let escapedCom = escape.chars(command);
-	connection.select(["comtext", "permlvl", "inpm"], "servcom", `server_id=${msg.guild.id} AND comname='${escapedCom}'`).then(response => {
+	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${escapedCom}'`).then(response => {
 		if (response[0]) {
-			let strs = response[0].comtext;
-			let results = strs.slice(1, strs.length - 1);
+			let strs;
+			let results;
+			if (response[0].comtext) {
+				strs = response[0].comtext;
+				results = strs.slice(1, strs.length - 1);
+			}
 			if (response[0].permlvl <= perms) {
-				if (response[0].inpm === "true") {
-					msg.author.sendMessage(results);
-				} else {
-					msg.channel.sendMessage(results);
+				if (response[0].type === "simple") {
+					if (response[0].inpm === "true") {
+						return msg.author.sendMessage(results);
+					} else {
+						return msg.channel.sendMessage(results);
+					}
+				} else if (response[0].type === "quote") {
+					customQuotes(msg, args, command, perms);
+					return;
 				}
 				return;
 			}
@@ -65,7 +76,7 @@ module.exports = (bot, meter, msg) => {
 	}).catch(e => console.error(e.stack));
 
 
-	let args = msg.content.split(" ").slice(1);
+
 	let cmd;
 	if (bot.commands.has(command)) {
 		cmd = bot.commands.get(command);

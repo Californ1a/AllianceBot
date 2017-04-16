@@ -1,6 +1,7 @@
 const fs = require("fs-extra");
-const colors = require("colors");
+require("colors");
 const cl = require("../util/chatinfo.js");
+const jsdiff = require("diff");
 
 module.exports = (bot, oldMessage, newMessage) => {
 	if (bot.user === oldMessage.author || bot.user === newMessage.author) {
@@ -28,7 +29,20 @@ module.exports = (bot, oldMessage, newMessage) => {
 				if (e) {
 					console.error(e.stack);
 				} else {
-					console.log(colors.white.dim("Edited --> " + newc.consoleChat));
+
+
+					var diff = jsdiff.diffChars(oldc.chatlinedata, newc.chatlinedata);
+
+					var edit = "Edited --> ".grey;
+					i = 0;
+					diff.forEach(part => {
+						var color = (part.added) ? "green" : (part.removed) ? "red" : "grey";
+						edit += part.value[color];
+					});
+					console.log(edit);
+
+
+					//console.log(colors.white.dim("Edited --> " + newc.consoleChat));
 				}
 			});
 		}

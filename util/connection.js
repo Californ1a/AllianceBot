@@ -1,6 +1,10 @@
 //const connection = require("./sqlmanager.js");
 const sql = require("./sqlmanager.js");
+const colors = require("colors");
 //sql.open("./alliancebot.sqlite");
+const log = (m, i) => {
+	console.log(`DATABASE: ${colors.cyan(m)}${(i) ? ` ${colors.cyan(JSON.stringify(i))}` : ""}`);
+};
 
 var select = function(columns, table, where) {
 	return new Promise((resolve, reject) => {
@@ -8,6 +12,7 @@ var select = function(columns, table, where) {
 			columns = columns.join(", ");
 		}
 		if (where) {
+			log(`SELECT ${columns} FROM ${table} WHERE ${where}`);
 			sql.query(`SELECT ${columns} FROM ${table} WHERE ${where}`, (err, response) => {
 				if (err) {
 					reject(err);
@@ -15,6 +20,7 @@ var select = function(columns, table, where) {
 				resolve(response);
 			});
 		} else {
+			log(`SELECT ${columns} FROM ${table}`);
 			sql.query(`SELECT ${columns} FROM ${table}`, (err, response) => {
 				if (err) {
 					reject(err);
@@ -27,6 +33,7 @@ var select = function(columns, table, where) {
 
 var del = function(table, where) {
 	return new Promise((resolve, reject) => {
+		log(`DELETE FROM ${table} WHERE ${where}`);
 		sql.query(`DELETE FROM ${table} WHERE ${where}`, (err) => {
 			if (err) {
 				reject(err);
@@ -38,6 +45,7 @@ var del = function(table, where) {
 
 var update = function(table, info, where) {
 	return new Promise((resolve, reject) => {
+		log(`UPDATE ${table} SET ${info} WHERE ${where}`);
 		sql.query(`UPDATE ${table} SET ${info} WHERE ${where}`, (err) => {
 			if (err) {
 				reject(err);
@@ -52,6 +60,7 @@ var insert = function(table, info) {
 		if (typeof info !== "object") {
 			reject(new Error("Info must be an object."));
 		}
+		log(`INSERT INTO ${table} SET ?`, info);
 		sql.query(`INSERT INTO ${table} SET ?`, info, (err) => {
 			if (err) {
 				reject(err);
@@ -64,6 +73,7 @@ var insert = function(table, info) {
 var query = function(q) {
 	return new Promise((resolve, reject) => {
 		if (q.split(" ")[0].toLowerCase() === "select") {
+			log(q);
 			sql.query(q, (err, response) => {
 				if (err) {
 					reject(err);
@@ -71,6 +81,7 @@ var query = function(q) {
 				resolve(response);
 			});
 		} else {
+			log(q);
 			sql.query(q, (err) => {
 				if (err) {
 					reject(err);
@@ -81,32 +92,30 @@ var query = function(q) {
 	});
 };
 
+var servers = "CREATE TABLE IF NOT EXISTS servers (idservers INT(11) NOT NULL AUTO_INCREMENT, servername VARCHAR(512) NOT NULL, serverid VARCHAR(45) NOT NULL, ownerid VARCHAR(45) NOT NULL, prefix VARCHAR(45) NOT NULL, membrole VARCHAR(255) NULL DEFAULT NULL, modrole VARCHAR(255) NULL DEFAULT NULL, adminrole VARCHAR(255) NULL DEFAULT NULL, PRIMARY KEY (idservers), UNIQUE INDEX serverid_UNIQUE (serverid)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var advent = "CREATE TABLE IF NOT EXISTS advent (idadvent INT(11) NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, time VARCHAR(19) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idadvent), UNIQUE INDEX id_name_unique (name, server_id), INDEX advent_ibfk_1_idx (server_id), CONSTRAINT advent_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var commands = "CREATE TABLE IF NOT EXISTS commands (idcommands INT(11) NOT NULL AUTO_INCREMENT, commandname VARCHAR(50) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idcommands), UNIQUE INDEX id_command_unique (commandname, server_id), INDEX commands_ibfk_1 (server_id), CONSTRAINT commands_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var servcom = "CREATE TABLE IF NOT EXISTS servcom (idservcom INT(11) NOT NULL AUTO_INCREMENT, comname VARCHAR(45) NOT NULL, comtext MEDIUMTEXT NULL, inpm VARCHAR(5) NOT NULL DEFAULT 'false', permlvl INT(2) NOT NULL DEFAULT '0', type VARCHAR(20) NOT NULL DEFAULT 'simple', server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idservcom), UNIQUE INDEX id_com_servid (comname, server_id), INDEX servcom_ibfk_1 (server_id), CONSTRAINT servcom_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var triviascore = "CREATE TABLE IF NOT EXISTS triviascore (idtriviascore INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, score INT(4) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idtriviascore), UNIQUE INDEX id_user_unique (userid, server_id), INDEX rip_ibfk_1_idx (server_id), CONSTRAINT triviascore_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var giveaway = "CREATE TABLE IF NOT EXISTS giveaway (idgive INT(11) NOT NULL AUTO_INCREMENT, entries INT(5) NOT NULL, cost INT(5) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idgive), UNIQUE INDEX serverid_unique (server_id), CONSTRAINT giveaway_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+var giveusers = "CREATE TABLE IF NOT EXISTS giveusers (idgive INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, likelihood INT(4) NOT NULL, giveawayid INT(11) NULL DEFAULT NULL, PRIMARY KEY (idgive), UNIQUE INDEX user_unique (userid, giveawayid), INDEX giveusers_ibfk_1 (giveawayid), CONSTRAINT giveusers_ibfk_1 FOREIGN KEY (giveawayid) REFERENCES giveaway (idgive) ON UPDATE CASCADE ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
 var createAllTables = function() { //because I built too much database stuff without first checking in the proper places if the tables exist
 	return new Promise((resolve, reject) => {
 		console.log("Checking if SQL tables exist...");
-		query("CREATE TABLE IF NOT EXISTS servers (idservers integer NOT NULL, ownerid varchar (45) NOT NULL, servername varchar (512) NOT NULL, prefix varchar (45) NOT NULL, serverid varchar (45) NOT NULL, membrole varchar (255), modrole varchar (255), adminrole varchar (255), PRIMARY KEY(idservers))").then(() => {
-			query("CREATE TABLE IF NOT EXISTS advent (idadvent integer NOT NULL, server_id varchar (45) NOT NULL, time varchar (19) NOT NULL, name varchar (255) NOT NULL, PRIMARY KEY(idadvent))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS commands (idcommands integer NOT NULL, server_id varchar (45) NOT NULL, commandname varchar (50) NOT NULL, PRIMARY KEY(idcommands))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS hype (idhype integer NOT NULL, quote varchar (1000) NOT NULL, server_id varchar (45) NOT NULL, PRIMARY KEY(idhype))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS rip (idrip integer NOT NULL, server_id varchar (45) NOT NULL, quote varchar (255) NOT NULL, PRIMARY KEY(idrip))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS servcom (idservcom integer NOT NULL, server_id varchar (45) NOT NULL, inpm varchar (5) NOT NULL DEFAULT 'false', permlvl integer NOT NULL DEFAULT 0, comname varchar (45) NOT NULL, comtext varchar (1000) NOT NULL, PRIMARY KEY(idservcom))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS sign (idsign integer NOT NULL, quote varchar (200) NOT NULL, server_id varchar (45) NOT NULL, PRIMARY KEY(idsign))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS tf (idtf integer NOT NULL, server_id varchar (45) NOT NULL, quote varchar (45) NOT NULL, PRIMARY KEY(idtf))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS triviascore (idtriviascore integer NOT NULL, server_id varchar (45) NOT NULL, score integer NOT NULL, userid varchar (45) NOT NULL, PRIMARY KEY(idtriviascore))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS win (idwin integer NOT NULL, quote varchar (255) NOT NULL, server_id varchar (45) NOT NULL, PRIMARY KEY(idwin))");
-		}).then(() => {
-			query("CREATE TABLE IF NOT EXISTS giveaway (idgive integer NOT NULL, running varchar (5) NOT NULL DEFAULT 'false', server_id varchar (45) NOT NULL, PRIMARY KEY(idgive))");
-		}).then(() => {
-			console.log("All tables exist or were created.");
-			resolve();
+		query(servers).then(() => {
+			Promise.all([query(advent), query(commands), query(servcom), query(triviascore), query(giveaway), query(giveusers)]).then(() => {
+				console.log("All tables exist or were created.");
+				resolve();
+			}).catch(e => {
+				reject(e);
+			});
 		}).catch(e => {
 			reject(e);
 		});
