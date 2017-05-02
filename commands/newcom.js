@@ -2,14 +2,11 @@ const connection = require("../util/connection.js");
 const colors = require("colors");
 //var config;
 const escape = require("../util/escapeChars.js");
+const send = require("../util/sendMessage.js");
 //const pre = config.prefix;
 // const modrolename = config.modrolename;
 // const membrolename = config.membrolename;
 // const adminrolename = config.adminrolename;
-
-const send = (msg, m) => {
-	msg.channel.sendMessage(m);
-};
 
 
 exports.run = (bot, msg, args, perms, cmd, flags) => {
@@ -18,27 +15,27 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 
 	//checks for all the right flags to be assigned values by user
 	if (!flags) {
-		return send(msg, "You must specify flags.");
+		return send(msg.channel, "You must specify flags.");
 	} else if (!flags.type) {
-		return send(msg, "You must specify a type.");
+		return send(msg.channel, "You must specify a type.");
 	} else if (!flags.name) {
-		return send(msg, "You must specify a name.");
+		return send(msg.channel, "You must specify a name.");
 	} else if (flags.name.includes(" ")) {
-		return send(msg, "The name cannot have any spaces.");
+		return send(msg.channel, "The name cannot have any spaces.");
 	} else if (!flags.type.match(/^(simple|quote)$/)) {
-		return send(msg, "The command type must be \`simple\` or \`quote\`.");
+		return send(msg.channel, "The command type must be \`simple\` or \`quote\`.");
 	} else if (flags.type === "simple" && !flags.message) {
-		return send(msg, "You must specify a message for simple-type commands.");
+		return send(msg.channel, "You must specify a message for simple-type commands.");
 	}
 
 
 	var cmdname = escape.chars(flags.name);
 	if (cmdname !== flags.name) {
-		return send(msg, "Invalid characters used in command name.");
+		return send(msg.channel, "Invalid characters used in command name.");
 	}
 	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${cmdname}'`).then(r => {
 		if (r[0]) {
-			return send(msg, "This command already exists.");
+			return send(msg.channel, "This command already exists.");
 		}
 		//assign variables from flags
 		var type = flags.type;
@@ -48,16 +45,16 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 		}
 		var inpms = "false";
 		var fullmsg;
-		var escdMsg;
+		//var escdMsg;
 		if (flags.message) {
 			fullmsg = flags.message;
-			escdMsg = escape.chars(fullmsg);
+			//escdMsg = escape.chars(fullmsg);
 		}
 		var info;
 		if (type === "simple") {
 			info = {
 				comname: cmdname,
-				comtext: `'${escdMsg}'`,
+				comtext: `'${fullmsg}'`,
 				permlvl: permslvl,
 				inpm: inpms,
 				server_id: msg.guild.id
@@ -86,15 +83,15 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				connection.query(`CREATE TABLE IF NOT EXISTS ${cmdname} (id${cmdname} INT(11) NOT NULL AUTO_INCREMENT, quote VARCHAR(255) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (id${cmdname}), UNIQUE INDEX id_${cmdname}_unique (quote, server_id), INDEX ${cmdname}_ibfk_1 (server_id), CONSTRAINT ${cmdname}_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB`).then(() => {
 					console.log(colors.red("Table existed or was successfully created."));
 				}).catch(e => {
-					send(msg, "Failed");
+					send(msg.channel, "Failed");
 					console.error(e);
 					return;
 				});
 			}
 			console.log(colors.red("Successfully inserted command."));
-			send(msg, "Success");
+			send(msg.channel, "Success");
 		}).catch(e => {
-			send(msg, "Failed");
+			send(msg.channel, "Failed");
 			console.error(e);
 			return;
 		});
@@ -113,7 +110,7 @@ exports.help = {
 	name: "newcom",
 	description: "Create a simple custom command.",
 	extendedDescription: `<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is Members, 2 is Moderators, 3 is Admins\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"newcom spook 0 false BOO! Scared ya!" :: The new command would be "spook" (enabled for all members and would reply in-channel) and the returned message would be "BOO! Scared ya!"`,
-	usage: "newcom <command-name> <perm-level> <reply-in-pm> <message>"
+	usage: "newcom --name <command name> --type <type> --permlvl <perm level> --inpm <reply in pm> --message <message>"
 };
 
 exports.f = {

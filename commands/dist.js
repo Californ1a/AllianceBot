@@ -3,17 +3,23 @@ const pre = require("../config.json").prefix;
 const parseString = require("xml2js").parseString;
 const checkMapID = require("../util/checkMapIDs.js").checkMapID;
 const jsondata = require("../mapids.json");
+const send = require("../util/sendMessage.js");
+const Steam = require("steam-web");
+const s = new Steam({
+	apiKey: process.env.STEAM_API_KEY,
+	format: "json"
+});
 
 exports.run = (bot, msg, args) => {
 	if (typeof args[0] !== "string") {
-		msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
+		send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 	} else {
 		var mapid = checkMapID(msg, args);
 		if (mapid === 0) {
-			msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
+			send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 		} else if (typeof mapid === "string" && mapid !== "") {
 			var lburl = `<http://steamcommunity.com/stats/233610/leaderboards/${mapid}>`;
-			msg.channel.sendMessage(lburl);
+			send(msg.channel, lburl);
 			var optionsac = {
 				hostname: "steamcommunity.com",
 				path: `/stats/233610/leaderboards/${mapid}/?xml=1&start=1&end=1`,
@@ -26,7 +32,7 @@ exports.run = (bot, msg, args) => {
 				});
 				respond.on("end", function() {
 					if (!str || str === "") {
-						msg.channel.sendMessage("No data received.");
+						send(msg.channel, "No data received.");
 						console.log("No data received.");
 						return;
 					}
@@ -59,33 +65,41 @@ exports.run = (bot, msg, args) => {
 								minimumFractionDigits: 0
 							});
 						}
+						s.getPlayerSummaries({
+							steamids: [`${somesteamid}`],
+							callback: (err, data) => {
+								var name = data.response.players[0].personaname;
+								send(msg.channel, `${fulltime} by ${name}`);
+								//console.log("data.response.players[0].personaname", data.response.players[0].personaname);
+							}
+						});
 						//begin convert steamid64 to profile name
-						var optionsac2 = {
-							hostname: "steamcommunity.com",
-							path: `/profiles/${somesteamid}/?xml=1`,
-							method: "GET",
-						};
-						http.request(optionsac2, function(response) {
-							var str2 = "";
-							response.on("data", function(chunk) {
-								str2 += chunk;
-							});
-							response.on("end", function() {
-								parseString(str2, function(error, result2) {
-									if (error) {
-										console.error(error.stack);
-										return;
-									}
-									var profilename = result2.profile.steamID.toString();
-									msg.channel.sendMessage(`${fulltime} by ${profilename}`);
-								});
-							});
-						}).end();
+						// var optionsac2 = {
+						// 	hostname: "steamcommunity.com",
+						// 	path: `/profiles/${somesteamid}/?xml=1`,
+						// 	method: "GET",
+						// };
+						// http.request(optionsac2, function(response) {
+						// 	var str2 = "";
+						// 	response.on("data", function(chunk) {
+						// 		str2 += chunk;
+						// 	});
+						// 	response.on("end", function() {
+						// 		parseString(str2, function(error, result2) {
+						// 			if (error) {
+						// 				console.error(error.stack);
+						// 				return;
+						// 			}
+						// 			var profilename = result2.profile.steamID.toString();
+						// 			send(msg.channel, `${fulltime} by ${profilename}`);
+						// 		});
+						// 	});
+						// }).end();
 					});
 				});
 			}).end();
 		} else {
-			msg.channel.sendMessage("No data found.");
+			send(msg.channel, "No data found.");
 		}
 	}
 };

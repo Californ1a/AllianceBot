@@ -5,6 +5,7 @@
 	"membrolename": "Member",
 	"adminrolename": "Admin",
 	"loglocation": "DiscordChatlogs/",
+	"reminders": 1,
 	"trivia": {
 		"delayBeforeFirstQuestion": 50000,
 	  "delayBeforeNextQuestion": 10000,

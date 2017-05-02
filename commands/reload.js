@@ -1,7 +1,9 @@
+const send = require("../util/sendMessage.js");
+
 exports.run = (bot, msg, args) => {
 	let command;
 	if (!args[0]) {
-		return msg.channel.sendMessage("You must provide a command to reload.");
+		return send(msg.channel, "You must provide a command to reload.");
 	}
 	if (bot.commands.has(args[0])) {
 		command = args[0];
@@ -9,9 +11,9 @@ exports.run = (bot, msg, args) => {
 		command = bot.aliases.get(args[0]);
 	}
 	if (!command) {
-		return msg.channel.sendMessage(`I cannot find the command: ${args[0]}`);
+		return send(msg.channel, `I cannot find the command: ${args[0]}`);
 	}
-	msg.channel.sendMessage(`Reloading: ${command}`).then(m => {
+	send(msg.channel, `Reloading: ${command}`).then(m => {
 		bot.reload(command).then(() => {
 			m.edit(`Successfully reloaded: ${command}`);
 		}).catch(e => {

@@ -7,13 +7,14 @@ const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 const parseFlags = require("../util/parseFlags.js");
 const customQuotes = require("../util/customQuotes.js").ripWin;
+const send = require("../util/sendMessage.js");
 var pre;
 
 module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
 		if (msg.content.startsWith(pre) && !msg.author.bot) {
-			msg.author.sendMessage("Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`${pre}help\` command within that server.");
+			send(msg.author, "Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`${pre}help\` command within that server.");
 		}
 		return;
 	}
@@ -62,9 +63,9 @@ module.exports = (bot, meter, msg) => {
 			if (response[0].permlvl <= perms) {
 				if (response[0].type === "simple") {
 					if (response[0].inpm === "true") {
-						return msg.author.sendMessage(results);
+						return send(msg.author, results);
 					} else {
-						return msg.channel.sendMessage(results);
+						return send(msg.author, results);
 					}
 				} else if (response[0].type === "quote") {
 					customQuotes(msg, args, command, perms);
@@ -86,11 +87,11 @@ module.exports = (bot, meter, msg) => {
 	if (cmd) {
 		if (perms < cmd.conf.permLevel || cmd.conf.onCooldown || cmd.conf.endGameCooldown) {
 			if (cmd.help.name === "strivia" || cmd.help.name === "num" || cmd.help.name === "scramble") {
-				msg.channel.sendMessage("This command is on cooldown (1 minute cooldown after game ends) or is otherwise unavailable at this time. Try again in a few minutes.");
+				send(msg.channel, "This command is on cooldown (1 minute cooldown after game ends) or is otherwise unavailable at this time. Try again in a few minutes.");
 			}
 			return;
 		}
-		connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='${cmd.help.name}'`).then(response => {
+		connection.select("commandname", "commands", `server_id='${msg.guild.id}' AND commandname='${cmd.help.name}'`).then(response => {
 			if (!response[0] && cmd.conf.perm < 4) {
 				console.log(colors.red("Command not enabled for this server."));
 				return;

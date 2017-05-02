@@ -1,28 +1,25 @@
 //const pre = require("../config.json").prefix;
 const connection = require("../util/connection.js");
 const colors = require("colors");
-
-const send = (msg, m) => {
-	msg.channel.sendMessage(m);
-};
+const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
 	const pre = bot.servConf.prefix;
 	if (args.length !== 1) {
-		return send(msg, `Incorrect syntax. Use \`${pre}help delcom\` for help.`);
+		return send(msg.channel, `Incorrect syntax. Use \`${pre}help delcom\` for help.`);
 	}
 	connection.select("*", "servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(response => {
 		if (!response[0]) {
-			return send(msg, "Command does not exist.");
+			return send(msg.channel, "Command does not exist.");
 		}
 		console.log(colors.red(`Attempting to remove the command \`${args[0]}\` from server \`${msg.guild.name}\`.`));
 		if (response[0].type === "simple") {
 			connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(() => {
 				console.log(colors.red("Successfully removed command."));
-				send(msg, "Success");
+				send(msg.channel, "Success");
 			}).catch(e => {
 				console.error(e);
-				send(msg, "Failed");
+				send(msg.channel, "Failed");
 			});
 			return;
 		} else if (response[0].type === "quote") {
@@ -30,28 +27,28 @@ exports.run = (bot, msg, args) => {
 				connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(() => {
 					if (!res[0]) {
 						connection.query(`DROP TABLE IF EXISTS ${response[0].comname}`).then(() => {
-							return send(msg, "Success");
+							return send(msg.channel, "Success");
 						}).catch(e => {
-							send(msg, "Failed");
+							send(msg.channel, "Failed");
 							console.error(e);
 							return;
 						});
 					} else {
-						return send(msg, "Success");
+						return send(msg.channel, "Success");
 					}
 				}).catch(e => {
-					send(msg, "Failed");
+					send(msg.channel, "Failed");
 					console.error(e);
 					return;
 				});
 			}).catch(e => {
-				send(msg, "Failed");
+				send(msg.channel, "Failed");
 				console.error(e);
 				return;
 			});
 		}
 	}).catch(e => {
-		send(msg, "Failed");
+		send(msg.channel, "Failed");
 		console.error(e);
 		return;
 	});

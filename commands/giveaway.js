@@ -1,5 +1,6 @@
 const sm = require("../util/scoremanager.js");
 const connection = require("../util/connection.js");
+const send = require("../util/sendMessage.js");
 
 function getWinners(msg, winnerCount) {
 	return new Promise((resolve, reject) => {
@@ -25,9 +26,9 @@ exports.run = (bot, msg, args, perm) => {
 		if (!response[0]) {
 			if (perm >= 2) {
 				if (!args[0] || !args[1]) {
-					return msg.channel.sendMessage("No giveaway is currently running. You must specify a cost amount and maximum number of entries per-person to start a giveaway.");
+					return send(msg.channel, "No giveaway is currently running. You must specify a cost amount and maximum number of entries per-person to start a giveaway.");
 				} else if (isNaN(args[0]) && isNaN(args[1])) {
-					return msg.channel.sendMessage("The cost must be number.");
+					return send(msg.channel, "The cost must be number.");
 				}
 				var price = parseInt(args[0]);
 				if (price > 9999) {
@@ -47,10 +48,10 @@ exports.run = (bot, msg, args, perm) => {
 					"entries": maxEntries
 				};
 				connection.insert("giveaway", info).then(() => {
-					return msg.channel.sendMessage(`Giveaway started with buy-in cost of ${price} points and ${maxEntries} maximum entries per-person.`);
+					return send(msg.channel, `Giveaway started with buy-in cost of ${price} points and ${maxEntries} maximum entries per-person.`);
 				});
 			} else {
-				return msg.channel.sendMessage("No giveaway currently running.");
+				return send(msg.channel, "No giveaway currently running.");
 			}
 		} else {
 			response = response[0];
@@ -58,37 +59,37 @@ exports.run = (bot, msg, args, perm) => {
 				connection.select("COUNT(*) as count", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${msg.guild.id}'`).then(c => {
 					c = c[0];
 					if (!args[0]) {
-						return msg.channel.sendMessage(`You must specify an amount of winners (0 to end with none). There ${(c.count > 1) ? `are ${c.count} entrants` : (c.count === 1) ? "is 1 entrant" : "are 0 entrants"}.`);
+						return send(msg.channel, `You must specify an amount of winners (0 to end with none). There ${(c.count > 1) ? `are ${c.count} entrants` : (c.count === 1) ? "is 1 entrant" : "are 0 entrants"}.`);
 					} else if (isNaN(args[0])) {
-						return msg.channel.sendMessage("The amount of winners must be a number (0 to end with none).");
+						return send(msg.channel, "The amount of winners must be a number (0 to end with none).");
 					}
 					var winnerCount = parseInt(args[0]);
 					if (c.count === 0 && winnerCount !== 0) {
-						return msg.channel.sendMessage("There are no entries. Use 0 to end an empty giveaway.");
+						return send(msg.channel, "There are no entries. Use 0 to end an empty giveaway.");
 					} else if (c.count < winnerCount) {
-						return msg.channel.sendMessage(`The winner amount cannot be less than the current amount of entrants (${c.count}).`);
+						return send(msg.channel, `The winner amount cannot be less than the current amount of entrants (${c.count}).`);
 					} else {
-						msg.channel.sendMessage(`A giveaway is currently running with ${(c.count > 1) ? `${c.count} entrants. Do you want to end it, draw ${winnerCount} random ${(winnerCount > 1) ? "winners" : "winner"}, and remove all entrants? [y/n]` : (c.count === 1) ? "1 entrant. Do you want to end it? [y/n]" : "0 entrants. Do you want to end it? [y/n]"}`).then(() => {
+						send(msg.channel, `A giveaway is currently running with ${(c.count > 1) ? `${c.count} entrants. Do you want to end it, draw ${winnerCount} random ${(winnerCount > 1) ? "winners" : "winner"}, and remove all entrants? [y/n]` : (c.count === 1) ? "1 entrant. Do you want to end it? [y/n]" : "0 entrants. Do you want to end it? [y/n]"}`).then(() => {
 							msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 								max: 1,
 								time: 20000,
 								errors: ["time"],
 							}).then((collected) => {
 								if (collected.first().content === "no" || collected.first().content === "n") {
-									return msg.channel.sendMessage("Giveaway will continue.");
+									return send(msg.channel, "Giveaway will continue.");
 								} else if (winnerCount === 0) {
-									msg.channel.sendMessage("Giveaway ended with no winners.").then(() => {
+									send(msg.channel, "Giveaway ended with no winners.").then(() => {
 										connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
 										return;
 									});
 								} else {
 									getWinners(msg, winnerCount).then(m => {
-										msg.channel.sendMessage(m);
+										send(msg.channel, m);
 										connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
 									});
 								}
 							}).catch(() => {
-								return msg.channel.sendMessage("Did not reply in time. Giveaway will continue accepting entrants.");
+								return send(msg.channel, "Did not reply in time. Giveaway will continue accepting entrants.");
 							});
 						});
 					}
@@ -96,19 +97,19 @@ exports.run = (bot, msg, args, perm) => {
 			} else {
 				sm.getScore(msg.guild, msg.member).then(ret => {
 					if (ret.score === 0) {
-						return msg.channel.sendMessage("You have no points.");
+						return send(msg.channel, "You have no points.");
 					} else if (ret.score < response.cost) {
-						return msg.channel.sendMessage(`You only have ${ret.score} points. You need ${response.cost} to enter the giveaway.`);
+						return send(msg.channel, `You only have ${ret.score} points. You need ${response.cost} to enter the giveaway.`);
 					}
 					connection.select("*", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(ent => {
 						var info;
 						if (ent[0]) {
 							if (ent[0].likelihood === response.entries) {
-								return msg.channel.sendMessage(`You already have the max amount of entries for this giveaway, ${response.entries}`);
+								return send(msg.channel, `You already have the max amount of entries for this giveaway, ${response.entries}`);
 							}
 							connection.update("giveusers", "likelihood=likelihood+1", `userid='${msg.author.id}' AND giveawayid=${ent[0].giveawayid}`).then(() => {
 								sm.setScore(msg.guild, msg.member, "add", response.cost * -1).then(r => {
-									return msg.channel.sendMessage(`${msg.author}(${r.pScore}=>${r.score}) entered into the giveaway! (${ent[0].likelihood+1}/${response.entries} ${(response.entries > 1) ? "entries" : "entry"})`);
+									return send(msg.channel, `${msg.author}(${r.pScore}=>${r.score}) entered into the giveaway! (${ent[0].likelihood+1}/${response.entries} ${(response.entries > 1) ? "entries" : "entry"})`);
 								}).catch(console.error);
 							}).catch(console.error);
 						} else {
@@ -119,7 +120,7 @@ exports.run = (bot, msg, args, perm) => {
 							};
 							connection.insert("giveusers", info).then(() => {
 								sm.setScore(msg.guild, msg.member, "add", response.cost * -1).then(r => {
-									return msg.channel.sendMessage(`${msg.author}(${r.pScore}=>${r.score}) entered into the giveaway! (${info.likelihood}/${response.entries} ${(response.entries > 1) ? "entries" : "entry"})`);
+									return send(msg.channel, `${msg.author}(${r.pScore}=>${r.score}) entered into the giveaway! (${info.likelihood}/${response.entries} ${(response.entries > 1) ? "entries" : "entry"})`);
 								}).catch(console.error);
 							}).catch(console.error);
 						}

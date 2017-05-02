@@ -1,4 +1,5 @@
 const http = require("http");
+const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
 	if (typeof args[0] === "string") {
@@ -46,10 +47,10 @@ exports.run = (bot, msg, args) => {
 									wrsec = `0${wrsec}`;
 								}
 								if (typeof actable[key].video !== "string") {
-									msg.channel.sendMessage(`${wrmin}:${wrsec}.${wrmil} by ${actable[key].player}: No video found.`);
+									send(msg.channel, `${wrmin}:${wrsec}.${wrmil} by ${actable[key].player}: No video found.`);
 									nonefound = false;
 								} else {
-									msg.channel.sendMessage(`${wrmin}:${wrsec}.${wrmil} by ${actable[key].player}: ${actable[key].video}`);
+									send(msg.channel, `${wrmin}:${wrsec}.${wrmil} by ${actable[key].player}: ${actable[key].video}`);
 									nonefound = false;
 								}
 							}
@@ -57,13 +58,13 @@ exports.run = (bot, msg, args) => {
 					}
 				}
 				if (nonefound) {
-					msg.channel.sendMessage("No record found for the given category.");
+					send(msg.channel, "No record found for the given category.");
 					nonefound = true;
 				}
 			});
 		}).end();
 	} else {
-		msg.channel.sendMessage("Incorrect syntax, category name required.");
+		send(msg.channel, "Incorrect syntax, category name required.");
 	}
 };
 

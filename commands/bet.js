@@ -4,6 +4,7 @@ const possibleBets = require("../gameconfigs/possibleroulettebets.json");
 const numbProps = require("../gameconfigs/roulettenumberproperties.json");
 const rouletteconfig = require("../config.json").roulette;
 const sm = require("../util/scoremanager.js");
+const send = require("../util/sendMessage.js");
 var running = false;
 var cantbet = false;
 
@@ -43,7 +44,7 @@ var resetBetting = () => {
 var manageBets = (msg, debugnum) => {
 	cantbet = true;
 	var rollingMsg;
-	msg.channel.sendMessage("No longer taking new bets. Rolling...").then(m => {
+	send(msg.channel, "No longer taking new bets. Rolling...").then(m => {
 		rollingMsg = m;
 	});
 	landNumb = Math.floor(Math.random() * 37);
@@ -81,7 +82,7 @@ var manageBets = (msg, debugnum) => {
 		}
 		if (winningBets.users.length <= 0) {
 			resetBetting();
-			return msg.channel.sendMessage("There were no winners.");
+			return send(msg.channel, "There were no winners.");
 		}
 		var textLine = `The winner${(winningBets.users.length > 1)?"s are:\n":" is: "}`;
 		var ment;
@@ -101,7 +102,7 @@ var manageBets = (msg, debugnum) => {
 			// 	}
 			// });
 		}
-		msg.channel.sendMessage(textLine);
+		send(msg.channel, textLine);
 
 		resetBetting();
 	};
@@ -143,7 +144,7 @@ exports.run = (bot, msg, args, perm) => {
 		sm.setScore(msg.guild, msg.member, "add", amount * -1).catch(console.error);
 		if (!running && !cantbet) {
 			running = true;
-			msg.channel.sendMessage(`${msg.member.displayName} has started roulette! Use \`${pre}help bet\` to get the list of possible bets and other information.`).then(() => {
+			send(msg.channel, `${msg.member.displayName} has started roulette! Use \`${pre}help bet\` to get the list of possible bets and other information.`).then(() => {
 				betArray.push(new Bet(msg.author.id, amount, args[1], msg));
 				//console.log(betArray[betArray.length - 1]);
 				setTimeout(() => {

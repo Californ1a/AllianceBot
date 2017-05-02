@@ -1,5 +1,6 @@
 const colors = require("colors");
 const Entities = require("html-entities").AllHtmlEntities;
+const send = require("../util/sendMessage.js");
 const entities = new Entities();
 const fs = require("fs-extra");
 
@@ -37,7 +38,7 @@ module.exports = (bot, tweet) => {
 		}
 		desc = `${text}`;
 		//desc += `\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`;
-		bot.channels.get("83078957620002816").sendMessage(`${emoji} <${tweetlink}>`, {
+		send(bot.channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, {
 			embed: {
 				color: 3447003,
 				author: {

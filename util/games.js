@@ -1,5 +1,6 @@
 const connection = require("./connection.js");
 const colors = require("colors");
+const send = require("./sendMessage.js");
 // var findIndex = require("array.prototype.findindex");
 // findIndex.shim();
 
@@ -45,7 +46,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 	var obj;
 	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank`).then(response => {
 		if (!response[0] && !startingScores[0]) {
-			return channel.sendMessage("There are no trivia scores yet.");
+			return send(channel, "There are no trivia scores yet.");
 		}
 		var i = 0;
 		for (i; i < response.length; i++) {
@@ -105,7 +106,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 				inline: true
 			};
 		}
-		channel.sendMessage(topMessage, {
+		send(channel, topMessage, {
 			embed: {
 				color: 3447003,
 				title: `__**Top ${fieldsArray.length} Scoreboard**__`,
@@ -118,7 +119,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 var getLB = (channel, topMessage, limit) => {
 	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank LIMIT ${limit}`).then(response => {
 		if (!response[0]) {
-			return channel.sendMessage("There are no trivia scores yet.");
+			return send(channel, "There are no trivia scores yet.");
 		}
 		//var text = "";
 		var nameArray = [];
@@ -147,7 +148,7 @@ var getLB = (channel, topMessage, limit) => {
 				inline: true
 			};
 		}
-		channel.sendMessage(topMessage, {
+		send(channel, topMessage, {
 			embed: {
 				color: 3447003,
 				title: `__**Top ${fieldsArray.length} Scoreboard**__`,

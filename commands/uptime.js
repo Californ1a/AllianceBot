@@ -1,3 +1,5 @@
+const send = require("../util/sendMessage.js");
+
 function formatUptime(amount) {
 	var out = "Bot uptime: ";
 	var days = 0;
@@ -30,7 +32,7 @@ function formatUptime(amount) {
 
 exports.run = (bot, msg) => {
 	var uptime = process.uptime();
-	msg.channel.sendMessage(formatUptime(uptime));
+	send(msg.channel, formatUptime(uptime));
 };
 
 exports.conf = {

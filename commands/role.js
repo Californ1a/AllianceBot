@@ -1,4 +1,5 @@
 const pre = ("../config.json").prefix;
+const send = require("../util/sendMessage.js");
 require("../util/Array.prototype.rejoin.js");
 
 function canUserAndBotAssign(assigner, assignee, buer) {
@@ -14,24 +15,24 @@ exports.run = (bot, msg, args) => {
 	var botMember = msg.guild.members.get(bot.user.id);
 	if (msgMember.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
 		if (!(args.length >= 3) || !msg.mentions.users.first()) {
-			return msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help role\` for syntax.`);
+			return send(msg.channel, `Incorrect syntax. Use \`${pre}help role\` for syntax.`);
 		}
 		var mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
 		if (!canUserAndBotAssign(msgMember, mentionedMember, botMember)) {
-			return msg.channel.sendMessage("Either the bot or you do not have permission to perform this action.");
+			return send(msg.channel, "Either the bot or you do not have permission to perform this action.");
 		}
 		var addRole = args.rejoin(" ", 2);
 		if (!msg.guild.roles.exists("name", addRole)) {
-			return msg.channel.sendMessage(`Role \`${addRole}\` does not exist.`);
+			return send(msg.channel, `Role \`${addRole}\` does not exist.`);
 		}
 		if (args[0] === "set" || args[0] === "add") {
 			mentionedMember.addRole(msg.guild.roles.find("name", addRole));
-			msg.channel.sendMessage(`Added \`${mentionedMember.displayName}\` to the \`${addRole}\` role.`);
+			send(msg.channel, `Added \`${mentionedMember.displayName}\` to the \`${addRole}\` role.`);
 		} else if (args[0] === "del") {
 			mentionedMember.removeRole(msg.guild.roles.find("name", args[2]));
-			msg.channel.sendMessage(`Removed \`${mentionedMember.displayName}\` from the \`${addRole}\` role.`);
+			send(msg.channel, `Removed \`${mentionedMember.displayName}\` from the \`${addRole}\` role.`);
 		} else {
-			msg.channel.sendMessage("Invalid syntax.");
+			send(msg.channel, "Invalid syntax.");
 		}
 	}
 };

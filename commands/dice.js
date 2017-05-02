@@ -1,38 +1,39 @@
 const connection = require("../util/connection.js");
 const pre = require("../config.json").prefix;
+const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
 	connection.select("*", "triviascore", `userid=${msg.author.id} AND server_id='${msg.guild.id}' LIMIT 1`).then(response => {
 		if (!response[0]) {
-			return msg.channel.sendMessage("You do not have any points to gamble with.");
+			return send(msg.channel, "You do not have any points to gamble with.");
 		}
 		if (!args[1]) {
-			return msg.channel.sendMessage("You must specify an amount to gamble and a dice side to bet on.");
+			return send(msg.channel, "You must specify an amount to gamble and a dice side to bet on.");
 		}
 		if (isNaN(args[0]) || isNaN(args[1])) {
-			return msg.channel.sendMessage("Your gamble amount and dice side must be a number.");
+			return send(msg.channel, "Your gamble amount and dice side must be a number.");
 		}
 		var dieType = 6;
 		var newScore = 0;
 		var amount = parseInt(args[0]);
 		if (amount < 1) {
-			return msg.channel.sendMessage("Your bet amount must be a positive number.");
+			return send(msg.channel, "Your bet amount must be a positive number.");
 		}
 		if (!(response[0].score >= amount)) {
-			return msg.channel.sendMessage("You do not have enough points to bet that much.");
+			return send(msg.channel, "You do not have enough points to bet that much.");
 		}
 		var side = parseInt(args[1]);
 		if (!(side > 0 && side <= dieType)) {
-			return msg.channel.sendMessage("It is a 6-sided dice, you can only use 1-6.");
+			return send(msg.channel, "It is a 6-sided dice, you can only use 1-6.");
 		}
 		var die = Math.floor(Math.random() * dieType) + 1;
 		if (side === die) {
 			var scoreAdd = Math.floor(amount * 2);
 			newScore = response[0].score + scoreAdd;
 			connection.update("triviascore", `score=${newScore}`, `userid='${msg.author.id}'`).then(() => {
-				msg.channel.sendMessage(`${msg.author}, The dice lands on ${die}! You win 200% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
+				send(msg.channel, `${msg.author}, The dice lands on ${die}! You win 200% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
 			}).catch(e => {
-				msg.channel.sendMessage("Failed");
+				send(msg.channel, "Failed");
 				console.error(e.stack);
 				return;
 			});
@@ -41,18 +42,18 @@ exports.run = (bot, msg, args) => {
 		newScore = response[0].score - amount;
 		if (newScore <= 0) {
 			connection.del("triviascore", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(() => {
-				msg.channel.sendMessage(`${msg.author}, The dice lands on ${die}. You lose your bet (-${amount})! You have been removed from the scoreboard.`);
+				send(msg.channel, `${msg.author}, The dice lands on ${die}. You lose your bet (-${amount})! You have been removed from the scoreboard.`);
 			}).catch(e => {
-				msg.channel.sendMessage("Failed");
+				send(msg.channel, "Failed");
 				console.error(e.stack);
 				return;
 			});
 			return;
 		}
 		connection.update("triviascore", `score=${newScore}`, `userid='${msg.author.id}'`).then(() => {
-			msg.channel.sendMessage(`${msg.author}, The dice lands on ${die}. You lose your bet (-${amount})! Your score is now ${newScore}`);
+			send(msg.channel, `${msg.author}, The dice lands on ${die}. You lose your bet (-${amount})! Your score is now ${newScore}`);
 		}).catch(e => {
-			msg.channel.sendMessage("Failed");
+			send(msg.channel, "Failed");
 			console.error(e.stack);
 			return;
 		});

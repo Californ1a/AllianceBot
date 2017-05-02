@@ -55,8 +55,8 @@ module.exports = (bot, closeEvent) => {
 			reason += "Unknown";
 			break;
 	}
-	console.error(colors.red(`${main}${reason}`));
+	console.error(colors.red(`${main}${reason}${(closeEvent.reason && closeEvent.reason !== "") ? `\nGiven Reason: ${closeEvent.reason}` : ""}`));
 	// console.log(`Reason: ${closeEvent.reason}`);
 	// console.error(closeEvent);
-	process.exit();
+	//process.exit();
 };

@@ -1,5 +1,6 @@
 const connection = require("../util/connection.js");
 const escape = require("../util/escapeChars.js");
+const send = require("../util/sendMessage.js");
 
 function update(flag, type, msg) {
 	return new Promise((resolve, reject) => {
@@ -41,7 +42,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 	console.log("flags", flags);
 	var conf = bot.servConf.get(msg.guild.id);
 	if (!flags || !args[0]) {
-		return msg.channel.sendMessage(`Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
+		return send(msg.channel, `Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
 	}
 	doAll(flags, msg).then(ret => {
 		var msgCon = [];
@@ -63,9 +64,9 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 			}
 		}
 		bot.confRefresh().then(() => {
-			msg.channel.sendMessage(`**Updated:**\n${msgCon.join("\n")}`);
+			send(msg.channel, `**Updated:**\n${msgCon.join("\n")}`);
 		}).catch(e => {
-			msg.channel.sendMessage(e.message);
+			send(msg.channel, e.message);
 		});
 	});
 };

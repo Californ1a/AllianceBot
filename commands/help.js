@@ -1,6 +1,7 @@
 const config = require("../config.json");
 const pre = config.prefix;
 const connection = require("../util/connection.js");
+const send = require("../util/sendMessage.js");
 var i = 0;
 
 function intersect(one, two) {
@@ -13,7 +14,7 @@ function intersect(one, two) {
 exports.run = (bot, msg, args, perm) => {
 	connection.select("*", "commands", `server_id='${msg.guild.id}'`).then(response => {
 		if (!response[0]) {
-			return msg.channel.sendMessage("No commands enabled for this server.");
+			return send(msg.channel, "No commands enabled for this server.");
 		}
 		if (!args[0]) {
 			const commandNames = Array.from(bot.commands.keys());
@@ -49,7 +50,7 @@ exports.run = (bot, msg, args, perm) => {
 						}
 						helpLine += nextCmd;
 					} else {
-						msg.author.sendMessage(`${helpLine}\`\`\``);
+						send(msg.author, `${helpLine}\`\`\``);
 						helpLine = `\`\`\`asciidoc\n\n${(arr3.has(cmd.help.name))?"✓":"✗"} ${nextCmd}`;
 					}
 				}
@@ -59,7 +60,7 @@ exports.run = (bot, msg, args, perm) => {
 			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(res => {
 				//console.log("yup", res);
 				if (!res[0]) {
-					return msg.author.sendMessage(`${helpLine}\`\`\``);
+					return send(msg.author, `${helpLine}\`\`\``);
 				}
 				var customs = "Custom commands :: ";
 				i = 0;
@@ -71,10 +72,10 @@ exports.run = (bot, msg, args, perm) => {
 					}
 				}
 				if (helpLine.length + customs.length < 1990) {
-					msg.author.sendMessage(`${helpLine}${customs}\`\`\``);
+					send(msg.author, `${helpLine}${customs}\`\`\``);
 				} else {
-					msg.author.sendMessage(`${helpLine}\`\`\``);
-					msg.author.sendMessage(`\`\`\`asciidoc\n${customs}\`\`\``);
+					send(msg.author, `${helpLine}\`\`\``);
+					send(msg.author, `\`\`\`asciidoc\n${customs}\`\`\``);
 				}
 			}).catch(e => console.error(e.stack));
 
@@ -99,7 +100,7 @@ exports.run = (bot, msg, args, perm) => {
 				command = bot.aliases.get(args[0]);
 			}
 			if (!command) {
-				return msg.channel.sendMessage(`I cannot find the command: ${args[0]}`);
+				return send(msg.channel, `I cannot find the command: ${args[0]}`);
 			} else {
 				command = bot.commands.get(command);
 				if (command.conf.permLevel <= perm) {

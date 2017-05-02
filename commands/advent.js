@@ -2,6 +2,7 @@ const connection = require("../util/connection.js");
 const colors = require("colors");
 const pre = require("../config.json").prefix;
 const timers = require("../util/timers.js");
+const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args, perm) => {
 	//console.log(flags);
@@ -10,7 +11,7 @@ exports.run = (bot, msg, args, perm) => {
 	var i = 0;
 	connection.select("*", "advent", `server_id=${msg.guild.id}`).then(response => {
 		if (!response[0] && !args[0]) {
-			msg.channel.sendMessage("No event set.");
+			send(msg.channel, "No event set.");
 		} else if (args[0] === "set" && perm >= 2) {
 			if (args[1] && !response[0]) {
 				if (args[2]) {
@@ -32,30 +33,30 @@ exports.run = (bot, msg, args, perm) => {
 					};
 					connection.insert("advent", info).then(() => {
 						console.log(colors.red("Successfully inserted event."));
-						msg.channel.sendMessage(`Event name set to: ${eventName}\r\nEvent date set to: ${eventDate}`);
+						send(msg.channel, `Event name set to: ${eventName}\r\nEvent date set to: ${eventDate}`);
 					}).catch(e => {
-						msg.channel.sendMessage("Failed");
+						send(msg.channel, "Failed");
 						console.error(e.stack);
 						return;
 					});
 				} else {
-					msg.channel.sendMessage("Incorrect syntax.");
+					send(msg.channel, "Incorrect syntax.");
 				}
 			} else if (!args[1]) {
-				msg.channel.sendMessage("Incorrect syntax.");
+				send(msg.channel, "Incorrect syntax.");
 			} else if (response[0]) {
-				msg.channel.sendMessage("You must delete the current event before creating a new one.");
+				send(msg.channel, "You must delete the current event before creating a new one.");
 			} else {
-				msg.channel.sendMessage("Error.");
+				send(msg.channel, "Error.");
 				console.log("Something happened.");
 			}
 		} else if (args[0] === "del" && perm >= 2) {
 			console.log(colors.red("Attempting to remove event from the database."));
 			connection.del("advent", `server_id=${msg.guild.id}`).then(() => {
 				console.log(colors.red("Successfully removed event."));
-				msg.channel.sendMessage("Event removed.");
+				send(msg.channel, "Event removed.");
 			}).catch(e => {
-				msg.channel.sendMessage("Failed.");
+				send(msg.channel, "Failed.");
 				console.error(e.stack);
 				return;
 			});
@@ -67,14 +68,14 @@ exports.run = (bot, msg, args, perm) => {
 			};
 			var startMessage = `${response[0].name} will begin in `;
 			var currentstream = timers.getCount(false, startMessage, forSS);
-			msg.channel.sendMessage(`${currentstream}`);
+			send(msg.channel, `${currentstream}`);
 		} else if (response[0]) {
-			msg.channel.sendMessage(`There is already an event set. Use \`${pre}advent\` to view it.`);
+			send(msg.channel, `There is already an event set. Use \`${pre}advent\` to view it.`);
 		} else {
 			console.log("Something happened.");
 		}
 	}).catch(e => {
-		msg.channel.sendMessage("Failed.");
+		send(msg.channel, "Failed.");
 		console.error(e.stack);
 		return;
 	});

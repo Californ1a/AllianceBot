@@ -1,4 +1,5 @@
 const connection = require("./connection.js");
+const send = require("./sendMessage.js");
 var numOn = false;
 
 var toggleStatus = function() {
@@ -24,7 +25,7 @@ var manageCorrect = function(channel, collected, winnerid, scoreAdd) {
 			};
 			connection.insert("triviascore", info).catch(e => console.error(e.stack));
 		}
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! Your score is now ${score}.`).then(() => {
+		send(channel, `${collected.first().author} guessed correctly (+${scoreAdd})! Your score is now ${score}.`).then(() => {
 			toggleStatus();
 		});
 	}).catch(e => {

@@ -60,3 +60,4 @@ npm-debug.log
 *.sqlite
 commands/test.js
 util/firebase.js
+commands/featurerequest.js

@@ -5,7 +5,7 @@ const sqlconfig = {
 	password: process.env.JAWSDB_PASS,
 	database: process.env.JAWSDB_DB,
 	charset: "utf8mb4",
-	connectionLimit: 4
+	connectionLimit: 3
 };
 
 const pool = mysql.createPool(sqlconfig);

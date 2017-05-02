@@ -1,6 +1,7 @@
 const colors = require("colors");
 const escape = require("../util/escapeChars.js");
 const connection = require("./connection.js");
+const send = require("./sendMessage.js");
 const pre = require("../config.json").prefix;
 require("./Array.prototype.rejoin.js");
 
@@ -11,9 +12,9 @@ function recombineQuote(args) {
 function randomQuote(message, type) {
 	connection.select("quote", type, `server_id=${message.guild.id} ORDER BY RAND() LIMIT 1`).then(response => {
 		if (!response[0]) {
-			message.channel.sendMessage("None found.");
+			send(message.channel, "None found.");
 		} else {
-			message.channel.sendMessage(response[0].quote);
+			send(message.channel, response[0].quote);
 		}
 	}).catch(e => {
 		console.error(e.stack);
@@ -32,14 +33,14 @@ function addQuote(msg, args, type) {
 		};
 		connection.insert(type, info).then(() => {
 			console.log(colors.red(`Successfully inserted ${type} message.`));
-			msg.channel.sendMessage("Success");
+			send(msg.channel, "Success");
 		}).catch(e => {
-			msg.channel.sendMessage("Failed");
+			send(msg.channel, "Failed");
 			console.error(e.stack);
 			return;
 		});
 	} else {
-		msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help ${type}\` for help.`);
+		send(msg.channel, `Incorrect syntax. Use \`${pre}help ${type}\` for help.`);
 	}
 }
 
@@ -51,13 +52,13 @@ function delQuote(msg, args, type) {
 		console.log(colors.red("Attempting to remove " + type + " message '" + recombined + "' from the database."));
 		connection.del(type, `quote = '${recombined}' AND server_id=${msg.guild.id}`).then(() => {
 			console.log(colors.red("Successfully removed " + type + " message."));
-			msg.channel.sendMessage("Success");
+			send(msg.channel, "Success");
 		}).catch(e => {
 			console.error(e.stack);
 			return;
 		});
 	} else {
-		msg.channel.sendMessage(`Incorrect syntax. Use \`${pre}help ${type}\` for help.`);
+		send(msg.channel, `Incorrect syntax. Use \`${pre}help ${type}\` for help.`);
 	}
 }
 
@@ -66,7 +67,7 @@ function listQuotes(msg, type) {
 	connection.select("quote", type, `server_id=${msg.guild.id} order by lower(quote) asc`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red("Failed."));
-			msg.author.sendMessage(`Failed to find any ${type} quotes for your server.`);
+			send(msg.author, `Failed to find any ${type} quotes for your server.`);
 			return;
 		}
 		console.log(colors.red("Success."));
@@ -79,15 +80,15 @@ function listQuotes(msg, type) {
 				quotespm += `${response[i].quote}\r`;
 			} else {
 				quotespm += "```";
-				msg.author.sendMessage(quotespm);
+				send(msg.author, quotespm);
 				quotespm = `\n**Remaining ${type} quotes:**\n--------------------\n\`\`\``;
 				quotespm += `${response[i].quote}\r`;
 			}
 		}
 		quotespm += "```";
-		msg.author.sendMessage(quotespm);
+		send(msg.author, quotespm);
 	}).catch(e => {
-		msg.channel.sendMessage("Failed to find any, with errors.");
+		send(msg.channel, "Failed to find any, with errors.");
 		console.error(e.stack);
 		return;
 	});
@@ -100,13 +101,13 @@ function searchQuotes(msg, args, type) {
 	connection.select("*", type, `server_id=${msg.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red("Failed to find any matching."));
-			msg.channel.sendMessage(`Unable to find any ${type} quotes matching '${searchKey}'.`);
+			send(msg.channel, `Unable to find any ${type} quotes matching '${searchKey}'.`);
 			return;
 		}
 		console.log(colors.red("Successfully found a quote."));
-		msg.channel.sendMessage(response[0].quote);
+		send(msg.channel, response[0].quote);
 	}).catch(e => {
-		msg.channel.sendMessage("Failed to find any matching quotes, with errors.");
+		send(msg.channel, "Failed to find any matching quotes, with errors.");
 		console.error(e.stack);
 		return;
 	});

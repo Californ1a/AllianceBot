@@ -3,6 +3,7 @@
 const sm = require("./scoremanager.js");
 const game = require("./games.js");
 const colors = require("colors");
+const send = require("./sendMessage.js");
 var triviaOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
@@ -143,7 +144,7 @@ var goTrivia = (channel, manualNumber, category, config) => {
 	}
 	console.log(incompleteQuestions.length);
 	console.log(colors.red(`Answer: ${quesNum.answers[0]}`));
-	channel.sendMessage(`Question:\r\n**${question}**`).then(() => {
+	send(channel, `Question:\r\n**${question}**`).then(() => {
 		scoreAdd = 0;
 		channel.awaitMessages(answerFilter, {
 			max: 1,
@@ -160,7 +161,7 @@ var goTrivia = (channel, manualNumber, category, config) => {
 			if (!getTriviaStatus()) {
 				return;
 			}
-			channel.sendMessage(`Hint:\r\n${quesNum.hint.replace(/_/g,"\\_")}`).then(() => {
+			send(channel, `Hint:\r\n${quesNum.hint.replace(/_/g,"\\_")}`).then(() => {
 				channel.awaitMessages(answerHintFilter, {
 					max: 1,
 					time: config.delayBeforeNoAnswer,
@@ -177,12 +178,12 @@ var goTrivia = (channel, manualNumber, category, config) => {
 						return;
 					}
 					countQsMissed += 1;
-					channel.sendMessage("No one guessed correctly!").then(() => {
+					send(channel, "No one guessed correctly!").then(() => {
 						if (countQsMissed < config.maxUnansweredQuestionsBeforeAutoStop) {
 							removeQuestion();
 							setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
 						} else {
-							channel.sendMessage("Trivia has been automatically stopped.");
+							send(channel, "Trivia has been automatically stopped.");
 							toggleTriviaStatus();
 						}
 					});
@@ -198,7 +199,7 @@ eventEmitter.on("manageCorrectAnswer", (channel, collected, winnerid, scoreAdd, 
 		removeQuestion();
 		countQsMissed = 0;
 		var bonus = (scoreAdd === 3) ? `You gain a +1 bonus for ${quesNum.bonusText}! ` : "";
-		channel.sendMessage(`${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(m.message.startsWith("Set"))?`Your score is now ${m.score}`:`You have been added to the board with a score of ${m.score}`}.`).then(() => {
+		send(channel, `${collected.first().author} guessed correctly (+${scoreAdd})! ${bonus}${(m.message.startsWith("Set"))?`Your score is now ${m.score}`:`You have been added to the board with a score of ${m.score}`}.`).then(() => {
 			setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
 		});
 	}).catch(e => console.error(e.stack));
@@ -208,12 +209,12 @@ var timedTrivia = function(channel, minutes, trivStartUser, category, cmd, confi
 	var time = (minutes * 60) * 1000;
 	toggleTriviaStatus();
 	populateQuestions();
-	channel.sendMessage("```markdown\r\n# Trivia is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(config.delayBeforeHint / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(config.delayBeforeHint / 1000) + "s between question and hint, " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between hint and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
+	send(channel, "```markdown\r\n# Trivia is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(config.delayBeforeHint / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(config.delayBeforeHint / 1000) + "s between question and hint, " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between hint and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 	setTimeout(goTrivia, config.delayBeforeFirstQuestion, channel, -1, category, config);
 	setTimeout(function() {
 		if (triviaOn) {
 			toggleTriviaStatus();
-			channel.sendMessage(`Everyone thank ${trivStartUser} for the trivia round! \`\`\`markdown\r\n# TRIVIA STOPPED!\`\`\``).then(() => {
+			send(channel, `Everyone thank ${trivStartUser} for the trivia round! \`\`\`markdown\r\n# TRIVIA STOPPED!\`\`\``).then(() => {
 				game.getChanges(channel, startingScores, "**Final Standings:**", 9);
 				game.cooldown(cmd);
 			});

@@ -3,7 +3,7 @@ const sql = require("./sqlmanager.js");
 const colors = require("colors");
 //sql.open("./alliancebot.sqlite");
 const log = (m, i) => {
-	console.log(`DATABASE: ${colors.cyan(m)}${(i) ? ` ${colors.cyan(JSON.stringify(i))}` : ""}`);
+	console.log(`DATABASE: ${colors.cyan(m)}${(i) ? ` ${colors.cyan(JSON.stringify(i, null, "\t"))}` : ""}`);
 };
 
 var select = function(columns, table, where) {
@@ -108,10 +108,10 @@ var giveusers = "CREATE TABLE IF NOT EXISTS giveusers (idgive INT(11) NOT NULL A
 
 var createAllTables = function() { //because I built too much database stuff without first checking in the proper places if the tables exist
 	return new Promise((resolve, reject) => {
-		console.log("Checking if SQL tables exist...");
+		console.log(colors.red("Checking if SQL tables exist..."));
 		query(servers).then(() => {
 			Promise.all([query(advent), query(commands), query(servcom), query(triviascore), query(giveaway), query(giveusers)]).then(() => {
-				console.log("All tables exist or were created.");
+				console.log(colors.red("All tables exist or were created."));
 				resolve();
 			}).catch(e => {
 				reject(e);

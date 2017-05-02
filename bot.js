@@ -20,10 +20,12 @@ const connection = require("./util/connection.js");
 var probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
+bot.reminders = new Discord.Collection();
 const token = process.env.DISCORD_TOKEN;
 const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
+const reminders = require("./util/reminders.js");
 //const config = require("./config.json");
 const Twit = require("twit");
 const twitconfig = {
@@ -110,12 +112,15 @@ bot.confRefresh = () => {
 				bot.servConf.set(serv[i].serverid, serv[i]);
 			}
 			//console.log(colors.cyan("servConf", bot.servConf));
+			console.log(colors.red("Refreshed server configs"));
 			resolve();
 		}).catch(e => reject(e));
 	});
 };
 connection.createAllTables().then(() => {
 	bot.confRefresh();
+	reminders.refresh(bot);
+	reminders.reminderEmitter(bot);
 }).catch(console.error);
 
 //get the permission level of the member who sent message

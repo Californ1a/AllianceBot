@@ -1,6 +1,7 @@
 const connection = require("../util/connection.js");
 const game = require("../util/game.js");
 const sm = require("../util/scoremanager.js");
+const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args, perm) => {
 	var mentionedMember;
@@ -12,9 +13,9 @@ exports.run = (bot, msg, args, perm) => {
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
 		sm.getScore(msg.guild, mentionedMember).then(s => {
 			if (mentionedMember.id === bot.user.id) {
-				return msg.channel.sendMessage("Rank: Godlike, Score: Untouchable");
+				return send(msg.channel, "Rank: Godlike, Score: Untouchable");
 			}
-			msg.channel.sendMessage(`Rank: ${s.rank}, Score: ${s.score}`);
+			send(msg.channel, `Rank: ${s.rank}, Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "board" || args[0] === "b") {
 		var limit = 9;
@@ -27,61 +28,61 @@ exports.run = (bot, msg, args, perm) => {
 		return;
 	} else if (args.length === 3 && (args[0].match(/^(set|give)$/))) {
 		if (perm < 2 && args[0] === "set") {
-			return msg.channel.sendMessage("You do not have permission to set scores.");
+			return send(msg.channel, "You do not have permission to set scores.");
 		}
 		if (!msg.mentions.users.first()) {
-			return msg.channel.sendMessage("Incorrect syntax.");
+			return send(msg.channel, "Incorrect syntax.");
 		}
 		if (perm < 2 && msg.mentions.users.first() === msg.author) {
-			return msg.channel.sendMessage("You can't give points to yourself.");
+			return send(msg.channel, "You can't give points to yourself.");
 		}
 		if (isNaN(args[2])) {
-			return msg.channel.sendMessage("The score must be a number.");
+			return send(msg.channel, "The score must be a number.");
 		}
 		var amount = parseInt(args[2]);
 		if (amount < 0 && perm < 2) {
-			return msg.channel.sendMessage("The score must be positive.");
+			return send(msg.channel, "The score must be positive.");
 		}
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
 		var type = (args[0] === "set") ? "set" : "add";
 		sm.getScore(msg.guild, msg.member).then(s => {
 			if (perm < 2 && s.score < amount) {
-				return msg.channel.sendMessage("You do not have enough points to give away that many.");
+				return send(msg.channel, "You do not have enough points to give away that many.");
 			}
 			if (amount > 0 && args[2].length > 9) {
-				return msg.channel.sendMessage("The score can only be nine digits maximum.");
+				return send(msg.channel, "The score can only be nine digits maximum.");
 			}
 			sm.setScore(msg.guild, mentionedMember, type, amount).then(m => {
 				if (perm < 2) {
 					sm.setScore(msg.guild, msg.member, type, amount * -1).then(r => {
-						return msg.channel.sendMessage(`${msg.member.displayName}(${r.pScore}-->${r.score}) gave ${amount} points to ${mentionedMember.displayName}(${m.pScore}-->${m.score}).`);
+						return send(msg.channel, `${msg.member.displayName}(${r.pScore}-->${r.score}) gave ${amount} points to ${mentionedMember.displayName}(${m.pScore}-->${m.score}).`);
 					});
 				} else {
-					msg.channel.sendMessage(m.message);
+					send(msg.channel, m.message);
 				}
 			}).catch(e => console.error(e.stack));
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "clear") {
 		if (!(perm >= 2)) {
-			return msg.channel.sendMessage("You do not have permission to clear the leaderboards.");
+			return send(msg.channel, "You do not have permission to clear the leaderboards.");
 		}
-		msg.channel.sendMessage("Are you absolutely sure you want to completely clear the trivia leaderboards? y/n");
+		send(msg.channel, "Are you absolutely sure you want to completely clear the trivia leaderboards? y/n");
 		msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 			max: 1,
 			time: 10000,
 			errors: ["time"],
 		}).then((collected) => {
 			if (collected.first().content === "no" || collected.first().content === "n") {
-				return msg.channel.sendMessage("Boards remain intact.");
+				return send(msg.channel, "Boards remain intact.");
 			}
 			connection.del("triviascore", `server_id='${msg.guild.id}'`).then(() => {
-				return msg.channel.sendMessage("Successfully cleared the trivia leaderboard.");
+				return send(msg.channel, "Successfully cleared the trivia leaderboard.");
 			}).catch(e => console.error(e.stack));
 		}).catch(() => {
-			return msg.channel.sendMessage("Did not reply in time. Boards left unchanged.");
+			return send(msg.channel, "Did not reply in time. Boards left unchanged.");
 		});
 	} else {
-		msg.channel.sendMessage("Incorrect syntax.");
+		send(msg.channel, "Incorrect syntax.");
 	}
 };
 
