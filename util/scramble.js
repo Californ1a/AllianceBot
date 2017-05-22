@@ -52,7 +52,7 @@ var toggleScrambleStatus = () => {
 	scrambleOn = !scrambleOn;
 };
 
-var goScramble = (channel, config) => {
+var goScramble = (channel, config, startingScores) => {
 	if (!getScrambleStatus()) {
 		return;
 	}
@@ -88,6 +88,9 @@ var goScramble = (channel, config) => {
 					setTimeout(goScramble, config.delayBeforeNextQuestion, channel, config);
 				} else {
 					send(channel, "Scramble has been automatically stopped.");
+					if (startingScores) {
+						game.getChanges(channel, startingScores, "**Final Standings:**", 9);
+					}
 					toggleScrambleStatus();
 				}
 			});
@@ -111,7 +114,7 @@ var timedScramble = (channel, minutes, trivStartUser, category, cmd, config, sta
 	toggleScrambleStatus();
 	populateScramble();
 	send(channel, "```markdown\r\n# Scramble is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n* There are no hints.  \r\n*  There is " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between scramble and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
-	setTimeout(goScramble, config.delayBeforeFirstQuestion, channel, config);
+	setTimeout(goScramble, config.delayBeforeFirstQuestion, channel, config, startingScores);
 	timeout = setTimeout(function() {
 		if (getScrambleStatus()) {
 			toggleScrambleStatus();

@@ -31,7 +31,7 @@ module.exports = (bot, oldMessage, newMessage) => {
 				} else {
 
 
-					var diff = jsdiff.diffChars(oldc.chatlinedata, newc.chatlinedata);
+					var diff = jsdiff.diffWords(oldc.chatlinedata, newc.chatlinedata);
 
 					var edit = "Edited --> ".grey;
 					i = 0;

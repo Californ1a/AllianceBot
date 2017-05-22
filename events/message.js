@@ -8,13 +8,30 @@ const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 const parseFlags = require("../util/parseFlags.js");
 const customQuotes = require("../util/customQuotes.js").ripWin;
 const send = require("../util/sendMessage.js");
-var pre;
+var pre = require("../config.json").prefix; //default prefix
 
 module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
-		if (msg.content.startsWith(pre) && !msg.author.bot) {
-			send(msg.author, "Using commands via PM is not supported as I have no indication of which server you want to access the commands for. Please use the command from within the server - To view which commands are enabled for your server, use the \`${pre}help\` command within that server.");
+		if (msg.content.startsWith(pre) && !msg.author.bot) { //default prefix
+			let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase(); //default prefix
+			let perms = bot.elevation(msg);
+			let args = msg.content.split(" ").slice(1);
+			let cmd;
+			if (bot.commands.has(command)) {
+				cmd = bot.commands.get(command);
+			} else if (bot.aliases.has(command)) {
+				cmd = bot.commands.get(bot.aliases.get(command));
+			}
+			if (cmd && perms > cmd.conf.permLevel && !cmd.conf.guildOnly) {
+				var flags;
+				if (cmd.flags) {
+					flags = parseFlags(cmd, args);
+				}
+				cmd.run(bot, msg, args, perms, cmd, flags);
+			} else {
+				send(msg.author, "Only certain commands can be used in PM. Using this command via PM is not supported as I have no indication of which server you're coming from. Please use this command from within the server - To view which commands are enabled for your server, use the \`help\` command within that server.");
+			}
 		}
 		return;
 	}
@@ -65,7 +82,7 @@ module.exports = (bot, meter, msg) => {
 					if (response[0].inpm === "true") {
 						return send(msg.author, results);
 					} else {
-						return send(msg.author, results);
+						return send(msg.channel, results);
 					}
 				} else if (response[0].type === "quote") {
 					customQuotes(msg, args, command, perms);

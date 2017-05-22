@@ -125,6 +125,12 @@ connection.createAllTables().then(() => {
 
 //get the permission level of the member who sent message
 bot.elevation = function(msg) {
+	if (!msg.guild) {
+		if (msg.author.id === require("./config.json").ownerid) {
+			return 4;
+		}
+		return 0;
+	}
 	var conf = bot.servConf.get(msg.guild.id);
 	var memberrole = conf.membrole;
 	var moderatorrole = conf.modrole;

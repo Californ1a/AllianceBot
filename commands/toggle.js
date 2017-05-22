@@ -44,7 +44,7 @@ exports.run = (bot, msg, args) => {
 };
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: ["t"],
 	permLevel: 4,
 	onCooldown: false,

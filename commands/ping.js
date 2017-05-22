@@ -1,7 +1,7 @@
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg) => {
-	send(msg.channel, "Ping?").then(m => {
+	send(msg, "Ping?").then(m => {
 		m.edit(`Pong! (took ${m.createdTimestamp - msg.createdTimestamp}ms)`);
 	});
 };

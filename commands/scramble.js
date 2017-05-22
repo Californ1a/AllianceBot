@@ -40,7 +40,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					game.scramble.populateQ();
 					send(msg.channel, "```markdown\r\n# Scramble is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n*  There are no hints.  \r\n*  There is " + Math.floor(delayBeforeNoA / 1000) + "s between scramble and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 					setTimeout(() => {
-						game.scramble.go(msg.channel, scrambleconfig);
+						game.scramble.go(msg.channel, scrambleconfig, startingScores);
 					}, delayBeforeFirstQ);
 				}).catch(e => console.error(e.stack));
 			} else if (game.scramble.getStatus() && !game.trivia.getStatus()) {
@@ -126,7 +126,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 };
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: [],
 	permLevel: 0,
 	onCooldown: false,

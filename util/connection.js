@@ -11,23 +11,13 @@ var select = function(columns, table, where) {
 		if (typeof columns === "object") {
 			columns = columns.join(", ");
 		}
-		if (where) {
-			log(`SELECT ${columns} FROM ${table} WHERE ${where}`);
-			sql.query(`SELECT ${columns} FROM ${table} WHERE ${where}`, (err, response) => {
-				if (err) {
-					reject(err);
-				}
-				resolve(response);
-			});
-		} else {
-			log(`SELECT ${columns} FROM ${table}`);
-			sql.query(`SELECT ${columns} FROM ${table}`, (err, response) => {
-				if (err) {
-					reject(err);
-				}
-				resolve(response);
-			});
-		}
+		log(`SELECT ${columns} FROM ${table}${(where) ? ` WHERE ${where}` : ""}`);
+		sql.query(`SELECT ${columns} FROM ${table}${(where) ? ` WHERE ${where}` : ""}`, (err, response) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(response);
+		});
 	});
 };
 

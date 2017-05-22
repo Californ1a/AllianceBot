@@ -41,7 +41,7 @@ function removeQuestion() {
 	//console.log(incompleteQuestions);
 }
 
-var goTrivia = (channel, manualNumber, category, config) => {
+var goTrivia = (channel, manualNumber, category, config, startingScores) => {
 	scoreAdd = 0;
 	var alreadyAnswered = [];
 	if (!getTriviaStatus()) {
@@ -184,6 +184,9 @@ var goTrivia = (channel, manualNumber, category, config) => {
 							setTimeout(goTrivia, config.delayBeforeNextQuestion, channel, -1, category, config);
 						} else {
 							send(channel, "Trivia has been automatically stopped.");
+							if (startingScores) {
+								game.getChanges(channel, startingScores, "**Final Standings:**", 9);
+							}
 							toggleTriviaStatus();
 						}
 					});
@@ -210,7 +213,7 @@ var timedTrivia = function(channel, minutes, trivStartUser, category, cmd, confi
 	toggleTriviaStatus();
 	populateQuestions();
 	send(channel, "```markdown\r\n# Trivia is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(config.delayBeforeHint / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(config.delayBeforeHint / 1000) + "s between question and hint, " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between hint and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
-	setTimeout(goTrivia, config.delayBeforeFirstQuestion, channel, -1, category, config);
+	setTimeout(goTrivia, config.delayBeforeFirstQuestion, channel, -1, category, config, startingScores);
 	setTimeout(function() {
 		if (triviaOn) {
 			toggleTriviaStatus();

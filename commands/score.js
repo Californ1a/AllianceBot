@@ -64,9 +64,9 @@ exports.run = (bot, msg, args, perm) => {
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "clear") {
 		if (!(perm >= 2)) {
-			return send(msg.channel, "You do not have permission to clear the leaderboards.");
+			return send(msg.channel, "You do not have permission to clear the scoreboards.");
 		}
-		send(msg.channel, "Are you absolutely sure you want to completely clear the trivia leaderboards? y/n");
+		send(msg.channel, "Are you absolutely sure you want to completely clear the scoreboards? y/n");
 		msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 			max: 1,
 			time: 10000,
@@ -76,7 +76,7 @@ exports.run = (bot, msg, args, perm) => {
 				return send(msg.channel, "Boards remain intact.");
 			}
 			connection.del("triviascore", `server_id='${msg.guild.id}'`).then(() => {
-				return send(msg.channel, "Successfully cleared the trivia leaderboard.");
+				return send(msg.channel, "Successfully cleared the scoreboard.");
 			}).catch(e => console.error(e.stack));
 		}).catch(() => {
 			return send(msg.channel, "Did not reply in time. Boards left unchanged.");
@@ -87,7 +87,7 @@ exports.run = (bot, msg, args, perm) => {
 };
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: ["s"],
 	permLevel: 0,
 	onCooldown: false,

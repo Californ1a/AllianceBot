@@ -3,7 +3,7 @@ const send = require("../util/sendMessage.js");
 exports.run = (bot, msg, args) => {
 	let command;
 	if (!args[0]) {
-		return send(msg.channel, "You must provide a command to reload.");
+		return send(msg, "You must provide a command to reload.");
 	}
 	if (bot.commands.has(args[0])) {
 		command = args[0];
@@ -13,7 +13,7 @@ exports.run = (bot, msg, args) => {
 	if (!command) {
 		return send(msg.channel, `I cannot find the command: ${args[0]}`);
 	}
-	send(msg.channel, `Reloading: ${command}`).then(m => {
+	send(msg, `Reloading: ${command}`).then(m => {
 		bot.reload(command).then(() => {
 			m.edit(`Successfully reloaded: ${command}`);
 		}).catch(e => {

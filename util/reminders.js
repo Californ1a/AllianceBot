@@ -21,7 +21,7 @@ var refresh = (bot) => {
 			resolve();
 		}).catch(e => {
 			if (e.code === "ER_NO_SUCH_TABLE") {
-				connection.query("CREATE TABLE IF NOT EXISTS reminders (id INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(50) NOT NULL, server_id VARCHAR(50) NOT NULL, message TEXT NOT NULL, msinitduration BIGINT(20) NOT NULL, sent VARCHAR(5) NOT NULL DEFAULT 'false', reminddate DATETIME NOT NULL, initdate DATETIME NOT NULL, INDEX id (id), INDEX reminders_ibfk_1 (server_id), CONSTRAINT reminders_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE CASCADE ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB").then(() => {
+				connection.query("CREATE TABLE reminders (id INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(50) NOT NULL, message TEXT NOT NULL, sent VARCHAR(5) NOT NULL DEFAULT 'false', reminddate DATETIME NOT NULL, initdate DATETIME NOT NULL, INDEX id (id)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB").then(() => {
 					refresh(bot);
 				}).catch(e => reject(e));
 			} else {
@@ -31,14 +31,44 @@ var refresh = (bot) => {
 	});
 };
 
+// ------ Attempt at making the delete and refresh wait after consecutive reminders
+// var count = 0;
+// var delTimer = (bot) => {
+// 	console.log("deltimer");
+// 	if (count > 0) {
+// 		console.log("count", count);
+// 		count--;
+// 		setTimeout(() => {
+// 			delTimer(bot);
+// 		}, 1000);
+// 	} else {
+// 		console.log("we outside");
+// 		count = 0;
+// 		var d = Date.now();
+// 		var delCount = 0;
+// 		bot.reminders.forEach(reminder => {
+// 			//console.log("reminder", reminder);
+// 			if (reminder.reminddate.getTime() <= d) {
+// 				connection.del("reminders", `id=${reminder.id}`);
+// 				delCount++;
+// 			}
+// 		});
+// 		if (delCount > 0) {
+// 			refresh(bot);
+// 		}
+// 	}
+// };
+
 var reminderEmitter = (bot) => {
 	var d = Date.now();
 	bot.reminders.forEach(reminder => {
 		//console.log("reminder", reminder);
 		if (reminder.reminddate.getTime() <= d) {
+			//count++;
 			eventEmitter.emit("remindTime", bot, reminder);
 		}
 	});
+	//delTimer(bot);
 	setTimeout(() => {
 		reminderEmitter(bot);
 	}, reminderCheckTime * 60 * 1000);
@@ -49,10 +79,12 @@ eventEmitter.on("remindTime", (bot, reminder) => {
 		refresh(bot);
 	}).then(() => {
 		if (reminder.sent === "false") {
+			//console.log("reminder (before send)", reminder);
 			let strs = reminder.message;
 			let results = strs.slice(1, strs.length - 1);
-			send(bot.users.get(reminder.userid), `Reminding you at ${reminder.reminddate.toString()} about:\n${results}\n\nYou set this reminder at: ${reminder.initdate.toString()}`);
+			send(bot.users.get(reminder.userid), `Reminding you soon after ${reminder.reminddate.toString()} about:\n${results}\n\nYou set this reminder at: ${reminder.initdate.toString()}`);
 			reminder.sent = "true";
+			//console.log("reminder (after send)", reminder);
 		}
 	}).catch(console.error);
 });

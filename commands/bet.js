@@ -58,18 +58,27 @@ var manageBets = (msg, debugnum) => {
 	var afterRoll = () => {
 		var chipPlace;
 		var index;
+		var ppay = {
+			users: [],
+			payouts: []
+		};
 		var i = betArray.length - 1;
 		for (i; i > -1; i--) {
 			//console.log("betArray", betArray);
 			chipPlace = betArray[i].chipPlace;
 			if (possibleBets[chipPlace].numbers.includes(landNumb)) {
-				betArray[i].setPayback(possibleBets[chipPlace].payout * betArray[i].amnt);
+				betArray[i].setPayback((possibleBets[chipPlace].payout * betArray[i].amnt) + betArray[i].amnt);
 				if (winningBets.users.includes(betArray[i].id)) {
 					index = winningBets.users.indexOf(betArray[i].id);
 					winningBets.payouts[index] += betArray[i].payback;
+					index = ppay.users.indexOf(betArray[i].id);
+					ppay.payouts[index] += betArray[i].amnt;
+
 				} else {
 					winningBets.users.push(betArray[i].id);
 					winningBets.payouts.push(betArray[i].payback);
+					ppay.users.push(betArray[i].id);
+					ppay.payouts.push(betArray[i].amnt);
 				}
 			} else {
 				// if (winningBets.users.includes(betArray[i].id)) {
@@ -89,7 +98,7 @@ var manageBets = (msg, debugnum) => {
 		i = 0;
 		for (i; i < winningBets.users.length; i++) {
 			ment = msg.guild.members.get(winningBets.users[i]).user;
-			textLine += `${ment}: +${winningBets.payouts[i]}\n`;
+			textLine += `${ment}: +${winningBets.payouts[i] - ppay.payouts[i]}\n`;
 			sm.setScore(msg.guild, msg.guild.members.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
 			// sm.getScore(msg.guild, msg.guild.members.get(winningBets.users[i])).then(res => {
 			// 	if (res.score === 0) {
@@ -134,14 +143,16 @@ exports.run = (bot, msg, args, perm) => {
 		return msg.reply("Your bet amount must be a positive number.");
 	}
 	sm.getScore(msg.guild, msg.member).then(res => {
-		if (res.score === 0) {
+		if (res.score === 0 && perm < 2) {
 			return msg.reply("You do not have any points to bet with.");
 		}
-		if (amount > res.score) {
+		if (amount > res.score && perm < 2) {
 			return msg.reply("You cannot bet more points than you have.");
 		}
 		//console.log(running, cantbet);
-		sm.setScore(msg.guild, msg.member, "add", amount * -1).catch(console.error);
+		if (perm < 2) {
+			sm.setScore(msg.guild, msg.member, "add", amount * -1).catch(console.error);
+		}
 		if (!running && !cantbet) {
 			running = true;
 			send(msg.channel, `${msg.member.displayName} has started roulette! Use \`${pre}help bet\` to get the list of possible bets and other information.`).then(() => {
@@ -161,7 +172,7 @@ exports.run = (bot, msg, args, perm) => {
 };
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: ["b"],
 	permLevel: 0,
 	onCooldown: false,

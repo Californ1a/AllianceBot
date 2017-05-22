@@ -38,7 +38,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					game.trivia.populateQ("default");
 					send(msg.channel, "```markdown\r\n# Trivia is about to start (" + Math.floor(delayBeforeFirstQ / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically " + Math.floor(delayBeforeH / 1000) + "s after the question. There is no hint command.  \r\n*  There is " + Math.floor(delayBeforeH / 1000) + "s between question and hint, " + Math.floor(delayBeforeNoA / 1000) + "s between hint and timeout, and " + Math.floor(delayBeforeNextQ / 1000) + "s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score b\" or \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 					setTimeout(function() {
-						game.trivia.go(msg.channel, -1, category, triviaconfig);
+						game.trivia.go(msg.channel, -1, category, triviaconfig, startingScores);
 					}, delayBeforeFirstQ);
 				});
 			} else if (game.trivia.getStatus() && !game.scramble.getStatus()) {
@@ -124,7 +124,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 };
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: [],
 	permLevel: 0,
 	onCooldown: false,

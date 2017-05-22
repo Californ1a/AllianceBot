@@ -32,7 +32,7 @@ function formatUptime(amount) {
 
 exports.run = (bot, msg) => {
 	var uptime = process.uptime();
-	send(msg.channel, formatUptime(uptime));
+	send(msg, formatUptime(uptime));
 };
 
 exports.conf = {

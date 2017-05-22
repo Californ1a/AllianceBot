@@ -61,3 +61,5 @@ npm-debug.log
 commands/test.js
 util/firebase.js
 commands/featurerequest.js
+commands/playtest.js
+*.dat

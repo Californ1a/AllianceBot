@@ -56,7 +56,7 @@ var setScore = (guild, member, type, amount) => {
 					};
 					connection.insert("triviascore", info).then(() => {
 						resolve({
-							message: `Added ${member.displayName} to the trivia board with a score of ${amount}.`,
+							message: `Added ${member.displayName} to the board with a score of ${amount}.`,
 							pScore: s.score,
 							score: newScore,
 							pRank: s.rank
@@ -71,7 +71,7 @@ var setScore = (guild, member, type, amount) => {
 var delScore = (guild, member, s) => {
 	return new Promise((resolve, reject) => {
 		connection.del("triviascore", `userid='${member.id}' AND server_id='${guild.id}'`).then(() => {
-			resolve(`Removed ${member.displayName} from the trivia board. Their previous score was ${s.score}.`);
+			resolve(`Removed ${member.displayName} from the board. Their previous score was ${s.score}.`);
 		}).catch(e => reject(e));
 	});
 };

@@ -18,6 +18,7 @@ exports.run = (bot, msg, args, perm) => {
 		}
 		if (!args[0]) {
 			const commandNames = Array.from(bot.commands.keys());
+			//commandNames.push("Custom commands");
 			const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
 
@@ -30,13 +31,14 @@ exports.run = (bot, msg, args, perm) => {
 
 			i = 0;
 			var doneCmds = [];
-			var helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n\n`;
+			var helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n(PM) means the command can be used in PMs\n\n`;
 			var nextCmd = "";
 			bot.commands.forEach(cmd => {
 				if (perm === 4) {
-					nextCmd = `${cmd.help.name} (${cmd.conf.permLevel})${" ".repeat(longest - cmd.help.name.length)} :: ${cmd.help.description}\n`;
+					//
+					nextCmd = `${cmd.help.name} (${cmd.conf.permLevel})${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((cmd.conf.permLevel === undefined) ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
 				} else if (cmd.conf.permLevel <= perm && arr3.has(cmd.help.name)) {
-					nextCmd = `${cmd.help.name}${" ".repeat(longest - cmd.help.name.length)} :: ${cmd.help.description}\n`;
+					nextCmd = `${cmd.help.name}${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((cmd.conf.permLevel === undefined) ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
 				}
 				if (!doneCmds.includes(cmd.help.name) && !helpLine.includes(nextCmd)) {
 					if (helpLine.length + nextCmd.length < 1990) {
@@ -62,7 +64,7 @@ exports.run = (bot, msg, args, perm) => {
 				if (!res[0]) {
 					return send(msg.author, `${helpLine}\`\`\``);
 				}
-				var customs = "Custom commands :: ";
+				var customs = "\nCustom commands :: ";
 				i = 0;
 				for (i; i < res.length; i++) {
 					if ((res[i].permlvl <= perm || perm === 4) && i < res.length - 1) {
@@ -104,7 +106,9 @@ exports.run = (bot, msg, args, perm) => {
 			} else {
 				command = bot.commands.get(command);
 				if (command.conf.permLevel <= perm) {
-					msg.author.sendCode("asciidoc", `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription && command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`);
+					send(msg.author, `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription && command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`, {
+						code: "asciidoc"
+					});
 				}
 			}
 		}
@@ -114,7 +118,7 @@ exports.run = (bot, msg, args, perm) => {
 
 
 exports.conf = {
-	guildOnly: false,
+	guildOnly: true,
 	aliases: ["h"],
 	permLevel: 0,
 	onCooldown: false,

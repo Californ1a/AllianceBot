@@ -72,6 +72,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 };
 
 exports.conf = {
+	guildOnly: true,
 	aliases: [],
 	permLevel: 3,
 	onCooldown: false,

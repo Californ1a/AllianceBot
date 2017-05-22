@@ -5,10 +5,12 @@ const connection = require("../util/connection.js");
 const reminders = require("../util/reminders.js");
 const reminderCheckTime = require("../config.json").reminders;
 const send = require("../util/sendMessage.js");
+const colors = require("colors");
+const timeout = 5;
 
 exports.run = (bot, msg, args, perm, cmd, flags) => {
 	if (!flags || !flags.message || !flags.duration) {
-		return send(msg.channel, "You must include both a duration and a message.");
+		return send(msg, "You must include both a duration and a message.");
 	}
 	var durationMS = parse(flags.duration);
 	var d = Duration.parse(`${durationMS}ms`);
@@ -18,18 +20,57 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 	//var escdMsg = escape.chars(flags.message);
 	var info = {
 		userid: msg.author.id,
-		server_id: msg.guild.id,
 		message: `'${flags.message}'`,
-		msinitduration: durationMS,
 		reminddate: later,
 		initdate: current
 	};
 	connection.insert("reminders", info).then(() => {
 		reminders.refresh(bot);
 	}).then(() => {
-		send(msg.channel, `${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}`);
+		send(msg, `${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}.${(msg.guild) ? `\n\nOthers may click the ⏰ reaction within the next ${(timeout > 1) ? `${timeout} minutes` : "1 minute"} to also be sent the same reminder (removing your reaction will **not** remove your reminder).` : ""}`).then(m => {
+			if (!msg.guild) {
+				return;
+			}
+			m.react("⏰").then(() => {
+				const collector = m.createReactionCollector(reaction => reaction.emoji.name === "⏰", {
+					time: timeout * 60 * 1000
+				});
+				collector.on("end", () => {
+					console.log(colors.red("Reaction collection ended."));
+					m.edit(`${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}.\n\n~~Others may click the ⏰ reaction within the next ${(timeout > 1) ? `${timeout} minutes` : "1 minute"} to also be sent the same reminder (removing your reaction will **not** remove your reminder)~~.`);
+					var userids = [];
+					var userids1 = [];
+					connection.select("*", "reminders", `message="${info.message}"`).then(response => {
+						var i = 0;
+						for (i; i < response.length; i++) {
+							if (!userids.includes(response[i].userid) && !userids1.includes(response[i].userid)) {
+								userids1.push(response[i].userid);
+							}
+						}
+						collector.users.forEach(u => {
+							if (!userids.includes(u.id) && !userids1.includes(u.id) && u.id !== bot.user.id && u.id !== msg.author.id) {
+								userids.push(u.id);
+							}
+						});
+						var unique = userids.filter((elem, index, self) => {
+							return index === self.indexOf(elem);
+						});
+						if (unique.length === 0) {
+							m.clearReactions().catch(e => console.error(e));
+							return;
+						}
+						i = 0;
+						for (i; i < unique.length; i++) {
+							info.userid = unique[i];
+							connection.insert("reminders", info);
+						}
+						reminders.refresh(bot);
+					});
+				});
+			});
+		});
 	}).catch(e => {
-		send(msg.channel, "Failed");
+		send(msg, "Failed");
 		console.error(e);
 	});
 };
