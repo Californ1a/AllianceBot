@@ -4,13 +4,13 @@ var i = 0;
 var getMapID = function(args, mapname) {
 	i = 0;
 	var id = 0;
-	if (!(args[args.length-1].match(/^s$/i) || args[args.length-1].match(/^sprint$/i) || args[args.length-1].match(/^sas$/i) || args[args.length-1].match(/^speed$/i) || args[args.length-1].match(/^sns$/i) || args[args.length-1].match(/^s&s$/i))) {
-		id = jsondata.officialmapids["Sprint"][mapname];
+	if (!(args[args.length - 1].match(/^s$/i) || args[args.length - 1].match(/^sprint$/i) || args[args.length - 1].match(/^sas$/i) || args[args.length - 1].match(/^speed$/i) || args[args.length - 1].match(/^sns$/i) || args[args.length - 1].match(/^s&s$/i))) {
+		id = jsondata.officialmapids["Sprint"][mapname].id;
 	} else {
 		if (typeof args[i] === "string" && (args[i].match(/^sas$/i) || args[i].match(/^speed$/i) || args[i].match(/^sns$/i) || args[i].match(/^s&s$/i))) {
-			id = jsondata.officialmapids["Speed and Style"][mapname];
+			id = jsondata.officialmapids["Speed and Style"][mapname].id;
 		} else if (typeof args[i] === "string" && (args[i].match(/^s$/i) || args[i].match(/^sprint$/i))) {
-			id = jsondata.officialmapids["Sprint"][mapname];
+			id = jsondata.officialmapids["Sprint"][mapname].id;
 		}
 	}
 	return id;
@@ -184,7 +184,7 @@ var checkDodge = function(args) {
 	var mapname = "Dodge";
 	var id = 0;
 	if (args[0].match(/^dodge$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
@@ -194,12 +194,12 @@ var checkThunder = function(args) {
 	var id = 0;
 	if (args[0].match(/^thunder$/i)) {
 		if (typeof args[1] === "string" && args[1].match(/^struck$/i)) {
-			id = jsondata.officialmapids["Challenge"][mapname];
+			id = jsondata.officialmapids["Challenge"][mapname].id;
 		}
 	} else if (args[0].match(/^thunderstruck$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	} else if (args[0].match(/^ts$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
@@ -208,7 +208,7 @@ var checkGrind = function(args) {
 	var mapname = "Grinder";
 	var id = 0;
 	if (args[0].match(/^grinder$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
@@ -217,7 +217,7 @@ var checkDesc = function(args) {
 	var mapname = "Descent";
 	var id = 0;
 	if (args[0].match(/^descent$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
@@ -226,7 +226,7 @@ var checkDeta = function(args) {
 	var mapname = "Detached";
 	var id = 0;
 	if (args[0].match(/^detached$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
@@ -235,7 +235,31 @@ var checkElev = function(args) {
 	var mapname = "Elevation";
 	var id = 0;
 	if (args[0].match(/^elevation$/i)) {
-		id = jsondata.officialmapids["Challenge"][mapname];
+		id = jsondata.officialmapids["Challenge"][mapname].id;
+	}
+	return id;
+};
+
+var checkRedHeat = function(args) {
+	var mapname = "Red Heat";
+	var id = 0;
+	if (args[0].match(/^red$/i)) {
+		if (typeof args[1] === "string" && args[1].match(/^heat$/i)) {
+			id = jsondata.officialmapids["Challenge"][mapname].id;
+		}
+	} else if (args[0].match(/^rh$/i)) {
+		id = jsondata.officialmapids["Challenge"][mapname].id;
+	}
+	return id;
+};
+
+var checkDis = function(args) {
+	var mapname = "Falling Through";
+	var id = 0;
+	if (args[0].match(/^disassembly$/i)) {
+		id = getMapID(args, mapname);
+	} else if (args[0].match(/^dl$/i)) {
+		id = getMapID(args, mapname);
 	}
 	return id;
 };
@@ -244,7 +268,7 @@ var checkCredits = function(args) {
 	var mapname = "Credits";
 	var id = 0;
 	if (args[0].match(/^credits$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -253,7 +277,7 @@ var checkRefrac = function(args) {
 	var mapname = "Refraction";
 	var id = 0;
 	if (args[0].match(/^refraction$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -261,8 +285,8 @@ var checkRefrac = function(args) {
 var checkSpace = function(args) {
 	var mapname = "Space Skate";
 	var id = 0;
-	if (args[0].match(/^space$/i) && args[2].match(/^skate$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+	if (args[0].match(/^space$/i) && args[1].match(/^skate$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -270,8 +294,8 @@ var checkSpace = function(args) {
 var checkSpooky = function(args) {
 	var mapname = "Spooky Town";
 	var id = 0;
-	if (args[0].match(/^spooky$/i) && args[2].match(/^town$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+	if (args[0].match(/^spooky$/i) && args[1].match(/^town$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -279,8 +303,8 @@ var checkSpooky = function(args) {
 var checkPlay = function(args) {
 	var mapname = "Stunt Playground";
 	var id = 0;
-	if (args[0].match(/^stunt$/i) && args[2].match(/^playground$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+	if (args[0].match(/^stunt$/i) && args[1].match(/^playground$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -289,7 +313,16 @@ var checkTagtastic = function(args) {
 	var mapname = "Tagtastic";
 	var id = 0;
 	if (args[0].match(/^tagtastic$/i)) {
-		id = jsondata.officialmapids["Stunt"][mapname];
+		id = jsondata.officialmapids["Stunt"][mapname].id;
+	}
+	return id;
+};
+
+var checkNeonPark = function(args) {
+	var mapname = "Neon Park";
+	var id = 0;
+	if (args[0].match(/^neon$/i) && args[1].match(/^park$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
 };
@@ -315,12 +348,15 @@ var individualMaps = [
 	checkDesc,
 	checkDeta,
 	checkElev,
+	checkRedHeat,
+	checkDis,
 	checkCredits,
 	checkRefrac,
 	checkSpace,
 	checkSpooky,
 	checkPlay,
-	checkTagtastic
+	checkTagtastic,
+	checkNeonPark
 ];
 
 var checkMapID = function checkMapID(message, args) {

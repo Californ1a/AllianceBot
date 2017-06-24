@@ -1,52 +1,184 @@
 {
 	"officialmapids": {
     "Sprint": {
-      "Broken Symmetry": "1558337",
-      "Lost Society": "1558158",
-      "Negative Space": "1558398",
-      "Departure": "1558402",
-      "Friction": "1558436",
-      "Aftermath": "1558394",
-      "The Thing About Machines": "1558441",
-      "Amusement": "1558304",
-      "Corruption": "1558416",
-      "The Observer Effect": "1558453",
-      "Dissolution": "1558428",
-      "Falling Through": "1558435",
-      "Monolith": "1558429",
-      "Uncanny Valley": "1558467"
+      "Broken Symmetry": {
+				"id": "1558337",
+				"names": ["BS"]
+				},
+      "Lost Society": {
+				"id": "1558158",
+				"names": ["LS"]
+			},
+      "Negative Space": {
+				"id": "1558398",
+				"names": ["NS"]
+			},
+      "Departure": {
+				"id": "1558402",
+				"names": []
+			},
+      "Friction": {
+				"id": "1558436",
+				"names": []
+			},
+      "Aftermath": {
+				"id": "1558394",
+				"names": []
+			},
+      "The Thing About Machines": {
+				"id": "1558441",
+				"names": ["TTAM", "Machines", "Thing About Machines"]
+			},
+      "Amusement": {
+				"id": "1558304",
+				"names": []
+			},
+      "Corruption": {
+				"id": "1558416",
+				"names": []
+			},
+      "The Observer Effect": {
+				"id": "1558453",
+				"names": ["TOE", "Observer Effect", "Observer"]
+			},
+      "Dissolution": {
+				"id": "1558428",
+				"names": []
+			},
+      "Falling Through": {
+				"id": "1558435",
+				"names": ["FT", "Falling"]
+			},
+      "Monolith": {
+				"id": "1558429",
+				"names": []
+			},
+      "Uncanny Valley": {
+				"id": "1558467",
+				"names": ["Uncanny"]
+			}
     },
     "Speed and Style": {
-      "Broken Symmetry": "288411",
-      "Lost Society": "324741",
-      "Negative Space": "449730",
-      "Departure": "449731",
-      "Friction": "",
-      "Aftermath": "449669",
-      "The Thing About Machines": "449735",
-      "Amusement": "",
-      "Corruption": "274046",
-      "The Observer Effect": "288417",
-      "Dissolution": "273907",
-      "Falling Through": "274028",
-      "Monolith": "411280",
-      "Uncanny Valley": ""
+      "Broken Symmetry": {
+				"id": "",
+				"names": ["BS"]
+			},
+      "Lost Society": {
+				"id": "",
+				"names": ["LS"]
+			},
+      "Negative Space": {
+				"id": "",
+				"names": ["NS"]
+			},
+      "Departure": {
+				"id": "",
+				"names": []
+			},
+      "Friction": {
+				"id": "",
+				"names": []
+			},
+      "Aftermath": {
+				"id": "",
+				"names": []
+			},
+      "The Thing About Machines": {
+				"id": "",
+				"names": ["TTAM", "Machines", "Thing About Machines"]
+			},
+      "Amusement": {
+				"id": "",
+				"names": []
+			},
+      "Corruption": {
+				"id": "",
+				"names": []
+			},
+      "The Observer Effect": {
+				"id": "",
+				"names": ["TOE", "Observer Effect", "Observer"]
+			},
+      "Dissolution": {
+				"id": "",
+				"names": []
+			},
+      "Falling Through": {
+				"id": "",
+				"names": ["FT", "Falling"]
+			},
+      "Monolith": {
+				"id": "",
+				"names": []
+			},
+      "Uncanny Valley": {
+				"id": "",
+				"names": ["Uncanny"]
+			}
     },
     "Challenge": {
-      "Dodge": "1558764",
-      "Thunder Struck": "1558769",
-      "Grinder": "1558800",
-      "Descent": "1558836",
-      "Detached": "1558817",
-      "Elevation": "1558823"
+      "Dodge": {
+				"id": "1558764",
+				"names": []
+			},
+      "Thunder Struck": {
+				"id": "1558769",
+				"names": ["Thunderstruck", "TS"]
+			},
+      "Grinder": {
+				"id": "1558800",
+				"names": []
+			},
+      "Descent": {
+				"id": "1558836",
+				"names": []
+			},
+      "Detached": {
+				"id": "1558817",
+				"names": []
+			},
+      "Elevation": {
+				"id": "1558823",
+				"names": []
+			},
+			"Red Heat": {
+				"id": "2011155",
+				"names": ["RH"]
+			},
+			"Disassembly Line": {
+				"id": "2011156",
+				"names": ["DL"]
+			}
     },
     "Stunt": {
-      "Credits": "1588771",
-      "Refraction": "1589164",
-      "Space Skate": "1561263",
-      "Spooky Town": "1573802",
-      "Stunt Playground": "1561573",
-      "Tagtastic": "1572280"
+      "Credits": {
+				"id": "1588771",
+				"names": []
+			},
+      "Refraction": {
+				"id": "1589164",
+				"names": []
+			},
+      "Space Skate": {
+				"id": "1561263",
+				"names": []
+			},
+      "Spooky Town": {
+				"id": "1573802",
+				"names": []
+			},
+      "Stunt Playground": {
+				"id": "1561573",
+				"names": []
+			},
+      "Tagtastic": {
+				"id": "1572280",
+				"names": []
+			},
+			"Neon Park": {
+				"id": "1952913",
+				"names": []
+			}
     }
   }
 }

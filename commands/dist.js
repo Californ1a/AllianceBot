@@ -47,7 +47,7 @@ exports.run = (bot, msg, args) => {
 						var working = parseInt(sometest.toString(), 10);
 						var checkForStunt = false;
 						Object.keys(jsondata.officialmapids["Stunt"]).forEach(function(key) {
-							if (mapid === jsondata.officialmapids["Stunt"][key]) {
+							if (mapid === jsondata.officialmapids["Stunt"][key].id) {
 								checkForStunt = true;
 							}
 						});
