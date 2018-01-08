@@ -2,11 +2,12 @@ const connection = require("../util/connection.js");
 const scrambleconfig = require("../config.json").scramble;
 const game = require("../util/game.js");
 const send = require("../util/sendMessage.js");
-var delayBeforeFirstQ = scrambleconfig.delayBeforeFirstQuestion;
-var delayBeforeNextQ = scrambleconfig.delayBeforeNextQuestion;
-var delayBeforeNoA = scrambleconfig.delayBeforeNoAnswer;
-var trivStartUser;
-var startingScores;
+let delayBeforeFirstQ = scrambleconfig.delayBeforeFirstQuestion;
+let delayBeforeNextQ = scrambleconfig.delayBeforeNextQuestion;
+let delayBeforeNoA = scrambleconfig.delayBeforeNoAnswer;
+let awaitStart = false;
+let trivStartUser;
+let startingScores;
 
 exports.run = (bot, msg, args, perm, cmd) => {
 	var category = "default";
@@ -55,7 +56,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				console.log("wut2");
 			}
 		}
-	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
+	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152") && !awaitStart) {
 		if (isNaN(args[0])) {
 			return send(msg.channel, "Amount must be a number.");
 		}
@@ -71,14 +72,17 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				return send(msg.channel, "You can't start scramble with that few points.\r\nScramble costs 5 points to start and an additional 3 points for every minute you want to run the game (minimum 6 points).");
 			}
 			send(msg.channel, `Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of scramble time. Are you sure you want to start scramble?\r\nScramble costs 5 points to start and an additional 1 point for every minute you want to run the game.`);
+			awaitStart = true;
 			msg.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && msg.author.id === r.author.id, {
 				max: 1,
 				time: 30000,
 				errors: ["time"],
 			}).then((collected) => {
 				if (collected.first().content === "n" || collected.first().content === "no") {
+					awaitStart = false;
 					return send(msg.channel, "Scramble will not be started, no points deducted.");
 				}
+				awaitStart = false;
 				trivStartUser = collected.first().author;
 				var newScore = parseInt(response[0].score) - cost;
 				if (newScore > 0) {
@@ -111,9 +115,12 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					return;
 				});
 			}).catch(() => {
+				awaitStart = false;
 				send(msg.channel, "You took too long to respond. Scramble will not be started, no points deducted.");
 			});
 		}).catch(e => console.error(e.stack));
+	} else if (awaitStart) {
+		return;
 	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.scramble.getStatus() && !game.trivia.getStatus()) {
 		send(msg.channel, "```markdown\r\n# SCRAMBLE STOPPED!```").then(() => {
 			game.scramble.toggleStatus();

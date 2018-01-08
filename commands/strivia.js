@@ -2,12 +2,13 @@ const connection = require("../util/connection.js");
 const triviaconfig = require("../config.json").trivia;
 const game = require("../util/game.js");
 const send = require("../util/sendMessage.js");
-var delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
-var delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
-var delayBeforeH = triviaconfig.delayBeforeHint;
-var delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
-var trivStartUser;
-var startingScores;
+let delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
+let delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
+let delayBeforeH = triviaconfig.delayBeforeHint;
+let delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
+let awaitStart = false;
+let trivStartUser;
+let startingScores;
 
 exports.run = (bot, msg, args, perm, cmd) => {
 	var category = "default";
@@ -53,7 +54,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				console.log("wut4");
 			}
 		}
-	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
+	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152") && !awaitStart) {
 		if (isNaN(args[0])) {
 			return send(msg.channel, "Amount must be a number.");
 		}
@@ -69,14 +70,17 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				return send(msg.channel, "You can't start trivia with that few points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game (minimum 7 points).");
 			}
 			send(msg.channel, `Spending ${cost} points will get you ${minutes} ${(minutes < 2) ? "minute" : "minutes"} of trivia time. Are you sure you want to start trivia?\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
+			awaitStart = true;
 			msg.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && msg.author.id === r.author.id, {
 				max: 1,
 				time: 30000,
 				errors: ["time"],
 			}).then((collected) => {
 				if (collected.first().content === "n" || collected.first().content === "no") {
+					awaitStart = false;
 					return send(msg.channel, "Trivia will not be started, no points deducted.");
 				}
+				awaitStart = false;
 				trivStartUser = collected.first().author;
 				var newScore = parseInt(response[0].score) - cost;
 				if (newScore > 0) {
@@ -109,9 +113,12 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					return;
 				});
 			}).catch(() => {
+				awaitStart = false;
 				send(msg.channel, "You took too long to respond. Trivia will not be started, no points deducted.");
 			});
 		}).catch(e => console.error(e.stack));
+	} else if (awaitStart) {
+		return;
 	} else if (trivStartUser && msg.author.id === trivStartUser.id && game.getTriviaStatus()) {
 		send(msg.channel, "```markdown\r\n# TRIVIA STOPPED!```").then(() => {
 			game.trivia.toggleStatus();

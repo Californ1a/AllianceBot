@@ -17,6 +17,10 @@
 				"id": "1558402",
 				"names": []
 			},
+			"Ground Zero": {
+				"id": "",
+				"names": ["GZ"]
+			},
       "Friction": {
 				"id": "1558436",
 				"names": []
@@ -56,6 +60,10 @@
       "Uncanny Valley": {
 				"id": "1558467",
 				"names": ["Uncanny"]
+			},
+			"The Manor": {
+				"id": "",
+				"names": ["Manor"]
 			}
     },
     "Speed and Style": {

@@ -1,45 +1,68 @@
-const pre = require("../config.json").prefix;
 const connection = require("../util/connection.js");
 const colors = require("colors");
+//var config;
 const escape = require("../util/escapeChars.js");
-const config = require("../config.json");
 const send = require("../util/sendMessage.js");
-const membrolename = config.membrolename;
-const modrolename = config.modrolename;
-const adminrolename = config.adminrolename;
+//const pre = config.prefix;
+// const modrolename = config.modrolename;
+// const membrolename = config.membrolename;
+// const adminrolename = config.adminrolename;
 
-exports.run = (bot, msg, args) => {
-	if (!isNaN(args[0]) || args[0].includes(pre) || args.length < 4 || isNaN(args[1]) || parseInt(args[1]) > 4 || parseInt(args[1]) < 0 || (args[2] !== "true" && args[2] !== "false")) {
-		send(msg.channel, `Incorrect syntax. Use \`${pre}help newcom\` for help.`);
-	} else {
-		var comname = escape.chars(args[0]);
-		connection.select("idservcom", "servcom", `server_id=${msg.guild.id} AND comname='${comname}'`).then(response => {
-			if (!response[0]) {
-				console.log(colors.red("Command does not exist."));
-			} else {
-				console.log(colors.red("Command exists."));
-				var permslvl = parseInt(args[1]);
-				var inpm = args[2];
-				var fullmsg = args;
-				fullmsg.splice(0, 3);
-				var escdMsg = escape.chars(fullmsg.join(" "));
-				console.log(inpm);
-				console.log(colors.red(`Attempting to edit the command \`${comname}\` with the resulting message \`${escdMsg}\` on server \`${msg.guild.name}\`.`));
-				connection.update("servcom", `comtext='\''${escdMsg}'\'', permlvl=${permslvl}, inpm='${inpm}'`, `idservcom=${response[0].idservcom}`).then(() => {
-					console.log(colors.red("Successfully edited command."));
-					send(msg.channel, "Success.");
-				}).catch(e => {
-					console.error(e.stack);
-					send(msg.channel, "Failed.");
-					return;
-				});
-			}
+
+exports.run = (bot, msg, args, perms, cmd, flags) => {
+	// const config = bot.servConf;
+	// const pre = config.prefix;
+
+	//checks for all the right flags to be assigned values by user
+	if (!flags) {
+		return send(msg.channel, "You must specify flags.");
+	} else if (!flags.name) {
+		return send(msg.channel, "You must specify a name.");
+	} else if (flags.name.includes(" ")) {
+		return send(msg.channel, "The name cannot have any spaces.");
+	} else if (flags.inpm && !flags.inpm.match(/^(true|false)$/)) {
+		return send(msg.channel, "PM must be true or false.");
+	}
+
+
+	let cmdname = escape.chars(flags.name);
+	if (cmdname !== flags.name) {
+		return send(msg.channel, "Invalid characters used in command name.");
+	}
+	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${cmdname}'`).then(r => {
+		if (!r[0]) {
+			return send(msg.channel, `The command \`${cmdname}\` does not exist.`);
+		} else if (r[0].type === "quote" && flags.message) {
+			return send(msg.channel, "You can't change the message on a quote-type command.");
+		} else if (flags.type && flags.type !== r[0].type) {
+			return send(msg.channel, "You cannot change the command type. Delete the command and re-create it to change type.");
+		}
+
+		let assign = [];
+		if (flags.permlvl) {
+			assign.push(`permlvl=${flags.permlvl}`);
+		}
+		if (flags.inpm) {
+			assign.push(`inpm='${flags.inpm}'`);
+		}
+		if (flags.message) {
+			let comtext = `'${flags.message}'`;
+			let escdMsg = escape.chars(comtext);
+			assign.push(`comtext='${escdMsg}'`);
+		}
+		let assignment = assign.join(", ");
+
+		console.log(colors.red(`Attempting to edit the command \`${cmdname}\`.`));
+
+		connection.update("servcom", assignment, `comname='${cmdname}' AND server_id='${msg.guild.id}'`).then(() => {
+			console.log(colors.red("Successfully edited command."));
+			send(msg.channel, "Success");
 		}).catch(e => {
-			send(msg.channel, "Failed.");
-			console.error(e.stack);
+			send(msg.channel, "Failed");
+			console.error(e);
 			return;
 		});
-	}
+	});
 };
 
 exports.conf = {
@@ -47,12 +70,20 @@ exports.conf = {
 	aliases: ["ec"],
 	permLevel: 2,
 	onCooldown: false,
-	cooldownTimer: 1000
+	cooldownTimer: 5000
 };
 
 exports.help = {
 	name: "editcom",
 	description: "Edit an already-existing custom command.",
-	extendedDescription: `<command-name>\n* Name of command without prefix, must be already-existing\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is ${membrolename}s, 2 is ${modrolename}s, 3 is ${adminrolename}\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"${pre}newcom spook 0 false BOO! Scared ya!" :: The edited command would be "${pre}spook" (enabled for all members and would reply in-channel) and the returned message would be "BOO! Scared ya!"`,
-	usage: "editcom <command-name> <perm-level> <reply-in-pm> <message>"
+	extendedDescription: `<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is Members, 2 is Moderators, 3 is Admins\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"editcom --n spook --m Sorry for the scare!" :: The command being edited would be "spook" and the edited message would be "Sorry for the scare!"`,
+	usage: "editcom --name <command name> --permlvl <perm level> --inpm <reply in pm> --message <message>"
+};
+
+exports.f = {
+	name: ["n", "name"],
+	permlvl: ["permlvl", "perm", "p", "pl", "lvl", "l"],
+	inpm: ["inpm", "pm"],
+	type: ["t", "type"],
+	message: ["msg", "message", "m"]
 };

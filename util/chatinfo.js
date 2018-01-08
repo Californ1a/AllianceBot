@@ -125,13 +125,21 @@ var writeLineToAllLogs = function(bot, guild, line) {
 var formatChatlog = function(message) {
 	var messageTime = messageDate(message);
 	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
-	var member = message.guild.members.get(message.author.id);
-	var isbot = (member.user.bot) ? "{BOT}" : "";
+	let member = message.member;
+	let author = message.author;
+	let isbot = (author.bot) ? "{BOT}" : "";
 	//var user = getMaxRole(member);
-	var chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
-	var fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
-	var chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
-	var consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
+	let chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
+	let fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
+	let chatlinedata;
+	let consoleChat;
+	if (!member) {
+		chatlinedata = `${messageTime.formattedDate} | ${isbot}(Guest)`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === message.guild.owner.id)?"Owner":"Guest"})`;
+	} else {
+		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.highestRole.name === "@everyone")?((member.id === message.guild.owner.id)?"Owner":"Guest"):member.highestRole.name})`;
+	}
 	var att = [];
 	var formattedAtturls = "";
 	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
@@ -146,8 +154,13 @@ var formatChatlog = function(message) {
 			return;
 		}
 	});
-	chatlinedata += `${member.displayName}: ${messageContent} `;
-	consoleChat += `${member.displayName}: ${messageContent} `;
+	if (!member) {
+		chatlinedata += `${author.username}: ${messageContent} `;
+		consoleChat += `${author.username}: ${messageContent} `;
+	} else {
+		chatlinedata += `${member.displayName}: ${messageContent} `;
+		consoleChat += `${member.displayName}: ${messageContent} `;
+	}
 	if (message.attachments.size > 0) {
 		var attc = message.attachments.array();
 		var i = 0;

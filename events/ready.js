@@ -12,6 +12,11 @@ var randomNickChange = function(bot) {
 	setTimeout(() => {
 		console.log(glitches);
 		console.log(rndmName.length);
+		if (!botMember) {
+			setTimeout(() => {
+				randomNickChange(bot);
+			}, ms);
+		}
 		botMember.setNickname(rndmName).then(bm => {
 			console.log(colors.red(`Bot changed nick to ${rndmName}`));
 			setTimeout(() => {
@@ -20,6 +25,12 @@ var randomNickChange = function(bot) {
 					randomNickChange(bot);
 				});
 			}, 0);
+		}).catch(e => {
+			console.error(e);
+			botMember.setNickname("").then(() => {
+				console.log(colors.red("Bot nick reverted."));
+				randomNickChange(bot);
+			}).catch(e => console.error(`Double Catch!! ${e}`));
 		});
 	}, ms);
 };
@@ -27,7 +38,12 @@ var randomNickChange = function(bot) {
 module.exports = bot => {
 	console.log(colors.red(`Bot online and ready on ${bot.guilds.size} ${(bot.guilds.size >= 2) ? "servers" : "server"}.`));
 	bot.user.setStatus("online").catch(e => console.error(e.stack));
-	bot.user.setGame(`Distance | ${pre}help`).catch(e => console.error(e.stack));
+	bot.user.setPresence({
+		game: {
+			name: `Distance | ${pre}help`,
+			type: 0
+		}
+	}).catch(e => console.error(e.stack));
 	if (bot.guilds.get("83078957620002816")) {
 		randomNickChange(bot);
 	}

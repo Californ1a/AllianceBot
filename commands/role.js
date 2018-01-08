@@ -1,4 +1,4 @@
-const pre = ("../config.json").prefix;
+const pre = require("../config.json").prefix;
 const send = require("../util/sendMessage.js");
 require("../util/Array.prototype.rejoin.js");
 
@@ -48,6 +48,6 @@ exports.conf = {
 exports.help = {
 	name: "role",
 	description: "Set or remove roles.",
-	extendedDescription: `<set(add)|del>\n* Either add or remove the specified role\n\n<mention>\n* An @mention for the user you want to edit the role of.\n\n<role-name>\n* Name of the role to assign or remve.\\n= Examples =\n"${pre}role set @Alliance Member" :: This will assign the role "Member" to the user "Alliance".`,
+	extendedDescription: `<set(add)|del>\n* Either add or remove the specified role\n\n<mention>\n* An @mention for the user you want to edit the role of.\n\n<role-name>\n* Name of the role to assign or remve.\n\n= Examples =\n"${pre}role set @Alliance Member" :: This will assign the role "Member" to the user "Alliance".`,
 	usage: "role <set|del> <mention> <role-name>"
 };

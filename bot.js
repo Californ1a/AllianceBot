@@ -17,6 +17,7 @@ require("opbeat").start();
 // });
 // var db = admin.database();
 const connection = require("./util/connection.js");
+const manageTimeout = require("./util/manageTimeout.js");
 var probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
@@ -26,8 +27,10 @@ const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
 const reminders = require("./util/reminders.js");
+const Duration = require("duration-js");
 //const config = require("./config.json");
 const Twit = require("twit");
+//const util = require("util");
 const twitconfig = {
 	consumer_key: process.env.TWITTER_CONSUMER_KEY,
 	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -103,11 +106,13 @@ bot.reload = function(command) {
 	});
 };
 
+bot.timer = new Discord.Collection();
+
 bot.servConf = new Discord.Collection();
 bot.confRefresh = () => {
 	return new Promise((resolve, reject) => {
 		connection.select("*", "servers").then(serv => {
-			var i = 0;
+			let i = 0;
 			for (i; i < serv.length; i++) {
 				bot.servConf.set(serv[i].serverid, serv[i]);
 			}
@@ -121,6 +126,30 @@ connection.createAllTables().then(() => {
 	bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
+	connection.query("select * from timeout inner join servers on timeout.server_id=servers.serverid").then(to => {
+		if (to[0]) {
+			console.log(colors.red("Checking timeouts"));
+			let now = Date.now();
+			let enddateMS;
+			let remainingMS;
+			let i = 0;
+			for (i; i < to.length; i++) {
+				enddateMS = to[i].enddate.getTime();
+				remainingMS = (enddateMS - now > 0) ? (enddateMS - now) : 1000;
+				bot.guilds.forEach(g => {
+					let memberTest = g.members.get(to[i].memberid);
+					if (memberTest && g.id === to[i].server_id) {
+						let timeoutData = to[i];
+						let toTimer = setTimeout(function() {
+							manageTimeout(memberTest, bot, g.roles.find("name", timeoutData.timeoutrole), timeoutData.server_id);
+						}, new Duration(`${remainingMS}ms`));
+						bot.timer.set(to[i].memberid, toTimer);
+					}
+				});
+			}
+			console.log(colors.red("Done checking timeouts"));
+		}
+	});
 }).catch(console.error);
 
 //get the permission level of the member who sent message
@@ -129,14 +158,14 @@ bot.elevation = function(msg) {
 		if (msg.author.id === require("./config.json").ownerid) {
 			return 4;
 		}
-		return 0;
+		return 1;
 	}
 	var conf = bot.servConf.get(msg.guild.id);
 	var memberrole = conf.membrole;
 	var moderatorrole = conf.modrole;
 	var administratorrole = conf.adminrole;
 	let permlvl = 0;
-	if (msg.guild) {
+	if (msg.guild && msg.member) {
 		if (memberrole) {
 			let membRole = msg.guild.roles.find("name", memberrole);
 			if (membRole && msg.member.roles.has(membRole.id)) {
@@ -154,6 +183,9 @@ bot.elevation = function(msg) {
 			if (adminRole && msg.member.roles.has(adminRole.id)) {
 				permlvl = 3;
 			}
+		}
+		if (msg.author.id === msg.guild.owner.id) {
+			permlvl = 3;
 		}
 	}
 	if (msg.author.id === require("./config.json").ownerid) {

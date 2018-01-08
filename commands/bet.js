@@ -139,7 +139,7 @@ exports.run = (bot, msg, args, perm) => {
 		return msg.reply("Your bet amount must be a positive number.");
 	}
 	var amount = parseInt(args[0]);
-	if (amount < 0) {
+	if (amount <= 0) {
 		return msg.reply("Your bet amount must be a positive number.");
 	}
 	sm.getScore(msg.guild, msg.member).then(res => {

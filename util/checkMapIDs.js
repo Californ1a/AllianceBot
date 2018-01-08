@@ -55,6 +55,19 @@ var checkNS = function(args) {
 	return id;
 };
 
+var checkGZ = function(args) {
+	var mapname = "Ground Zero";
+	var id = 0;
+	if (args[0].match(/^ground$/i)) {
+		if (typeof args[1] === "string" && (args[1].match(/^zero$/i))) {
+			id = getMapID(args, mapname);
+		}
+	} else if (args[0].match(/^gz$/i)) {
+		id = getMapID(args, mapname);
+	}
+	return id;
+};
+
 var checkDep = function(args) {
 	var mapname = "Departure";
 	var id = 0;
@@ -180,6 +193,19 @@ var checkUncanny = function(args) {
 	return id;
 };
 
+var checkManor = function(args) {
+	var mapname = "The Manor";
+	var id = 0;
+	if (args[0].match(/^the$/i)) {
+		if (typeof args[1] === "string" && (args[1].match(/^manor$/i))) {
+			id = getMapID(args, mapname);
+		}
+	} else if (args[0].match(/^manor$/i)) {
+		id = getMapID(args, mapname);
+	}
+	return id;
+};
+
 var checkDodge = function(args) {
 	var mapname = "Dodge";
 	var id = 0;
@@ -285,7 +311,7 @@ var checkRefrac = function(args) {
 var checkSpace = function(args) {
 	var mapname = "Space Skate";
 	var id = 0;
-	if (args[0].match(/^space$/i) && args[1].match(/^skate$/i)) {
+	if (args[0].match(/^space$/i) && typeof args[1] === "string" && args[1].match(/^skate$/i)) {
 		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
@@ -294,7 +320,7 @@ var checkSpace = function(args) {
 var checkSpooky = function(args) {
 	var mapname = "Spooky Town";
 	var id = 0;
-	if (args[0].match(/^spooky$/i) && args[1].match(/^town$/i)) {
+	if (args[0].match(/^spooky$/i) && typeof args[1] === "string" && args[1].match(/^town$/i)) {
 		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
@@ -303,7 +329,7 @@ var checkSpooky = function(args) {
 var checkPlay = function(args) {
 	var mapname = "Stunt Playground";
 	var id = 0;
-	if (args[0].match(/^stunt$/i) && args[1].match(/^playground$/i)) {
+	if (args[0].match(/^stunt$/i) && typeof args[1] === "string" && args[1].match(/^playground$/i)) {
 		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
@@ -321,7 +347,9 @@ var checkTagtastic = function(args) {
 var checkNeonPark = function(args) {
 	var mapname = "Neon Park";
 	var id = 0;
-	if (args[0].match(/^neon$/i) && args[1].match(/^park$/i)) {
+	if (args[0].match(/^neon$/i) && typeof args[1] === "string" && args[1].match(/^park$/i)) {
+		id = jsondata.officialmapids["Stunt"][mapname].id;
+	} else if (args[0].match(/^np$/i)) {
 		id = jsondata.officialmapids["Stunt"][mapname].id;
 	}
 	return id;
@@ -332,6 +360,7 @@ var individualMaps = [
 	checkLS,
 	checkNS,
 	checkDep,
+	checkGZ,
 	checkFric,
 	checkAft,
 	checkMachines,
@@ -342,6 +371,7 @@ var individualMaps = [
 	checkFall,
 	checkMon,
 	checkUncanny,
+	checkManor,
 	checkDodge,
 	checkThunder,
 	checkGrind,

@@ -22,7 +22,7 @@ exports.run = (bot, msg, args, perm) => {
 	if (guild.id === "83078957620002816") {
 		let botMember = guild.members.get(bot.user.id);
 		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.highestRole.position > member.highestRole.position) {
-			let playRole = guild.roles.find("name", `Playing ${guild.name}`);
+			let playRole = guild.roles.find("name", "Playing Distance");
 			if (!playRole) {
 				return;
 			}

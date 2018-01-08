@@ -3,20 +3,33 @@ const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
 const colors = require("colors");
 
+let delWinners = (guild, winnerArray) => {
+	return new Promise((resolve, reject) => {
+		let i = 0;
+		for (i; i < winnerArray.length; i++) {
+			connection.del("giveusers", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${guild.id}' AND userid='${winnerArray[i].userid}'`).catch(e => reject(e));
+		}
+	});
+};
+
 var getWinners = (msg, winnerCount) => {
 	return new Promise((resolve, reject) => {
 		connection.select("*", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${msg.guild.id}' order by -log(rand())/((likelihood/entries)*100) limit ${winnerCount}`).then(win => {
-			var message = "Winners:";
-			var i = 0;
+			let message = "Winners:";
+			let i = 0;
+			let winners = [];
 			for (i; i < win.length; i++) {
-				if (!msg.guild.members.get(win[i].userid)) {
-					connection.del("giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${msg.guild.id}' AND userid=${win[i].userid}`).then(() => {
+				if (!msg.guild.members.get(win[i].userid) || `${msg.guild.members.get(win[i].userid)}` === "undefined") {
+					connection.del("giveusers", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${msg.guild.id}' AND userid='${win[i].userid}'`).then(() => {
+						winners = [];
 						return getWinners(msg, winnerCount);
 					}).catch(e => reject(e));
 				}
-				message += `\n${i+1}. ${msg.guild.members.get(win[i].userid)} with ${win[i].likelihood} entries`;
+				message += `\n${i+1}. ${msg.guild.members.get(win[i].userid)} with ${(win[i].likelihood === 1)?"1 entry":`${win[i].likelihood} entries`}`;
+				winners.push(win[i]);
 			}
-			message += `\nCongratulations! (max ${win[0].entries} entries)`;
+			delWinners(msg.guild, winners);
+			message += `\nCongratulations! (max ${(win[0].entries === 1)?"1 entry":`${win[0].entries} entries`})`;
 			resolve(message);
 		}).catch(e => reject(e));
 	});
@@ -38,7 +51,7 @@ var getCurrentEntrants = (channel, topMessage) => {
 							nameArray.push(channel.guild.members.get(users[i].userid).displayName);
 							entriesArray.push(users[i].likelihood);
 						} else {
-							connection.del("giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}' AND userid=${users[i].userid}`).then(() => {
+							connection.del("giveusers", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}' AND userid='${users[i].userid}'`).then(() => {
 								console.log(colors.red(`Deleted user with id '${users[i].userid}' from the giveaway.`));
 							}).catch(e => reject(e));
 							return getCurrentEntrants(channel);
@@ -107,11 +120,11 @@ exports.run = (bot, msg, args, perm) => {
 		} else {
 			response = response[0];
 			if (perm >= 2) {
-				const pre = bot.servConf.get(msg.guild.id).prefix;
-				let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
-				if (command === "enter") {
-					return send(msg.channel, "Roles with permission to give themselves points cannot enter giveaways.");
-				}
+				// const pre = bot.servConf.get(msg.guild.id).prefix;
+				// let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
+				// if (command === "enter") {
+				// 	return send(msg.channel, "Roles with permission to give themselves points cannot enter giveaways.");
+				// }
 				connection.select("COUNT(*) as count", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${msg.guild.id}'`).then(c => {
 					c = c[0];
 					if (!args[0]) {
@@ -128,7 +141,7 @@ exports.run = (bot, msg, args, perm) => {
 					} else if (winnerCount > c.count) {
 						return send(msg.channel, `The winner amount cannot be more than the current amount of entrants (${c.count}).`);
 					} else {
-						send(msg.channel, `A giveaway is currently running with ${(c.count > 1) ? `${c.count} entrants. Do you want to end it, draw ${winnerCount} random ${(winnerCount > 1) ? "winners" : "winner"}, and remove all entrants? [y/n]` : (c.count === 1) ? "1 entrant. Do you want to end it? [y/n]" : "0 entrants. Do you want to end it? [y/n]"}`).then(() => {
+						send(msg.channel, `A giveaway is currently running with ${(c.count > 1) ? `${c.count} entrants. Do you want to end it ${(winnerCount > 0)?`and draw ${winnerCount} random ${(winnerCount === 1) ? "winner" : "winners"}`:"with no winners"}? [y/n]` : (c.count === 1) ? "1 entrant. Do you want to end it and remove all entrants? [y/n]" : "0 entrants. Do you want to end it? [y/n]"}`).then(() => {
 							msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 								max: 1,
 								time: 20000,
@@ -138,13 +151,13 @@ exports.run = (bot, msg, args, perm) => {
 									return send(msg.channel, "Giveaway will continue.");
 								} else if (winnerCount === 0) {
 									send(msg.channel, "Giveaway ended with no winners.").then(() => {
-										connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
+										connection.del("giveaway", `server_id="${msg.guild.id}"`).catch(console.error);
 										return;
 									});
 								} else {
 									getWinners(msg, winnerCount).then(m => {
 										send(msg.channel, m);
-										connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
+										//connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
 									});
 								}
 							}).catch(() => {

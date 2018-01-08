@@ -8,11 +8,11 @@ exports.run = (bot, msg, args, perm) => {
 			return send(msg.channel, "No giveaway currently running.");
 		} else {
 			response = response[0];
-			if (perm >= 2) {
-				return send(msg.channel, "Roles with permission to give themselves points cannot enter giveaways.");
+			if (perm >= 2 && response.cost > 0) {
+				return send(msg.channel, "Roles with permission to give themselves points cannot enter giveaways that require spending points.");
 			} else {
 				sm.getScore(msg.guild, msg.member).then(ret => {
-					if (ret.score === 0) {
+					if (ret.score === 0 && response.cost > 0) {
 						return send(msg.channel, "You have no points.");
 					} else if (ret.score < response.cost) {
 						return send(msg.channel, `You only have ${ret.score} points. You need ${response.cost} to enter the giveaway.`);

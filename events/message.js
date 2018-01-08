@@ -23,7 +23,7 @@ module.exports = (bot, meter, msg) => {
 			} else if (bot.aliases.has(command)) {
 				cmd = bot.commands.get(bot.aliases.get(command));
 			}
-			if (cmd && perms > cmd.conf.permLevel && !cmd.conf.guildOnly) {
+			if (cmd && perms >= cmd.conf.permLevel && !cmd.conf.guildOnly) {
 				var flags;
 				if (cmd.flags) {
 					flags = parseFlags(cmd, args);
@@ -54,7 +54,7 @@ module.exports = (bot, meter, msg) => {
 			console.error(error.stack);
 		}
 	});
-	if (membrole && !msg.guild.members.get(msg.author.id).roles.exists("name", membrole)) {
+	if (membrole && (msg.guild.members.get(msg.author.id) && !msg.guild.members.get(msg.author.id).roles.exists("name", membrole))) {
 		guestToMemb(bot, msg);
 	}
 	if (!msg.content.startsWith(pre)) {
@@ -109,7 +109,7 @@ module.exports = (bot, meter, msg) => {
 			return;
 		}
 		connection.select("commandname", "commands", `server_id='${msg.guild.id}' AND commandname='${cmd.help.name}'`).then(response => {
-			if (!response[0] && cmd.conf.perm < 4) {
+			if (!response[0] && cmd.conf.permLevel < 4) {
 				console.log(colors.red("Command not enabled for this server."));
 				return;
 			}
