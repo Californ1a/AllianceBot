@@ -62,4 +62,7 @@ commands/test.js
 util/firebase.js
 commands/featurerequest.js
 commands/playtest.js
+commands/lockdown.js
 *.dat
+package-lock.json
+*.bak
