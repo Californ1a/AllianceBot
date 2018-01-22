@@ -9,16 +9,27 @@ function clean(text) {
 }
 
 exports.run = (bot, msg, args) => {
+	let code = args.join(" ");
 	try {
-		var code = args.join(" ");
-		var evaled = eval(code);
-
+		let evaled = eval(code);
+		let type = typeof evaled;
 		if (typeof evaled !== "string") {
 			evaled = require("util").inspect(evaled);
 		}
-		send(msg.channel, `\`\`\`xl\n${clean(evaled)}\n\`\`\``);
+		let cleaned = clean(evaled);
+		send(msg.channel, `**EVAL:**\n\`\`\`js\n${code}\`\`\`\n**Evaluates to:**\n\`\`\`xl\n${cleaned}\`\`\`\n**Type:**\n\`\`\`fix\n${type}\`\`\``).catch(e => {
+			let err = e.response.request.req.res;
+			if (!err) {
+				err = e.response;
+				if (!err) {
+					return console.error(e);
+				}
+			}
+			let text = JSON.parse(err.text);
+			send(msg.channel, `**EVAL:**\`\`\`js\n${code}\`\`\`\n**Error:**\n\`\`\`js\n${err.statusCode} ${err.statusMessage}: ${text.content[0]}\`\`\``);
+		});
 	} catch (err) {
-		send(msg.channel, `\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
+		send(msg.channel, `**EVAL:**\`\`\`js\n${code}\`\`\`\n**Error:**\n\`\`\`js\n${clean(err)}\`\`\``);
 	}
 };
 
