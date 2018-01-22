@@ -1,9 +1,9 @@
 const colors = require("colors");
 const connection = require("../util/connection.js");
 
-module.exports = (bot, guild) => {
-	console.log(colors.red(`Trying to insert server '${guild.name}' into database...`));
-	var info = {
+let addServer = (bot, guild) => {
+	console.log(colors.red(`Does not exist, trying to insert server '${guild.name}' into database...`));
+	let info = {
 		"servername": `'${guild.name}'`,
 		"serverid": guild.id,
 		"ownerid": guild.owner.id,
@@ -19,4 +19,15 @@ module.exports = (bot, guild) => {
 			});
 		}).catch(e => console.error(e.stack));
 	}).catch(e => console.error(e.stack));
+};
+
+module.exports = (bot, guild) => {
+	console.log(colors.red(`Joined server '${guild.name}' - Checking if exists...`));
+	connection.select("*", "servers", `serverid='${guild.id}'`).then(r => {
+		if (!r[0]) {
+			addServer(bot, guild);
+		} else {
+			console.log(colors.yellow(`Server '${guild.name}' already exists.`));
+		}
+	}).catch(e => console.error(e));
 };
