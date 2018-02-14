@@ -280,12 +280,12 @@ var checkRedHeat = function(args) {
 };
 
 var checkDis = function(args) {
-	var mapname = "Falling Through";
+	var mapname = "Disassembly Line";
 	var id = 0;
 	if (args[0].match(/^disassembly$/i)) {
-		id = getMapID(args, mapname);
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	} else if (args[0].match(/^dl$/i)) {
-		id = getMapID(args, mapname);
+		id = jsondata.officialmapids["Challenge"][mapname].id;
 	}
 	return id;
 };
