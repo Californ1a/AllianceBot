@@ -47,5 +47,6 @@ module.exports = (bot) => {
 	}).catch(e => console.error(e.stack));
 	if (bot.guilds.get("83078957620002816")) {
 		randomNickChange(bot);
+		distanceServers(bot);
 	}
 };
