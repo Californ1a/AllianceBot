@@ -1,4 +1,4 @@
-var send = (chan, msg, options) => {
+let send = (chan, msg, options) => {
 	return new Promise((resolve, reject) => {
 		if (options) {
 			chan.send(msg, options).then(m => {

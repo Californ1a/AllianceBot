@@ -1,17 +1,18 @@
 const colors = require("colors");
+const distanceServers = require("../util/distanceServers.js");
 const pre = require("../config.json").prefix;
 const glitchNames = ["T͠h̷e̛ A҉ll̨i̡anc̵e", "T̕͝h̡͏e A͝l͏l̵i̡̛͡à̧̕n̨͜҉ce͞", "T͘̕͟h̵͟͡e͘͞ A̢͞l̀͡li̡̢͏̀a̶̕nc̶̢e", "ŦҤE λŁŁłλ₦₡E", "Ţђę Ąɭɭįąŋçę", "Ťhë ÅÎÎīåñċë", "Ṫḧḕ Ḁḷḷḭḁṅḉḕ", "T̷h̷e̴ ̶A̴l̶l̵i̷a̶n̵c̴e̸", "T̴͖̉h̶̾e̷̿͝ ̴̆̚A̴l̸l̶͂i̷an̶̂c̸͝e"];
 
-var randomNickChange = function(bot) {
-	var botMember = bot.guilds.get("83078957620002816").members.get(bot.user.id);
-	var sec = Math.floor(Math.random() * 3600) + 1800;
-	var ms = sec * 1000;
-	var glitches = Math.floor(Math.random() * glitchNames.length);
-	var rndmName = glitchNames[glitches];
+let randomNickChange = function(bot) {
+	let botMember = bot.guilds.get("83078957620002816").members.get(bot.user.id);
+	let sec = Math.floor(Math.random() * 3600) + 1800;
+	let ms = sec * 1000;
+	let glitches = Math.floor(Math.random() * glitchNames.length);
+	let rndmName = glitchNames[glitches];
 
 	setTimeout(() => {
-		console.log(glitches);
-		console.log(rndmName.length);
+		//console.log(glitches);
+		//console.log(rndmName.length);
 		if (!botMember) {
 			setTimeout(() => {
 				randomNickChange(bot);
@@ -35,7 +36,7 @@ var randomNickChange = function(bot) {
 	}, ms);
 };
 
-module.exports = bot => {
+module.exports = (bot) => {
 	console.log(colors.red(`Bot online and ready on ${bot.guilds.size} ${(bot.guilds.size >= 2) ? "servers" : "server"}.`));
 	bot.user.setStatus("online").catch(e => console.error(e.stack));
 	bot.user.setPresence({
