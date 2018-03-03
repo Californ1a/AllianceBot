@@ -41,8 +41,9 @@ let updateEmbed = (bot, servers) => {
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (let serv of servers) {
+			let servName = serv.serverName.replace(/^\[[a-zA-Z0-9]{6}\]/i, "");
 			fieldsArray.push({
-				"name": (serv.passwordProtected) ? `~~${serv.serverName}~~` : serv.serverName,
+				"name": (serv.passwordProtected) ? `~~${servName}~~` : servName,
 				"value": `${serv.mode} (${serv.connectedPlayers}/${serv.playerLimit}) \`${serv.build}\``,
 				"inline": true
 			});
@@ -57,7 +58,7 @@ let updateEmbed = (bot, servers) => {
 		limit: 20
 	}).then(messages => {
 		if (messages.size === 0) {
-			send(channel, "a", {
+			send(channel, "Distance Server List", {
 				embed: serversEmbed
 			});
 		} else {
@@ -69,13 +70,13 @@ let updateEmbed = (bot, servers) => {
 				});
 			}
 			if (bm.size > 0) {
-				bm.first().edit("b", {
+				bm.first().edit("Distance Server List", {
 					embed: serversEmbed
 				}).then(() => {
 					console.log(colors.grey("Updated Distance server list"));
 				});
 			} else {
-				send(channel, "c", {
+				send(channel, "Distance Server List", {
 					embed: serversEmbed
 				});
 			}
