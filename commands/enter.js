@@ -19,6 +19,7 @@ exports.run = (bot, msg, args, perm) => {
 					} else if (args[0] && !isNaN(args[0]) && (ret.score < response.cost * parseInt(args[0]))) {
 						return send(msg.channel, `You only have ${ret.score} points. You don't have enough to enter ${args[0]} times (${response.cost * parseInt(args[0])}).`);
 					}
+					let entriesToAdd;
 					connection.select("*", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(ent => {
 						var info;
 						if (ent[0]) {
@@ -28,7 +29,7 @@ exports.run = (bot, msg, args, perm) => {
 							if (args[0] && !isNaN(args[0]) && (ent[0].likelihood + parseInt(args[0]) > response.entries || parseInt(args[0]) < 0)) {
 								return send(msg.channel, `You can only enter ${response.entries-ent[0].likelihood} more time${(response.entries-ent[0].likelihood > 1) ? "s" : ""} and cannot have an entry amount less than or equal to 0.`);
 							}
-							var entriesToAdd = 1;
+							entriesToAdd = 1;
 							if (args[0] && !isNaN(args[0]) && ent[0].likelihood + parseInt(args[0]) <= response.entries && parseInt(args[0]) > 0) {
 								entriesToAdd = parseInt(args[0]);
 							}

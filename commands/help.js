@@ -36,9 +36,9 @@ exports.run = (bot, msg, args, perm) => {
 			bot.commands.forEach(cmd => {
 				if (perm === 4) {
 					//
-					nextCmd = `${cmd.help.name} (${cmd.conf.permLevel})${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((cmd.conf.permLevel === undefined) ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
+					nextCmd = `${cmd.help.name} (${cmd.conf.permLevel})${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((typeof cmd.conf.permLevel === "undefined") ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
 				} else if (cmd.conf.permLevel <= perm && arr3.has(cmd.help.name)) {
-					nextCmd = `${cmd.help.name}${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((cmd.conf.permLevel === undefined) ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
+					nextCmd = `${cmd.help.name}${(!cmd.conf.guildOnly) ? " (PM)" : ""}${" ".repeat(longest - cmd.help.name.length - ((typeof cmd.conf.permLevel === "undefined") ? 8 : 0) + ((!cmd.conf.guildOnly) ? 0 : 5))} :: ${cmd.help.description}\n`;
 				}
 				if (!doneCmds.includes(cmd.help.name) && !helpLine.includes(nextCmd)) {
 					if (helpLine.length + nextCmd.length < 1990) {

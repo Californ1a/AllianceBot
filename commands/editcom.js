@@ -76,7 +76,7 @@ exports.conf = {
 exports.help = {
 	name: "editcom",
 	description: "Edit an already-existing custom command.",
-	extendedDescription: `<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is Members, 2 is Moderators, 3 is Admins\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n"editcom --n spook --m Sorry for the scare!" :: The command being edited would be "spook" and the edited message would be "Sorry for the scare!"`,
+	extendedDescription: "<command-name>\n* Name of command without prefix\n\n\<perm-level> (0-3)\n* 0 is @everyone, 1 is Members, 2 is Moderators, 3 is Admins\n\n<reply-in-pm> (true|false)\n* Reply to command in a PM rather than in-channel.\n\n<message>\n* The message to be sent when command is given.\n\n= Examples =\n\"editcom --n spook --m Sorry for the scare!\" :: The command being edited would be \"spook\" and the edited message would be \"Sorry for the scare!\"",
 	usage: "editcom --name <command name> --permlvl <perm level> --inpm <reply in pm> --message <message>"
 };
 

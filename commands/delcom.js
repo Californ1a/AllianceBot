@@ -65,6 +65,6 @@ exports.conf = {
 exports.help = {
 	name: "delcom",
 	description: "Delete a custom command.",
-	extendedDescription: `<command-name>\n* Name of command without prefix\n\n= Examples =\n"delcom spook" :: This will delete the "spook" command.`,
+	extendedDescription: "<command-name>\n* Name of command without prefix\n\n= Examples =\n\"delcom spook\" :: This will delete the \"spook\" command.",
 	usage: "delcom <command-name>"
 };
