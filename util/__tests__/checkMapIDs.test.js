@@ -5,26 +5,50 @@ describe("MapID resolutions", () => {
 	describe("Sprint", () => {
 		describe("Broken Symmetry", () => {
 			test("broken symmetry", () => {
-				expect(check(["broken", "symmetry"])).toBe("1558337");
+				expect(check(["broken", "symmetry"])).toEqual({
+					id: "1558337",
+					mode: "sprint",
+					name: "broken symmetry"
+				});
 			});
 			test("bs", () => {
-				expect(check(["bs"])).toBe("1558337");
+				expect(check(["bs"])).toEqual({
+					id: "1558337",
+					mode: "sprint",
+					name: "broken symmetry"
+				});
 			});
 		});
 		describe("Lost Society", () => {
 			test("lost society", () => {
-				expect(check(["lost", "society"])).toBe("1558158");
+				expect(check(["lost", "society"])).toEqual({
+					id: "1558158",
+					mode: "sprint",
+					name: "lost society"
+				});
 			});
 			test("ls", () => {
-				expect(check(["ls"])).toBe("1558158");
+				expect(check(["ls"])).toEqual({
+					id: "1558158",
+					mode: "sprint",
+					name: "lost society"
+				});
 			});
 		});
 		describe("Negative Space", () => {
 			test("negative space", () => {
-				expect(check(["negative", "space"])).toBe("1558398");
+				expect(check(["negative", "space"])).toEqual({
+					id: "1558398",
+					mode: "sprint",
+					name: "negative space"
+				});
 			});
 			test("ns", () => {
-				expect(check(["ns"])).toBe("1558398");
+				expect(check(["ns"])).toEqual({
+					id: "1558398",
+					mode: "sprint",
+					name: "negative space"
+				});
 			});
 		});
 		// =========================================================================
@@ -32,87 +56,171 @@ describe("MapID resolutions", () => {
 		// =========================================================================
 		describe("Departure", () => {
 			test("departure", () => {
-				expect(check(["departure"])).toBe("1558402");
+				expect(check(["departure"])).toEqual({
+					id: "1558402",
+					mode: "sprint",
+					name: "departure"
+				});
 			});
 		});
 		describe("Friction", () => {
 			test("friction", () => {
-				expect(check(["friction"])).toBe("1558436");
+				expect(check(["friction"])).toEqual({
+					id: "1558436",
+					mode: "sprint",
+					name: "friction"
+				});
 			});
 		});
 		describe("Aftermath", () => {
 			test("friction", () => {
-				expect(check(["aftermath"])).toBe("1558394");
+				expect(check(["aftermath"])).toEqual({
+					id: "1558394",
+					mode: "sprint",
+					name: "aftermath"
+				});
 			});
 		});
 		describe("The Thing About Machines", () => {
 			test("the thing about machines", () => {
-				expect(check(["the", "thing", "about", "machines"])).toBe("1558441");
+				expect(check(["the", "thing", "about", "machines"])).toEqual({
+					id: "1558441",
+					mode: "sprint",
+					name: "the thing about machines"
+				});
 			});
 			test("thing about machines", () => {
-				expect(check(["thing", "about", "machines"])).toBe("1558441");
+				expect(check(["thing", "about", "machines"])).toEqual({
+					id: "1558441",
+					mode: "sprint",
+					name: "the thing about machines"
+				});
 			});
 			test("machines", () => {
-				expect(check(["machines"])).toBe("1558441");
+				expect(check(["machines"])).toEqual({
+					id: "1558441",
+					mode: "sprint",
+					name: "the thing about machines"
+				});
 			});
 			test("ttam", () => {
-				expect(check(["ttam"])).toBe("1558441");
+				expect(check(["ttam"])).toEqual({
+					id: "1558441",
+					mode: "sprint",
+					name: "the thing about machines"
+				});
 			});
 		});
 		describe("Amusement", () => {
 			test("amusement", () => {
-				expect(check(["amusement"])).toBe("1558304");
+				expect(check(["amusement"])).toEqual({
+					id: "1558304",
+					mode: "sprint",
+					name: "amusement"
+				});
 			});
 		});
 		describe("Corruption", () => {
 			test("corruption", () => {
-				expect(check(["corruption"])).toBe("1558416");
+				expect(check(["corruption"])).toEqual({
+					id: "1558416",
+					mode: "sprint",
+					name: "corruption"
+				});
 			});
 		});
 		describe("The Observer Effect", () => {
 			test("the observer effect", () => {
-				expect(check(["the", "observer", "effect"])).toBe("1558453");
+				expect(check(["the", "observer", "effect"])).toEqual({
+					id: "1558453",
+					mode: "sprint",
+					name: "the observer effect"
+				});
 			});
 			test("observer effect", () => {
-				expect(check(["observer", "effect"])).toBe("1558453");
+				expect(check(["observer", "effect"])).toEqual({
+					id: "1558453",
+					mode: "sprint",
+					name: "the observer effect"
+				});
 			});
 			test("observer", () => {
-				expect(check(["observer"])).toBe("1558453");
+				expect(check(["observer"])).toEqual({
+					id: "1558453",
+					mode: "sprint",
+					name: "the observer effect"
+				});
 			});
 			test("toe", () => {
-				expect(check(["toe"])).toBe("1558453");
+				expect(check(["toe"])).toEqual({
+					id: "1558453",
+					mode: "sprint",
+					name: "the observer effect"
+				});
 			});
 		});
 		describe("Dissolution", () => {
 			test("dissolution", () => {
-				expect(check(["dissolution"])).toBe("1558428");
+				expect(check(["dissolution"])).toEqual({
+					id: "1558428",
+					mode: "sprint",
+					name: "dissolution"
+				});
 			});
 		});
 		describe("Falling Through", () => {
 			test("falling through", () => {
-				expect(check(["falling", "through"])).toBe("1558435");
+				expect(check(["falling", "through"])).toEqual({
+					id: "1558435",
+					mode: "sprint",
+					name: "falling through"
+				});
 			});
 			test("falling", () => {
-				expect(check(["falling"])).toBe("1558435");
+				expect(check(["falling"])).toEqual({
+					id: "1558435",
+					mode: "sprint",
+					name: "falling through"
+				});
 			});
 			test("ft", () => {
-				expect(check(["ft"])).toBe("1558435");
+				expect(check(["ft"])).toEqual({
+					id: "1558435",
+					mode: "sprint",
+					name: "falling through"
+				});
 			});
 		});
 		describe("Monolith", () => {
 			test("monoloth", () => {
-				expect(check(["monolith"])).toBe("1558429");
+				expect(check(["monolith"])).toEqual({
+					id: "1558429",
+					mode: "sprint",
+					name: "monolith"
+				});
 			});
 		});
 		describe("Uncanny Valley", () => {
 			test("uncanny valley", () => {
-				expect(check(["uncanny", "valley"])).toBe("1558467");
+				expect(check(["uncanny", "valley"])).toEqual({
+					id: "1558467",
+					mode: "sprint",
+					name: "uncanny valley"
+				});
 			});
 			test("uncanny", () => {
-				expect(check(["uncanny"])).toBe("1558467");
+				expect(check(["uncanny"])).toEqual({
+					id: "1558467",
+					mode: "sprint",
+					name: "uncanny valley"
+				});
 			});
 			test("uv", () => {
-				expect(check(["uv"])).toBe("1558467");
+				expect(check(["uv"])).toEqual({
+					id: "1558467",
+					mode: "sprint",
+					name: "uncanny valley"
+				});
 			});
 		});
 		// =========================================================================
@@ -126,60 +234,116 @@ describe("MapID resolutions", () => {
 	describe("Challenge", () => {
 		describe("Dodge", () => {
 			test("dodge", () => {
-				expect(check(["dodge"])).toBe("1558764");
+				expect(check(["dodge"])).toEqual({
+					id: "1558764",
+					mode: "challenge",
+					name: "dodge"
+				});
 			});
 		});
 		describe("Thunder Struck", () => {
 			test("thunder struck", () => {
-				expect(check(["thunder", "struck"])).toBe("1558769");
+				expect(check(["thunder", "struck"])).toEqual({
+					id: "1558769",
+					mode: "challenge",
+					name: "thunder struck"
+				});
 			});
 			test("thunderstruck", () => {
-				expect(check(["thunderstruck"])).toBe("1558769");
+				expect(check(["thunderstruck"])).toEqual({
+					id: "1558769",
+					mode: "challenge",
+					name: "thunder struck"
+				});
 			});
 			test("thunder", () => {
-				expect(check(["thunder"])).toBe("1558769");
+				expect(check(["thunder"])).toEqual({
+					id: "1558769",
+					mode: "challenge",
+					name: "thunder struck"
+				});
 			});
 			test("ts", () => {
-				expect(check(["ts"])).toBe("1558769");
+				expect(check(["ts"])).toEqual({
+					id: "1558769",
+					mode: "challenge",
+					name: "thunder struck"
+				});
 			});
 		});
 		describe("Grinder", () => {
 			test("grinder", () => {
-				expect(check(["grinder"])).toBe("1558800");
+				expect(check(["grinder"])).toEqual({
+					id: "1558800",
+					mode: "challenge",
+					name: "grinder"
+				});
 			});
 		});
 		describe("Descent", () => {
 			test("descent", () => {
-				expect(check(["descent"])).toBe("1558836");
+				expect(check(["descent"])).toEqual({
+					id: "1558836",
+					mode: "challenge",
+					name: "descent"
+				});
 			});
 		});
 		describe("Detached", () => {
 			test("detached", () => {
-				expect(check(["detached"])).toBe("1558817");
+				expect(check(["detached"])).toEqual({
+					id: "1558817",
+					mode: "challenge",
+					name: "detached"
+				});
 			});
 		});
 		describe("Elevation", () => {
 			test("elevation", () => {
-				expect(check(["elevation"])).toBe("1558823");
+				expect(check(["elevation"])).toEqual({
+					id: "1558823",
+					mode: "challenge",
+					name: "elevation"
+				});
 			});
 		});
 		describe("Red Heat", () => {
 			test("red heat", () => {
-				expect(check(["red", "heat"])).toBe("2011155");
+				expect(check(["red", "heat"])).toEqual({
+					id: "2011155",
+					mode: "challenge",
+					name: "red heat"
+				});
 			});
 			test("rh", () => {
-				expect(check(["rh"])).toBe("2011155");
+				expect(check(["rh"])).toEqual({
+					id: "2011155",
+					mode: "challenge",
+					name: "red heat"
+				});
 			});
 		});
 		describe("Disassembly Line", () => {
 			test("disassembly line", () => {
-				expect(check(["disassembly", "line"])).toBe("2011156");
+				expect(check(["disassembly", "line"])).toEqual({
+					id: "2011156",
+					mode: "challenge",
+					name: "disassembly line"
+				});
 			});
 			test("disassembly", () => {
-				expect(check(["disassembly"])).toBe("2011156");
+				expect(check(["disassembly"])).toEqual({
+					id: "2011156",
+					mode: "challenge",
+					name: "disassembly line"
+				});
 			});
 			test("dl", () => {
-				expect(check(["dl"])).toBe("2011156");
+				expect(check(["dl"])).toEqual({
+					id: "2011156",
+					mode: "challenge",
+					name: "disassembly line"
+				});
 			});
 		});
 	});
@@ -189,40 +353,72 @@ describe("MapID resolutions", () => {
 	describe("Stunt", () => {
 		describe("Credits", () => {
 			test("credits", () => {
-				expect(check(["credits"])).toBe("1588771");
+				expect(check(["credits"])).toEqual({
+					id: "1588771",
+					mode: "stunt",
+					name: "credits"
+				});
 			});
 		});
 		describe("Refraction", () => {
 			test("refraction", () => {
-				expect(check(["refraction"])).toBe("1589164");
+				expect(check(["refraction"])).toEqual({
+					id: "1589164",
+					mode: "stunt",
+					name: "refraction"
+				});
 			});
 		});
 		describe("Space Skate", () => {
 			test("space skate", () => {
-				expect(check(["space", "skate"])).toBe("1561263");
+				expect(check(["space", "skate"])).toEqual({
+					id: "1561263",
+					mode: "stunt",
+					name: "space skate"
+				});
 			});
 		});
 		describe("Spooky Town", () => {
 			test("spooky town", () => {
-				expect(check(["spooky", "town"])).toBe("1573802");
+				expect(check(["spooky", "town"])).toEqual({
+					id: "1573802",
+					mode: "stunt",
+					name: "spooky town"
+				});
 			});
 		});
 		describe("Stunt Playground", () => {
 			test("stunt playground", () => {
-				expect(check(["stunt", "playground"])).toBe("1561573");
+				expect(check(["stunt", "playground"])).toEqual({
+					id: "1561573",
+					mode: "stunt",
+					name: "stunt playground"
+				});
 			});
 		});
 		describe("Tagtastic", () => {
 			test("tagtastic", () => {
-				expect(check(["tagtastic"])).toBe("1572280");
+				expect(check(["tagtastic"])).toEqual({
+					id: "1572280",
+					mode: "stunt",
+					name: "tagtastic"
+				});
 			});
 		});
 		describe("Neon Park", () => {
 			test("neon park", () => {
-				expect(check(["neon", "park"])).toBe("1952913");
+				expect(check(["neon", "park"])).toEqual({
+					id: "1952913",
+					mode: "stunt",
+					name: "neon park"
+				});
 			});
 			test("np", () => {
-				expect(check(["np"])).toBe("1952913");
+				expect(check(["np"])).toEqual({
+					id: "1952913",
+					mode: "stunt",
+					name: "neon park"
+				});
 			});
 		});
 	});
