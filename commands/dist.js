@@ -1,7 +1,7 @@
 const http = require("http");
 const pre = require("../config.json").prefix;
 const parseString = require("xml2js").parseString;
-const checkMapID = require("../util/checkMapIDs.js").checkMapID;
+const checkMapID = require("../util/checkMapIDs.js");
 const jsondata = require("../mapids.json");
 const send = require("../util/sendMessage.js");
 const Steam = require("steam-web");
@@ -14,7 +14,7 @@ exports.run = (bot, msg, args) => {
 	if (typeof args[0] !== "string") {
 		send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 	} else {
-		var mapid = checkMapID(msg, args);
+		var mapid = checkMapID(args);
 		if (mapid === 0) {
 			send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 		} else if (typeof mapid === "string" && mapid !== "") {

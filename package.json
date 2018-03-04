@@ -6,10 +6,14 @@
     "node": "8.9.4",
     "npm": "5.7.1"
   },
-  "main": "bot.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "test": "jest"
   },
+	"jest": {
+		"testPathIgnorePatterns": ["/commands/test.js"]
+	},
   "author": "Californ1a",
   "license": "ISC",
   "dependencies": {
@@ -36,5 +40,8 @@
     "ultron": "1.1.0",
     "util": "0.10.3",
     "xml2js": "0.4.17"
+  },
+  "devDependencies": {
+    "jest": "^22.4.2"
   }
 }

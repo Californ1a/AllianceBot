@@ -1,192 +1,219 @@
 {
-	"officialmapids": {
-    "Sprint": {
-      "Broken Symmetry": {
-				"id": "1558337",
-				"names": ["BS"]
-				},
-      "Lost Society": {
-				"id": "1558158",
-				"names": ["LS"]
-			},
-      "Negative Space": {
-				"id": "1558398",
-				"names": ["NS"]
-			},
-      "Departure": {
-				"id": "1558402",
-				"names": []
-			},
-			"Ground Zero": {
-				"id": "",
-				"names": ["GZ"]
-			},
-      "Friction": {
-				"id": "1558436",
-				"names": []
-			},
-      "Aftermath": {
-				"id": "1558394",
-				"names": []
-			},
-      "The Thing About Machines": {
-				"id": "1558441",
-				"names": ["TTAM", "Machines", "Thing About Machines"]
-			},
-      "Amusement": {
-				"id": "1558304",
-				"names": []
-			},
-      "Corruption": {
-				"id": "1558416",
-				"names": []
-			},
-      "The Observer Effect": {
-				"id": "1558453",
-				"names": ["TOE", "Observer Effect", "Observer"]
-			},
-      "Dissolution": {
-				"id": "1558428",
-				"names": []
-			},
-      "Falling Through": {
-				"id": "1558435",
-				"names": ["FT", "Falling"]
-			},
-      "Monolith": {
-				"id": "1558429",
-				"names": []
-			},
-      "Uncanny Valley": {
-				"id": "1558467",
-				"names": ["Uncanny"]
-			},
-			"The Manor": {
-				"id": "",
-				"names": ["Manor"]
-			}
-    },
-    "Speed and Style": {
-      "Broken Symmetry": {
-				"id": "",
-				"names": ["BS"]
-			},
-      "Lost Society": {
-				"id": "",
-				"names": ["LS"]
-			},
-      "Negative Space": {
-				"id": "",
-				"names": ["NS"]
-			},
-      "Departure": {
-				"id": "",
-				"names": []
-			},
-      "Friction": {
-				"id": "",
-				"names": []
-			},
-      "Aftermath": {
-				"id": "",
-				"names": []
-			},
-      "The Thing About Machines": {
-				"id": "",
-				"names": ["TTAM", "Machines", "Thing About Machines"]
-			},
-      "Amusement": {
-				"id": "",
-				"names": []
-			},
-      "Corruption": {
-				"id": "",
-				"names": []
-			},
-      "The Observer Effect": {
-				"id": "",
-				"names": ["TOE", "Observer Effect", "Observer"]
-			},
-      "Dissolution": {
-				"id": "",
-				"names": []
-			},
-      "Falling Through": {
-				"id": "",
-				"names": ["FT", "Falling"]
-			},
-      "Monolith": {
-				"id": "",
-				"names": []
-			},
-      "Uncanny Valley": {
-				"id": "",
-				"names": ["Uncanny"]
-			}
-    },
-    "Challenge": {
-      "Dodge": {
-				"id": "1558764",
-				"names": []
-			},
-      "Thunder Struck": {
-				"id": "1558769",
-				"names": ["Thunderstruck", "TS"]
-			},
-      "Grinder": {
-				"id": "1558800",
-				"names": []
-			},
-      "Descent": {
-				"id": "1558836",
-				"names": []
-			},
-      "Detached": {
-				"id": "1558817",
-				"names": []
-			},
-      "Elevation": {
-				"id": "1558823",
-				"names": []
-			},
-			"Red Heat": {
-				"id": "2011155",
-				"names": ["RH"]
-			},
-			"Disassembly Line": {
-				"id": "2011156",
-				"names": ["DL"]
-			}
-    },
-    "Stunt": {
-      "Credits": {
-				"id": "1588771",
-				"names": []
-			},
-      "Refraction": {
-				"id": "1589164",
-				"names": []
-			},
-      "Space Skate": {
-				"id": "1561263",
-				"names": []
-			},
-      "Spooky Town": {
-				"id": "1573802",
-				"names": []
-			},
-      "Stunt Playground": {
-				"id": "1561573",
-				"names": []
-			},
-      "Tagtastic": {
-				"id": "1572280",
-				"names": []
-			},
-			"Neon Park": {
-				"id": "1952913",
-				"names": []
-			}
-    }
-  }
+	"broken symmetry": {
+		"aliases": ["bs"],
+		"modes": [{
+			"id": "1558337",
+			"mode": "sprint"
+		}]
+	},
+	"lost society": {
+		"aliases": ["ls"],
+		"modes": [{
+			"id": "1558158",
+			"mode": "sprint"
+		}]
+	},
+	"negative space": {
+		"aliases": ["ns"],
+		"modes": [{
+			"id": "1558398",
+			"mode": "sprint"
+		}]
+	},
+	"ground zero": {
+		"aliases": ["gz"],
+		"modes": [{
+			"id": "",
+			"mode": "sprint"
+		}]
+	},
+	"departure": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558402",
+			"mode": "sprint"
+		}]
+	},
+	"friction": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558436",
+			"mode": "sprint"
+		}]
+	},
+	"aftermath": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558394",
+			"mode": "sprint"
+		}]
+	},
+	"the thing about machines": {
+		"aliases": ["ttam", "machines", "thing about machines"],
+		"modes": [{
+			"id": "1558441",
+			"mode": "sprint"
+		}]
+	},
+	"amusement": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558304",
+			"mode": "sprint"
+		}]
+	},
+	"corruption": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558416",
+			"mode": "sprint"
+		}]
+	},
+	"the observer effect": {
+		"aliases": ["toe", "observer effect", "observer"],
+		"modes": [{
+			"id": "1558453",
+			"mode": "sprint"
+		}]
+	},
+	"dissolution": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558428",
+			"mode": "sprint"
+		}]
+	},
+	"falling through": {
+		"aliases": ["ft", "falling"],
+		"modes": [{
+			"id": "1558435",
+			"mode": "sprint"
+		}]
+	},
+	"monolith": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558429",
+			"mode": "sprint"
+		}]
+	},
+	"uncanny valley": {
+		"aliases": ["uncanny", "uv"],
+		"modes": [{
+			"id": "1558467",
+			"mode": "sprint"
+		}]
+	},
+	"the manor": {
+		"aliases": ["manor"],
+		"modes": [{
+			"id": "",
+			"mode": "sprint"
+		}]
+	},
+	"dodge": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558764",
+			"mode": "challenge"
+		}]
+	},
+	"thunder struck": {
+		"aliases": ["thunderstruck", "ts", "thunder"],
+		"modes": [{
+			"id": "1558769",
+			"mode": "challenge"
+		}]
+	},
+	"grinder": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558800",
+			"mode": "challenge"
+		}]
+	},
+	"descent": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558836",
+			"mode": "challenge"
+		}]
+	},
+	"detached": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558817",
+			"mode": "challenge"
+		}]
+	},
+	"elevation": {
+		"aliases": [],
+		"modes": [{
+			"id": "1558823",
+			"mode": "challenge"
+		}]
+	},
+	"red heat": {
+		"aliases": ["rh"],
+		"modes": [{
+			"id": "2011155",
+			"mode": "challenge"
+		}]
+	},
+	"disassembly line": {
+		"aliases": ["dl", "disassembly"],
+		"modes": [{
+			"id": "2011156",
+			"mode": "challenge"
+		}]
+	},
+	"credits": {
+		"aliases": [],
+		"modes": [{
+			"id": "1588771",
+			"mode": "stunt"
+		}]
+	},
+	"refraction": {
+		"aliases": [],
+		"modes": [{
+			"id": "1589164",
+			"mode": "stunt"
+		}]
+	},
+	"space skate": {
+		"aliases": [],
+		"modes": [{
+			"id": "1561263",
+			"mode": "stunt"
+		}]
+	},
+	"spooky town": {
+		"aliases": [],
+		"modes": [{
+			"id": "1573802",
+			"mode": "stunt"
+		}]
+	},
+	"stunt playground": {
+		"aliases": [],
+		"modes": [{
+			"id": "1561573",
+			"mode": "stunt"
+		}]
+	},
+	"tagtastic": {
+		"aliases": [],
+		"modes": [{
+			"id": "1572280",
+			"mode": "stunt"
+		}]
+	},
+	"neon park": {
+		"aliases": ["np"],
+		"modes": [{
+			"id": "1952913",
+			"mode": "stunt"
+		}]
+	}
 }

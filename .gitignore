@@ -45,23 +45,14 @@ Desktop.ini
 desktop.ini
 
 # Logins, chatlogs, backups
-logins
-tweet.json
-tweet*.json
-userinfo.txt
-DiscordChatlogs/*
-backups/*
+*.dat
+*.bak
 *.bat
-process.json
-OLDgameconfigs
-npm-debug.log
-.env
 *.sqlite
+.env
+DiscordChatlogs/*
+process.json
 commands/test.js
 commands/featurerequest.js
 commands/playtest.js
 commands/lockdown.js
-*.dat
-package-lock.json
-*.bak
-bak.npmrc
