@@ -1,7 +1,13 @@
 const pre = require("../config.json").prefix;
-const possibleBets = require("../gameconfigs/possibleroulettebets.json");
-//const connection = require("../util/connection.js");
-const numbProps = require("../gameconfigs/roulettenumberproperties.json");
+const firebase = require("../util/firebase.js");
+let possibleBets;
+let numbProps;
+firebase.db.ref("possibleroulettebets").once("value").then(data => {
+	possibleBets = data.val();
+});
+firebase.db.ref("roulettenumberproperties").once("value").then(data => {
+	numbProps = data.val();
+});
 const rouletteconfig = require("../config.json").roulette;
 const sm = require("../util/scoremanager.js");
 const send = require("../util/sendMessage.js");

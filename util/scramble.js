@@ -3,6 +3,11 @@ const game = require("./games.js");
 const colors = require("colors");
 const sm = require("./scoremanager.js");
 const send = require("./sendMessage.js");
+const firebase = require("./firebase.js");
+let scrambleSet;
+firebase.db.ref("scramble").once("value").then(data => {
+	scrambleSet = data.val().filter(v => v !== "");
+});
 var scrambleOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
@@ -15,9 +20,8 @@ var getScrambleStatus = () => {
 	return scrambleOn;
 };
 
-var populateScramble = () => {
-	delete require.cache[require.resolve("../gameconfigs/scramble.json")];
-	incompleteQuestions = require("../gameconfigs/scramble.json").filter(v => v !== "");
+let populateScramble = () => {
+	incompleteQuestions = JSON.parse(JSON.stringify(scrambleSet));
 };
 
 function removeScrambleTerm(orig) {
@@ -64,7 +68,7 @@ var goScramble = (channel, config, startingScores) => {
 	}
 	orig = game.getRndmFromSet(incompleteQuestions);
 	curr = scramble(orig);
-	console.log(colors.red(`Term: ${orig}`));
+	console.log(colors.red(`Terms remaining: ${incompleteQuestions.length}, Term: ${orig}`));
 	send(channel, `Term:\n**${curr.toUpperCase()}**`).then(() => {
 		channel.awaitMessages(r => r.content.toLowerCase() === orig.toLowerCase(), {
 			max: 1,

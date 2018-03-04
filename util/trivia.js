@@ -4,6 +4,11 @@ const sm = require("./scoremanager.js");
 const game = require("./games.js");
 const colors = require("colors");
 const send = require("./sendMessage.js");
+const firebase = require("./firebase.js");
+let triviaSet;
+firebase.db.ref("trivia").once("value").then(data => {
+	triviaSet = data.val().filter(v => v.question !== "");
+});
 var triviaOn = false;
 var incompleteQuestions = [];
 var countQsMissed = 0;
@@ -21,8 +26,9 @@ var toggleTriviaStatus = () => {
 };
 
 var populateQuestions = () => {
-	delete require.cache[require.resolve("../gameconfigs/trivia.json")];
-	incompleteQuestions = require("../gameconfigs/trivia.json").filter(v => v.question !== "");
+	// delete require.cache[require.resolve("../gameconfigs/trivia.json")];
+	// incompleteQuestions = require("../gameconfigs/trivia.json").filter(v => v.question !== "");
+	incompleteQuestions = JSON.parse(JSON.stringify(triviaSet));
 };
 
 function checkQuestions(q) {
@@ -142,8 +148,7 @@ var goTrivia = (channel, manualNumber, category, config, startingScores) => {
 	} else {
 		question = quesNum.question.replace(/_/g, "\\_");
 	}
-	console.log(incompleteQuestions.length);
-	console.log(colors.red(`Answer: ${quesNum.answers[0]}`));
+	console.log(colors.red(`Remaining questions: ${incompleteQuestions.length}, Answer: ${quesNum.answers[0]}`));
 	send(channel, `Question:\r\n**${question}**`).then(() => {
 		scoreAdd = 0;
 		channel.awaitMessages(answerFilter, {

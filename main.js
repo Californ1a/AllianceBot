@@ -1,11 +1,11 @@
-var pm2 = require("pm2");
+let pm2 = require("pm2");
 
-var MACHINE_NAME = "Heroku1";
-var PRIVATE_KEY = process.env.KEYMETRICS_PRIVATE_KEY; // Keymetrics Private key
-var PUBLIC_KEY = process.env.KEYMETRICS_PUBLIC_KEY; // Keymetrics Public  key
+let MACHINE_NAME = "Heroku1";
+let PRIVATE_KEY = process.env.KEYMETRICS_PRIVATE_KEY; // Keymetrics Private key
+let PUBLIC_KEY = process.env.KEYMETRICS_PUBLIC_KEY; // Keymetrics Public  key
 
-//var instances = process.env.WEB_CONCURRENCY || -1; // Set by Heroku or -1 to scale to max cpu core -1
-//var maxMemory = process.env.WEB_MEMORY || 512; // " " "
+//let instances = process.env.WEB_CONCURRENCY || -1; // Set by Heroku or -1 to scale to max cpu core -1
+//let maxMemory = process.env.WEB_MEMORY || 512; // " " "
 
 pm2.connect(function() {
 	pm2.start({
@@ -23,7 +23,8 @@ pm2.connect(function() {
 			"TWITTER_ACCESS_TOKEN": process.env.TWITTER_ACCESS_TOKEN,
 			"TWITTER_ACCESS_TOKEN_SECRET": process.env.TWITTER_ACCESS_TOKEN_SECRET,
 			"TWITTER_CONSUMER_KEY": process.env.TWITTER_CONSUMER_KEY,
-			"TWITTER_CONSUMER_SECRET": process.env.TWITTER_CONSUMER_SECRET
+			"TWITTER_CONSUMER_SECRET": process.env.TWITTER_CONSUMER_SECRET,
+			"NODE_NO_HTTP2": 1
 		},
 		log_date_format: "YYYY-MM-DD HH:mm Z",
 		args: [
