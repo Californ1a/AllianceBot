@@ -18,6 +18,14 @@ var getScore = (guild, member) => {
 	});
 };
 
+var delScore = (guild, member, s) => {
+	return new Promise((resolve, reject) => {
+		connection.del("triviascore", `userid='${member.id}' AND server_id='${guild.id}'`).then(() => {
+			resolve(`Removed ${member.displayName} from the board. Their previous score was ${s.score}.`);
+		}).catch(e => reject(e));
+	});
+};
+
 var setScore = (guild, member, type, amount) => {
 	return new Promise((resolve, reject) => {
 		getScore(guild, member).then(s => {
@@ -64,14 +72,6 @@ var setScore = (guild, member, type, amount) => {
 					}).catch(e => reject(e));
 				}
 			}
-		}).catch(e => reject(e));
-	});
-};
-
-var delScore = (guild, member, s) => {
-	return new Promise((resolve, reject) => {
-		connection.del("triviascore", `userid='${member.id}' AND server_id='${guild.id}'`).then(() => {
-			resolve(`Removed ${member.displayName} from the board. Their previous score was ${s.score}.`);
 		}).catch(e => reject(e));
 	});
 };
