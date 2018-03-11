@@ -4,7 +4,7 @@ const send = require("../util/sendMessage.js");
 
 function update(flag, type, msg) {
 	return new Promise((resolve, reject) => {
-		var newFlag;
+		let newFlag;
 		if (flag) {
 			newFlag = escape.chars(flag);
 			if (newFlag !== flag) {
@@ -19,9 +19,9 @@ function update(flag, type, msg) {
 
 function doAll(flags, msg) {
 	return new Promise((resolve, reject) => {
-		var types = [];
-		var newVals = [];
-		for (var key in flags) {
+		const types = [];
+		const newVals = [];
+		for (const key in flags) {
 			if (flags.hasOwnProperty(key)) {
 				newVals.push(flags[key]);
 				types.push(key);
@@ -30,7 +30,7 @@ function doAll(flags, msg) {
 				});
 			}
 		}
-		var ret = {
+		const ret = {
 			types,
 			newVals
 		};
@@ -40,13 +40,13 @@ function doAll(flags, msg) {
 
 exports.run = (bot, msg, args, perms, cmd, flags) => {
 	console.log("flags", flags);
-	var conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.guild.id);
 	if (!flags || !args[0]) {
 		return send(msg.channel, `Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
 	}
 	doAll(flags, msg).then(ret => {
-		var msgCon = [];
-		var i = 0;
+		const msgCon = [];
+		let i = 0;
 		for (i; i < ret.types.length; i++) {
 			switch (ret.types[i]) {
 				case "prefix":

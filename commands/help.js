@@ -1,17 +1,18 @@
-const config = require("../config.json");
-const pre = config.prefix;
+// const config = require("../config.json");
+// const pre = config.prefix;
 const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
-var i = 0;
+let i = 0;
 
 function intersect(one, two) {
-	let a = new Set(one);
-	let b = new Set(two);
-	var intersection = new Set([...a].filter(x => b.has(x)));
+	const a = new Set(one);
+	const b = new Set(two);
+	const intersection = new Set([...a].filter(x => b.has(x)));
 	return intersection;
 }
 
 exports.run = (bot, msg, args, perm) => {
+	const pre = bot.servConf.get(msg.guild.id).prefix;
 	connection.select("*", "commands", `server_id='${msg.guild.id}'`).then(response => {
 		if (!response[0]) {
 			return send(msg.channel, "No commands enabled for this server.");
@@ -22,17 +23,17 @@ exports.run = (bot, msg, args, perm) => {
 			const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
 
-			var arr1 = [];
+			const arr1 = [];
 			i = 0;
 			for (i; i < response.length; i++) {
 				arr1.push(response[i].commandname);
 			}
-			var arr3 = intersect(commandNames, arr1);
+			const arr3 = intersect(commandNames, arr1);
 
 			i = 0;
-			var doneCmds = [];
-			var helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n(PM) means the command can be used in PMs\n\n`;
-			var nextCmd = "";
+			const doneCmds = [];
+			let helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n(PM) means the command can be used in PMs\n\n`;
+			let nextCmd = "";
 			bot.commands.forEach(cmd => {
 				if (perm === 4) {
 					//
@@ -64,7 +65,7 @@ exports.run = (bot, msg, args, perm) => {
 				if (!res[0]) {
 					return send(msg.author, `${helpLine}\`\`\``);
 				}
-				var customs = "\nCustom commands :: ";
+				let customs = "\nCustom commands :: ";
 				i = 0;
 				for (i; i < res.length; i++) {
 					if ((res[i].permlvl <= perm || perm === 4) && i < res.length - 1) {

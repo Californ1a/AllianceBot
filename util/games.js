@@ -4,26 +4,26 @@ const send = require("./sendMessage.js");
 // var findIndex = require("array.prototype.findindex");
 // findIndex.shim();
 
-var getRndmFromSet = (set) => {
-	var rndm = Math.floor(Math.random() * set.length);
+const getRndmFromSet = (set) => {
+	const rndm = Math.floor(Math.random() * set.length);
 	return set[rndm];
 };
 
 function arrayUnion(arr1, arr2) {
-	var union = arr1.concat(arr2);
+	const union = arr1.concat(arr2);
 	//console.log("arr1", arr1);
 	//console.log("arr2", arr2);
-	var nameids = [];
-	var names = [];
-	var i = 0;
+	const nameids = [];
+	const names = [];
+	let i = 0;
 	for (i; i < union.length; i++) {
-		var sindex = union[i].sindex;
-		var rindex = union[i].rindex;
+		const sindex = union[i].sindex;
+		const rindex = union[i].rindex;
 		if (!nameids.includes(union[i].userid)) {
 			nameids.push(union[i].userid);
 			names.push(union[i]);
 		} else {
-			var index = nameids.indexOf(union[i].userid);
+			const index = nameids.indexOf(union[i].userid);
 			if (names[index].rindex >= 0) {
 				names[index].sindex = sindex;
 			} else if (names[index].sindex >= 0) {
@@ -41,14 +41,14 @@ function arrayUnion(arr1, arr2) {
 // }
 
 
-var getChanges = (channel, startingScores, topMessage, limit) => {
-	var combined = [];
-	var obj;
+const getChanges = (channel, startingScores, topMessage, limit) => {
+	const combined = [];
+	let obj;
 	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank`).then(response => {
 		if (!response[0] && !startingScores[0]) {
 			return send(channel, "There are no trivia scores yet.");
 		}
-		var i = 0;
+		let i = 0;
 		for (i; i < response.length; i++) {
 			obj = {
 				"rindex": i,
@@ -64,14 +64,14 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 			};
 			Object.assign(startingScores[i], obj);
 		}
-		var union = arrayUnion(response, startingScores);
+		const union = arrayUnion(response, startingScores);
 		//console.log(union);
 		i = 0;
 		for (i; i < union.length; i++) {
 			if (channel.guild.members.get(union[i].userid)) {
-				var sindex = union[i].sindex;
-				var current = (union[i].rindex < 0) ? 0 : union[i].score;
-				var change = current;
+				const sindex = union[i].sindex;
+				const current = (union[i].rindex < 0) ? 0 : union[i].score;
+				let change = current;
 				if (union[i].sindex >= 0 && union[i].rindex >= 0) {
 					change -= startingScores[sindex].score;
 				} else if (union[i].rindex < 0) {
@@ -97,7 +97,7 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 			return b.scorechange - a.scorechange;
 		});
 		combined.splice(limit);
-		var fieldsArray = [];
+		const fieldsArray = [];
 		i = 0;
 		for (i; i < combined.length; i++) {
 			fieldsArray[i] = {
@@ -116,16 +116,16 @@ var getChanges = (channel, startingScores, topMessage, limit) => {
 	}).catch(e => console.error(e.stack));
 };
 
-var getLB = (channel, topMessage, limit) => {
+const getLB = (channel, topMessage, limit) => {
 	connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${channel.guild.id}') as rank`, "triviascore as t1", `server_id='${channel.guild.id}' ORDER BY rank LIMIT ${limit}`).then(response => {
 		if (!response[0]) {
 			return send(channel, "There are no trivia scores yet.");
 		}
 		//var text = "";
-		var nameArray = [];
-		var scoreArray = [];
-		var rankArray = [];
-		var i = 0;
+		const nameArray = [];
+		const scoreArray = [];
+		const rankArray = [];
+		let i = 0;
 		for (i; i < response.length; i++) {
 			if (channel.guild.members.get(response[i].userid)) {
 				nameArray.push(channel.guild.members.get(response[i].userid).displayName);
@@ -139,7 +139,7 @@ var getLB = (channel, topMessage, limit) => {
 			}
 			//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
 		}
-		var fieldsArray = [""];
+		const fieldsArray = [""];
 		i = 0;
 		for (i; i < nameArray.length; i++) {
 			fieldsArray[i] = {
@@ -158,7 +158,7 @@ var getLB = (channel, topMessage, limit) => {
 	}).catch(e => console.error(e.stack));
 };
 
-var cooldown = (cmd) => {
+const cooldown = (cmd) => {
 	cmd.conf.endGameCooldown = true;
 	setTimeout(() => {
 		cmd.conf.endGameCooldown = false;

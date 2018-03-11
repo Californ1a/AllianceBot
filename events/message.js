@@ -8,15 +8,15 @@ const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 const parseFlags = require("../util/parseFlags.js");
 const customQuotes = require("../util/customQuotes.js").ripWin;
 const send = require("../util/sendMessage.js");
-var pre = require("../config.json").prefix; //default prefix
+let pre = require("../config.json").prefix; //default prefix
 
 module.exports = (bot, meter, msg) => {
 	if (!msg.guild) {
 		console.log(colors.grey(`(Private) ${msg.author.username}: ${msg.cleanContent}`));
 		if (msg.content.startsWith(pre) && !msg.author.bot) { //default prefix
-			let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase(); //default prefix
-			let perms = bot.elevation(msg);
-			let args = msg.content.split(" ").slice(1);
+			const command = msg.content.split(" ")[0].slice(pre.length).toLowerCase(); //default prefix
+			const perms = bot.elevation(msg);
+			const args = msg.content.split(" ").slice(1);
 			let cmd;
 			if (bot.commands.has(command)) {
 				cmd = bot.commands.get(command);
@@ -24,21 +24,21 @@ module.exports = (bot, meter, msg) => {
 				cmd = bot.commands.get(bot.aliases.get(command));
 			}
 			if (cmd && perms >= cmd.conf.permLevel && !cmd.conf.guildOnly) {
-				var flags;
+				let flags;
 				if (cmd.flags) {
 					flags = parseFlags(cmd, args);
 				}
 				cmd.run(bot, msg, args, perms, cmd, flags);
 			} else {
-				send(msg.author, "Only certain commands can be used in PM. Using this command via PM is not supported as I have no indication of which server you're coming from. Please use this command from within the server - To view which commands are enabled for your server, use the \`help\` command within that server.");
+				send(msg.author, "Only certain commands can be used in PM. Using this command via PM is not supported as I have no indication of which server you're coming from. Please use this command from within the server - To view which commands are enabled for your server, use the `help` command within that server.");
 			}
 		}
 		return;
 	}
-	var conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.guild.id);
 	pre = conf.prefix;
-	var membrole = conf.membrole;
-	var cha = cl.formatChatlog(msg);
+	const membrole = conf.membrole;
+	const cha = cl.formatChatlog(msg);
 	meter.mark();
 	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
 		if (error) {
@@ -64,11 +64,11 @@ module.exports = (bot, meter, msg) => {
 		return;
 	}
 
-	let command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
-	let perms = bot.elevation(msg);
-	let args = msg.content.split(" ").slice(1);
+	const command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
+	const perms = bot.elevation(msg);
+	const args = msg.content.split(" ").slice(1);
 
-	let escapedCom = escape.chars(command);
+	const escapedCom = escape.chars(command);
 	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${escapedCom}'`).then(response => {
 		if (response[0]) {
 			let strs;
@@ -115,7 +115,7 @@ module.exports = (bot, meter, msg) => {
 			}
 			console.log(colors.red("Command enabled for this server."));
 			cmd.conf.onCooldown = true;
-			var flags;
+			let flags;
 			if (cmd.flags) {
 				flags = parseFlags(cmd, args);
 			}

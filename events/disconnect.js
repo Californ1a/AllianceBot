@@ -1,7 +1,7 @@
 const colors = require("colors");
 module.exports = (bot, closeEvent) => {
-	var main = `Bot disconnected from server with status code ${closeEvent.code}.\nReason: `;
-	var reason = "";
+	const main = `Bot disconnected from server with status code ${closeEvent.code}.\nReason: `;
+	let reason = "";
 	switch (closeEvent.code) {
 		case 1000:
 			reason += "CLOSE_NORMAL - Normal closure; the connection successfully completed whatever purpose for which it was created.";

@@ -23,15 +23,15 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 	} else if (flags.name.includes(" ")) {
 		return send(msg.channel, "The name cannot have any spaces.");
 	} else if (!flags.type.match(/^(simple|quote)$/)) {
-		return send(msg.channel, "The command type must be \`simple\` or \`quote\`.");
+		return send(msg.channel, "The command type must be `simple` or `quote`.");
 	} else if (flags.inpm && !flags.inpm.match(/^(true|false)$/)) {
-		return send(msg.channel, "The inpm must be \`true\` or \`false\`.");
+		return send(msg.channel, "The inpm must be `true` or `false`.");
 	} else if (flags.type === "simple" && !flags.message) {
 		return send(msg.channel, "You must specify a message for simple-type commands.");
 	}
 
 
-	let cmdname = escape.chars(flags.name);
+	const cmdname = escape.chars(flags.name);
 	if (cmdname !== flags.name) {
 		return send(msg.channel, "Invalid characters used in command name.");
 	}
@@ -40,7 +40,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 			return send(msg.channel, "This command already exists.");
 		}
 		//assign variables from flags
-		let type = flags.type;
+		const type = flags.type;
 		let permslvl = 0;
 		if (flags.permlvl) {
 			permslvl = flags.permlvl;
@@ -62,7 +62,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				comtext: `'${fullmsg}'`,
 				permlvl: permslvl,
 				inpm: inpms,
-				server_id: msg.guild.id
+				"server_id": msg.guild.id
 			};
 		} else if (type === "quote") {
 			info = {
@@ -70,7 +70,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				type,
 				permlvl: permslvl,
 				inpm: inpms,
-				server_id: msg.guild.id
+				"server_id": msg.guild.id
 			};
 		}
 
@@ -84,7 +84,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 		// };
 		connection.insert("servcom", info).then(() => {
 			if (type === "quote") {
-				let tableNames = ["advent", "commands", "giveaway", "giveusers", "playtest", "reminders", "servcom", "servers", "timeout", "triviascore"];
+				const tableNames = ["advent", "commands", "giveaway", "giveusers", "playtest", "reminders", "servcom", "servers", "timeout", "triviascore"];
 				if (tableNames.includes(cmdname)) {
 					return send(msg.channel, "Invalid custom command name.");
 				}

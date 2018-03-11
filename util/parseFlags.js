@@ -12,8 +12,8 @@ module.exports = (cmd, args) => {
 	if (!args[0]) {
 		return;
 	}
-	var indexes = [];
-	var keyOrder = [];
+	const indexes = [];
+	const keyOrder = [];
 	cmd.flags.forEach((f, ke) => {
 		f.forEach(a => {
 			if (args.includes(`--${a}`) && !keyOrder.includes(ke)) {
@@ -29,8 +29,8 @@ module.exports = (cmd, args) => {
 	}
 	if (indexes.length > 1) {
 
-		var list = [];
-		var j = 0;
+		const list = [];
+		let j = 0;
 		for (j; j < indexes.length; j++) {
 			list.push({
 				"index": indexes[j],
@@ -40,15 +40,15 @@ module.exports = (cmd, args) => {
 		list.sort((a, b) => {
 			return ((a.index < b.index) ? -1 : ((a.keyOrder === b.keyOrder) ? 0 : 1));
 		});
-		var k = 0;
+		let k = 0;
 		for (k; k < list.length; k++) {
 			indexes[k] = list[k].index;
 			keyOrder[k] = list[k].keyOrder;
 		}
 	}
-	var obj = "{";
-	var val;
-	var i = 0;
+	let obj = "{";
+	let val;
+	let i = 0;
 	for (i; i < indexes.length; i++) {
 		// console.log(`indexes[${i}]`, indexes[i]);
 		// console.log(`keyOrder[${i}]`, keyOrder[i]);

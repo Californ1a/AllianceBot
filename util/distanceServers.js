@@ -3,8 +3,8 @@ const colors = require("colors");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
 const channelName = "servers";
-let refreshMin = 5;
-let serversEmbed = {
+const refreshMin = 5;
+const serversEmbed = {
 	"description": `This list is updated once per ${(refreshMin===1)?"minute":`${refreshMin} minutes`} and displays up to the first 25 servers listed. You may also use \`!servers\` in any other channel to get a short summary of the current public server info without having to look at this channel.`,
 	"color": 4886754,
 	"footer": {
@@ -32,16 +32,16 @@ const emptyFields = [{
 	"inline": true
 }];
 
-let updateEmbed = (bot, servers) => {
-	let distance = bot.guilds.get(serverID);
+const updateEmbed = (bot, servers) => {
+	const distance = bot.guilds.get(serverID);
 	if (!distance.channels.exists("name", channelName)) {
 		return;
 	}
-	let channel = distance.channels.find("name", "servers");
+	const channel = distance.channels.find("name", "servers");
 	let fieldsArray = [];
 	if (servers[0]) {
-		for (let serv of servers) {
-			let servName = serv.serverName.replace(/^\[[a-zA-Z0-9]{6}\]/i, "");
+		for (const serv of servers) {
+			const servName = serv.serverName.replace(/^\[[a-zA-Z0-9]{6}\]/i, "");
 			fieldsArray.push({
 				"name": (serv.passwordProtected) ? `~~${servName}~~` : servName,
 				"value": `${serv.mode} (${serv.connectedPlayers}/${serv.playerLimit}) \`${serv.build}\``,
@@ -62,8 +62,8 @@ let updateEmbed = (bot, servers) => {
 				embed: serversEmbed
 			});
 		} else {
-			let bm = messages.filter(m => m.author.id === bot.user.id);
-			let mm = messages.filter(m => m.author.id !== bot.user.id);
+			const bm = messages.filter(m => m.author.id === bot.user.id);
+			const mm = messages.filter(m => m.author.id !== bot.user.id);
 			if (mm.size > 1) {
 				messages.forEach(m => {
 					m.deleteAll().catch(console.error);
@@ -85,7 +85,7 @@ let updateEmbed = (bot, servers) => {
 
 };
 
-let distanceServers = (bot, server = "http://35.185.40.23/") => {
+const distanceServers = (bot, server = "http://35.185.40.23/") => {
 	fetch(server).then((response) => {
 		return response.json();
 	}).then((data) => {

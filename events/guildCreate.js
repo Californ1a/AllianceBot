@@ -1,9 +1,9 @@
 const colors = require("colors");
 const connection = require("../util/connection.js");
 
-let addServer = (bot, guild) => {
+const addServer = (bot, guild) => {
 	console.log(colors.red(`Does not exist, trying to insert server '${guild.name}' into database...`));
-	let info = {
+	const info = {
 		"servername": `'${guild.name}'`,
 		"serverid": guild.id,
 		"ownerid": guild.owner.id,

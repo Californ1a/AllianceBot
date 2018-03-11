@@ -1,4 +1,4 @@
-const reqEvent = (event) => require(`../events/${event}`);
+const reqEvent = (event) => require(`../events/${event}`); // eslint-disable-line global-require
 module.exports = (bot, stream, meter) => {
 	bot.on("ready", () => reqEvent("ready")(bot));
 	bot.on("reconnecting", () => reqEvent("reconnecting")(bot));

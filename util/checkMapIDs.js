@@ -1,18 +1,18 @@
 const Discord = require("discord.js");
 const mapjson = require("../mapids.json");
-let maps = new Discord.Collection();
-let aliases = new Discord.Collection();
-for (let elt in mapjson) {
+const maps = new Discord.Collection();
+const aliases = new Discord.Collection();
+for (const elt in mapjson) {
 	maps.set(elt, mapjson[elt]);
 	if (mapjson[elt].aliases[0]) {
-		for (let ele of mapjson[elt].aliases) {
+		for (const ele of mapjson[elt].aliases) {
 			aliases.set(ele, elt);
 		}
 	}
 }
 
-let checkMapID = (args) => {
-	let mapName = args.join(" ").toLowerCase();
+const checkMapID = (args) => {
+	const mapName = args.join(" ").toLowerCase();
 	let map;
 	let name;
 	if (maps.has(mapName)) {
@@ -25,7 +25,7 @@ let checkMapID = (args) => {
 		return 0;
 	}
 	let modeIndex = 0;
-	let mode = map.modes[modeIndex].mode;
+	const mode = map.modes[modeIndex].mode;
 	if (map.modes.length > 1) {
 		//TODO: Deal with maps that are in multiple modes, hardcoded for now
 		modeIndex = 0;

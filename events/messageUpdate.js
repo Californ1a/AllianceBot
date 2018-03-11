@@ -11,15 +11,15 @@ module.exports = (bot, oldMessage, newMessage) => {
 		return;
 	}
 
-	var newc = cl.formatChatlog(newMessage);
-	var oldc = cl.formatChatlog(oldMessage);
+	const newc = cl.formatChatlog(newMessage);
+	const oldc = cl.formatChatlog(oldMessage);
 
 	fs.readFile(oldc.currentLog, function(e, data) {
 		if (e) {
 			console.error(e.stack);
 		} else {
-			var array = data.toString().split("\r\n");
-			var i = 0;
+			const array = data.toString().split("\r\n");
+			let i = 0;
 			for (i; i < array.length; i++) {
 				if (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata) {
 					array[i] = "(Edited) " + newc.chatlinedata;
@@ -31,12 +31,12 @@ module.exports = (bot, oldMessage, newMessage) => {
 				} else {
 
 
-					var diff = jsdiff.diffWords(oldc.chatlinedata, newc.chatlinedata);
+					const diff = jsdiff.diffWords(oldc.chatlinedata, newc.chatlinedata);
 
-					var edit = "Edited --> ".grey;
+					let edit = "Edited --> ".grey;
 					i = 0;
 					diff.forEach(part => {
-						var color = (part.added) ? "green" : (part.removed) ? "red" : "grey";
+						const color = (part.added) ? "green" : (part.removed) ? "red" : "grey";
 						edit += part.value[color];
 					});
 					console.log(edit);
@@ -51,8 +51,8 @@ module.exports = (bot, oldMessage, newMessage) => {
 		if (e) {
 			console.error(e.stack);
 		} else {
-			var array = data.toString().split("\r\n");
-			var i = 0;
+			const array = data.toString().split("\r\n");
+			let i = 0;
 			for (i; i < array.length; i++) {
 				if (!array[i].startsWith("http") && (array[i] === oldc.chatlinedata || array[i] === "(Edited) " + oldc.chatlinedata)) {
 					array[i] = "(Edited) " + newc.chatlinedata;

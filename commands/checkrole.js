@@ -1,6 +1,6 @@
 const colors = require("colors");
 
-var runcheck = (guild, member, playRole) => {
+const runcheck = (guild, member, playRole) => {
 	if (member.user.presence.game && member.user.presence.game.name === guild.name) {
 		member.addRole(playRole).then(() => {
 			console.log(colors.white.dim(`* ${member.displayName}  added to ${playRole.name} role on ${guild.name} server.`));
@@ -17,12 +17,12 @@ var runcheck = (guild, member, playRole) => {
 };
 
 exports.run = (bot, msg, args, perm) => {
-	let member = msg.member;
-	let guild = member.guild;
+	const member = msg.member;
+	const guild = member.guild;
 	if (guild.id === "83078957620002816") {
-		let botMember = guild.members.get(bot.user.id);
+		const botMember = guild.members.get(bot.user.id);
 		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.highestRole.position > member.highestRole.position) {
-			let playRole = guild.roles.find("name", "Playing Distance");
+			const playRole = guild.roles.find("name", "Playing Distance");
 			if (!playRole) {
 				return;
 			}

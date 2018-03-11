@@ -1,4 +1,4 @@
-const pre = require("../config.json").prefix;
+//const pre = require("../config.json").prefix;
 const parseString = require("xml2js").parseString;
 const checkMapID = require("../util/checkMapIDs.js");
 // const ids = require("../mapids.json");
@@ -10,7 +10,7 @@ const s = new Steam({
 	format: "json"
 });
 
-let fetchBoard = (server) => {
+const fetchBoard = (server) => {
 	return new Promise((resolve, reject) => {
 		fetch(server).then(res => {
 			return res.text();
@@ -26,28 +26,29 @@ let fetchBoard = (server) => {
 };
 
 exports.run = (bot, msg, args) => {
+	const pre = bot.servConf.get(msg.guild.id).prefix;
 	if (typeof args[0] !== "string") {
 		send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 	} else {
-		let mapInfo = checkMapID(args);
-		let mapid = mapInfo.id;
+		const mapInfo = checkMapID(args);
+		const mapid = mapInfo.id;
 		if (mapid === 0) {
 			send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 		} else if (typeof mapid === "string" && mapid !== "") {
-			let lburl = `http://steamcommunity.com/stats/233610/leaderboards/${mapid}`;
+			const lburl = `http://steamcommunity.com/stats/233610/leaderboards/${mapid}`;
 			send(msg.channel, `<${lburl}>`);
-			let server = `${lburl}/?xml=1&start=1&end=1`;
+			const server = `${lburl}/?xml=1&start=1&end=1`;
 			fetchBoard(server).then((response) => {
 				let fulltime = "";
-				let sometest = response.entries[0].entry[0].score;
-				let somesteamid = response.entries[0].entry[0].steamid.toString();
-				let working = parseInt(sometest.toString(), 10);
+				const sometest = response.entries[0].entry[0].score;
+				const somesteamid = response.entries[0].entry[0].steamid.toString();
+				const working = parseInt(sometest.toString(), 10);
 				let checkForStunt = false;
 				if (mapInfo.mode === "stunt") {
 					checkForStunt = true;
 				}
 				if (!checkForStunt) {
-					let wrmin = ((working / 1000) / 60) >> 0;
+					const wrmin = ((working / 1000) / 60) >> 0;
 					let wrsec = (working / 1000) - (wrmin * 60) >> 0;
 					let wrmil = (working / 1000).toFixed(2).split(".");
 					wrmil = wrmil[1];
@@ -63,7 +64,7 @@ exports.run = (bot, msg, args) => {
 				s.getPlayerSummaries({
 					steamids: [`${somesteamid}`],
 					callback: (err, data) => {
-						let name = data.response.players[0].personaname;
+						const name = data.response.players[0].personaname;
 						send(msg.channel, `${fulltime} by ${name}`);
 						//console.log("data.response.players[0].personaname", data.response.players[0].personaname);
 					}
@@ -86,6 +87,6 @@ exports.conf = {
 exports.help = {
 	name: "dist",
 	description: "Displays current #1 on the specified map.",
-	extendedDescription: `<map name>\n* The name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (\`ttam\` = \`machines\` = \`the thing about machines\`).\n\n[mode]\n* The mode. This is only necessary when requesting a Speed and Style map (it will default to Sprint because they have the same name, however S&S is currently not supported because the map IDs aren't listed on Steam). Abbreviations for modes is also supported (\`speed and style\` = \`speed\` = \`sas\` = \`s&s\` | \`sprint\` = \`s\`)\n\n= Examples =\n"${pre}dist bs" or "${pre}dist broken symmetry" :: Both would return the best time for Broken Symmetry in Sprint mode.`,
+	extendedDescription: "<map name>\n* The name of the map. Only official maps are supported, no workshop. Abbreviations and full names are both supported (`ttam` = `machines` = `the thing about machines`).\n\n[mode]\n* The mode. This is only necessary when requesting a Speed and Style map (it will default to Sprint because they have the same name, however S&S is currently not supported because the map IDs aren't listed on Steam). Abbreviations for modes is also supported (`speed and style` = `speed` = `sas` = `s&s` | `sprint` = `s`)\n\n= Examples =\n\"dist bs\" or \"dist broken symmetry\" :: Both would return the best time for Broken Symmetry in Sprint mode.",
 	usage: "dist <map> [mode]"
 };

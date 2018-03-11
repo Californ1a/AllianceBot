@@ -17,9 +17,9 @@ exports.run = (bot, msg, args) => {
 	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='${command}'`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red(`Trying to insert command '${command}' into database.`));
-			var info = {
+			const info = {
 				"commandname": command,
-				"server_id": msg.guild.id,
+				"server_id": msg.guild.id
 			};
 			connection.insert("commands", info).then(() => {
 				console.log(colors.red("Successfully added command to server."));

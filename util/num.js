@@ -1,24 +1,24 @@
 const connection = require("./connection.js");
 const send = require("./sendMessage.js");
-var numOn = false;
+let numOn = false;
 
-var toggleStatus = function() {
+const toggleStatus = function() {
 	numOn = !numOn;
 };
 
-var getStatus = function() {
+const getStatus = function() {
 	return numOn;
 };
 
-var manageCorrect = function(channel, collected, winnerid, scoreAdd) {
-	var score;
+const manageCorrect = function(channel, collected, winnerid, scoreAdd) {
+	let score;
 	connection.select("*", "triviascore", `userid=${winnerid} AND server_id='${channel.guild.id}' LIMIT 1`).then(response => {
 		if (response[0]) {
 			score = response[0].score + scoreAdd;
 			connection.update("triviascore", `score=${score}`, `userid='${winnerid}' AND server_id='${channel.guild.id}'`).catch(e => console.error(e.stack));
 		} else {
 			score = scoreAdd;
-			var info = {
+			const info = {
 				"userid": winnerid,
 				"score": scoreAdd,
 				"server_id": channel.guild.id

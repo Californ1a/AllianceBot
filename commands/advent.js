@@ -6,9 +6,9 @@ const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args, perm) => {
 	//console.log(flags);
-	var eventName;
-	var eventDate;
-	var i = 0;
+	let eventName;
+	let eventDate;
+	let i = 0;
 	connection.select("*", "advent", `server_id=${msg.guild.id}`).then(response => {
 		if (!response[0] && !args[0]) {
 			send(msg.channel, "No event set.");
@@ -26,7 +26,7 @@ exports.run = (bot, msg, args, perm) => {
 						}
 					}
 					console.log(colors.red(`Trying to insert '${eventName}' event into database.`));
-					var info = {
+					const info = {
 						"name": eventName,
 						"time": eventDate,
 						"server_id": msg.guild.id
@@ -61,13 +61,13 @@ exports.run = (bot, msg, args, perm) => {
 				return;
 			});
 		} else if (response[0] && !args[0]) {
-			var forSS = {
+			const forSS = {
 				"bool": false,
 				"eventDate": response[0].time,
 				"eventName": response[0].name
 			};
-			var startMessage = `${response[0].name} will begin in `;
-			var currentstream = timers.getCount(false, startMessage, forSS);
+			const startMessage = `${response[0].name} will begin in `;
+			const currentstream = timers.getCount(false, startMessage, forSS);
 			send(msg.channel, `${currentstream}`);
 		} else if (response[0]) {
 			send(msg.channel, `There is already an event set. Use \`${pre}advent\` to view it.`);

@@ -2,12 +2,12 @@ const logLocation = require("../config.json").loglocation;
 const fs = require("fs-extra");
 const colors = require("colors");
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-var ampm = "AM";
+let ampm = "AM";
 
 function messageDate(message) {
-	var d = message.createdAt;
+	const d = message.createdAt;
 
-	var hournow = d.getHours();
+	let hournow = d.getHours();
 	ampm = "AM";
 	if (hournow === 0) {
 		hournow = 12;
@@ -19,32 +19,32 @@ function messageDate(message) {
 	if (hournow < 10 && hournow > 0) {
 		hournow = "0" + hournow;
 	}
-	var minutenow = d.getMinutes();
+	let minutenow = d.getMinutes();
 	if (minutenow < 10) {
 		minutenow = "0" + minutenow;
 	}
-	var secondnow = d.getSeconds();
+	let secondnow = d.getSeconds();
 	if (secondnow < 10) {
 		secondnow = "0" + secondnow;
 	}
-	var day = d.getDate();
-	var monthIndex = d.getMonth();
-	var year = d.getFullYear();
-	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + " " + ampm;
+	const day = d.getDate();
+	const monthIndex = d.getMonth();
+	const year = d.getFullYear();
+	const thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + " " + ampm;
 	return {
 		"formattedDate": thedate,
-		year,
+		year: "" + year,
 		"month": monthNames[monthIndex],
-		"hour": hournow,
-		"minute": minutenow,
+		"hour": "" + hournow,
+		"minute": "" + minutenow,
 		ampm
 	};
 }
 
-var getMaxRole = function(user) {
-	var nick = null;
-	var isbot = "";
-	var toprole = "";
+const getMaxRole = function(user) {
+	let nick = null;
+	let isbot = "";
+	let toprole = "";
 	//console.log(user.roles);
 	if (user.roles.size === 1) {
 		//user = "Guest";
@@ -61,8 +61,8 @@ var getMaxRole = function(user) {
 		if (user.user.bot) {
 			isbot = "{BOT}";
 		}
-		var maxpos = 0;
-		var i = 0;
+		let maxpos = 0;
+		let i = 0;
 		for (i; i < user.guild.roles.size + 1; i++) {
 			maxpos = user.roles.exists("position", i) && user.roles.find("position", i).position > maxpos ? user.roles.find("position", i).position : maxpos;
 		}
@@ -78,13 +78,13 @@ var getMaxRole = function(user) {
 	};
 };
 
-var writeLineToAllLogs = function(bot, guild, line) {
-	var guildChannels = guild.channels.array();
-	var currentDate = new Date();
-	var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-	var currentYear = currentDate.getFullYear();
-	var currentMonth = monthNames[currentDate.getMonth()];
-	var i = 0;
+const writeLineToAllLogs = function(bot, guild, line) {
+	const guildChannels = guild.channels.array();
+	const currentDate = new Date();
+	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+	const currentYear = currentDate.getFullYear();
+	const currentMonth = monthNames[currentDate.getMonth()];
+	let i = 0;
 	for (i; i < guildChannels.length; i++) {
 		fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
 			if (error) {
@@ -122,15 +122,15 @@ var writeLineToAllLogs = function(bot, guild, line) {
 	}
 };
 
-var formatChatlog = function(message) {
-	var messageTime = messageDate(message);
-	var messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
-	let member = message.member;
-	let author = message.author;
-	let isbot = (author.bot) ? "{BOT}" : "";
+const formatChatlog = function(message) {
+	const messageTime = messageDate(message);
+	const messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
+	const member = message.member;
+	const author = message.author;
+	const isbot = (author.bot) ? "{BOT}" : "";
 	//var user = getMaxRole(member);
-	let chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
-	let fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
+	const chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
+	const fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
 	let chatlinedata;
 	let consoleChat;
 	if (!member) {
@@ -140,8 +140,8 @@ var formatChatlog = function(message) {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
 		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.highestRole.name === "@everyone")?((member.id === message.guild.owner.id)?"Owner":"Guest"):member.highestRole.name})`;
 	}
-	var att = [];
-	var formattedAtturls = "";
+	const att = [];
+	let formattedAtturls = "";
 	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
 		if (error) {
 			console.error(error.stack);
@@ -162,8 +162,8 @@ var formatChatlog = function(message) {
 		consoleChat += `${member.displayName}: ${messageContent} `;
 	}
 	if (message.attachments.size > 0) {
-		var attc = message.attachments.array();
-		var i = 0;
+		const attc = message.attachments.array();
+		let i = 0;
 		for (i; i < attc.length; i++) {
 			att.push(attc[i].url);
 		}

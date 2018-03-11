@@ -11,7 +11,7 @@ admin.initializeApp({
 	databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
 });
 
-let db = admin.database();
+const db = admin.database();
 
 //preload roulette betting data
 

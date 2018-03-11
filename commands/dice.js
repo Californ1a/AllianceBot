@@ -13,22 +13,22 @@ exports.run = (bot, msg, args) => {
 		if (isNaN(args[0]) || isNaN(args[1])) {
 			return send(msg.channel, "Your gamble amount and dice side must be a number.");
 		}
-		var dieType = 6;
-		var newScore = 0;
-		var amount = parseInt(args[0]);
+		const dieType = 6;
+		let newScore = 0;
+		const amount = parseInt(args[0]);
 		if (amount < 1) {
 			return send(msg.channel, "Your bet amount must be a positive number.");
 		}
 		if (!(response[0].score >= amount)) {
 			return send(msg.channel, "You do not have enough points to bet that much.");
 		}
-		var side = parseInt(args[1]);
+		const side = parseInt(args[1]);
 		if (!(side > 0 && side <= dieType)) {
 			return send(msg.channel, "It is a 6-sided dice, you can only use 1-6.");
 		}
-		var die = Math.floor(Math.random() * dieType) + 1;
+		const die = Math.floor(Math.random() * dieType) + 1;
 		if (side === die) {
-			var scoreAdd = Math.floor(amount * 2);
+			const scoreAdd = Math.floor(amount * 2);
 			newScore = response[0].score + scoreAdd;
 			connection.update("triviascore", `score=${newScore}`, `userid='${msg.author.id}'`).then(() => {
 				send(msg.channel, `${msg.author}, The dice lands on ${die}! You win 200% of your bet (+${scoreAdd}, and bet amount returned)! Your score is now ${newScore}.`);
@@ -74,6 +74,6 @@ exports.conf = {
 exports.help = {
 	name: "dice",
 	description: "Dice game",
-	extendedDescription: `<amount>\n* The amount of score/points to bet.\n\n\<dice-side> (1-6)\n* The side of the dice to bet on.\n\n= Examples =\n"${pre}dice 10 3" :: This would bet 10 points on dice side 3.`,
+	extendedDescription: `<amount>\n* The amount of score/points to bet.\n\n<dice-side> (1-6)\n* The side of the dice to bet on.\n\n= Examples =\n"${pre}dice 10 3" :: This would bet 10 points on dice side 3.`,
 	usage: "dice <amount> <dice-side>"
 };

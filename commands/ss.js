@@ -1,12 +1,13 @@
-const pre = require("../config.json").prefix;
+//const pre = require("../config.json").prefix;
 const timers = require("../util/timers.js");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg) => {
-	var forSS = {
+	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const forSS = {
 		"bool": true
 	};
-	var currentss = timers.getCount(false, "The next SS will begin in ", forSS);
+	const currentss = timers.getCount(false, "The next SS will begin in ", forSS);
 	send(msg.channel, `${currentss} Use ${pre}speedy for full SS information.`);
 };
 

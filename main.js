@@ -1,8 +1,8 @@
-let pm2 = require("pm2");
+const pm2 = require("pm2");
 
-let MACHINE_NAME = "Heroku1";
-let PRIVATE_KEY = process.env.KEYMETRICS_PRIVATE_KEY; // Keymetrics Private key
-let PUBLIC_KEY = process.env.KEYMETRICS_PUBLIC_KEY; // Keymetrics Public  key
+const MACHINE_NAME = "Heroku1";
+const PRIVATE_KEY = process.env.KEYMETRICS_PRIVATE_KEY; // Keymetrics Private key
+const PUBLIC_KEY = process.env.KEYMETRICS_PUBLIC_KEY; // Keymetrics Public  key
 
 //let instances = process.env.WEB_CONCURRENCY || -1; // Set by Heroku or -1 to scale to max cpu core -1
 //let maxMemory = process.env.WEB_MEMORY || 512; // " " "
@@ -26,11 +26,11 @@ pm2.connect(function() {
 			"TWITTER_CONSUMER_SECRET": process.env.TWITTER_CONSUMER_SECRET,
 			"NODE_NO_HTTP2": 1
 		},
-		log_date_format: "YYYY-MM-DD HH:mm Z",
+		"log_date_format": "YYYY-MM-DD HH:mm Z",
 		args: [
 			"--color"
 		],
-		post_update: ["npm install"] // Commands to execute once we do a pull from Keymetrics
+		"post_update": ["npm install"] // Commands to execute once we do a pull from Keymetrics
 	}, function() {
 		pm2.interact(PRIVATE_KEY, PUBLIC_KEY, MACHINE_NAME, function() {
 
