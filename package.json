@@ -1,47 +1,51 @@
 {
-  "name": "AllianceBot",
-  "version": "2.0.0",
-  "description": "Discord bot",
-  "engines": {
-    "node": "8.9.4",
-    "npm": "5.7.1"
-  },
-  "main": "main.js",
-  "scripts": {
-    "start": "node main.js",
-    "test": "jest"
-  },
-	"jest": {
-		"testPathIgnorePatterns": ["/commands/test.js"]
+	"name": "AllianceBot",
+	"version": "2.0.0",
+	"description": "Discord bot",
+	"engines": {
+		"node": "8.9.4",
+		"npm": "5.7.1"
 	},
-  "author": "Californ1a",
-  "license": "ISC",
-  "dependencies": {
-    "colors": "1.1.2",
-    "diff": "3.2.0",
-    "discord.js": "11.2.1",
-    "dotenv": "4.0.0",
-    "duration-js": "3.9.2",
-    "firebase-admin": "5.9.1",
-    "fs-extra": "0.30.0",
-    "github-create-issue": "2.0.0",
-    "html-entities": "1.2.0",
-    "http": "0.0.0",
-    "moment": "2.17.1",
-    "mysql": "2.13.0",
-    "node-fetch": "2.0.0",
-    "opbeat": "4.12.0",
-    "parse-duration": "0.1.1",
-    "pm2": "2.4.3",
-    "pmx": "1.0.3",
-    "randomcolor": "0.4.4",
-    "steam-web": "0.4.0",
-    "twit": "2.2.4",
-    "ultron": "1.1.0",
-    "util": "0.10.3",
-    "xml2js": "0.4.17"
-  },
-  "devDependencies": {
-    "jest": "^22.4.2"
-  }
+	"main": "main.js",
+	"scripts": {
+		"start": "node main.js",
+		"test": "jest",
+		"watch": "jest --watch"
+	},
+	"jest": {
+		"testPathIgnorePatterns": [
+			"/commands/test.js"
+		]
+	},
+	"author": "Californ1a",
+	"license": "ISC",
+	"dependencies": {
+		"colors": "1.1.2",
+		"diff": "3.2.0",
+		"discord.js": "11.2.1",
+		"dotenv": "4.0.0",
+		"duration-js": "3.9.2",
+		"firebase-admin": "5.9.1",
+		"fs-extra": "0.30.0",
+		"github-create-issue": "2.0.0",
+		"html-entities": "1.2.0",
+		"http": "0.0.0",
+		"moment": "2.17.1",
+		"mysql": "2.13.0",
+		"node-fetch": "2.0.0",
+		"opbeat": "4.12.0",
+		"parse-duration": "0.1.1",
+		"pm2": "2.4.3",
+		"pmx": "1.0.3",
+		"randomcolor": "0.4.4",
+		"steam-web": "0.4.0",
+		"twit": "2.2.4",
+		"ultron": "1.1.0",
+		"util": "0.10.3",
+		"xml2js": "0.4.17"
+	},
+	"devDependencies": {
+		"jest": "^22.4.2",
+		"rewire": "^3.0.2"
+	}
 }

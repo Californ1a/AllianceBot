@@ -33,10 +33,10 @@ function messageDate(message) {
 	var thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + " " + ampm;
 	return {
 		"formattedDate": thedate,
-		year,
+		year: "" + year,
 		"month": monthNames[monthIndex],
-		"hour": hournow,
-		"minute": minutenow,
+		"hour": "" + hournow,
+		"minute": "" + minutenow,
 		ampm
 	};
 }
