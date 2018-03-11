@@ -6,7 +6,7 @@ const log = (m, i) => {
 	console.log(`DATABASE: ${colors.cyan(m)}${(i) ? ` ${colors.cyan(JSON.stringify(i, null, "\t"))}` : ""}`);
 };
 
-var select = function(columns, table, where) {
+const select = function(columns, table, where) {
 	return new Promise((resolve, reject) => {
 		if (typeof columns === "object") {
 			columns = columns.join(", ");
@@ -21,7 +21,7 @@ var select = function(columns, table, where) {
 	});
 };
 
-var del = function(t1, table, where) {
+const del = function(t1, table, where) {
 	return new Promise((resolve, reject) => {
 		if (where) {
 			log(`DELETE ${t1} FROM ${table} WHERE ${where}`);
@@ -43,7 +43,7 @@ var del = function(t1, table, where) {
 	});
 };
 
-var update = function(table, info, where) {
+const update = function(table, info, where) {
 	return new Promise((resolve, reject) => {
 		log(`UPDATE ${table} SET ${info} WHERE ${where}`);
 		sql.query(`UPDATE ${table} SET ${info} WHERE ${where}`, (err) => {
@@ -55,7 +55,7 @@ var update = function(table, info, where) {
 	});
 };
 
-var insert = function(table, info) {
+const insert = function(table, info) {
 	return new Promise((resolve, reject) => {
 		if (typeof info !== "object") {
 			reject(new Error("Info must be an object."));
@@ -70,7 +70,7 @@ var insert = function(table, info) {
 	});
 };
 
-var query = function(q) {
+const query = function(q) {
 	return new Promise((resolve, reject) => {
 		if (q.split(" ")[0].toLowerCase() === "select") {
 			log(q);
@@ -92,21 +92,21 @@ var query = function(q) {
 	});
 };
 
-var servers = "CREATE TABLE IF NOT EXISTS servers (idservers INT(11) NOT NULL AUTO_INCREMENT, servername VARCHAR(512) NOT NULL, serverid VARCHAR(45) NOT NULL, ownerid VARCHAR(45) NOT NULL, prefix VARCHAR(45) NOT NULL, membrole VARCHAR(255) NULL DEFAULT NULL, modrole VARCHAR(255) NULL DEFAULT NULL, adminrole VARCHAR(255) NULL DEFAULT NULL, timeoutrole VARCHAR(255) NULL DEFAULT NULL, PRIMARY KEY (idservers), UNIQUE INDEX serverid_UNIQUE (serverid)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const servers = "CREATE TABLE IF NOT EXISTS servers (idservers INT(11) NOT NULL AUTO_INCREMENT, servername VARCHAR(512) NOT NULL, serverid VARCHAR(45) NOT NULL, ownerid VARCHAR(45) NOT NULL, prefix VARCHAR(45) NOT NULL, membrole VARCHAR(255) NULL DEFAULT NULL, modrole VARCHAR(255) NULL DEFAULT NULL, adminrole VARCHAR(255) NULL DEFAULT NULL, timeoutrole VARCHAR(255) NULL DEFAULT NULL, PRIMARY KEY (idservers), UNIQUE INDEX serverid_UNIQUE (serverid)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var advent = "CREATE TABLE IF NOT EXISTS advent (idadvent INT(11) NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, time VARCHAR(19) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idadvent), UNIQUE INDEX id_name_unique (name, server_id), INDEX advent_ibfk_1_idx (server_id), CONSTRAINT advent_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const advent = "CREATE TABLE IF NOT EXISTS advent (idadvent INT(11) NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, time VARCHAR(19) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idadvent), UNIQUE INDEX id_name_unique (name, server_id), INDEX advent_ibfk_1_idx (server_id), CONSTRAINT advent_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var commands = "CREATE TABLE IF NOT EXISTS commands (idcommands INT(11) NOT NULL AUTO_INCREMENT, commandname VARCHAR(50) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idcommands), UNIQUE INDEX id_command_unique (commandname, server_id), INDEX commands_ibfk_1 (server_id), CONSTRAINT commands_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const commands = "CREATE TABLE IF NOT EXISTS commands (idcommands INT(11) NOT NULL AUTO_INCREMENT, commandname VARCHAR(50) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idcommands), UNIQUE INDEX id_command_unique (commandname, server_id), INDEX commands_ibfk_1 (server_id), CONSTRAINT commands_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var servcom = "CREATE TABLE IF NOT EXISTS servcom (idservcom INT(11) NOT NULL AUTO_INCREMENT, comname VARCHAR(45) NOT NULL, comtext MEDIUMTEXT NULL, inpm VARCHAR(5) NOT NULL DEFAULT 'false', permlvl INT(2) NOT NULL DEFAULT '0', type VARCHAR(20) NOT NULL DEFAULT 'simple', server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idservcom), UNIQUE INDEX id_com_servid (comname, server_id), INDEX servcom_ibfk_1 (server_id), CONSTRAINT servcom_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const servcom = "CREATE TABLE IF NOT EXISTS servcom (idservcom INT(11) NOT NULL AUTO_INCREMENT, comname VARCHAR(45) NOT NULL, comtext MEDIUMTEXT NULL, inpm VARCHAR(5) NOT NULL DEFAULT 'false', permlvl INT(2) NOT NULL DEFAULT '0', type VARCHAR(20) NOT NULL DEFAULT 'simple', server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idservcom), UNIQUE INDEX id_com_servid (comname, server_id), INDEX servcom_ibfk_1 (server_id), CONSTRAINT servcom_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var triviascore = "CREATE TABLE IF NOT EXISTS triviascore (idtriviascore INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, score INT(4) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idtriviascore), UNIQUE INDEX id_user_unique (userid, server_id), INDEX rip_ibfk_1_idx (server_id), CONSTRAINT triviascore_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const triviascore = "CREATE TABLE IF NOT EXISTS triviascore (idtriviascore INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, score INT(4) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idtriviascore), UNIQUE INDEX id_user_unique (userid, server_id), INDEX rip_ibfk_1_idx (server_id), CONSTRAINT triviascore_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var giveaway = "CREATE TABLE IF NOT EXISTS giveaway (idgive INT(11) NOT NULL AUTO_INCREMENT, entries INT(5) NOT NULL, cost INT(5) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idgive), UNIQUE INDEX serverid_unique (server_id), CONSTRAINT giveaway_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const giveaway = "CREATE TABLE IF NOT EXISTS giveaway (idgive INT(11) NOT NULL AUTO_INCREMENT, entries INT(5) NOT NULL, cost INT(5) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idgive), UNIQUE INDEX serverid_unique (server_id), CONSTRAINT giveaway_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var giveusers = "CREATE TABLE IF NOT EXISTS giveusers (idgive INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, likelihood INT(4) NOT NULL, giveawayid INT(11) NULL DEFAULT NULL, PRIMARY KEY (idgive), UNIQUE INDEX user_unique (userid, giveawayid), INDEX giveusers_ibfk_1 (giveawayid), CONSTRAINT giveusers_ibfk_1 FOREIGN KEY (giveawayid) REFERENCES giveaway (idgive) ON UPDATE CASCADE ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const giveusers = "CREATE TABLE IF NOT EXISTS giveusers (idgive INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, likelihood INT(4) NOT NULL, giveawayid INT(11) NULL DEFAULT NULL, PRIMARY KEY (idgive), UNIQUE INDEX user_unique (userid, giveawayid), INDEX giveusers_ibfk_1 (giveawayid), CONSTRAINT giveusers_ibfk_1 FOREIGN KEY (giveawayid) REFERENCES giveaway (idgive) ON UPDATE CASCADE ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
-var createAllTables = function() { //because I built too much database stuff without first checking in the proper places if the tables exist
+const createAllTables = function() { //because I built too much database stuff without first checking in the proper places if the tables exist
 	return new Promise((resolve, reject) => {
 		console.log(colors.red("Checking if SQL tables exist..."));
 		query(servers).then(() => {

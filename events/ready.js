@@ -3,12 +3,12 @@ const distanceServers = require("../util/distanceServers.js");
 const pre = require("../config.json").prefix;
 const glitchNames = ["T͠h̷e̛ A҉ll̨i̡anc̵e", "T̕͝h̡͏e A͝l͏l̵i̡̛͡à̧̕n̨͜҉ce͞", "T͘̕͟h̵͟͡e͘͞ A̢͞l̀͡li̡̢͏̀a̶̕nc̶̢e", "ŦҤE λŁŁłλ₦₡E", "Ţђę Ąɭɭįąŋçę", "Ťhë ÅÎÎīåñċë", "Ṫḧḕ Ḁḷḷḭḁṅḉḕ", "T̷h̷e̴ ̶A̴l̶l̵i̷a̶n̵c̴e̸", "T̴͖̉h̶̾e̷̿͝ ̴̆̚A̴l̸l̶͂i̷an̶̂c̸͝e"];
 
-let randomNickChange = function(bot) {
-	let botMember = bot.guilds.get("83078957620002816").members.get(bot.user.id);
-	let sec = Math.floor(Math.random() * 3600) + 1800;
-	let ms = sec * 1000;
-	let glitches = Math.floor(Math.random() * glitchNames.length);
-	let rndmName = glitchNames[glitches];
+const randomNickChange = function(bot) {
+	const botMember = bot.guilds.get("83078957620002816").members.get(bot.user.id);
+	const sec = Math.floor(Math.random() * 3600) + 1800;
+	const ms = sec * 1000;
+	const glitches = Math.floor(Math.random() * glitchNames.length);
+	const rndmName = glitchNames[glitches];
 
 	setTimeout(() => {
 		//console.log(glitches);

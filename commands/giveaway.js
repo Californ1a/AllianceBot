@@ -3,7 +3,7 @@ const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
 const colors = require("colors");
 
-let delWinners = (guild, winnerArray) => {
+const delWinners = (guild, winnerArray) => {
 	return new Promise((resolve, reject) => {
 		let i = 0;
 		for (i; i < winnerArray.length; i++) {
@@ -12,7 +12,7 @@ let delWinners = (guild, winnerArray) => {
 	});
 };
 
-var getWinners = (msg, winnerCount) => {
+const getWinners = (msg, winnerCount) => {
 	return new Promise((resolve, reject) => {
 		connection.select("*", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${msg.guild.id}' order by -log(rand())/((likelihood/entries)*100) limit ${winnerCount}`).then(win => {
 			let message = "Winners:";
@@ -35,17 +35,17 @@ var getWinners = (msg, winnerCount) => {
 	});
 };
 
-var getCurrentEntrants = (channel, topMessage) => {
+const getCurrentEntrants = (channel, topMessage) => {
 	return new Promise((resolve, reject) => {
 		connection.select("COUNT(*) as count", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}'`).then(c => {
 			if (c[0].count === 0) {
 				resolve("There are no entrants in the giveaway.");
 			} else {
 				connection.select("*", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}' order by likelihood desc`).then(users => {
-					var maxEntries = users[0].entries;
-					var nameArray = [];
-					var entriesArray = [];
-					var i = 0;
+					const maxEntries = users[0].entries;
+					const nameArray = [];
+					const entriesArray = [];
+					let i = 0;
 					for (i; i < users.length; i++) {
 						if (channel.guild.members.get(users[i].userid)) {
 							nameArray.push(channel.guild.members.get(users[i].userid).displayName);
@@ -58,7 +58,7 @@ var getCurrentEntrants = (channel, topMessage) => {
 						}
 						//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
 					}
-					var fieldsArray = [""];
+					const fieldsArray = [""];
 					i = 0;
 					for (i; i < nameArray.length; i++) {
 						fieldsArray[i] = {
@@ -93,19 +93,19 @@ exports.run = (bot, msg, args, perm) => {
 				} else if (isNaN(args[0]) && isNaN(args[1])) {
 					return send(msg.channel, "The cost must be number.");
 				}
-				var price = parseInt(args[0]);
+				let price = parseInt(args[0]);
 				if (price > 9999) {
 					price = 9999;
 				} else if (price <= 0) {
 					price = 0;
 				}
-				var maxEntries = parseInt(args[1]);
+				let maxEntries = parseInt(args[1]);
 				if (maxEntries > 9999) {
 					maxEntries = 9999;
 				} else if (maxEntries <= 0) {
 					maxEntries = 0;
 				}
-				var info = {
+				const info = {
 					"server_id": msg.guild.id,
 					"cost": price,
 					"entries": maxEntries
@@ -135,7 +135,7 @@ exports.run = (bot, msg, args, perm) => {
 						getCurrentEntrants(msg.channel, "The amount of winners must be a number (0 to end with none).").catch(e => console.error(e));
 						return;
 					}
-					var winnerCount = parseInt(args[0]);
+					const winnerCount = parseInt(args[0]);
 					if (c.count === 0 && winnerCount !== 0) {
 						return send(msg.channel, "There are no entries. Use 0 to end an empty giveaway.");
 					} else if (winnerCount > c.count) {
@@ -145,7 +145,7 @@ exports.run = (bot, msg, args, perm) => {
 							msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 								max: 1,
 								time: 20000,
-								errors: ["time"],
+								errors: ["time"]
 							}).then((collected) => {
 								if (collected.first().content === "no" || collected.first().content === "n") {
 									return send(msg.channel, "Giveaway will continue.");

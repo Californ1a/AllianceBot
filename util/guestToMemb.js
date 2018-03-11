@@ -2,7 +2,7 @@ const colors = require("colors");
 const membrolename = require("../config.json").membrolename;
 const connection = require("./connection.js");
 
-var guestToMemb = function(bot, msg) {
+const guestToMemb = function(bot, msg) {
 	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='automemb'`).then(response => {
 		if (!response[0]) {
 			if (!msg.author.bot) {
@@ -13,9 +13,9 @@ var guestToMemb = function(bot, msg) {
 		if (msg.member.highestRole.name !== "@everyone" && !msg.author.bot) {
 			return console.log(`User isn't guest? (${msg.member.highestRole.name}) (${msg.author.bot})`);
 		}
-		var botcanassign = false;
+		let botcanassign = false;
 		//var bu = cl.getMaxRole(msg.guild.members.get(bot.user.id));
-		var botMemb = msg.guild.members.get(bot.user.id);
+		const botMemb = msg.guild.members.get(bot.user.id);
 		if (botMemb.highestRole.name === "@everyone") {
 			return console.log(colors.red("Bot cannot assign (Bot is guest)."));
 		}

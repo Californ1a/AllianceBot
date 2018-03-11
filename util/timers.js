@@ -1,8 +1,8 @@
 const moment = require("moment"); //requirements
 
-var getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
+const getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
 
-	var resultDate = new Date(date.getTime());
+	const resultDate = new Date(date.getTime());
 
 	resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
 	if (date.getDay() === 6 && date.getHours() >= 16) {
@@ -23,19 +23,19 @@ var getNextSSDay = function getNextSSDay(date, dayOfWeek, currentlyHappening) {
 
 
 //get and format duration from now until "futuredate"
-var getCount = function getCount(currentlyHappening, startMessage, forSS) {
-	var momentDate;
-	var dateFuture;
-	var amount;
-	var dateNow = new Date(); //grab current date
+const getCount = function getCount(currentlyHappening, startMessage, forSS) {
+	let momentDate;
+	let dateFuture;
+	let amount;
+	const dateNow = new Date(); //grab current date
 	//var localTime = dateNow.getTime();
 	//var localOffset = dateNow.getTimezoneOffset() * 60000; //convert time offset to milliseconds
 	//var utc = localTime + localOffset;
-	var days = 0;
-	var hours = 0;
-	var mins = 0;
-	var secs = 0;
-	var out = "";
+	let days = 0;
+	let hours = 0;
+	let mins = 0;
+	let secs = 0;
+	let out = "";
 	if (forSS.bool) {
 		amount = getNextSSDay(dateNow, 6, currentlyHappening).getTime() - dateNow.getTime(); //calc milliseconds between dates
 	} else {
@@ -55,9 +55,7 @@ var getCount = function getCount(currentlyHappening, startMessage, forSS) {
 			out = forSS.eventName + " is currently happening or has passed.";
 			return out;
 		}
-	}
-	// date is still good
-	else {
+	} else { // date is still good
 		//currentss = 0;
 		days = 0;
 		hours = 0;

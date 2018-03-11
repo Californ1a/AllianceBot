@@ -8,19 +8,19 @@ let scrambleSet;
 firebase.db.ref("scramble").once("value").then(data => {
 	scrambleSet = data.val().filter(v => v !== "");
 });
-var scrambleOn = false;
-var incompleteQuestions = [];
-var countQsMissed = 0;
-var scoreAdd = 0;
-var events = require("events");
-var eventEmitter = new events.EventEmitter();
-var timeout;
+let scrambleOn = false;
+let incompleteQuestions = [];
+let countQsMissed = 0;
+let scoreAdd = 0;
+const events = require("events");
+const eventEmitter = new events.EventEmitter();
+let timeout;
 
-var getScrambleStatus = () => {
+const getScrambleStatus = () => {
 	return scrambleOn;
 };
 
-let populateScramble = () => {
+const populateScramble = () => {
 	incompleteQuestions = JSON.parse(JSON.stringify(scrambleSet));
 };
 
@@ -28,7 +28,7 @@ function removeScrambleTerm(orig) {
 	if (!incompleteQuestions[0]) {
 		populateScramble();
 	} else {
-		var index = incompleteQuestions.indexOf(orig);
+		const index = incompleteQuestions.indexOf(orig);
 		if (index > -1) {
 			incompleteQuestions.splice(index, 1);
 		}
@@ -36,46 +36,44 @@ function removeScrambleTerm(orig) {
 }
 
 function scramble(a) {
-	var k = a.split("");
-	var d;
-	var b = a.length - 1;
+	const k = a.split("");
+	let d;
+	let b = a.length - 1;
 	for (b; 0 < b; b--) {
-		var c = Math.floor(Math.random() * (b + 1));
+		const c = Math.floor(Math.random() * (b + 1));
 		d = k[b];
 		k[b] = k[c];
 		k[c] = d;
 	}
-	var ret = k.join("");
+	let ret = k.join("");
 	if (ret.charAt(0) === " " || ret.charAt(ret.length - 1) === " " || ret.includes("  ") || ret === a) {
 		ret = scramble(a);
 	}
 	return ret;
 }
 
-var toggleScrambleStatus = () => {
+const toggleScrambleStatus = () => {
 	scrambleOn = !scrambleOn;
 };
 
-var goScramble = (channel, config, startingScores) => {
+const goScramble = (channel, config, startingScores) => {
 	if (!getScrambleStatus()) {
 		return;
 	}
 	scoreAdd = 0;
-	var curr;
-	var orig;
 	if (!incompleteQuestions[0]) {
 		populateScramble();
 	}
-	orig = game.getRndmFromSet(incompleteQuestions);
-	curr = scramble(orig);
+	const orig = game.getRndmFromSet(incompleteQuestions);
+	const curr = scramble(orig);
 	console.log(colors.red(`Terms remaining: ${incompleteQuestions.length}, Term: ${orig}`));
 	send(channel, `Term:\n**${curr.toUpperCase()}**`).then(() => {
 		channel.awaitMessages(r => r.content.toLowerCase() === orig.toLowerCase(), {
 			max: 1,
 			time: config.delayBeforeNoAnswer,
-			errors: ["time"],
+			errors: ["time"]
 		}).then((collected) => {
-			var winnerid = collected.first().author.id;
+			const winnerid = collected.first().author.id;
 			if (!getScrambleStatus()) {
 				return;
 			}
@@ -103,7 +101,7 @@ var goScramble = (channel, config, startingScores) => {
 };
 
 eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd, config, orig) => {
-	var member = channel.guild.members.get(winnerid);
+	const member = channel.guild.members.get(winnerid);
 	sm.setScore(channel.guild, member, "add", scoreAdd).then(m => {
 		removeScrambleTerm(orig);
 		countQsMissed = 0;
@@ -113,8 +111,8 @@ eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd
 	}).catch(e => console.error(e.stack));
 });
 
-var timedScramble = (channel, minutes, trivStartUser, category, cmd, config, startingScores) => {
-	var time = (minutes * 60) * 1000;
+const timedScramble = (channel, minutes, trivStartUser, category, cmd, config, startingScores) => {
+	const time = (minutes * 60) * 1000;
 	toggleScrambleStatus();
 	populateScramble();
 	send(channel, "```markdown\r\n# Scramble is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n* There are no hints.  \r\n*  There is " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between scramble and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");

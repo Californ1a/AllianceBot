@@ -2,14 +2,14 @@ const connection = require("./connection.js");
 const colors = require("colors");
 const reminderCheckTime = require("../config.json").reminders;
 const send = require("./sendMessage.js");
-var events = require("events");
-var eventEmitter = new events.EventEmitter();
+const events = require("events");
+const eventEmitter = new events.EventEmitter();
 
-var refresh = (bot) => {
+const refresh = (bot) => {
 	return new Promise((resolve, reject) => {
 		bot.reminders.clear();
 		connection.select("*", "reminders").then(response => {
-			var i = 0;
+			let i = 0;
 			for (i; i < response.length; i++) {
 				bot.reminders.set(response[i].id, response[i]);
 			}
@@ -59,8 +59,8 @@ var refresh = (bot) => {
 // 	}
 // };
 
-var reminderEmitter = (bot) => {
-	var d = Date.now();
+const reminderEmitter = (bot) => {
+	const d = Date.now();
 	bot.reminders.forEach(reminder => {
 		//console.log("reminder", reminder);
 		if (reminder.reminddate.getTime() <= d) {
@@ -80,8 +80,8 @@ eventEmitter.on("remindTime", (bot, reminder) => {
 	}).then(() => {
 		if (reminder.sent === "false") {
 			//console.log("reminder (before send)", reminder);
-			let strs = reminder.message;
-			let results = strs.slice(1, strs.length - 1);
+			const strs = reminder.message;
+			const results = strs.slice(1, strs.length - 1);
 			send(bot.users.get(reminder.userid), `Reminding you soon after ${reminder.reminddate.toString()} about:\n${results}\n\nYou set this reminder at: ${reminder.initdate.toString()}`);
 			reminder.sent = "true";
 			//console.log("reminder (after send)", reminder);

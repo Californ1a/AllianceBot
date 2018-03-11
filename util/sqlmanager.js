@@ -12,12 +12,12 @@ const pool = mysql.createPool(sqlconfig);
 
 module.exports = {
 	query() {
-		var sqlArgs = [];
-		var args = [];
-		for (var i = 0; i < arguments.length; i++) {
+		let sqlArgs = [];
+		const args = [];
+		for (let i = 0; i < arguments.length; i++) {
 			args.push(arguments[i]);
 		}
-		var callback = args[args.length - 1]; //last arg is callback
+		const callback = args[args.length - 1]; //last arg is callback
 		pool.getConnection(function(err, connection) {
 			if (err) {
 				console.error(err);

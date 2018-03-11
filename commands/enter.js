@@ -21,7 +21,7 @@ exports.run = (bot, msg, args, perm) => {
 					}
 					let entriesToAdd;
 					connection.select("*", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(ent => {
-						var info;
+						let info;
 						if (ent[0]) {
 							if (ent[0].likelihood === response.entries) {
 								return send(msg.channel, `You already have the max amount of entries for this giveaway, ${response.entries}`);

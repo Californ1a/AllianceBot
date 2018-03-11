@@ -4,7 +4,7 @@ const colors = require("colors");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
-	const pre = bot.servConf.prefix;
+	const pre = bot.servConf.get(msg.guild.id).prefix;
 	if (args.length !== 1) {
 		return send(msg.channel, `Incorrect syntax. Use \`${pre}help delcom\` for help.`);
 	}

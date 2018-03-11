@@ -4,7 +4,7 @@ const sm = require("../util/scoremanager.js");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args, perm) => {
-	var mentionedMember;
+	let mentionedMember;
 	if (!args[0]) {
 		sm.getScore(msg.guild, msg.member).then(s => {
 			msg.reply(`Your Rank: ${s.rank}, Your Score: ${s.score}`);
@@ -18,7 +18,7 @@ exports.run = (bot, msg, args, perm) => {
 			send(msg.channel, `Rank: ${s.rank}, Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args[0] === "board" || args[0] === "b") {
-		var limit = 9;
+		let limit = 9;
 		if (perm >= 2 && (args[1] === "full" || args[1] === "f")) {
 			limit = 999;
 		}
@@ -39,12 +39,12 @@ exports.run = (bot, msg, args, perm) => {
 		if (isNaN(args[2])) {
 			return send(msg.channel, "The score must be a number.");
 		}
-		var amount = parseInt(args[2]);
+		const amount = parseInt(args[2]);
 		if (amount < 0 && perm < 2) {
 			return send(msg.channel, "The score must be positive.");
 		}
 		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
-		var type = (args[0] === "set") ? "set" : "add";
+		const type = (args[0] === "set") ? "set" : "add";
 		sm.getScore(msg.guild, msg.member).then(s => {
 			if (perm < 2 && s.score < amount) {
 				return send(msg.channel, "You do not have enough points to give away that many.");
@@ -70,7 +70,7 @@ exports.run = (bot, msg, args, perm) => {
 		msg.channel.awaitMessages(respond => (respond.author.id === msg.author.id && (respond.content === "yes" || respond.content === "no" || respond.content === "n" || respond.content === "y")), {
 			max: 1,
 			time: 10000,
-			errors: ["time"],
+			errors: ["time"]
 		}).then((collected) => {
 			if (collected.first().content === "no" || collected.first().content === "n") {
 				return send(msg.channel, "Boards remain intact.");

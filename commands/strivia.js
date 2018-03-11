@@ -2,16 +2,16 @@ const connection = require("../util/connection.js");
 const triviaconfig = require("../config.json").trivia;
 const game = require("../util/game.js");
 const send = require("../util/sendMessage.js");
-let delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
-let delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
-let delayBeforeH = triviaconfig.delayBeforeHint;
-let delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
+const delayBeforeFirstQ = triviaconfig.delayBeforeFirstQuestion;
+const delayBeforeNextQ = triviaconfig.delayBeforeNextQuestion;
+const delayBeforeH = triviaconfig.delayBeforeHint;
+const delayBeforeNoA = triviaconfig.delayBeforeNoAnswer;
 let awaitStart = false;
 let trivStartUser;
 let startingScores;
 
 exports.run = (bot, msg, args, perm, cmd) => {
-	var category = "default";
+	const category = "default";
 	if (perm >= 2 && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
 		if (args[0]) {
 			if (!game.trivia.getStatus() && !game.scramble.getStatus()) {
@@ -62,8 +62,8 @@ exports.run = (bot, msg, args, perm, cmd) => {
 			if (!response[0]) {
 				return send(msg.channel, "You don't have any points.");
 			}
-			var cost = parseInt(args[0]);
-			var minutes = Math.floor((cost - 4) / 3);
+			const cost = parseInt(args[0]);
+			const minutes = Math.floor((cost - 4) / 3);
 			if (cost > response[0].score) {
 				return send(msg.channel, `You do not have enough points. You would need ${cost} points to keep trivia going for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}. You only have ${response[0].score} points.\r\nTrivia costs 4 points to start and an additional 3 points for every minute you want to run the game.`);
 			} else if (minutes < 1) {
@@ -74,7 +74,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 			msg.channel.awaitMessages(r => (r.content === "y" || r.content === "yes" || r.content === "n" || r.content === "no") && msg.author.id === r.author.id, {
 				max: 1,
 				time: 30000,
-				errors: ["time"],
+				errors: ["time"]
 			}).then((collected) => {
 				if (collected.first().content === "n" || collected.first().content === "no") {
 					awaitStart = false;
@@ -82,7 +82,7 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				}
 				awaitStart = false;
 				trivStartUser = collected.first().author;
-				var newScore = parseInt(response[0].score) - cost;
+				const newScore = parseInt(response[0].score) - cost;
 				if (newScore > 0) {
 					startingScores = 0;
 					connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.guild.id}' ORDER BY rank`).then(response => {

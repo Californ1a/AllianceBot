@@ -1,15 +1,15 @@
 const connection = require("./connection.js");
 
-var getScore = (guild, member) => {
+const getScore = (guild, member) => {
 	return new Promise((resolve, reject) => {
-		var usersScore = 0;
-		var usersRank = "unranked";
+		let usersScore = 0;
+		let usersRank = "unranked";
 		connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${guild.id}') as rank`, "triviascore as t1", `userid='${member.id}' AND server_id='${guild.id}' ORDER BY rank`).then(response => {
 			if (response[0]) {
 				usersRank = response[0].rank;
 				usersScore = response[0].score;
 			}
-			var arr = {
+			const arr = {
 				rank: usersRank,
 				score: usersScore
 			};
@@ -18,7 +18,7 @@ var getScore = (guild, member) => {
 	});
 };
 
-var delScore = (guild, member, s) => {
+const delScore = (guild, member, s) => {
 	return new Promise((resolve, reject) => {
 		connection.del("triviascore", `userid='${member.id}' AND server_id='${guild.id}'`).then(() => {
 			resolve(`Removed ${member.displayName} from the board. Their previous score was ${s.score}.`);
@@ -26,7 +26,7 @@ var delScore = (guild, member, s) => {
 	});
 };
 
-var setScore = (guild, member, type, amount) => {
+const setScore = (guild, member, type, amount) => {
 	return new Promise((resolve, reject) => {
 		getScore(guild, member).then(s => {
 			if ((type === "add" && s.score + amount <= 0) || (type === "set" && amount <= 0)) {
@@ -39,7 +39,7 @@ var setScore = (guild, member, type, amount) => {
 					});
 				}).catch(e => reject(e));
 			} else {
-				var newScore;
+				let newScore;
 				if (type === "add") {
 					newScore = s.score + amount;
 				} else if (type === "set") {
@@ -57,7 +57,7 @@ var setScore = (guild, member, type, amount) => {
 						});
 					}).catch(e => reject(e));
 				} else {
-					var info = {
+					const info = {
 						"userid": member.id,
 						"score": newScore,
 						"server_id": guild.id

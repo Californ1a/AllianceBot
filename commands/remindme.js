@@ -12,13 +12,13 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 	if (!flags || !flags.message || !flags.duration) {
 		return send(msg, "You must include both a duration and a message.");
 	}
-	var durationMS = parse(flags.duration);
-	var d = Duration.parse(`${durationMS}ms`);
-	var now = Date.now();
-	var current = new Date();
-	var later = new Date(now + d);
+	const durationMS = parse(flags.duration);
+	const d = Duration.parse(`${durationMS}ms`);
+	const now = Date.now();
+	const current = new Date();
+	const later = new Date(now + d);
 	//var escdMsg = escape.chars(flags.message);
-	var info = {
+	const info = {
 		userid: msg.author.id,
 		message: `'${flags.message}'`,
 		reminddate: later,
@@ -38,10 +38,10 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 				collector.on("end", () => {
 					console.log(colors.red("Reaction collection ended."));
 					m.edit(`${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}.\n\n~~Others may click the ⏰ reaction within the next ${(timeout > 1) ? `${timeout} minutes` : "1 minute"} to also be sent the same reminder (removing your reaction will **not** remove your reminder)~~.`);
-					var userids = [];
-					var userids1 = [];
+					const userids = [];
+					const userids1 = [];
 					connection.select("*", "reminders", `message="${info.message}"`).then(response => {
-						var i = 0;
+						let i = 0;
 						for (i; i < response.length; i++) {
 							if (!userids.includes(response[i].userid) && !userids1.includes(response[i].userid)) {
 								userids1.push(response[i].userid);
@@ -52,7 +52,7 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 								userids.push(u.id);
 							}
 						});
-						var unique = userids.filter((elem, index, self) => {
+						const unique = userids.filter((elem, index, self) => {
 							return index === self.indexOf(elem);
 						});
 						if (unique.length === 0) {

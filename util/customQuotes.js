@@ -23,11 +23,11 @@ function randomQuote(message, type) {
 }
 
 function addQuote(msg, args, type) {
-	var recombined = "";
+	let recombined = "";
 	if (args.length >= 2) {
 		recombined = recombineQuote(args);
 		console.log(colors.red(`Trying to insert ${type} message '${recombined}' into database.`));
-		var info = {
+		const info = {
 			"quote": recombined,
 			"server_id": msg.guild.id
 		};
@@ -45,7 +45,7 @@ function addQuote(msg, args, type) {
 }
 
 function delQuote(msg, args, type) {
-	var recombined = "";
+	let recombined = "";
 	if (args.length >= 2) {
 		//console.log(results.length);
 		recombined = recombineQuote(args);
@@ -71,9 +71,9 @@ function listQuotes(msg, type) {
 			return;
 		}
 		console.log(colors.red("Success."));
-		var quotespm = `\n**Here are all the current ${type} quotes:**\n--------------------\n\`\`\``;
-		var lengthCheck;
-		var i = 0;
+		let quotespm = `\n**Here are all the current ${type} quotes:**\n--------------------\n\`\`\``;
+		let lengthCheck;
+		let i = 0;
 		for (i; i < response.length; i++) {
 			lengthCheck = `${quotespm}${response[i].quote}\r`;
 			if (lengthCheck.length < 1996) {
@@ -96,7 +96,7 @@ function listQuotes(msg, type) {
 
 function searchQuotes(msg, args, type) {
 	//let args = message.content.split(" ").slice(1).join(" ");
-	let searchKey = escape.chars(args.rejoin(" "));
+	const searchKey = escape.chars(args.rejoin(" "));
 	console.log(colors.red(`Trying to find ${type} message matching '${searchKey}' in database.`));
 	connection.select("*", type, `server_id=${msg.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1`).then(response => {
 		if (!response[0]) {
@@ -113,7 +113,7 @@ function searchQuotes(msg, args, type) {
 	});
 }
 
-var ripWin = function(msg, args, type, perm) {
+const ripWin = function(msg, args, type, perm) {
 	// var str = msg.content.toString();
 	// var results = str.split(" ");
 	if (!args[0]) { //if second word doesn't exist, type undefined
