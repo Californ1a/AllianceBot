@@ -142,6 +142,20 @@ connection.createAllTables().then(() => {
 	});
 }).catch(console.error);
 
+//Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
+bot.channels.forEach(c => {
+	if (c.locked && c.timeoutRoles) {
+		const roles = c.timeoutRoles;
+		for (const r of roles) {
+			c.overwritePermissions(r, {
+				"SEND_MESSAGES": null
+			}, "Revert channel lockdown").catch(console.error);
+		}
+		c.locked = false;
+		c.timeoutRoles = [];
+	}
+});
+
 //get the permission level of the member who sent message
 bot.elevation = function(msg) {
 	if (!msg.guild) {
