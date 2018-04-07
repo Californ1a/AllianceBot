@@ -4,6 +4,7 @@ const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
 const channelName = "servers";
 const refreshMin = 5;
+let refreshMin2 = refreshMin;
 const serversEmbed = {
 	"description": `This list is updated once per ${(refreshMin===1)?"minute":`${refreshMin} minutes`} and displays up to the first 25 servers listed. You may also use \`!servers\` in any other channel to get a short summary of the current public server info without having to look at this channel.`,
 	"color": 4886754,
@@ -61,6 +62,7 @@ const updateEmbed = (bot, servers) => {
 			send(channel, "Distance Server List", {
 				embed: serversEmbed
 			});
+			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
 			const mm = messages.filter(m => m.author.id !== bot.user.id);
@@ -73,12 +75,14 @@ const updateEmbed = (bot, servers) => {
 				bm.first().edit("Distance Server List", {
 					embed: serversEmbed
 				}).then(() => {
-					console.log(colors.grey("Updated Distance server list"));
+					console.log(colors.grey("* Updated Distance server list"));
+					refreshMin2 = refreshMin;
 				});
 			} else {
 				send(channel, "Distance Server List", {
 					embed: serversEmbed
 				});
+				refreshMin2 = refreshMin;
 			}
 		}
 	}).catch(console.error);
@@ -93,13 +97,14 @@ const distanceServers = (bot, server = "http://35.185.40.23/") => {
 	}).catch(err => {
 		if (server !== "http://35.185.40.23/") {
 			console.warn("Failed fetching from both Distance servers.", err);
+			refreshMin2 *= 2;
 		} else {
 			distanceServers(bot, "http://distance.rip:23469/");
 		}
 	});
 	setTimeout(() => {
 		distanceServers(bot);
-	}, refreshMin * 60 * 1000);
+	}, refreshMin2 * 60 * 1000);
 };
 
 module.exports = distanceServers;
