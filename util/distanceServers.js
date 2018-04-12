@@ -96,7 +96,6 @@ const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distanc
 			...data
 		})))
 		.then(merged => {
-			console.log(JSON.stringify(merged, null, 2));
 			updateEmbed(bot, merged.servers);
 			setTimeout(() => {
 				distanceServers(bot);
