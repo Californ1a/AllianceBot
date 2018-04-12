@@ -61,14 +61,14 @@ const updateEmbed = (bot, servers) => {
 		if (messages.size === 0) {
 			send(channel, "Distance Server List", {
 				embed: serversEmbed
-			});
+			}).catch(err => console.error(err));
 			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
 			const mm = messages.filter(m => m.author.id !== bot.user.id);
 			if (mm.size > 1) {
 				messages.forEach(m => {
-					m.deleteAll().catch(console.error);
+					m.deleteAll().catch(err => console.error(err));
 				});
 			}
 			if (bm.size > 0) {
@@ -77,34 +77,38 @@ const updateEmbed = (bot, servers) => {
 				}).then(() => {
 					console.log(colors.grey("* Updated Distance server list"));
 					refreshMin2 = refreshMin;
-				});
+				}).catch(err => console.error(err));
 			} else {
 				send(channel, "Distance Server List", {
 					embed: serversEmbed
-				});
+				}).catch(err => console.error(err));
 				refreshMin2 = refreshMin;
 			}
 		}
-	}).catch(console.error);
-
+	}).catch(err => console.error(err));
 };
 
-const distanceServers = (bot, server = "http://35.185.40.23/") => {
-	fetch(server).then((response) => {
-		return response.json();
-	}).then((data) => {
-		updateEmbed(bot, data.servers);
-	}).catch(err => {
-		if (server !== "http://35.185.40.23/") {
-			console.warn("Failed fetching from both Distance servers.", err);
+const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distance.rip:23469/"]) => {
+	Promise.all(servers.map(fetch))
+		.then(responses => Promise.all(responses.map(res => res.json())))
+		.then(multiData => multiData.reduce((merge, data) => ({
+			...merge,
+			...data
+		})))
+		.then(merged => {
+			console.log(JSON.stringify(merged, null, 2));
+			updateEmbed(bot, merged.servers);
+			setTimeout(() => {
+				distanceServers(bot);
+			}, refreshMin2 * 60 * 1000);
+		})
+		.catch(err => {
+			console.error(err);
 			refreshMin2 *= 2;
-		} else {
-			distanceServers(bot, "http://distance.rip:23469/");
-		}
-	});
-	setTimeout(() => {
-		distanceServers(bot);
-	}, refreshMin2 * 60 * 1000);
+			setTimeout(() => {
+				distanceServers(bot);
+			}, refreshMin2 * 60 * 1000);
+		});
 };
 
 module.exports = distanceServers;

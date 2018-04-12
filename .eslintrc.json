@@ -5,7 +5,10 @@
 	},
 	"extends": "eslint:recommended",
 	"parserOptions": {
-		"sourceType": "module"
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"experimentalObjectRestSpread": true
+		}
 	},
 	"rules": {
 		"indent": [
@@ -50,7 +53,6 @@
 		"no-new-require": "error",
 		"array-bracket-newline": ["error", "consistent"],
 		"array-bracket-spacing": ["error", "never"],
-		"array-element-newline": ["error", "never"],
 		"block-spacing": ["error", "always"],
 		"brace-style": ["error", "1tbs"],
 		"camelcase": ["error", {
