@@ -95,15 +95,13 @@ const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distanc
 			...merge,
 			...data
 		})))
+		.catch(console.error)
 		.then(merged => {
-			updateEmbed(bot, merged.servers);
-			setTimeout(() => {
-				distanceServers(bot);
-			}, refreshMin2 * 60 * 1000);
-		})
-		.catch(err => {
-			console.error(err);
-			refreshMin2 *= 2;
+			if (typeof merged !== "undefined") {
+				updateEmbed(bot, merged.servers);
+			} else {
+				refreshMin2 *= 2;
+			}
 			setTimeout(() => {
 				distanceServers(bot);
 			}, refreshMin2 * 60 * 1000);
