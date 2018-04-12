@@ -61,14 +61,14 @@ const updateEmbed = (bot, servers) => {
 		if (messages.size === 0) {
 			send(channel, "Distance Server List", {
 				embed: serversEmbed
-			}).catch(err => console.error(err));
+			}).catch(console.error);
 			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
 			const mm = messages.filter(m => m.author.id !== bot.user.id);
 			if (mm.size > 1) {
 				messages.forEach(m => {
-					m.deleteAll().catch(err => console.error(err));
+					m.deleteAll().catch(console.error);
 				});
 			}
 			if (bm.size > 0) {
@@ -77,15 +77,15 @@ const updateEmbed = (bot, servers) => {
 				}).then(() => {
 					console.log(colors.grey("* Updated Distance server list"));
 					refreshMin2 = refreshMin;
-				}).catch(err => console.error(err));
+				}).catch(console.error);
 			} else {
 				send(channel, "Distance Server List", {
 					embed: serversEmbed
-				}).catch(err => console.error(err));
+				}).catch(console.error);
 				refreshMin2 = refreshMin;
 			}
 		}
-	}).catch(err => console.error(err));
+	}).catch(console.error);
 };
 
 const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distance.rip:23469/"]) => {
