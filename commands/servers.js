@@ -24,7 +24,7 @@ exports.run = (bot, msg) => {
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
-		send(msg.channel, `There ${(pubServs.length === 1) ? "is 1 public server" : `are ${pubServs.length} public servers`}${(pubServs.length > 0 && openPubs.length > 0) ? `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.` : (pubServs.length > 0) ? " with no open slots.":"."}`);
+		send(msg.channel, `There ${(pubServs.length === 1) ? "is 1 public server" : `are ${pubServs.length} public servers`}${(pubServs.length > 0 && openPubs.length > 0) ? (openPubs.length < 2) ? ` with ${totalSlots} open slots.` : `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.` : (pubServs.length > 0) ? " with no open slots.":"."}`);
 	}).catch(() => send(msg.channel, "Failed to obtain server list."));
 };
 
