@@ -3,8 +3,11 @@ const colors = require("colors");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
 const channelName = "servers";
-const refreshMin = 5;
+const refreshMin = 1;
+const logTimeMin = 10;
 let refreshMin2 = refreshMin;
+let d = Date.now();
+let count = 0;
 const serversEmbed = {
 	"description": `This list is updated once per ${(refreshMin===1)?"minute":`${refreshMin} minutes`} and displays up to the first 25 servers listed. You may also use \`!servers\` in any other channel to get a short summary of the current public server info without having to look at this channel.`,
 	"color": 4886754,
@@ -61,31 +64,36 @@ const updateEmbed = (bot, servers) => {
 		if (messages.size === 0) {
 			send(channel, "Distance Server List", {
 				embed: serversEmbed
-			}).catch(err => console.error(err));
+			}).catch(console.error);
 			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
 			const mm = messages.filter(m => m.author.id !== bot.user.id);
 			if (mm.size > 1) {
 				messages.forEach(m => {
-					m.deleteAll().catch(err => console.error(err));
+					m.deleteAll().catch(console.error);
 				});
 			}
 			if (bm.size > 0) {
 				bm.first().edit("Distance Server List", {
 					embed: serversEmbed
 				}).then(() => {
-					console.log(colors.grey("* Updated Distance server list"));
+					count++;
+					if (Date.now() - d >= logTimeMin * 60 * 1000) {
+						console.log(colors.grey(`* Updated Distance server list ${count} times in the past ${logTimeMin} minutes.`));
+						d = Date.now();
+						count = 0;
+					}
 					refreshMin2 = refreshMin;
-				}).catch(err => console.error(err));
+				}).catch(console.error);
 			} else {
 				send(channel, "Distance Server List", {
 					embed: serversEmbed
-				}).catch(err => console.error(err));
+				}).catch(console.error);
 				refreshMin2 = refreshMin;
 			}
 		}
-	}).catch(err => console.error(err));
+	}).catch(console.error);
 };
 
 const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distance.rip:23469/"]) => {
