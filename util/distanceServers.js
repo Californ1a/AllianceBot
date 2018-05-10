@@ -3,8 +3,11 @@ const colors = require("colors");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
 const channelName = "servers";
-const refreshMin = 5;
+const refreshMin = 1;
+const logTimeMin = 10;
 let refreshMin2 = refreshMin;
+let d = Date.now();
+let count = 0;
 const serversEmbed = {
 	"description": `This list is updated once per ${(refreshMin===1)?"minute":`${refreshMin} minutes`} and displays up to the first 25 servers listed. You may also use \`!servers\` in any other channel to get a short summary of the current public server info without having to look at this channel.`,
 	"color": 4886754,
@@ -75,7 +78,12 @@ const updateEmbed = (bot, servers) => {
 				bm.first().edit("Distance Server List", {
 					embed: serversEmbed
 				}).then(() => {
-					console.log(colors.grey("* Updated Distance server list"));
+					count++;
+					if (Date.now() - d >= logTimeMin * 60 * 1000) {
+						console.log(colors.grey(`* Updated Distance server list ${count} times in the past ${logTimeMin} minutes.`));
+						d = Date.now();
+						count = 0;
+					}
 					refreshMin2 = refreshMin;
 				}).catch(console.error);
 			} else {
