@@ -105,8 +105,6 @@ const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distanc
 		})))
 		.catch(console.error)
 		.then(merged => {
-			console.log("merged", merged);
-			console.log("refreshMin2", refreshMin2);
 			if (typeof merged !== "undefined") {
 				updateEmbed(bot, merged.servers);
 			} else {
