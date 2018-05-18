@@ -2,28 +2,8 @@ const send = require("../util/sendMessage.js");
 const fetch = require("node-fetch");
 const servers = ["http://35.185.40.23/", "http://distance.rip:23469/"];
 
-function getInfo(server = "http://35.185.40.23/") {
+function getInfo() {
 	return new Promise((resolve, reject) => {
-
-
-
-		// fetch(server).then((response) => {
-		// 	return response.json();
-		// }).then((data) => {
-		// 	resolve(data.servers);
-		// }).catch(err => {
-		// 	if (server !== "http://35.185.40.23/") {
-		// 		console.warn("Failed fetching from both Distance servers.", err);
-		// 		reject(err);
-		// 	} else {
-		// 		getInfo("http://distance.rip:23469/");
-		// 	}
-		// });
-
-
-
-
-
 		Promise.all(servers.map(fetch))
 			.then(responses => Promise.all(responses.map(res => res.json())))
 			.then(multiData => multiData.reduce((merge, data) => ({
