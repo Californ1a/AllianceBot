@@ -1,20 +1,42 @@
 const send = require("../util/sendMessage.js");
 const fetch = require("node-fetch");
+const servers = ["http://35.185.40.23/", "http://distance.rip:23469/"];
 
 function getInfo(server = "http://35.185.40.23/") {
 	return new Promise((resolve, reject) => {
-		fetch(server).then((response) => {
-			return response.json();
-		}).then((data) => {
-			resolve(data.servers);
-		}).catch(err => {
-			if (server !== "http://35.185.40.23/") {
-				console.warn("Failed fetching from both Distance servers.", err);
-				reject(err);
-			} else {
-				getInfo("http://distance.rip:23469/");
-			}
-		});
+
+
+
+		// fetch(server).then((response) => {
+		// 	return response.json();
+		// }).then((data) => {
+		// 	resolve(data.servers);
+		// }).catch(err => {
+		// 	if (server !== "http://35.185.40.23/") {
+		// 		console.warn("Failed fetching from both Distance servers.", err);
+		// 		reject(err);
+		// 	} else {
+		// 		getInfo("http://distance.rip:23469/");
+		// 	}
+		// });
+
+
+
+
+
+		Promise.all(servers.map(fetch))
+			.then(responses => Promise.all(responses.map(res => res.json())))
+			.then(multiData => multiData.reduce((merge, data) => ({
+				...merge,
+				...data
+			})))
+			.then(merged => {
+				if (typeof merged !== "undefined") {
+					resolve(merged.servers);
+				} else {
+					reject(new Error("Server list undefined"));
+				}
+			}).catch(e => reject(e));
 	});
 }
 
@@ -24,7 +46,8 @@ exports.run = (bot, msg) => {
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
-		send(msg.channel, `There ${(pubServs.length === 1) ? "is 1 public server" : `are ${pubServs.length} public servers`}${(pubServs.length > 0 && openPubs.length > 0) ? (openPubs.length < 2) ? ` with ${totalSlots} open slots.` : `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.` : (pubServs.length > 0) ? " with no open slots.":"."}`);
+		const chan = (msg.guild.channels.exists("name", "servers")) ? msg.guild.channels.find("name", "servers") : null;
+		send(msg.channel, `There ${(pubServs.length === 1) ? `is 1 public ${(chan!==null)?chan:"server"}` : `are ${pubServs.length} public ${(chan!==null)?chan:"servers"}`}${(pubServs.length > 0 && openPubs.length > 0) ? (openPubs.length < 2) ? ` with ${totalSlots} open slots.` : `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.` : (pubServs.length > 0) ? " with no open slots.":"."}`);
 	}).catch(() => send(msg.channel, "Failed to obtain server list."));
 };
 

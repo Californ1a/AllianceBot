@@ -41,7 +41,7 @@ const updateEmbed = (bot, servers) => {
 	if (!distance.channels.exists("name", channelName)) {
 		return;
 	}
-	const channel = distance.channels.find("name", "servers");
+	const channel = distance.channels.find("name", channelName);
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (const serv of servers) {
