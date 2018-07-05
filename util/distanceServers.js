@@ -70,9 +70,7 @@ const updateEmbed = (bot, servers) => {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
 			const mm = messages.filter(m => m.author.id !== bot.user.id);
 			if (mm.size > 1) {
-				messages.forEach(m => {
-					m.deleteAll().catch(console.error);
-				});
+				mm.deleteAll().catch(console.error);
 			}
 			if (bm.size > 0) {
 				bm.first().edit("Distance Server List", {
