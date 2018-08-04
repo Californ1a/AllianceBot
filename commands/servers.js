@@ -20,8 +20,11 @@ function getInfo() {
 	});
 }
 
-exports.run = (bot, msg) => {
+exports.run = (bot, msg, args) => {
 	getInfo().then(servs => {
+		if (args[0] === "-f" || args[0] === "-filter") {
+			servs = servs.filter(s => RegExp("^Auto*", "g").test(s.serverName));
+		}
 		console.log(servs);
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
