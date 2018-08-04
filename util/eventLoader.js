@@ -10,6 +10,7 @@ module.exports = (bot, stream, meter) => {
 	bot.on("messageDelete", (msg) => reqEvent("messageDelete")(bot, msg));
 	bot.on("messageUpdate", (oldMessage, newMessage) => reqEvent("messageUpdate")(bot, oldMessage, newMessage));
 	bot.on("guildMemberUpdate", (oldMember, newMember) => reqEvent("guildMemberUpdate")(bot, oldMember, newMember));
+	bot.on("guildMemberAdd", (member) => reqEvent("guildMemberUpdate")(bot, member));
 	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
 	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));

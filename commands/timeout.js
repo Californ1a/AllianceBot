@@ -4,15 +4,8 @@ const connection = require("../util/connection.js");
 const manageTimeout = require("../util/manageTimeout.js");
 const parse = require("parse-duration");
 const Duration = require("duration-js");
+const canUserAndBotAssign = require("../util/canAssignRole.js");
 require("../util/Array.prototype.rejoin.js");
-
-function canUserAndBotAssign(assigner, assignee, buer) {
-	if (assigner.highestRole.position !== 0 && buer.highestRole.name !== 0 && assigner.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && buer.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && assigner.highestRole.position > assignee.highestRole.position && buer.highestRole.position > assignee.highestRole.position) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 exports.run = (bot, msg, args) => {
 	const pre = bot.servConf.get(msg.guild.id).prefix;
