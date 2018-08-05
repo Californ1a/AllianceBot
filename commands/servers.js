@@ -20,17 +20,31 @@ function getInfo() {
 	});
 }
 
+function compose(msg, pubServs, openPubs, totalSlots, chan, auto) {
+	const u = (auto) ? "T" : "Not including auto servers, t";
+	const a = (chan !== null) ? chan : "server";
+	const b = (chan !== null) ? chan : "servers";
+	const c = (pubServs.length === 1) ? `is 1 public ${a}` : `are ${pubServs.length} public ${b}`;
+	const d = (openPubs.length < 2) ? ` with ${totalSlots} open slots.` : `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.`;
+	const e = (pubServs.length > 0) ? " with no open slots." : ".";
+	const x = (pubServs.length > 0 && openPubs.length > 0) ? d : e;
+
+	send(msg.channel, `${u}here ${c}${x}`);
+}
+
 exports.run = (bot, msg, args) => {
+	let auto = true;
 	getInfo().then(servs => {
 		if (args[0] === "-f" || args[0] === "-filter") {
-			servs = servs.filter(s => RegExp("^Auto*", "g").test(s.serverName));
+			servs = servs.filter(s => !RegExp("^Auto*", "g").test(s.serverName));
+			auto = false;
 		}
 		console.log(servs);
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
 		const chan = (msg.guild.channels.exists("name", "servers")) ? msg.guild.channels.find("name", "servers") : null;
-		send(msg.channel, `There ${(pubServs.length === 1) ? `is 1 public ${(chan!==null)?chan:"server"}` : `are ${pubServs.length} public ${(chan!==null)?chan:"servers"}`}${(pubServs.length > 0 && openPubs.length > 0) ? (openPubs.length < 2) ? ` with ${totalSlots} open slots.` : `, ${openPubs.length} of which account for a combined ${totalSlots} open slots.` : (pubServs.length > 0) ? " with no open slots.":"."}`);
+		compose(msg, pubServs, openPubs, totalSlots, chan, auto);
 	}).catch(() => send(msg.channel, "Failed to obtain server list."));
 };
 
