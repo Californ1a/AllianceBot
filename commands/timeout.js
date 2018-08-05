@@ -26,7 +26,7 @@ exports.run = (bot, msg, args) => {
 			if (bot.timer.get(mentionedMember.id)) {
 				clearTimeout(bot.timer.get(mentionedMember.id));
 			}
-			if (mentionedMember.roles.find("name", toRole)) {
+			if (mentionedMember.roles.get(toRole.id)) {
 				manageTimeout(mentionedMember, bot, toRole, msg.guild.id);
 				return send(msg.channel, `${mentionedMember.displayName} was manually removed from timeout.`);
 			} else {
