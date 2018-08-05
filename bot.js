@@ -7,7 +7,7 @@ const pmx = require("pmx").init({
 	network: true,
 	ports: true
 });
-require("opbeat").start();
+//require("opbeat").start();
 const connection = require("./util/connection.js");
 const manageTimeout = require("./util/manageTimeout.js");
 const probe = pmx.probe();

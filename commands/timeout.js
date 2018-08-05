@@ -18,7 +18,7 @@ exports.run = (bot, msg, args) => {
 		return send(msg.channel, `The Timeout role could not be found. Make sure a Timeout role is set in your server config: \`${pre}config --to <role name here>\``);
 	}
 	if (msgMember.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
-		if (!(args.length >= 2) || !msg.mentions.users.first()) {
+		if (!msg.mentions.users.first()) {
 			return send(msg.channel, `Incorrect syntax. Use \`${prefix}help timeout\` for syntax.`);
 		}
 		const mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
@@ -26,12 +26,15 @@ exports.run = (bot, msg, args) => {
 			if (bot.timer.get(mentionedMember.id)) {
 				clearTimeout(bot.timer.get(mentionedMember.id));
 			}
-			if (mentionedMember.roles.find("name", toRole)) {
+			if (mentionedMember.roles.get(toRole.id)) {
 				manageTimeout(mentionedMember, bot, toRole, msg.guild.id);
 				return send(msg.channel, `${mentionedMember.displayName} was manually removed from timeout.`);
 			} else {
 				return send(msg.channel, `${mentionedMember.displayName} does not have the Timeout role.`);
 			}
+		}
+		if (!(args.length >= 2)) {
+			return send(msg.channel, `Incorrect syntax. Use \`${prefix}help timeout\` for syntax.`);
 		}
 		if (!canUserAndBotAssign(msgMember, mentionedMember, botMember)) {
 			return send(msg.channel, "Either the bot or you do not have permission to perform this action.");
