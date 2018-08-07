@@ -25,7 +25,8 @@ const Twit = require("twit");
 const twitconfig = {
 	consumer_key: process.env.TWITTER_CONSUMER_KEY, // eslint-disable-line camelcase
 	consumer_secret: process.env.TWITTER_CONSUMER_SECRET, // eslint-disable-line camelcase
-	app_only_auth: true // eslint-disable-line camelcase
+	access_token: process.env.TWITTER_ACCESS_TOKEN, // eslint-disable-line camelcase
+	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET // eslint-disable-line camelcase
 };
 const T = new Twit(twitconfig);
 const stream = T.stream("statuses/filter", {
