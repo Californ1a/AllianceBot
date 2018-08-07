@@ -14,6 +14,7 @@ module.exports = (bot, tweet) => {
 	let text = "";
 	let desc = "";
 	let medialink = "";
+	let giflink = "";
 
 	console.log(colors.red(`Found matching tweet: https://twitter.com/${tweetuser}/status/${tweetid} `));
 	if ((typeof tweet.in_reply_to_screen_name !== "string" || tweet.in_reply_to_user_id === tweet.user.id) && !tweet.text.startsWith("RT @") && (!tweet.text.startsWith("@") || tweet.text.toLowerCase().startsWith("@" + tweet.user.screen_name.toLowerCase())) && (tweet.user.id_str === "628034104" || tweet.user.id_str === "241371699")) {
@@ -21,7 +22,9 @@ module.exports = (bot, tweet) => {
 
 		fs.appendFile("tweet.json", tweetjson + "\r\n\r\n\r\n\r\n\r\n");
 
-		if (tweet.entities.media) {
+		if (tweet.extended_entities && tweet.extended_entities.media && tweet.extended_entities.media[0].type === "animated_gif") {
+			giflink = tweet.extended_entities.media[0].video_info.variants[0].url;
+		} else if (tweet.entities.media) {
 			medialink = tweet.entities.media[0].media_url;
 		}
 		if (tweet.extended_tweet) {
@@ -38,7 +41,7 @@ module.exports = (bot, tweet) => {
 		}
 		desc = `${text}`;
 		//desc += `\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`;
-		send(bot.channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, {
+		const embed = {
 			embed: {
 				color: 3447003,
 				author: {
@@ -48,15 +51,18 @@ module.exports = (bot, tweet) => {
 				},
 				url: tweetlink,
 				description: `${desc}`,
-				image: {
-					url: medialink
-				},
 				timestamp: new Date(tweet.created_at),
 				footer: {
 					text: `@${tweet.user.screen_name}`
 				}
 			}
-		}).catch((error) => console.error(error));
+		};
+		if (giflink !== "") {
+			embed.embed.video.url = giflink;
+		} else if (medialink !== "") {
+			embed.embed.image.url = medialink;
+		}
+		send(bot.channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch((error) => console.error(error));
 
 	}
 };
