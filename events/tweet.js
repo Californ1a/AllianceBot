@@ -58,9 +58,13 @@ module.exports = (bot, tweet) => {
 			}
 		};
 		if (giflink !== "") {
-			embed.embed.video.url = giflink;
+			embed.embed.video = {
+				url: giflink
+			};
 		} else if (medialink !== "") {
-			embed.embed.image.url = medialink;
+			embed.embed.image = {
+				url: medialink
+			};
 		}
 		send(bot.channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch((error) => console.error(error));
 
