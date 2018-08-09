@@ -27,10 +27,10 @@ exports.run = (bot, msg, args) => {
 			return send(msg.channel, `Role \`${addRole}\` does not exist.`);
 		}
 		if (args[0] === "set" || args[0] === "add") {
-			mentionedMember.addRole(msg.guild.roles.find("name", addRole));
+			mentionedMember.addRole(msg.guild.roles.find(val => val.name === addRole));
 			send(msg.channel, `Added \`${mentionedMember.displayName}\` to the \`${addRole}\` role.`);
 		} else if (args[0] === "del") {
-			mentionedMember.removeRole(msg.guild.roles.find("name", args[2]));
+			mentionedMember.removeRole(msg.guild.roles.find(val => val.name === args[2]));
 			send(msg.channel, `Removed \`${mentionedMember.displayName}\` from the \`${addRole}\` role.`);
 		} else {
 			send(msg.channel, "Invalid syntax.");

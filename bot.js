@@ -131,7 +131,7 @@ connection.createAllTables().then(() => {
 					if (memberTest && g.id === to[i].server_id) {
 						const timeoutData = to[i];
 						const toTimer = setTimeout(function() {
-							manageTimeout(memberTest, bot, g.roles.find("name", timeoutData.timeoutrole), timeoutData.server_id);
+							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id);
 						}, new Duration(`${remainingMS}ms`));
 						bot.timer.set(to[i].memberid, toTimer);
 					}
@@ -171,19 +171,19 @@ bot.elevation = function(msg) {
 	let permlvl = 0;
 	if (msg.guild && msg.member) {
 		if (memberrole) {
-			const membRole = msg.guild.roles.find("name", memberrole);
+			const membRole = msg.guild.roles.find(val => val.name === memberrole);
 			if (membRole && msg.member.roles.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
 		if (moderatorrole) {
-			const modRole = msg.guild.roles.find("name", moderatorrole);
+			const modRole = msg.guild.roles.find(val => val.name === moderatorrole);
 			if (modRole && msg.member.roles.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
 		if (administratorrole) {
-			const adminRole = msg.guild.roles.find("name", administratorrole);
+			const adminRole = msg.guild.roles.find(val => val.name === administratorrole);
 			if (adminRole && msg.member.roles.has(adminRole.id)) {
 				permlvl = 3;
 			}

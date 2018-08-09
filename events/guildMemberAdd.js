@@ -4,7 +4,7 @@ module.exports = (bot, member) => {
 	console.log(`${member.displayName} joined ${member.guild.name} server.`);
 	const conf = bot.servConf.get(member.guild.id);
 	const botMember = member.guild.members.get(bot.user.id);
-	const toRole = (conf.timeoutrole) ? member.guild.roles.find("name", conf.timeoutrole) : member.guild.roles.find("name", "Timeout");
+	const toRole = (conf.timeoutrole) ? member.guild.roles.find(val => val.name === conf.timeoutrole) : member.guild.roles.find(val => val.name === "Timeout");
 	if (!toRole || !canAssignRole(botMember, member)) {
 		return;
 	}

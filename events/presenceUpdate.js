@@ -4,7 +4,7 @@ module.exports = (bot, oldMember, newMember) => {
 	const guild = newMember.guild;
 	let playRole = "";
 	if (guild.id === "83078957620002816" || guild.id === "211599888222257152") {
-		playRole = guild.roles.find("name", "Playing Distance");
+		playRole = guild.roles.find(val => val.name === "Playing Distance");
 	}
 	if (!playRole || playRole === "") {
 		return;

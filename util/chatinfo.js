@@ -64,9 +64,9 @@ const getMaxRole = function(user) {
 		let maxpos = 0;
 		let i = 0;
 		for (i; i < user.guild.roles.size + 1; i++) {
-			maxpos = user.roles.exists("position", i) && user.roles.find("position", i).position > maxpos ? user.roles.find("position", i).position : maxpos;
+			maxpos = user.roles.exists("position", i) && user.roles.find(val => val.position === i).position > maxpos ? user.roles.find(val => val.position === i).position : maxpos;
 		}
-		toprole = user.guild.roles.find("position", maxpos);
+		toprole = user.guild.roles.find(val => val.position === maxpos);
 		if (user.nickname) {
 			nick = user.nickname;
 		}

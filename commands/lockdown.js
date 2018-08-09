@@ -51,9 +51,9 @@ exports.run = (bot, msg, args) => {
 	if (msg.channel.locked) {
 		return send(msg.channel, "This channel is already locked. You can use `lockdown` with no arguments to force unlock.");
 	}
-	roles.push(msg.guild.roles.find("name", "@everyone"));
+	roles.push(msg.guild.roles.find(val => val.name === "@everyone"));
 	if (msg.guild.roles.exists("name", args[args.length - 1])) {
-		roles.push(msg.guild.roles.find("name", args[args.length - 1]));
+		roles.push(msg.guild.roles.find(val => val.name === args[args.length - 1]));
 	}
 	const durationMS = parse(time);
 	const d = Duration.parse(`${durationMS}ms`);
