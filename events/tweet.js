@@ -24,11 +24,15 @@ module.exports = (bot, tweet) => {
 
 		if (tweet.extended_entities && tweet.extended_entities.media && tweet.extended_entities.media[0].type === "animated_gif") {
 			giflink = tweet.extended_entities.media[0].video_info.variants[0].url;
+		} else if (tweet.entities.media && tweet.entities.media[0].type === "animated_gif") {
+			giflink = tweet.entities.media[0].video_info.variants[0].url;
 		} else if (tweet.entities.media) {
 			medialink = tweet.entities.media[0].media_url;
 		}
 		if (tweet.extended_tweet) {
-			if (tweet.extended_tweet.entities.media) {
+			if (tweet.extended_tweet.entities.media && tweet.extended_tweet.entities.media[0].type === "animated_gif") {
+				giflink = tweet.extended_tweet.entities.media[0].video_info.variants[0].url;
+			} else if (tweet.extended_tweet.entities.media) {
 				medialink = tweet.extended_tweet.entities.media[0].media_url;
 			}
 		}
