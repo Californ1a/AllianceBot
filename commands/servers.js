@@ -43,7 +43,7 @@ exports.run = (bot, msg, args) => {
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
-		const chan = (msg.guild.channels.exists("name", "servers")) ? msg.guild.channels.find(val => val.name === "servers") : null;
+		const chan = (msg.guild.channels.some(val => val.name === "servers")) ? msg.guild.channels.find(val => val.name === "servers") : null;
 		compose(msg, pubServs, openPubs, totalSlots, chan, auto);
 	}).catch(() => send(msg.channel, "Failed to obtain server list."));
 };
