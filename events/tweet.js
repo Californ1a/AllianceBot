@@ -7,7 +7,7 @@ const fs = require("fs-extra");
 module.exports = (bot, tweet) => {
 	const tweetid = tweet.id_str;
 	const tweetuser = tweet.user.screen_name;
-	const emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find("name", "torcht") : "";
+	const emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find(val => val.name === "torcht") : "";
 	//var intent = "https://twitter.com/intent";
 	const profilelink = `https://twitter.com/${tweetuser}`;
 	const tweetlink = `${profilelink}/status/${tweetid}`;
@@ -24,11 +24,15 @@ module.exports = (bot, tweet) => {
 
 		if (tweet.extended_entities && tweet.extended_entities.media && tweet.extended_entities.media[0].type === "animated_gif") {
 			giflink = tweet.extended_entities.media[0].video_info.variants[0].url;
+		} else if (tweet.entities.media && tweet.entities.media[0].type === "animated_gif") {
+			giflink = tweet.entities.media[0].video_info.variants[0].url;
 		} else if (tweet.entities.media) {
 			medialink = tweet.entities.media[0].media_url;
 		}
 		if (tweet.extended_tweet) {
-			if (tweet.extended_tweet.entities.media) {
+			if (tweet.extended_tweet.entities.media && tweet.extended_tweet.entities.media[0].type === "animated_gif") {
+				giflink = tweet.extended_tweet.entities.media[0].video_info.variants[0].url;
+			} else if (tweet.extended_tweet.entities.media) {
 				medialink = tweet.extended_tweet.entities.media[0].media_url;
 			}
 		}
@@ -66,7 +70,7 @@ module.exports = (bot, tweet) => {
 				url: medialink
 			};
 		}
-		send(bot.channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch((error) => console.error(error));
+		send(bot.guild.get("83078957620002816").channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch(console.error);
 
 	}
 };

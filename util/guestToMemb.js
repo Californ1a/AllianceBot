@@ -29,7 +29,7 @@ const guestToMemb = function(bot, msg) {
 			}
 		}
 		if (botcanassign && !msg.author.bot) {
-			msg.member.addRole(msg.guild.roles.find("name", membrolename));
+			msg.member.addRole(msg.guild.roles.find(val => val.name === membrolename));
 			if (msg.guild.id === "83078957620002816") {
 				msg.reply(`Welcome to the discord! You are now a ${membrolename}. Make sure to read the #rules_and_info channel.`);
 			} else {

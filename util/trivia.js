@@ -142,7 +142,7 @@ const goTrivia = (channel, manualNumber, category, config, startingScores) => {
 	}
 	let question;
 	if (match) {
-		const emoji = channel.guild.emojis.find("name", match[1]);
+		const emoji = channel.guild.emojis.find(val => val.name === match[1]);
 		question = quesNum.question.replace(/_/g, "\\_");
 		question = question.replace(/:\S+:/, emoji.toString());
 	} else {

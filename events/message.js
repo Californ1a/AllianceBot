@@ -54,7 +54,7 @@ module.exports = (bot, meter, msg) => {
 			console.error(error.stack);
 		}
 	});
-	if (membrole && (msg.guild.members.get(msg.author.id) && !msg.guild.members.get(msg.author.id).roles.exists("name", membrole))) {
+	if (membrole && (msg.guild.members.get(msg.author.id) && !msg.guild.members.get(msg.author.id).roles.some(val => val.name === membrole))) {
 		guestToMemb(bot, msg);
 	}
 	if (!msg.content.startsWith(pre)) {

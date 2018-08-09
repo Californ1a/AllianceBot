@@ -22,7 +22,7 @@ it("getMaxRole", () => {
 	const user = {
 		roles: {
 			size: 2,
-			exists: () => {
+			some: () => {
 				return;
 			},
 			find: () => {

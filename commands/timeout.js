@@ -12,7 +12,7 @@ exports.run = (bot, msg, args) => {
 	const msgMember = msg.member;
 	const botMember = msg.guild.members.get(bot.user.id);
 	const conf = bot.servConf.get(msg.guild.id);
-	const toRole = (conf.timeoutrole) ? msg.guild.roles.find("name", conf.timeoutrole) : msg.guild.roles.find("name", "Timeout");
+	const toRole = (conf.timeoutrole) ? msg.guild.roles.find(val => val.name === conf.timeoutrole) : msg.guild.roles.find(val => val.name === "Timeout");
 	const prefix = conf.prefix;
 	if (!toRole) {
 		return send(msg.channel, `The Timeout role could not be found. Make sure a Timeout role is set in your server config: \`${pre}config --to <role name here>\``);

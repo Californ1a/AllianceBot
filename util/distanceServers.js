@@ -38,10 +38,10 @@ const emptyFields = [{
 
 const updateEmbed = (bot, servers) => {
 	const distance = bot.guilds.get(serverID);
-	if (!distance.channels.exists("name", channelName)) {
+	if (!distance.channels.some(val => val.name === channelName)) {
 		return;
 	}
-	const channel = distance.channels.find("name", channelName);
+	const channel = distance.channels.find(val => val.name === channelName);
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (const serv of servers) {
