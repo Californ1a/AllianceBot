@@ -1,14 +1,7 @@
 //const pre = require("../config.json").prefix;
 const send = require("../util/sendMessage.js");
+const canUserAndBotAssign = require("../util/canAssignRole.js");
 require("../util/Array.prototype.rejoin.js");
-
-function canUserAndBotAssign(assigner, assignee, buer) {
-	if (assigner.highestRole.position !== 0 && buer.highestRole.name !== 0 && assigner.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && buer.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS") && assigner.highestRole.position > assignee.highestRole.position && buer.highestRole.position > assignee.highestRole.position) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 exports.run = (bot, msg, args) => {
 	const pre = bot.servConf.get(msg.guild.id).prefix;
@@ -23,14 +16,18 @@ exports.run = (bot, msg, args) => {
 			return send(msg.channel, "Either the bot or you do not have permission to perform this action.");
 		}
 		const addRole = args.rejoin(" ", 2);
-		if (!msg.guild.roles.exists("name", addRole)) {
+		if (!msg.guild.roles.some(val => val.name === addRole)) {
 			return send(msg.channel, `Role \`${addRole}\` does not exist.`);
 		}
+		const roleToAddDel = msg.guild.roles.find(val => val.name === addRole);
 		if (args[0] === "set" || args[0] === "add") {
-			mentionedMember.addRole(msg.guild.roles.find(val => val.name === addRole));
+			if (msgMember.highestRole.position <= roleToAddDel.position) {
+				return send(msg.channel, "You cannot assign a role equal to or higher than your own highest role.");
+			}
+			mentionedMember.addRole(roleToAddDel);
 			send(msg.channel, `Added \`${mentionedMember.displayName}\` to the \`${addRole}\` role.`);
 		} else if (args[0] === "del") {
-			mentionedMember.removeRole(msg.guild.roles.find(val => val.name === args[2]));
+			mentionedMember.removeRole(roleToAddDel);
 			send(msg.channel, `Removed \`${mentionedMember.displayName}\` from the \`${addRole}\` role.`);
 		} else {
 			send(msg.channel, "Invalid syntax.");
