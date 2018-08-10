@@ -9,7 +9,6 @@ const pmx = require("pmx").init({
 });
 //require("opbeat").start();
 const connection = require("./util/connection.js");
-const manageTimeout = require("./util/manageTimeout.js");
 const probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
@@ -20,7 +19,6 @@ const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
 const reminders = require("./util/reminders.js");
-const Duration = require("duration-js");
 const Twit = require("twit");
 const twitconfig = {
 	consumer_key: process.env.TWITTER_CONSUMER_KEY, // eslint-disable-line camelcase
@@ -97,6 +95,7 @@ bot.reload = function(command) {
 };
 
 bot.timer = new Discord.Collection();
+bot.timer.lockdown = new Discord.Collection();
 
 bot.servConf = new Discord.Collection();
 bot.confRefresh = () => {
@@ -116,30 +115,7 @@ connection.createAllTables().then(() => {
 	bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
-	connection.query("select * from timeout inner join servers on timeout.server_id=servers.serverid").then(to => {
-		if (to[0]) {
-			console.log(colors.red("Checking timeouts"));
-			const now = Date.now();
-			let enddateMS;
-			let remainingMS;
-			let i = 0;
-			for (i; i < to.length; i++) {
-				enddateMS = to[i].enddate.getTime();
-				remainingMS = (enddateMS - now > 0) ? (enddateMS - now) : 1000;
-				bot.guilds.forEach(g => {
-					const memberTest = g.members.get(to[i].memberid);
-					if (memberTest && g.id === to[i].server_id) {
-						const timeoutData = to[i];
-						const toTimer = setTimeout(function() {
-							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id);
-						}, new Duration(`${remainingMS}ms`));
-						bot.timer.set(to[i].memberid, toTimer);
-					}
-				});
-			}
-			console.log(colors.red("Done checking timeouts"));
-		}
-	});
+
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future

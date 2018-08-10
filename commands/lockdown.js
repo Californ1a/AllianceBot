@@ -1,7 +1,8 @@
 const parse = require("parse-duration");
 const Duration = require("duration-js");
+const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
-let timeout;
+//let timeout;
 
 const lockIt = (msg, roles) => {
 	for (const r of roles) {
@@ -11,7 +12,7 @@ const lockIt = (msg, roles) => {
 	}
 };
 
-const unlockIt = (msg, roles) => {
+const unlockIt = (bot, msg, roles) => {
 	for (const r of roles) {
 		msg.channel.overwritePermissions(r, {
 			"SEND_MESSAGES": null
@@ -19,8 +20,8 @@ const unlockIt = (msg, roles) => {
 	}
 	msg.channel.locked = false;
 	msg.channel.timeoutRoles = [];
-	if (timeout) {
-		clearTimeout(timeout);
+	if (bot.timer.lockdown.get(msg.channel.id)) {
+		clearTimeout(bot.timer.lockdown.get(msg.channel.id));
 	}
 };
 
@@ -47,23 +48,37 @@ exports.run = (bot, msg, args) => {
 		});
 	} else if (!time) {
 		return send(msg.channel, "You must specify a duration.");
-	}
-	if (msg.channel.locked) {
+	} else if (msg.channel.locked && args[0]) {
 		return send(msg.channel, "This channel is already locked. You can use `lockdown` with no arguments to force unlock.");
+	} else if (time) {
+		roles.push(msg.guild.roles.find(val => val.name === "@everyone"));
+		if (msg.guild.roles.some(val => val.name === args[args.length - 1])) {
+			roles.push(msg.guild.roles.find(val => val.name === args[args.length - 1]));
+		}
+		const durationMS = parse(time);
+		const d = Duration.parse(`${durationMS}ms`);
+		let now = Date.now();
+		const later = new Date(now + d);
+		now = new Date(now);
+
+
+		const info = {
+			"server_id": msg.guild.id,
+			"channel_id": msg.channel.id,
+			"role_id": (roles.length === 2) ? roles[1].id : null,
+			startdate: now,
+			enddate: later
+		};
+		connection.insert("lockdown", info).then(() => {
+			lockIt(msg, roles);
+			send(msg.channel, `Channel locked for ${d.toString()}.`).catch(console.error);
+			const toTimer = setTimeout(() => {
+				unlockIt(bot, msg, roles);
+				send(msg.channel, `Channel unlocked after ${d.toString()} of lockdown.`).catch(console.error);
+			}, d);
+			bot.timer.lockdown.set(msg.channel.id, toTimer);
+		});
 	}
-	roles.push(msg.guild.roles.find(val => val.name === "@everyone"));
-	if (msg.guild.roles.some(val => val.name === args[args.length - 1])) {
-		roles.push(msg.guild.roles.find(val => val.name === args[args.length - 1]));
-	}
-	const durationMS = parse(time);
-	const d = Duration.parse(`${durationMS}ms`);
-	send(msg.channel, `Channel locked for ${d.toString()}.`).catch(console.error);
-	lockIt(msg, roles);
-	msg.channel.locked = true;
-	timeout = setTimeout(() => {
-		unlockIt(msg, roles);
-		send(msg.channel, `Channel unlocked after ${d.toString()} of lockdown.`).catch(console.error);
-	}, d.milliseconds());
 };
 
 exports.conf = {
