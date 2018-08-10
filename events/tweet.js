@@ -70,7 +70,7 @@ module.exports = (bot, tweet) => {
 				url: medialink
 			};
 		}
-		send(bot.guild.get("83078957620002816").channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch(console.error);
+		send(bot.guilds.get("83078957620002816").channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, embed).catch(console.error);
 
 	}
 };
