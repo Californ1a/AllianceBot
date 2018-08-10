@@ -17,24 +17,30 @@ module.exports = (bot, oldMember, newMember) => {
 	if (!playRole || playRole === "") {
 		return;
 	}
-	//console.log("playRole.name", playRole.name);
+
 	const botMember = guild.members.get(bot.user.id);
 	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.highestRole.position > newMember.highestRole.position) {
-		//const memberName = newMember.displayName;
-		//console.log("newMember.user.presence.game", newMember.user.presence.game);
+
 		const oldP = oldMember.user.presence;
 		const newP = newMember.user.presence;
 
-		if (oldP.game && oldP.game.name === "Distance" && newP.game && newP.game.name === "Distance") {
+		const oldHasStream = (oldP.game) ? oldP.game.streaming : false;
+		const oldHasDistance = (oldP.game) ? (oldHasStream) ? oldP.game.details === "Distance" : oldP.game.name === "Distance" : false;
+		//const oldHasRole = oldMember.roles.has(playRole.id);
+
+		const newHasStream = (newP.game) ? newP.game.streaming : false;
+		const newHasDistance = (newP.game) ? (newHasStream) ? newP.game.details === "Distance" : newP.game.name === "Distance" : false;
+		const newHasRole = newMember.roles.has(playRole.id);
+
+
+		if (oldHasDistance && newHasDistance) {
 			return;
-		} else if (oldP.game && oldP.game.name !== "Distance" && newP.game && newP.game.name === "Distance") {
-			editPlayRole("add", newMember, playRole, guild);
-		} else if (!oldP.game && newP.game && newP.game.name === "Distance") {
-			editPlayRole("add", newMember, playRole, guild);
-		} else if (!newP.game && newMember.roles.has(playRole.id)) {
+		} else if (!newHasDistance && newHasRole) {
 			editPlayRole("del", newMember, playRole, guild);
-		} else if ((newP.game && newP.game !== "Distance") && newMember.roles.has(playRole.id)) {
-			editPlayRole("del", newMember, playRole, guild);
+		} else if (!oldHasDistance && newHasDistance) {
+			editPlayRole("add", newMember, playRole, guild);
+		} else if (newHasDistance && !newHasRole) {
+			editPlayRole("add", newMember, playRole, guild);
 		}
 
 	}

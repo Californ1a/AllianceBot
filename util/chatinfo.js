@@ -103,7 +103,7 @@ const writeLineToAllLogs = function(bot, guild, line) {
 		}
 	});
 	for (i; i < guildChannels.length; i++) {
-		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["READ_MESSAGES", "SEND_MESSAGES"])) {
+		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
 			fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
 				if (error) {
 					console.error(error.stack);
