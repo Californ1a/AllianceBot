@@ -106,11 +106,17 @@ const giveaway = "CREATE TABLE IF NOT EXISTS giveaway (idgive INT(11) NOT NULL A
 
 const giveusers = "CREATE TABLE IF NOT EXISTS giveusers (idgive INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(45) NOT NULL, likelihood INT(4) NOT NULL, giveawayid INT(11) NULL DEFAULT NULL, PRIMARY KEY (idgive), UNIQUE INDEX user_unique (userid, giveawayid), INDEX giveusers_ibfk_1 (giveawayid), CONSTRAINT giveusers_ibfk_1 FOREIGN KEY (giveawayid) REFERENCES giveaway (idgive) ON UPDATE CASCADE ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
+const lockdown = "CREATE TABLE IF NOT EXISTS lockdown (lockdownid INT(11) NOT NULL AUTO_INCREMENT, server_id VARCHAR(45) NOT NULL, channel_id VARCHAR(45) NOT NULL, role_id VARCHAR(45) NULL DEFAULT NULL, startdate DATETIME NOT NULL, enddate DATETIME NOT NULL, PRIMARY KEY (lockdownid), INDEX lockdown_ibfk_1_idx (server_id), CONSTRAINT lockdown_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+const reminders = "CREATE TABLE IF NOT EXISTS reminders (id INT(11) NOT NULL AUTO_INCREMENT, userid VARCHAR(50) NOT NULL, message TEXT NOT NULL, sent VARCHAR(5) NOT NULL DEFAULT 'false', reminddate DATETIME NOT NULL, initdate DATETIME NOT NULL, INDEX id (id)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
+const timeout = "CREATE TABLE IF NOT EXISTS timeout (timeoutid INT(11) NOT NULL AUTO_INCREMENT, server_id VARCHAR(45) NOT NULL, memberid VARCHAR(45) NOT NULL, enddate DATETIME NOT NULL, PRIMARY KEY (timeoutid), INDEX timeout_ibfk_1_idx (server_id), CONSTRAINT timeout_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE CASCADE) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+
 const createAllTables = function() { //because I built too much database stuff without first checking in the proper places if the tables exist
 	return new Promise((resolve, reject) => {
 		console.log(colors.red("Checking if SQL tables exist..."));
 		query(servers).then(() => {
-			Promise.all([query(advent), query(commands), query(servcom), query(triviascore), query(giveaway), query(giveusers)]).then(() => {
+			Promise.all([query(advent), query(commands), query(servcom), query(triviascore), query(giveaway), query(giveusers), query(lockdown), query(reminders), query(timeout)]).then(() => {
 				console.log(colors.red("All tables exist or were created."));
 				resolve();
 			}).catch(e => {
