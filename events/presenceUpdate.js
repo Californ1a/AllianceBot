@@ -32,9 +32,8 @@ module.exports = (bot, oldMember, newMember) => {
 		const newHasDistance = (newP.game) ? (newHasStream) ? newP.game.details === "Distance" : newP.game.name === "Distance" : false;
 		const newHasRole = newMember.roles.has(playRole.id);
 
-
-		if (oldHasDistance && newHasDistance) {
-			return;
+		if (newHasDistance && !newHasRole) {
+			editPlayRole("add", newMember, playRole, guild);
 		} else if (!newHasDistance && newHasRole) {
 			editPlayRole("del", newMember, playRole, guild);
 		} else if (!oldHasDistance && newHasDistance) {
