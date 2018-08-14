@@ -54,6 +54,10 @@ module.exports = (bot, msg) => {
 	const reg = /^<?https?:\/\/(www\.)?steamcommunity\.com\/sharedfiles\/filedetails\/\?id=(\d{9,10})(&searchtext=\S*)?>?$/;
 	// console.log(!reg.exec(msg.content.trim()));
 	if (!reg.test(msg.content.trim())) {
+		const perms = bot.elevation(msg);
+		if (perms >= 2) {
+			return;
+		}
 		send(msg.channel, "You can only post links to the workshop here.").then(m => {
 			m.delete(botmsgDeleteTimeout).catch(console.error);
 		}).catch(console.error);
