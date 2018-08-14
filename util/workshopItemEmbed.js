@@ -99,7 +99,7 @@ module.exports = (bot, msg) => {
 					.addField("Subscribers", json.subscriptions.toLocaleString(), true)
 					.addField("Favorites", json.favorited.toLocaleString(), true)
 					.addField("File Name", json.filename, true)
-					.addField("File Size", `${(json.file_size/1000).toLocaleString()}KB`, true);
+					.addField("File Size", `${Math.floor(json.file_size/1000).toLocaleString()}KB`, true);
 				let modes = [];
 				let difficulty;
 				for (const tag of json.tags) {
