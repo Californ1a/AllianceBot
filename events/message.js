@@ -2,6 +2,7 @@
 const connection = require("../util/connection.js");
 const colors = require("colors");
 const escape = require("../util/escapeChars.js");
+const workshopItemEmbed = require("../util/workshopItemEmbed.js");
 const cl = require("../util/chatinfo.js");
 const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
@@ -57,6 +58,12 @@ module.exports = (bot, meter, msg) => {
 	if (membrole && (msg.guild.members.get(msg.author.id) && !msg.guild.members.get(msg.author.id).roles.some(val => val.name === membrole))) {
 		guestToMemb(bot, msg);
 	}
+
+	if (msg.guild.id === "83078957620002816" && msg.channel.id === "478841453934542848") {
+		return workshopItemEmbed(bot, msg);
+	}
+
+
 	if (!msg.content.startsWith(pre)) {
 		return;
 	}
