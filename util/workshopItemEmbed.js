@@ -96,8 +96,6 @@ module.exports = (bot, msg) => {
 					.setColor(4886754)
 					//.setThumbnail(json.preview_url)
 					.setImage(json.preview_url)
-					.addField("Subscribers", json.subscriptions.toLocaleString(), true)
-					.addField("Favorites", json.favorited.toLocaleString(), true)
 					.addField("File Name", json.filename, true)
 					.addField("File Size", `${Math.floor(json.file_size/1000).toLocaleString()}KB`, true);
 				let modes = [];
