@@ -50,6 +50,6 @@ exports.conf = {
 exports.help = {
 	name: "num",
 	description: "Start a random number guessing game, with custom min and max.",
-	extendedDescription: "",
+	extendedDescription: "<min>\n* Minimum number to be guessed.\n\n<max>\n* Maximum number to be guessed. Min and max must be at least 50 apart.\n\n= Examples =\n\"num\" :: This would start a number guess game between 0 and 10.\n\n\"num 0 100\" :: This would start a number guess game between 0 and 100.",
 	usage: "num [min|max] [min|max]"
 };

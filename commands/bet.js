@@ -1,4 +1,4 @@
-const pre = require("../config.json").prefix;
+//const pre = require("../config.json").prefix;
 const firebase = require("../util/firebase.js");
 let possibleBets;
 let numbProps;
@@ -129,6 +129,7 @@ const manageBets = (msg, debugnum) => {
 };
 
 exports.run = (bot, msg, args, perm) => {
+	const pre = bot.servConf.get(msg.guild.id).prefix;
 	let debugnum;
 	if (perm >= 2 && args[2] && !isNaN(args[2]) && parseInt(args[2]) >= 0 && parseInt(args[2]) <= 37) {
 		debugnum = parseInt(args[2]);
@@ -188,6 +189,6 @@ exports.conf = {
 exports.help = {
 	name: "bet",
 	description: "Roulette betting, bet on as many different places as you like until betting duration ends.",
-	extendedDescription: `<amount>\n* Amount of points to bet\n\n<possible bet>\n* Place to bet on. Possibilites below.\n\n= Reference Table =\n* http://i.imgur.com/949rfyc.png\n\n= Possible Bet Locations =\n[1to18, 19to36, even, odd, red, black]\n1:1 payout\n\n[1st12, 2nd12, 3rd12, 1rd, 2rd, 3rd]\n2:1 payout\n\n[Xline]\n5:1 payout, where X is first number of first row, betting on two rows (i.e. 4line bets on 4,5,6,7,8,9 and 25line bets on 25,26,27,28,29,30)\n\n[5num]\n6:1 payout, bets on 0,00,1,2,3\n\n[Xcorner]\n8:1 payout, where X is top left corner when betting on 4 numbers (i.e. 17corner bets on 17,18,20,21)\n\n[Xstreet, basket]\n11:1 payout, where basket bets on 0,00,2, or where X is first number of the row to bet on (i.e. 22street bets on 22,23,24)\n\n[XsplitY]\n17:1 payout, where X is any number and Y is a neighboring number (i.e 35split32 bets on 35 and 32)\n\n[X]\n35:1 payout, where X is any individual number\n\n= Examples =\n${pre}bet 10 0split00\nThis would bet 10 points on the split between 0 and 00\n\n${pre}bet 5 1rd\nThis would bet 5 points on the first column\n\n${pre}bet 20 4line\nThis would bet 20 points on the lines [4,5,6] and [7,8,9]`,
+	extendedDescription: "<amount>\n* Amount of points to bet\n\n<possible bet>\n* Place to bet on. Possibilites below.\n\n= Reference Table =\n* http://i.imgur.com/949rfyc.png\n\n= Possible Bet Locations =\n[1to18, 19to36, even, odd, red, black]\n1:1 payout\n\n[1st12, 2nd12, 3rd12, 1rd, 2rd, 3rd]\n2:1 payout\n\n[Xline]\n5:1 payout, where X is first number of first row, betting on two rows (i.e. 4line bets on 4,5,6,7,8,9 and 25line bets on 25,26,27,28,29,30)\n\n[5num]\n6:1 payout, bets on 0,00,1,2,3\n\n[Xcorner]\n8:1 payout, where X is top left corner when betting on 4 numbers (i.e. 17corner bets on 17,18,20,21)\n\n[Xstreet, basket]\n11:1 payout, where basket bets on 0,00,2, or where X is first number of the row to bet on (i.e. 22street bets on 22,23,24)\n\n[XsplitY]\n17:1 payout, where X is any number and Y is a neighboring number (i.e 35split32 bets on 35 and 32)\n\n[X]\n35:1 payout, where X is any individual number\n\n= Examples =\n\"bet 10 0split00\" :: This would bet 10 points on the split between 0 and 00\n\n\"bet 5 1rd\" :: This would bet 5 points on the first column\n\n\"bet 20 4line\" :: This would bet 20 points on the lines [4,5,6] and [7,8,9]",
 	usage: "bet <amount> <possible bet>"
 };
