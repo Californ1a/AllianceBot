@@ -14,13 +14,14 @@ module.exports = (bot) => {
 			for (i; i < to.length; i++) {
 				enddateMS = to[i].enddate.getTime();
 				remainingMS = (enddateMS - now > 0) ? (enddateMS - now) : 1000;
+				const d = new Duration(`${remainingMS}ms`);
 				bot.guilds.forEach(g => {
 					const memberTest = g.members.get(to[i].memberid);
 					if (memberTest && g.id === to[i].server_id) {
 						const timeoutData = to[i];
-						const toTimer = setTimeout(function() {
+						const toTimer = setTimeout(() => {
 							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id);
-						}, new Duration(`${remainingMS}ms`));
+						}, d);
 						bot.timer.set(to[i].memberid, toTimer);
 					}
 				});

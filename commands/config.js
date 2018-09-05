@@ -82,8 +82,8 @@ exports.conf = {
 exports.help = {
 	name: "config",
 	description: "Set server config",
-	extendedDescription: "",
-	usage: "config --<prefix|membrole|modrole|adminrole> (<prefix>|<member role>|<moderator role>|<admin role>)"
+	extendedDescription: "<prefix>\n* Command prefix to use in the server\n\n<membrole>\n* Name of the role to have perm level 1\n\n<modrole>\n* Name of the role to have perm level 2\n\n<adminrole>\n* Name of the role to have perm level 3\n\n= Examples =\n\"config --prefix ~ --membrole Member --modrole Moderator --adminrole Admin\" :: This would set all of the config options, however, it is also possible to only edit need needed change:\n\n\"config --adminrole Admin\" :: This would only set the admin role.\n\n\"config --modrole Mod --prefix #\" :: This would set the prefix and moderator role.",
+	usage: "config --<prefix|membrole|modrole|adminrole> [<prefix>|<member role>|<moderator role>|<admin role>]"
 };
 
 exports.f = {
