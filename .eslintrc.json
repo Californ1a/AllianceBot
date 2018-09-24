@@ -6,6 +6,7 @@
 	"extends": "eslint:recommended",
 	"parserOptions": {
 		"sourceType": "module",
+		"emcaVersion": 2017,
 		"ecmaFeatures": {
 			"experimentalObjectRestSpread": true
 		}
