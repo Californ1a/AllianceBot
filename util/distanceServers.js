@@ -94,7 +94,7 @@ const updateEmbed = (bot, servers) => {
 	}).catch(console.error);
 };
 
-const distanceServers = (bot, servers = ["http://35.185.40.23/", "http://distance.rip:23469/"]) => {
+const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
 	Promise.all(servers.map(fetch))
 		.then(responses => Promise.all(responses.map(res => res.json())))
 		.then(multiData => multiData.reduce((merge, data) => ({
