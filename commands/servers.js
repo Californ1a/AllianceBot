@@ -1,6 +1,6 @@
 const send = require("../util/sendMessage.js");
 const fetch = require("node-fetch");
-const servers = ["http://35.185.40.23/", "http://distance.rip:23469/"];
+const servers = ["http://distance.rip:23469/"];
 
 function getInfo() {
 	return new Promise((resolve, reject) => {
