@@ -17,7 +17,7 @@ module.exports = (bot) => {
 				const d = new Duration(`${remainingMS}ms`);
 				bot.guilds.forEach(g => {
 					const memberTest = g.members.get(to[i].memberid);
-					if (memberTest && g.id === to[i].server_id) {
+					if (g.id === to[i].server_id) {
 						const timeoutData = to[i];
 						const toTimer = setTimeout(() => {
 							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id);
