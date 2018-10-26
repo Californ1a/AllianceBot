@@ -139,7 +139,7 @@ module.exports = (bot, msg) => {
 							break;
 					}
 				}
-				difficulty = (difficulty === "") ? "None" : difficulty;
+				difficulty = (difficulty) ? difficulty : "None";
 				modes = (modes.length === 0) ? "None" : modes.join(", ");
 				embed.addField("Mode(s)", modes, true)
 					.addField("Difficulty", difficulty, true);

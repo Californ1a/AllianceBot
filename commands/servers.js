@@ -1,6 +1,6 @@
 const send = require("../util/sendMessage.js");
 const fetch = require("node-fetch");
-const servers = ["http://35.185.40.23/", "http://distance.rip:23469/"];
+const servers = ["http://distance.rip:23469/"];
 
 function getInfo() {
 	return new Promise((resolve, reject) => {
@@ -36,7 +36,7 @@ exports.run = (bot, msg, args) => {
 	let auto = true;
 	getInfo().then(servs => {
 		if (args[0] === "-f" || args[0] === "-filter") {
-			servs = servs.filter(s => !RegExp("^Auto*", "g").test(s.serverName));
+			servs = servs.filter(s => !RegExp("^.*\(Auto\)$", "g").test(s.serverName)); //eslint-disable-line no-useless-escape
 			auto = false;
 		}
 		console.log(servs);
