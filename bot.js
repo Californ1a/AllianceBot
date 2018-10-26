@@ -210,8 +210,11 @@ pmx.action("throw err", function(reply) {
 //catch errors
 bot.on("error", (e) => {
 	pmx.notify(new Error(e));
-	console.error(colors.green(e));
-	console.error(colors.green(JSON.stringify(e)));
+	if (e.message) {
+		console.error(colors.green(e.message));
+	} else {
+		console.error(colors.green(e));
+	}
 });
 bot.on("warn", (e) => {
 	console.warn(colors.blue(e));
