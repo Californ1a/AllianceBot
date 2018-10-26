@@ -20,7 +20,7 @@ module.exports = (bot) => {
 					if (g.id === to[i].server_id) {
 						const timeoutData = to[i];
 						const toTimer = setTimeout(() => {
-							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id);
+							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id, to[i].memberid);
 						}, d);
 						bot.timer.set(to[i].memberid, toTimer);
 					}
