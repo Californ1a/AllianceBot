@@ -101,7 +101,13 @@ const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
 			...merge,
 			...data
 		})))
-		.catch(console.error)
+		.catch(e => {
+			if (e.code === "ECONNREFUSED" || e.code === "ECONNRESET") {
+				console.log(colors.yellow(e.message));
+			} else {
+				console.error(e);
+			}
+		})
 		.then(merged => {
 			if (typeof merged !== "undefined") {
 				updateEmbed(bot, merged.servers);
