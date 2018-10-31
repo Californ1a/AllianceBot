@@ -1,18 +1,19 @@
-const colors = require("colors");
+const editPlayRole = require("../util/editRole.js");
+const send = require("../util/sendMessage.js");
 
-const runcheck = (guild, member, playRole) => {
-	if (member.user.presence.game && member.user.presence.game.name === guild.name) {
-		member.addRole(playRole).then(() => {
-			console.log(colors.white.dim(`* ${member.displayName}  added to ${playRole.name} role on ${guild.name} server.`));
-		}).catch(e => console.error(e.stack));
-	} else if (!member.user.presence.game && member.roles.has(playRole.id)) {
-		member.removeRole(playRole).then(() => {
-			console.log(colors.white.dim(`* ${member.displayName} removed from ${playRole.name} role on ${guild.name} server.`));
-		}).catch(e => console.error(e.stack));
-	} else if ((member.user.presence.game && member.user.presence.game !== "Distance") && member.roles.has(playRole.id)) {
-		member.removeRole(playRole).then(() => {
-			console.log(colors.white.dim(`* ${member.displayName} removed from ${playRole.name} role on ${guild.name} server.`));
-		}).catch(console.error);
+const runCheck = (memb, role, guild) => {
+	const P = memb.user.presence;
+
+	const hasStream = (P.game) ? P.game.streaming : false;
+	const hasDistance = (P.game) ? (hasStream) ? /Distance/i.test(P.game.details) : /Distance/i.test(P.game.name) : false;
+	const hasRole = memb.roles.has(role.id);
+
+	if (hasDistance && !hasRole) {
+		editPlayRole("add", memb, role, guild);
+	} else if (!hasDistance && hasRole) {
+		editPlayRole("del", memb, role, guild);
+	} else if (hasDistance && !hasRole) {
+		editPlayRole("add", memb, role, guild);
 	}
 };
 
@@ -27,11 +28,12 @@ exports.run = (bot, msg, args, perm) => {
 				return;
 			}
 			if (perm >= 2 && args[0] === "all") {
-				msg.guild.members.forEach(m => {
-					runcheck(guild, m, playRole);
+				guild.members.forEach(m => {
+					runCheck(m, playRole, guild);
 				});
 			} else {
-				runcheck(guild, member, playRole);
+				runCheck(member, playRole, guild);
+				send(msg.channel, "Note that Distance has a bug with the Discord implementation. If you join a multiplayer lobby then Discord stops uploading your playing status, so no one other than you can see your status (me included). If your role didn't get updated because of this, close and reopen the game.");
 			}
 		}
 	}

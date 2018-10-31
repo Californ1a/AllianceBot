@@ -1,12 +1,4 @@
-const colors = require("colors");
-
-const editPlayRole = (type, memb, role, guild) => {
-	if (type === "add") {
-		memb.addRole(role).then(console.log(colors.white.dim(`* ${memb.displayName} added to ${role.name} role on ${guild.name} server.`))).catch(console.error);
-	} else if (type === "del") {
-		memb.removeRole(role).then(console.log(colors.white.dim(`* ${memb.displayName} removed from ${role.name} role on ${guild.name} server.`))).catch(console.error);
-	}
-};
+const editPlayRole = require("../util/editRole.js");
 
 module.exports = (bot, oldMember, newMember) => {
 	const guild = newMember.guild;
@@ -25,11 +17,11 @@ module.exports = (bot, oldMember, newMember) => {
 		const newP = newMember.user.presence;
 
 		const oldHasStream = (oldP.game) ? oldP.game.streaming : false;
-		const oldHasDistance = (oldP.game) ? (oldHasStream) ? oldP.game.details === "Distance" : oldP.game.name === "Distance" : false;
+		const oldHasDistance = (oldP.game) ? (oldHasStream) ? /Distance/i.test(oldP.game.details) : /Distance/i.test(oldP.game.name) : false;
 		//const oldHasRole = oldMember.roles.has(playRole.id);
 
 		const newHasStream = (newP.game) ? newP.game.streaming : false;
-		const newHasDistance = (newP.game) ? (newHasStream) ? newP.game.details === "Distance" : newP.game.name === "Distance" : false;
+		const newHasDistance = (newP.game) ? (newHasStream) ? /Distance/i.test(newP.game.details) : /Distance/i.test(newP.game.name) : false;
 		const newHasRole = newMember.roles.has(playRole.id);
 
 		if (newHasDistance && !newHasRole) {
