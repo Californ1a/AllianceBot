@@ -7,7 +7,7 @@ const fs = require("fs-extra");
 module.exports = (bot, tweet) => {
 	const tweetid = tweet.id_str;
 	const tweetuser = tweet.user.screen_name;
-	const emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find(val => val.name === "santorcht") : "";
+	const emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find(val => val.name === "torcht") : "";
 	//var intent = "https://twitter.com/intent";
 	const profilelink = `https://twitter.com/${tweetuser}`;
 	const tweetlink = `${profilelink}/status/${tweetid}`;
