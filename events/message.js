@@ -59,8 +59,22 @@ module.exports = (bot, meter, msg) => {
 		guestToMemb(bot, msg);
 	}
 
-	if (msg.guild.id === "83078957620002816" && msg.channel.id === "478841453934542848") {
-		return workshopItemEmbed(bot, msg);
+	const perms = bot.elevation(msg);
+
+	if (msg.guild.id === "83078957620002816") {
+		const urlMatchReg = /(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/i;
+		if (perms === 0 && urlMatchReg.test(msg.content)) {
+			return send(msg.channel, "Guests can't send links. Wait for staff to add you to the Member role.").then(m => {
+				msg.delete().then(() => {
+					setTimeout(() => {
+						m.delete();
+					}, 8000);
+				});
+			}).catch(console.error);
+		}
+		if (msg.channel.id === "478841453934542848") {
+			return workshopItemEmbed(bot, msg);
+		}
 	}
 
 
@@ -72,7 +86,6 @@ module.exports = (bot, meter, msg) => {
 	}
 
 	const command = msg.content.split(" ")[0].slice(pre.length).toLowerCase();
-	const perms = bot.elevation(msg);
 	const args = msg.content.split(" ").slice(1);
 
 	const escapedCom = escape.chars(command);
