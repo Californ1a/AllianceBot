@@ -51,7 +51,7 @@ module.exports = (bot, msg) => {
 	if (msg.author.id === bot.user.id) {
 		return;
 	}
-	const reg = /^<?https?:\/\/(www\.)?steamcommunity\.com\/sharedfiles\/filedetails\/\?id=(\d{9,10})(&searchtext=\S*)?>?$/;
+	const reg = /^<?https?:\/\/(www\.)?steamcommunity\.com\/(sharedfiles|workshop)\/filedetails\/\?id=(\d{9,10})(&searchtext=\S*)?>?$/;
 	// console.log(!reg.exec(msg.content.trim()));
 	if (!reg.test(msg.content.trim())) {
 		const perms = bot.elevation(msg);
@@ -64,7 +64,7 @@ module.exports = (bot, msg) => {
 		return msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 	}
 	const rege = reg.exec(msg.content.trim());
-	const mapid = rege[2];
+	const mapid = rege[3];
 	// console.log(rege);
 	const options = {
 		method: "POST",
