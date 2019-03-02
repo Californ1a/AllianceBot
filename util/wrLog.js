@@ -120,7 +120,7 @@ function embedSendManager(data, chan, maxIndex) {
 	const embeds = [];
 	// console.log("data (2)", data);
 	// console.log("\n\n-----------------------------------------------------------\n\n");
-	for (let i = data.length - 1 - maxIndex + 860; i < data.length - 1; i++) {
+	for (let i = data.length - maxIndex; i < data.length - 1; i++) {
 		// console.log("data[i]", data[i]);
 		// console.log("\n\n--------------------------------\n\n");
 		embeds.push(composeEmbed(data[i]));
