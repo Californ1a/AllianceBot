@@ -163,8 +163,8 @@ function sendNewWRMessages(bot, data) {
 						}
 					}
 				}
-				console.log("data.length", data.length);
-				console.log("matchingIndices", matchingIndices);
+				// console.log("data.length", data.length);
+				// console.log("matchingIndices", matchingIndices);
 				const highestMatchedIndex = Math.max(...matchingIndices);
 				//console.log("data[highestMatchedIndex]", data[highestMatchedIndex]);
 				embedSendManager(data, chan, data.length - highestMatchedIndex - 1);
