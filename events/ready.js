@@ -1,5 +1,6 @@
 const colors = require("colors");
 const distanceServers = require("../util/distanceServers.js");
+const wrLog = require("../util/wrLog.js");
 const checkTimeouts = require("../util/checkTimeouts.js");
 const checkLockdowns = require("../util/checkLockdowns.js");
 const pre = require("../config.json").prefix;
@@ -50,6 +51,7 @@ module.exports = (bot) => {
 	if (bot.guilds.get("83078957620002816")) {
 		randomNickChange(bot);
 		distanceServers(bot);
+		wrLog(bot);
 	}
 	checkTimeouts(bot);
 	checkLockdowns(bot);
