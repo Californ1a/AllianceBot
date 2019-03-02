@@ -120,7 +120,7 @@ function embedSendManager(data, chan, maxIndex) {
 	const embeds = [];
 	// console.log("data (2)", data);
 	// console.log("\n\n-----------------------------------------------------------\n\n");
-	for (let i = data.length - 1 - maxIndex; i < data.length - 1; i++) {
+	for (let i = data.length - 1 - maxIndex + 860; i < data.length - 1; i++) {
 		// console.log("data[i]", data[i]);
 		// console.log("\n\n--------------------------------\n\n");
 		embeds.push(composeEmbed(data[i]));
@@ -149,7 +149,8 @@ function sendNewWRMessages(bot, data) {
 				embedSendManager(data, chan, data.length);
 			} else {
 				//console.log("msg.embeds[0]", msg.embeds[0]);
-				const mostRecentCheck = msg.embeds.filter(e => embedDataMatch(e, data[0]));
+				const mostRecentCheck = msg.embeds.filter(e => embedDataMatch(e, data[data.length - 1]));
+				// console.log("mostRecentCheck", mostRecentCheck);
 				if (mostRecentCheck[0]) {
 					console.log(colors.grey("* No WRs need posting - Most recent WR message matches most recent data entry."));
 					return;
