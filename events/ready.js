@@ -53,6 +53,9 @@ module.exports = (bot) => {
 		distanceServers(bot);
 		wrLog(bot);
 	}
+	// if (bot.guilds.get("211599888222257152")) {
+	// 	wrLog(bot);
+	// }
 	checkTimeouts(bot);
 	checkLockdowns(bot);
 };

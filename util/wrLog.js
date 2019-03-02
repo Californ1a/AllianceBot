@@ -94,7 +94,7 @@ function parseMapData(t) {
 }
 
 function embedDataMatch(embed, data) {
-	return embed.title === data.map && embed.fields[0].value === `${data.oldTime} by [${data.oldRecordHolderName}](${data.oldRecordHolderProfileUrl})`;
+	return embed.title === data.map && embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
 }
 
 function composeEmbed(d) {
@@ -120,13 +120,13 @@ function embedSendManager(data, chan, maxIndex) {
 	const embeds = [];
 	// console.log("data (2)", data);
 	// console.log("\n\n-----------------------------------------------------------\n\n");
-	for (let i = maxIndex - 1; i >= 1; i--) {
+	for (let i = data.length - maxIndex; i < data.length - 1; i++) {
 		// console.log("data[i]", data[i]);
 		// console.log("\n\n--------------------------------\n\n");
 		embeds.push(composeEmbed(data[i]));
 	}
 	Promise.all(embeds.map(e => send(chan, "New record!", e))).then(msgs => {
-		const lastEmbed = composeEmbed(data[0]);
+		const lastEmbed = composeEmbed(data[data.length - 1]);
 		send(chan, "New record!", lastEmbed).then(() => {
 			console.log(colors.grey(`* Sent ${msgs.length+1} new WR messages.`));
 		});
@@ -138,9 +138,7 @@ function sendNewWRMessages(bot, data) {
 	if (!chan.lastMessageID) {
 		// console.log("data (1)", data);
 		// console.log("\n\n-------------------------------\n\n");
-		const mostRecentWR = [];
-		mostRecentWR.push(data[data.length - 1]);
-		embedSendManager(mostRecentWR, chan, mostRecentWR.length);
+		embedSendManager(data, chan, data.length);
 	} else {
 		// console.log("chan.lastMessageID", chan.lastMessageID);
 		chan.fetchMessages({
@@ -150,21 +148,24 @@ function sendNewWRMessages(bot, data) {
 			if (!msg) {
 				embedSendManager(data, chan, data.length);
 			} else {
+				//console.log("msg.embeds[0]", msg.embeds[0]);
 				const mostRecentCheck = msg.embeds.filter(e => embedDataMatch(e, data[0]));
 				if (mostRecentCheck[0]) {
 					console.log(colors.grey("* No WRs need posting - Most recent WR message matches most recent data entry."));
 					return;
 				}
 				const matchingIndices = [];
-				for (let i = data.length - 1; i >= 0; i--) {
+				for (let i = 0; i < data.length; i++) {
 					for (const embed of msg.embeds) {
 						if (embedDataMatch(embed, data[i])) {
 							matchingIndices.push(i);
 						}
 					}
 				}
-				const lowestMatchedIndex = Math.min(...matchingIndices);
-				embedSendManager(data, chan, lowestMatchedIndex);
+				console.log("data.length", data.length);
+				console.log("matchingIndices", matchingIndices);
+				const highestMatchedIndex = Math.max(...matchingIndices);
+				embedSendManager(data, chan, data.length - highestMatchedIndex + 1);
 			}
 		}).catch(console.error);
 	}
