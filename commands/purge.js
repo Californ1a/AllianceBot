@@ -3,7 +3,10 @@ const send = require("../util/sendMessage.js");
 const del = (chan, m) => {
 	chan.bulkDelete(m).then(() => {
 		send(chan, `Purged ${(m.length) ? m.length : m} messages.`);
-	}).catch(console.error);
+	}).catch(err => {
+		send(chan, err.message);
+		console.error(err);
+	});
 };
 
 const doTheThing = (chan, amount, user) => {
