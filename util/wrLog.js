@@ -10,26 +10,26 @@ const {
 } = require("discord.js");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
-const refreshMin = 20;
+const refreshMin = 5;
 let refreshMin2 = refreshMin;
 
 function readableTime(time) {
 	let dur = new Duration(time);
 
 	const h = dur.hours();
-	const hours = (h !== 0) ? (h >= 10) ? `${h}:` : `0${h}:` : "";
+	const hours = (h !== 0) ? `${h}:` : "";
 	dur = new Duration(dur - Duration.parse(`${h}h`));
 
 	const m = dur.minutes();
-	const minutes = (m !== 0) ? (m >= 10) ? `${m}:` : (hours !== "") ? `0${m}:` : `${m}:` : "";
+	const minutes = (m !== 0) ? (m >= 10) ? `${m}:` : (h !== 0) ? `0${m}:` : `${m}:` : (h !== 0) ? "00:" : "";
 	dur = new Duration(dur - Duration.parse(`${m}m`));
 
 	const s = dur.seconds();
-	const seconds = (s !== 0) ? (s >= 10) ? `${s}.` : (minutes !== "") ? `0${s}.` : `${s}.` : "0.";
+	const seconds = (s !== 0) ? (s >= 10) ? `${s}.` : (m !== 0) ? `0${s}.` : `${s}.` : (m === 0 && h === 0) ? "0." : "00.";
 	dur = new Duration(dur - Duration.parse(`${s}s`));
 
 	const ms = dur.milliseconds();
-	const milliseconds = (ms !== 0) ? (ms >= 10) ? (ms >= 100) ? `${ms}` : `0${ms}` : `00${ms}` : "00";
+	const milliseconds = (ms !== 0) ? (ms >= 10) ? (ms >= 100) ? `${ms}` : `0${ms}` : `00${ms}` : "000";
 	return `${hours}${minutes}${seconds}${milliseconds.slice(0, milliseconds.length-1)}${(minutes==="")?"s":""}`;
 }
 
@@ -163,8 +163,8 @@ function sendNewWRMessages(bot, data) {
 						}
 					}
 				}
-				console.log("data.length", data.length);
-				console.log("matchingIndices", matchingIndices);
+				// console.log("data.length", data.length);
+				// console.log("matchingIndices", matchingIndices);
 				const highestMatchedIndex = Math.max(...matchingIndices);
 				//console.log("data[highestMatchedIndex]", data[highestMatchedIndex]);
 				embedSendManager(data, chan, data.length - highestMatchedIndex - 1);
