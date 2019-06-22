@@ -36,7 +36,7 @@ exports.run = (bot, msg, args) => {
 	let auto = true;
 	getInfo().then(servs => {
 		if (args[0] === "-f" || args[0] === "-filter") {
-			servs = servs.filter(s => !RegExp("^.*\(Auto\)$", "g").test(s.mode)); //eslint-disable-line no-useless-escape
+			servs = servs.filter(s => !RegExp("^.*Auto$", "g").test(s.mode)); //eslint-disable-line no-useless-escape
 			auto = false;
 		}
 		console.log(servs);
