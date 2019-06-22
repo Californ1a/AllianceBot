@@ -95,7 +95,9 @@ function parseMapData(t) {
 }
 
 function embedDataMatch(embed, data) {
-	return embed.title === data.map && embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
+	const check1 = embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
+	const check2 = (data.mapThumbnailUrl) ? embed.thumbnail.url === data.mapThumbnailUrl : embed.title === data.map;
+	return check2 && check1;
 }
 
 function composeEmbed(d) {
