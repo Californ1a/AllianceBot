@@ -12,6 +12,7 @@ const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
 const refreshMin = 5;
 let refreshMin2 = refreshMin;
+let sending = false;
 
 function readableTime(time) {
 	let dur = new Duration(time);
@@ -94,7 +95,9 @@ function parseMapData(t) {
 }
 
 function embedDataMatch(embed, data) {
-	return embed.title === data.map && embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
+	const check1 = embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
+	const check2 = (data.mapThumbnailUrl) ? embed.thumbnail.url === data.mapThumbnailUrl : embed.title === data.map;
+	return check2 && check1;
 }
 
 function composeEmbed(d) {
@@ -129,6 +132,7 @@ function embedSendManager(data, chan, maxIndex) {
 		const lastEmbed = composeEmbed(data[data.length - 1]);
 		send(chan, "New record!", lastEmbed).then(() => {
 			console.log(colors.grey(`* Sent ${msgs.length+1} new WR messages.`));
+			sending = false;
 		});
 	}).catch(console.error);
 }
@@ -153,6 +157,7 @@ function sendNewWRMessages(bot, data) {
 				// console.log("mostRecentCheck", mostRecentCheck);
 				if (mostRecentCheck[0]) {
 					console.log(colors.grey("* No WRs need posting - Most recent WR message matches most recent data entry."));
+					sending = false;
 					return;
 				}
 				const matchingIndices = [];
@@ -175,6 +180,12 @@ function sendNewWRMessages(bot, data) {
 
 function wrLog(bot) {
 	console.log(colors.grey("* Checking for new WRs..."));
+	if (sending) {
+		console.log(colors.grey("* Still sending old WR messages; begin timeout again"));
+		setTimeout(() => {
+			wrLog(bot);
+		}, refreshMin2 * 60 * 1000);
+	}
 	fetch("http://seekr.pw/distance-log/changelist.json").then(res => res.json()).then(json => {
 		return json.map(t => parseMapData(t));
 	}).catch(e => {
@@ -185,6 +196,7 @@ function wrLog(bot) {
 		}
 	}).then(data => {
 		if (typeof data !== "undefined") {
+			sending = true;
 			sendNewWRMessages(bot, data);
 		} else {
 			refreshMin2 += refreshMin;
