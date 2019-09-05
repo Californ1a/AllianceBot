@@ -39,7 +39,6 @@ function doAll(flags, msg) {
 }
 
 exports.run = (bot, msg, args, perms, cmd, flags) => {
-	console.log("flags", flags);
 	const conf = bot.servConf.get(msg.guild.id);
 	if (!flags || !args[0]) {
 		return send(msg.channel, `Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
@@ -61,13 +60,18 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				case "adminrole":
 					msgCon.push(`Admin Role Name - ${ret.newVals[i]}`);
 					break;
+				case "logchannel":
+					msgCon.push(`Mod Log Channel - ${ret.newVals[i]}`);
+					break;
 			}
 		}
-		bot.confRefresh().then(() => {
-			send(msg.channel, `**Updated:**\n${msgCon.join("\n")}`);
-		}).catch(e => {
-			send(msg.channel, e.message);
-		});
+		setTimeout(() => {
+			bot.confRefresh().then(() => {
+				send(msg.channel, `**Updated:**\n${msgCon.join("\n")}`);
+			}).catch(e => {
+				send(msg.channel, e.message);
+			});
+		}, 1000);
 	});
 };
 
@@ -82,13 +86,14 @@ exports.conf = {
 exports.help = {
 	name: "config",
 	description: "Set server config",
-	extendedDescription: "<prefix>\n* Command prefix to use in the server\n\n<membrole>\n* Name of the role to have perm level 1\n\n<modrole>\n* Name of the role to have perm level 2\n\n<adminrole>\n* Name of the role to have perm level 3\n\n= Examples =\n\"config --prefix ~ --membrole Member --modrole Moderator --adminrole Admin\" :: This would set all of the config options, however, it is also possible to only edit need needed change:\n\n\"config --adminrole Admin\" :: This would only set the admin role.\n\n\"config --modrole Mod --prefix #\" :: This would set the prefix and moderator role.",
-	usage: "config --<prefix|membrole|modrole|adminrole> [<prefix>|<member role>|<moderator role>|<admin role>]"
+	extendedDescription: "<prefix>\n* Command prefix to use in the server\n\n<membrole>\n* Name of the role to have perm level 1\n\n<modrole>\n* Name of the role to have perm level 2\n\n<adminrole>\n* Name of the role to have perm level 3\n\n<logchannel>\n* ID of the channel to post logs to.\n\n= Examples =\n\"config --prefix ~ --membrole Member --modrole Moderator --adminrole Admin\" :: This would set all of the config options, however, it is also possible to only edit need needed change:\n\n\"config --adminrole Admin\" :: This would only set the admin role.\n\n\"config --modrole Mod --prefix #\" :: This would set the prefix and moderator role.",
+	usage: "config --<prefix|membrole|modrole|adminrole|logchannel> [<prefix>|<member role>|<moderator role>|<admin role>|<log channel>]"
 };
 
 exports.f = {
-	prefix: ["p", "pre"],
+	prefix: ["p", "pre", "prefix"],
 	membrole: ["memb", "membrole"],
 	modrole: ["mod", "modrole"],
-	adminrole: ["admin", "adminrole"]
+	adminrole: ["admin", "adminrole"],
+	logchannel: ["lc", "logchannel"]
 };
