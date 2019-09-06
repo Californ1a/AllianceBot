@@ -10,7 +10,7 @@ function update(flag, type, msg) {
 			if (newFlag !== flag) {
 				reject(new Error("You used an invalid character."));
 			}
-			connection.update("servers", `${type}='${newFlag}'`, `serverid='${msg.guild.id}'`).then(() => {
+			connection.update("servers", `${type}=${(newFlag.toLowerCase()==="null")?"NULL":`'${newFlag}'`}`, `serverid='${msg.guild.id}'`).then(() => {
 				resolve();
 			}).catch(console.error);
 		}
@@ -39,39 +39,41 @@ function doAll(flags, msg) {
 }
 
 exports.run = (bot, msg, args, perms, cmd, flags) => {
-	const conf = bot.servConf.get(msg.guild.id);
-	if (!flags || !args[0]) {
-		return send(msg.channel, `Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
-	}
-	doAll(flags, msg).then(ret => {
-		const msgCon = [];
-		let i = 0;
-		for (i; i < ret.types.length; i++) {
-			switch (ret.types[i]) {
-				case "prefix":
-					msgCon.push(`Prefix - ${ret.newVals[i]}`);
-					break;
-				case "membrole":
-					msgCon.push(`Member Role Name - ${ret.newVals[i]}`);
-					break;
-				case "modrole":
-					msgCon.push(`Moderator Role Name - ${ret.newVals[i]}`);
-					break;
-				case "adminrole":
-					msgCon.push(`Admin Role Name - ${ret.newVals[i]}`);
-					break;
-				case "logchannel":
-					msgCon.push(`Mod Log Channel - ${ret.newVals[i]}`);
-					break;
-			}
+	send(msg.channel, "Loading...").then(m => {
+		const conf = bot.servConf.get(m.guild.id);
+		if (!flags || !args[0]) {
+			return m.edit(`Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
 		}
-		setTimeout(() => {
-			bot.confRefresh().then(() => {
-				send(msg.channel, `**Updated:**\n${msgCon.join("\n")}`);
-			}).catch(e => {
-				send(msg.channel, e.message);
-			});
-		}, 1000);
+		doAll(flags, msg).then(ret => {
+			const msgCon = [];
+			let i = 0;
+			for (i; i < ret.types.length; i++) {
+				switch (ret.types[i]) {
+					case "prefix":
+						msgCon.push(`Prefix - ${ret.newVals[i]}`);
+						break;
+					case "membrole":
+						msgCon.push(`Member Role Name - ${ret.newVals[i]}`);
+						break;
+					case "modrole":
+						msgCon.push(`Moderator Role Name - ${ret.newVals[i]}`);
+						break;
+					case "adminrole":
+						msgCon.push(`Admin Role Name - ${ret.newVals[i]}`);
+						break;
+					case "logchannel":
+						msgCon.push(`Log Channel - ${ret.newVals[i]}`);
+						break;
+				}
+			}
+			setTimeout(() => {
+				bot.confRefresh().then(() => {
+					m.edit(`**Updated:**\n${msgCon.join("\n")}`);
+				}).catch(e => {
+					m.edit(e.message);
+				});
+			}, 1000);
+		});
 	});
 };
 
