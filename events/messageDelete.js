@@ -19,7 +19,8 @@ module.exports = (bot, msg) => {
 		return;
 	}
 	const embed = new RichEmbed()
-		.setDescription(msg.content)
-		.setAuthor(msg.member.displayName, msg.author.avatarURL);
-	send(chan, "Message Deleted", embed);
+		.setColor("#ffff00")
+		.setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.avatarURL)
+		.setDescription(`**Action:** Message Deleted\n**Channel:** ${msg.channel}\n**Content:** ${msg.content}`);
+	send(chan, "", embed);
 };
