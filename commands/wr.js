@@ -32,7 +32,12 @@ exports.run = (bot, msg, args) => {
 				str += chunk;
 			});
 			respond.on("end", function() {
-				const actable = JSON.parse(str)[gamename];
+				let actable;
+				try {
+					actable = JSON.parse(str)[gamename];
+				} catch (e) {
+					return send(msg.channel, "Failed to find category.");
+				}
 				for (const key in actable) {
 					if (actable.hasOwnProperty(key)) {
 						if (key.indexOf(category) > -1) {
@@ -73,7 +78,7 @@ exports.conf = {
 	aliases: [],
 	permLevel: 0,
 	onCooldown: false,
-	cooldownTimer: 1000
+	cooldownTimer: 5000
 };
 
 exports.help = {

@@ -8,9 +8,13 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildDelete", (guild) => reqEvent("guildDelete")(bot, guild));
 	bot.on("presenceUpdate", (oldMember, newMember) => reqEvent("presenceUpdate")(bot, oldMember, newMember));
 	bot.on("messageDelete", (msg) => reqEvent("messageDelete")(bot, msg));
+	bot.on("messageDeleteBulk", (msgs) => reqEvent("messageDeleteBulk")(bot, msgs));
 	bot.on("messageUpdate", (oldMessage, newMessage) => reqEvent("messageUpdate")(bot, oldMessage, newMessage));
 	bot.on("guildMemberUpdate", (oldMember, newMember) => reqEvent("guildMemberUpdate")(bot, oldMember, newMember));
 	bot.on("guildMemberAdd", (member) => reqEvent("guildMemberAdd")(bot, member));
+	bot.on("guildMemberRemove", (member) => reqEvent("guildMemberRemove")(bot, member));
+	bot.on("guildBanAdd", (guild, user) => reqEvent("guildBanAdd")(bot, guild, user));
+	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
 	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
 	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
