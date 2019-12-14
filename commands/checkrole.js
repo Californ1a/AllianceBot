@@ -33,7 +33,7 @@ exports.run = (bot, msg, args, perm) => {
 				});
 			} else {
 				runCheck(member, playRole, guild);
-				send(msg.channel, "Note that Distance has a bug with the Discord implementation. If you join a multiplayer lobby then Discord stops uploading your playing status, so no one other than you can see your status (me included). If your role didn't get updated because of this, close and reopen the game.");
+				send(msg.channel, "Note that custom status overrides your game in the Discord api. If you don't have a custom status set, and your role wasn't updated, restart Discord.");
 			}
 		}
 	}
