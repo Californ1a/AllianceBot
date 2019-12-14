@@ -39,7 +39,7 @@ pm2.connect(function() {
 				console.log("[PM2] Log streaming started");
 
 				bus.on("log:out", function(packet) {
-					console.log(`[App:${packet.process.name}] ${packet.data}`);
+					console.log(`[App:${packet.process.name}] ${packet.data.replace(/\n$/g, "")}`);
 				});
 
 				bus.on("log:err", function(packet) {
