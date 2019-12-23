@@ -1,4 +1,4 @@
-const http = require("http");
+const fetch = require("node-fetch");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
@@ -20,26 +20,17 @@ exports.run = (bot, msg, args) => {
 			gamename = msg.guild.name;
 		}
 		let nonefound = true;
-		const optionsac = {
-			hostname: "www.speedrun.com",
-			path: `/api_records.php?game=${gamename}`,
-			method: "GET",
-			json: true
-		};
-		http.request(optionsac, function(respond) {
-			let str = "";
-			respond.on("data", function(chunk) {
-				str += chunk;
-			});
-			respond.on("end", function() {
+		fetch(`https://www.speedrun.com/api_records.php?game=${gamename}`)
+			.then(res => res.json())
+			.then(json => {
 				let actable;
 				try {
-					actable = JSON.parse(str)[gamename];
+					actable = json[gamename];
 				} catch (e) {
 					return send(msg.channel, "Failed to find category.");
 				}
 				for (const key in actable) {
-					if (actable.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(actable, key)) {
 						if (key.indexOf(category) > -1) {
 							if (nonefound) {
 								const sometime = actable[key].time;
@@ -67,7 +58,6 @@ exports.run = (bot, msg, args) => {
 					nonefound = true;
 				}
 			});
-		}).end();
 	} else {
 		send(msg.channel, "Incorrect syntax, category name required.");
 	}
