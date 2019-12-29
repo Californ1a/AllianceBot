@@ -5,7 +5,7 @@ const runCheck = (memb, role, guild) => {
 	const P = memb.user.presence;
 
 	const hasStream = (P.game) ? P.game.streaming : false;
-	const hasDistance = (P.game) ? (hasStream) ? /Distance/i.test(P.game.state) : /Distance/i.test(P.game.name) : false;
+	const hasDistance = (P.game) ? (hasStream) ? /Distance/i.test(P.game.state) : (P.game.applicationID) ? /Distance/i.test(P.game.name) : false : false;
 	const hasRole = memb.roles.has(role.id);
 
 	if (hasDistance && !hasRole) {
