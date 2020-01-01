@@ -157,36 +157,34 @@ async function sendManager(streams, users, chan, gameUrl) {
 	saveToFirebase(newStreamIDs);
 }
 
-function main(bot, chan, gameName) {
-	const gameUrl = `https://twitch.tv/directory/game/${gameName}`;
-	getGameID("Distance")
+function main(bot, chan, guild, gameName, conf) {
+	const gameUrl = `https://twitch.tv/directory/game/${encodeURIComponent(gameName)}`;
+	getGameID(gameName)
 		.then(getStreamsForGame)
 		.then(data => {
 			//console.log(data.streams);
 			getAllUsers(data.streams).then(users => {
 				//console.log(users);
 				sendManager(data.streams, users, chan, gameUrl).then(() => {
-					setTimeout(() => {
-						streams(bot);
+					conf.streamTimeout = setTimeout(() => {
+						streams(bot, guild);
 					}, 60 * 1000);
 				});
 			});
 		});
 }
 
-function streams(bot) {
-	bot.guilds.forEach(g => {
-		const conf = bot.servConf.get(g.id);
-		const twitchChannel = conf.twitchchannel;
-		const gameName = conf.twitchgame;
-		if (twitchChannel) {
-			const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
-			const chan = bot.guilds.get(g.id).channels.get(twitchchanid);
-			if (chan && gameName) {
-				main(bot, chan, gameName);
-			}
+function streams(bot, guild) {
+	const conf = bot.servConf.get(guild.id);
+	const twitchChannel = conf.twitchchannel;
+	const gameName = conf.twitchgame;
+	if (twitchChannel) {
+		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
+		const chan = guild.channels.get(twitchchanid);
+		if (chan && gameName) {
+			main(bot, chan, guild, gameName, conf);
 		}
-	});
+	}
 	//const chan = bot.guilds.get(serverID).channels.get(chanID);
 }
 

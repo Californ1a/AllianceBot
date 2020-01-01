@@ -57,9 +57,13 @@ module.exports = (bot) => {
 	// if (bot.guilds.get("211599888222257152")) {
 	// 	wrLog(bot);
 	// }
+	checkTimeouts(bot);
+	checkLockdowns(bot);
 	bot.confEventEmitter.on("finishServConfLoad", () => {
-		checkTimeouts(bot);
-		checkLockdowns(bot);
-		streams(bot);
+		bot.guilds.forEach(g => {
+			const conf = bot.servConf.get(g.id);
+			clearTimeout(conf.streamTimeout);
+			streams(bot, g);
+		});
 	});
 };
