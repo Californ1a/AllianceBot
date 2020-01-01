@@ -64,6 +64,12 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 					case "logchannel":
 						msgCon.push(`Log Channel - ${ret.newVals[i]}`);
 						break;
+					case "twitchchannel":
+						msgCon.push(`Twitch Channel - ${ret.newVals[i]}`);
+						break;
+					case "twitchgame":
+						msgCon.push(`Twitch Game - ${ret.newVals[i]}`);
+						break;
 				}
 			}
 			setTimeout(() => {
@@ -88,8 +94,8 @@ exports.conf = {
 exports.help = {
 	name: "config",
 	description: "Set server config",
-	extendedDescription: "<prefix>\n* Command prefix to use in the server\n\n<membrole>\n* Name of the role to have perm level 1\n\n<modrole>\n* Name of the role to have perm level 2\n\n<adminrole>\n* Name of the role to have perm level 3\n\n<logchannel>\n* #Mention the channel to post logs to, or NULL to empty.\n\n= Examples =\n\"config --prefix ~ --membrole Member --modrole Moderator --adminrole Admin\" :: This would set all of the config options, however, it is also possible to only edit need needed change:\n\n\"config --adminrole Admin\" :: This would only set the admin role.\n\n\"config --modrole Mod --prefix #\" :: This would set the prefix and moderator role.",
-	usage: "config --<prefix|membrole|modrole|adminrole|logchannel> [<prefix>|<member role>|<moderator role>|<admin role>|<log channel>]"
+	extendedDescription: "<prefix>\n* Command prefix to use in the server\n\n<membrole>\n* Name of the role to have perm level 1\n\n<modrole>\n* Name of the role to have perm level 2\n\n<adminrole>\n* Name of the role to have perm level 3\n\n<logchannel>\n* #Mention the channel to post logs to, or NULL to empty.\n\n<twitchchannel>\n* #Mention the channel to post twitch streams to, or NULL to empty.\n\n<twitchgame>\n* The exact name of the game as it is shown on Twitch, or NULL to empty.\n\n= Examples =\n\"config --prefix ~ --membrole Member --modrole Moderator --adminrole Admin\" :: This would set all of the config options, however, it is also possible to only edit need needed change:\n\n\"config --adminrole Admin\" :: This would only set the admin role.\n\n\"config --modrole Mod --prefix #\" :: This would set the prefix and moderator role.",
+	usage: "config --<prefix|membrole|modrole|adminrole|logchannel|twitchchannel|twitchgame> [<prefix>|<member role>|<moderator role>|<admin role>|<log channel>|<twitch channel>|<twitch game>]"
 };
 
 exports.f = {
@@ -97,5 +103,7 @@ exports.f = {
 	membrole: ["memb", "membrole"],
 	modrole: ["mod", "modrole"],
 	adminrole: ["admin", "adminrole"],
-	logchannel: ["lc", "logchannel"]
+	logchannel: ["lc", "logchannel"],
+	twitchchannel: ["tc", "twitchchannel"],
+	twitchgame: ["tg", "twitchgame"]
 };

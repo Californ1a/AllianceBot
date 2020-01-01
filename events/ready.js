@@ -3,6 +3,7 @@ const distanceServers = require("../util/distanceServers.js");
 const wrLog = require("../util/wrLog.js");
 const checkTimeouts = require("../util/checkTimeouts.js");
 const checkLockdowns = require("../util/checkLockdowns.js");
+const streams = require("../util/twitchStreams.js");
 const pre = require("../config.json").prefix;
 const glitchNames = ["T͠h̷e̛ A҉ll̨i̡anc̵e", "T̕͝h̡͏e A͝l͏l̵i̡̛͡à̧̕n̨͜҉ce͞", "T͘̕͟h̵͟͡e͘͞ A̢͞l̀͡li̡̢͏̀a̶̕nc̶̢e", "ŦҤE λŁŁłλ₦₡E", "Ţђę Ąɭɭįąŋçę", "Ťhë ÅÎÎīåñċë", "Ṫḧḕ Ḁḷḷḭḁṅḉḕ", "T̷h̷e̴ ̶A̴l̶l̵i̷a̶n̵c̴e̸", "T̴͖̉h̶̾e̷̿͝ ̴̆̚A̴l̸l̶͂i̷an̶̂c̸͝e"];
 
@@ -56,6 +57,9 @@ module.exports = (bot) => {
 	// if (bot.guilds.get("211599888222257152")) {
 	// 	wrLog(bot);
 	// }
-	checkTimeouts(bot);
-	checkLockdowns(bot);
+	bot.confEventEmitter.on("finishServConfLoad", () => {
+		checkTimeouts(bot);
+		checkLockdowns(bot);
+		streams(bot);
+	});
 };
