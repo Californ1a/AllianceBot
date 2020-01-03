@@ -7,7 +7,7 @@ let twitchStreams = [];
 firebase.db.ref("twitch").once("value").then(data => {
 	if (data.val()) {
 		twitchStreams = JSON.parse(JSON.stringify(data.val())); //.filter(v => v !== "")
-		// console.log("twitchStreams", twitchStreams);
+		// console.log("twitchStreams1", twitchStreams);
 	}
 });
 const {
@@ -61,6 +61,7 @@ async function getAllUsers(streams) {
 function saveToFirebase(arr, guildID) {
 	//console.log("SaveToFirebase", arr);
 	firebase.db.ref(`twitch/${guildID}`).set(arr);
+	twitchStreams[guildID] = arr;
 }
 
 async function removeClosedStreams(streamIDs, closedStreams, chan) {
@@ -84,6 +85,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 
 async function sendManager(streams, users, chan, gameUrl) {
 	const streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
+	// console.log("twitchStreams2", twitchStreams);
 	// console.log("streamIDs", streamIDs);
 	const totalStreams = streams.length;
 	let totalViewers = 0;

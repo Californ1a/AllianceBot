@@ -3,8 +3,8 @@
 	"version": "2.0.0",
 	"description": "Discord bot",
 	"engines": {
-		"node": "8.9.4",
-		"npm": "5.7.1"
+		"node": "10.10.0",
+		"npm": "6.4.1"
 	},
 	"main": "main.js",
 	"scripts": {
