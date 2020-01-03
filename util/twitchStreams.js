@@ -7,7 +7,7 @@ let twitchStreams = [];
 firebase.db.ref("twitch").once("value").then(data => {
 	if (data.val()) {
 		twitchStreams = JSON.parse(JSON.stringify(data.val())); //.filter(v => v !== "")
-		console.log("twitchStreams", twitchStreams);
+		// console.log("twitchStreams", twitchStreams);
 	}
 });
 const {
@@ -51,7 +51,7 @@ async function getStreamsForGame(gameid, opts = {
 
 async function getAllUsers(streams) {
 	const users = [];
-	for await (const stream of streams) {
+	for (const stream of streams) {
 		const user = await client.helix.users.getUserById(stream.userId);
 		users.push(user);
 	}
@@ -84,11 +84,11 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 
 async function sendManager(streams, users, chan, gameUrl) {
 	const streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
-	console.log("streamIDs", streamIDs);
+	// console.log("streamIDs", streamIDs);
 	const totalStreams = streams.length;
 	let totalViewers = 0;
 	let amntSent = 0;
-	for await (const stream of streams) {
+	for (const stream of streams) {
 		totalViewers += parseInt(stream.viewers);
 		const d = new Date(stream.startDate);
 		const now = new Date();
