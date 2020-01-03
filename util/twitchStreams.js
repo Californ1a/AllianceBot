@@ -6,7 +6,8 @@ const colors = require("colors");
 let twitchStreams = [];
 firebase.db.ref("twitch").once("value").then(data => {
 	if (data.val()) {
-		twitchStreams = JSON.parse(JSON.stringify(data.val().filter(v => v !== "")));
+		twitchStreams = JSON.parse(JSON.stringify(data.val())); //.filter(v => v !== "")
+		console.log("twitchStreams", twitchStreams);
 	}
 });
 const {
@@ -57,9 +58,9 @@ async function getAllUsers(streams) {
 	return users;
 }
 
-function saveToFirebase(arr) {
+function saveToFirebase(arr, guildID) {
 	//console.log("SaveToFirebase", arr);
-	firebase.db.ref("twitch").set(arr);
+	firebase.db.ref(`twitch/${guildID}`).set(arr);
 }
 
 async function removeClosedStreams(streamIDs, closedStreams, chan) {
@@ -82,7 +83,8 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 }
 
 async function sendManager(streams, users, chan, gameUrl) {
-	const streamIDs = twitchStreams;
+	const streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
+	console.log("streamIDs", streamIDs);
 	const totalStreams = streams.length;
 	let totalViewers = 0;
 	let amntSent = 0;
@@ -131,7 +133,7 @@ async function sendManager(streams, users, chan, gameUrl) {
 				const closedStreams = streamIDs.filter(sid => sid.msgID === msgID);
 				const newStreamIDs = await removeClosedStreams(streamIDs, closedStreams, chan);
 				//console.log("newStreamIDsA", newStreamIDs);
-				saveToFirebase(newStreamIDs);
+				saveToFirebase(newStreamIDs, chan.guild.id);
 				const m = await send(chan, "", embed);
 				streamIDs.push({
 					streamID: stream.id,
@@ -154,7 +156,7 @@ async function sendManager(streams, users, chan, gameUrl) {
 	}
 	const newStreamIDs = await removeClosedStreams(streamIDs, closedStreams, chan);
 	//console.log("newStreamIDsB", newStreamIDs);
-	saveToFirebase(newStreamIDs);
+	saveToFirebase(newStreamIDs, chan.guild.id);
 }
 
 function main(bot, chan, guild, gameName, conf) {
