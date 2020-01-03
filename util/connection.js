@@ -92,7 +92,7 @@ const query = function(q) {
 	});
 };
 
-const servers = "CREATE TABLE IF NOT EXISTS servers (idservers INT(11) NOT NULL AUTO_INCREMENT, servername VARCHAR(512) NOT NULL, serverid VARCHAR(45) NOT NULL, ownerid VARCHAR(45) NOT NULL, prefix VARCHAR(45) NOT NULL, membrole VARCHAR(255) NULL DEFAULT NULL, modrole VARCHAR(255) NULL DEFAULT NULL, adminrole VARCHAR(255) NULL DEFAULT NULL, timeoutrole VARCHAR(255) NULL DEFAULT NULL, logchannel VARCHAR(120) NULL DEFAULT NULL, PRIMARY KEY (idservers), UNIQUE INDEX serverid_UNIQUE (serverid)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
+const servers = "CREATE TABLE IF NOT EXISTS servers (idservers INT(11) NOT NULL AUTO_INCREMENT, servername VARCHAR(512) NOT NULL, serverid VARCHAR(45) NOT NULL, ownerid VARCHAR(45) NOT NULL, prefix VARCHAR(45) NOT NULL, membrole VARCHAR(255) NULL DEFAULT NULL, modrole VARCHAR(255) NULL DEFAULT NULL, adminrole VARCHAR(255) NULL DEFAULT NULL, timeoutrole VARCHAR(255) NULL DEFAULT NULL, logchannel VARCHAR(120) NULL DEFAULT NULL, twitchgame VARCHAR(255) NULL DEFAULT NULL, twitchchannel VARCHAR(120) NULL DEFAULT NULL, PRIMARY KEY (idservers), UNIQUE INDEX serverid_UNIQUE (serverid)) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 
 const advent = "CREATE TABLE IF NOT EXISTS advent (idadvent INT(11) NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, time VARCHAR(19) NOT NULL, server_id VARCHAR(45) NOT NULL, PRIMARY KEY (idadvent), UNIQUE INDEX id_name_unique (name, server_id), INDEX advent_ibfk_1_idx (server_id), CONSTRAINT advent_ibfk_1 FOREIGN KEY (server_id) REFERENCES servers (serverid) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8mb4_general_ci' ENGINE=InnoDB";
 

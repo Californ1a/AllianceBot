@@ -19,6 +19,8 @@ const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
 const reminders = require("./util/reminders.js");
+const events = require("events");
+bot.confEventEmitter = new events.EventEmitter();
 const Twit = require("twit");
 const twitconfig = {
 	consumer_key: process.env.TWITTER_CONSUMER_KEY, // eslint-disable-line camelcase
@@ -107,6 +109,7 @@ bot.confRefresh = () => {
 			}
 			//console.log(colors.cyan("servConf", bot.servConf));
 			console.log(colors.red("Refreshed server configs"));
+			bot.confEventEmitter.emit("finishServConfLoad");
 			resolve();
 		}).catch(e => reject(e));
 	});
@@ -115,7 +118,6 @@ connection.createAllTables().then(() => {
 	bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
-
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
