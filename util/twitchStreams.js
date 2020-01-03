@@ -104,7 +104,7 @@ async function sendManager(streams, users, chan, gameUrl) {
 			.addField("Uptime", uptime, true)
 			.addField("URL", `[ttv/${stream.userDisplayName}](https://twitch.tv/${stream.userDisplayName})`, true);
 		const img = `${stream.thumbnailUrl.replace("{width}", "880").replace("{height}", "496")}?${Date.now()}`;
-		if (streams.length > 2) {
+		if (streams.length > 1) {
 			embed.setThumbnail(img);
 		} else {
 			embed.setImage(img);
