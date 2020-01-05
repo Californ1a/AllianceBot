@@ -1,12 +1,17 @@
 const colors = require("colors");
 const membrolename = require("../config.json").membrolename;
 const connection = require("./connection.js");
+let checked;
 
 const guestToMemb = function(bot, msg) {
+	if (checked[msg.guild.id][msg.author.id]) {
+		return;
+	}
 	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='automemb'`).then(response => {
 		if (!response[0]) {
 			if (!msg.author.bot) {
 				console.log(colors.red("Automemb not enabled for this server."));
+				checked[msg.guild.id][msg.author.id] = true;
 			}
 			return;
 		}
