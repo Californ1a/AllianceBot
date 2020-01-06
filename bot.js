@@ -106,10 +106,10 @@ let twitchChecked = false;
 function streamCheck(a) {
 	accum += a;
 	if (accum >= 2) {
-		console.log("finishServConfLoad SideB");
+		// console.log("finishServConfLoad SideB");
 		setTimeout(() => {
 			bot.guilds.forEach(g => {
-				console.log(`Twitchcheck Guild ${g.id}`);
+				// console.log(`Twitchcheck Guild ${g.id}`);
 				const conf = bot.servConf.get(g.id);
 				clearTimeout(conf.streamTimeout);
 				streams(bot, g);
@@ -142,7 +142,7 @@ bot.confRefresh = () => {
 			//console.log(colors.cyan("servConf", bot.servConf));
 			console.log(colors.red("Refreshed server configs"));
 			bot.confEventEmitter.emit("finishServConfLoad", 1);
-			console.log("finishServConfLoad SideA");
+			// console.log("finishServConfLoad SideA");
 			resolve();
 		}).catch(e => reject(e));
 	});

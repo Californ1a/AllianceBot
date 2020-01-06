@@ -71,7 +71,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 		if (closedStreams.includes(streamIDs[i])) {
 			let m;
 			try {
-				console.log("B");
+				// console.log("B");
 				m = await chan.fetchMessage(streamIDs[i].msgID);
 			} catch (e) {
 				console.log(colors.green("* Removing from list."));
@@ -121,12 +121,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			embed.setImage(img);
 		}
 		if (streamIDs.filter(s => s.streamID === stream.id).length === 0) {
-			let m;
-			try {
-				m = await send(chan, "", embed);
-			} catch (e) {
-				console.log(colors.red(`A - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
-			}
+			const m = await send(chan, "", embed);
 			streamIDs.push({
 				streamID: stream.id,
 				msgID: m.id
@@ -137,7 +132,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			// console.log("msgID", msgID);
 			let msg;
 			try {
-				console.log("A");
+				// console.log("A");
 				msg = await chan.fetchMessage(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
@@ -225,7 +220,9 @@ function streams(bot, guild) {
 	if (twitchChannel) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
 		const chan = guild.channels.get(twitchchanid);
-		if (chan && gameName) {
+		const missingPerms = chan.memberPermissions(guild.members.get(bot.user.id)).missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]);
+		// console.log(missingPerms);
+		if (chan && gameName && missingPerms.length === 0) {
 			main(bot, chan, guild, gameName, conf);
 		} else {
 			// console.log(colors.green(`* No twitch game set for guild ${guild.id} or couldn't find channel with id ${twitchchanid}.`));
