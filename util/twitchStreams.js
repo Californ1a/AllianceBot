@@ -2,6 +2,8 @@ const send = require("./sendMessage.js");
 const firebase = require("./firebase.js");
 const TwitchClient = require("twitch").default;
 const colors = require("colors");
+const refreshMin = 1;
+const timeBeforeMsg = 10;
 
 let twitchStreams = [];
 firebase.db.ref("twitch").once("value").then(data => {
@@ -71,7 +73,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			try {
 				m = await chan.fetchMessage(streamIDs[i].msgID);
 			} catch (e) {
-				console.log(colors.grey("* Removing from list."));
+				console.log(colors.green("* Removing from list."));
 			}
 			if (m) {
 				//console.log("def456", m);
@@ -83,7 +85,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 	return streamIDs;
 }
 
-async function sendManager(streams, users, chan, gameUrl) {
+async function sendManager(streams, users, chan, gameUrl, conf) {
 	const streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
 	// console.log("twitchStreams2", twitchStreams);
 	// console.log("streamIDs", streamIDs);
@@ -127,7 +129,7 @@ async function sendManager(streams, users, chan, gameUrl) {
 			try {
 				msg = await chan.fetchMessage(msgID);
 			} catch (e) {
-				console.log(colors.grey("* Message was deleted before stream ended. Reposting..."));
+				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
 			}
 			if (msg) {
 				await msg.edit("", embed).catch(console.error);
@@ -148,17 +150,34 @@ async function sendManager(streams, users, chan, gameUrl) {
 		}
 	}
 	chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`);
-	if (amntSent > 0) {
-		console.log(colors.grey(`* Sent ${amntSent} new twitch streams.`));
-		amntSent = 0;
-	}
+
 	const closedStreams = streamIDs.filter(sid => streams.filter(s => s.id === sid.streamID).length === 0);
-	if (closedStreams.length > 0) {
-		console.log(colors.grey(`* Found ${closedStreams.length} closed twitch streams.`));
-	}
+
 	const newStreamIDs = await removeClosedStreams(streamIDs, closedStreams, chan);
 	//console.log("newStreamIDsB", newStreamIDs);
 	saveToFirebase(newStreamIDs, chan.guild.id);
+
+	// console.log("amntSent", amntSent);
+	// console.log("closedStreams.length", closedStreams.length);
+	if (amntSent > 0 && closedStreams.length === 0) {
+		console.log(colors.green(`* Sent ${amntSent} new twitch streams in guild ${chan.guild.name}.`));
+		amntSent = 0;
+	} else if (amntSent > 0 && closedStreams.length > 0) {
+		console.log(colors.green(`* Sent ${amntSent} new twitch streams and removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
+	} else if (amntSent === 0 && closedStreams.length > 0) {
+		console.log(colors.green(`* Removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
+	} else {
+		// console.log(colors.green("* No twitch stream changes."));
+	}
+
+	if (conf.checkAmnt >= timeBeforeMsg) {
+		// if (conf.currentTimestamp) {
+		// 	console.log(`Time elapsed: ${((Date.now()-conf.currentTimestamp)/1000)/60} min`);
+		// }
+		console.log(colors.green(`* Checked twitch streams ${timeBeforeMsg} times in the past ${refreshMin * timeBeforeMsg} minutes for guild ${chan.guild.name}.`));
+		conf.checkAmnt = 0;
+		// conf.currentTimestamp = Date.now();
+	}
 }
 
 function main(bot, chan, guild, gameName, conf) {
@@ -169,10 +188,10 @@ function main(bot, chan, guild, gameName, conf) {
 			//console.log(data.streams);
 			getAllUsers(data.streams).then(users => {
 				//console.log(users);
-				sendManager(data.streams, users, chan, gameUrl).then(() => {
+				sendManager(data.streams, users, chan, gameUrl, conf).then(() => {
 					conf.streamTimeout = setTimeout(() => {
 						streams(bot, guild);
-					}, 60 * 1000);
+					}, refreshMin * 60 * 1000);
 				});
 			});
 		});
@@ -180,6 +199,7 @@ function main(bot, chan, guild, gameName, conf) {
 
 function streams(bot, guild) {
 	const conf = bot.servConf.get(guild.id);
+	conf.checkAmnt = (conf.checkAmnt || conf.checkAmnt === 0) ? conf.checkAmnt + 1 : 0;
 	const twitchChannel = conf.twitchchannel;
 	const gameName = conf.twitchgame;
 	if (twitchChannel) {
@@ -187,7 +207,11 @@ function streams(bot, guild) {
 		const chan = guild.channels.get(twitchchanid);
 		if (chan && gameName) {
 			main(bot, chan, guild, gameName, conf);
+		} else {
+			// console.log(colors.green(`* No twitch game set for guild ${guild.id} or couldn't find channel with id ${twitchchanid}.`));
 		}
+	} else {
+		// console.log(colors.green(`* No twitch channel set for guild ${guild.id}.`));
 	}
 	//const chan = bot.guilds.get(serverID).channels.get(chanID);
 }
