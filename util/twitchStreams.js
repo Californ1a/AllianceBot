@@ -71,6 +71,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 		if (closedStreams.includes(streamIDs[i])) {
 			let m;
 			try {
+				console.log("B");
 				m = await chan.fetchMessage(streamIDs[i].msgID);
 			} catch (e) {
 				console.log(colors.green("* Removing from list."));
@@ -120,7 +121,12 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			embed.setImage(img);
 		}
 		if (streamIDs.filter(s => s.streamID === stream.id).length === 0) {
-			const m = await send(chan, "", embed);
+			let m;
+			try {
+				m = await send(chan, "", embed);
+			} catch (e) {
+				console.log(colors.red(`A - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
+			}
 			streamIDs.push({
 				streamID: stream.id,
 				msgID: m.id
@@ -131,18 +137,28 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			// console.log("msgID", msgID);
 			let msg;
 			try {
+				console.log("A");
 				msg = await chan.fetchMessage(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
 			}
 			if (msg) {
-				await msg.edit("", embed).catch(console.error);
+				try {
+					await msg.edit("", embed);
+				} catch (e) {
+					console.log(colors.red(`Couldn't edit msg ${msg.id} from author ${msg.author.username} with id ${msg.author.id}`));
+				}
 			} else {
 				const closedStreams = streamIDs.filter(sid => sid.msgID === msgID);
 				const newStreamIDs = await removeClosedStreams(streamIDs, closedStreams, chan);
 				//console.log("newStreamIDsA", newStreamIDs);
 				saveToFirebase(newStreamIDs, chan.guild.id);
-				const m = await send(chan, "", embed);
+				let m;
+				try {
+					m = await send(chan, "", embed);
+				} catch (e) {
+					console.log(colors.red(`B - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
+				}
 				streamIDs.push({
 					streamID: stream.id,
 					msgID: m.id
