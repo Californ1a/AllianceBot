@@ -19,6 +19,7 @@ const colors = require("colors");
 const fs = require("fs-extra");
 const moment = require("moment");
 const reminders = require("./util/reminders.js");
+const streams = require("./util/twitchStreams.js");
 const events = require("events");
 bot.confEventEmitter = new events.EventEmitter();
 const Twit = require("twit");
@@ -99,6 +100,36 @@ bot.reload = function(command) {
 bot.timer = new Discord.Collection();
 bot.timer.lockdown = new Discord.Collection();
 
+let accum = 0;
+let twitchChecked = false;
+
+function streamCheck(a) {
+	accum += a;
+	if (accum >= 2) {
+		// console.log("finishServConfLoad SideB");
+		setTimeout(() => {
+			bot.guilds.forEach(g => {
+				const conf = bot.servConf.get(g.id);
+				clearTimeout(conf.streamTimeout);
+				streams(bot, g);
+				if (!twitchChecked) {
+					console.log(colors.red("Started twitch stream checking."));
+					twitchChecked = true;
+				}
+			});
+			accum = 2;
+		}, 1000);
+	} else {
+		setTimeout(() => {
+			streamCheck(1);
+		}, 5000);
+	}
+}
+
+bot.confEventEmitter.on("finishServConfLoad", (a) => {
+	streamCheck(a);
+});
+
 bot.servConf = new Discord.Collection();
 bot.confRefresh = () => {
 	return new Promise((resolve, reject) => {
@@ -109,7 +140,8 @@ bot.confRefresh = () => {
 			}
 			//console.log(colors.cyan("servConf", bot.servConf));
 			console.log(colors.red("Refreshed server configs"));
-			bot.confEventEmitter.emit("finishServConfLoad");
+			bot.confEventEmitter.emit("finishServConfLoad", 1);
+			// console.log("finishServConfLoad SideA");
 			resolve();
 		}).catch(e => reject(e));
 	});

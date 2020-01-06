@@ -74,12 +74,21 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 			}
 			setTimeout(() => {
 				bot.confRefresh().then(() => {
-					m.edit(`**Updated:**\n${msgCon.join("\n")}`);
+					m.edit(`**Updated:**\n${msgCon.join("\n")}`).catch(e => {
+						console.log("B");
+						console.error(e);
+					});
 				}).catch(e => {
-					m.edit(e.message);
+					m.edit(e.message).catch(e => {
+						console.log("C");
+						console.error(e);
+					});
 				});
 			}, 1000);
 		});
+	}).catch(e => {
+		console.log("A");
+		console.error(e);
 	});
 };
 
