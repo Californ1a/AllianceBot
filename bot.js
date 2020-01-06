@@ -112,6 +112,7 @@ function streamCheck(a) {
 				// console.log(`Twitchcheck Guild ${g.id}`);
 				const conf = bot.servConf.get(g.id);
 				clearTimeout(conf.streamTimeout);
+				conf.checkAmnt = 0;
 				streams(bot, g);
 				if (!twitchChecked) {
 					console.log(colors.red("Started twitch stream checking."));

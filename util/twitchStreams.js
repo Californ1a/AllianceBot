@@ -193,6 +193,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 		conf.checkAmnt = 0;
 		// conf.currentTimestamp = Date.now();
 	}
+	conf.checkAmnt += 1;
 }
 
 function main(bot, chan, guild, gameName, conf) {
@@ -214,7 +215,7 @@ function main(bot, chan, guild, gameName, conf) {
 
 function streams(bot, guild) {
 	const conf = bot.servConf.get(guild.id);
-	conf.checkAmnt = (conf.checkAmnt || conf.checkAmnt === 0) ? conf.checkAmnt + 1 : 0;
+	conf.checkAmnt = (conf.checkAmnt || conf.checkAmnt === 0) ? conf.checkAmnt : 0;
 	const twitchChannel = conf.twitchchannel;
 	const gameName = conf.twitchgame;
 	if (twitchChannel) {
