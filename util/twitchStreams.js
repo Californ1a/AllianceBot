@@ -77,7 +77,11 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			}
 			if (m) {
 				//console.log("def456", m);
-				await m.delete().catch(console.error);
+				try {
+					await m.delete();
+				} catch (e) {
+					console.log(colors.red(`Could not delete msg with id ${m.id} from author ${m.author.username} with id ${m.author.id}`));
+				}
 			}
 			streamIDs.splice(i, 1);
 		}
