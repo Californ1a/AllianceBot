@@ -2,6 +2,7 @@ const {
 	RichEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
+const moment = require("moment");
 
 module.exports = (bot, member) => {
 	const conf = bot.servConf.get(member.guild.id);
@@ -42,7 +43,7 @@ module.exports = (bot, member) => {
 				embed = new RichEmbed()
 					.setColor("#f4bf42")
 					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.avatarURL)
-					.setFooter("User left");
+					.setFooter(`User left - Joined ${moment.duration(Date.now()-member.joinedTimestamp).humanize()} ago`);
 				return send(chan, "", embed);
 			}).catch(console.error);
 		}
