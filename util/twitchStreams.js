@@ -91,7 +91,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 }
 
 async function sendManager(streams, users, chan, gameUrl, conf) {
-	const streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
+	let streamIDs = (twitchStreams[chan.guild.id]) ? twitchStreams[chan.guild.id] : [];
 	// console.log("twitchStreams2", twitchStreams);
 	// console.log("streamIDs", streamIDs);
 	const totalStreams = streams.length;
@@ -177,10 +177,10 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			if (msg) {
 				msg.delete();
 			}
-			const newStreamIDs = streamIDs.filter(sid => sid.msgID !== msgID);
-			saveToFirebase(newStreamIDs, chan.guild.id);
+			streamIDs = streamIDs.filter(sid => sid.msgID !== msgID);
+			saveToFirebase(streamIDs, chan.guild.id);
 			console.log(colors.green("* Deleted duplicate."));
-			console.log(newStreamIDs);
+			console.log(streamIDs);
 		}
 	}
 	chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`);
