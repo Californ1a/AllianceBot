@@ -162,6 +162,25 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			}
 		} else {
 			console.error(colors.red("wtf multiple with same id"));
+			console.log(streamIDs);
+
+			const msgID = streamIDs.filter(s => s.streamID === stream.id)[0].msgID;
+
+			let msg;
+			try {
+				msg = await chan.fetchMessage(msgID);
+			} catch (e) {
+				console.log(colors.green("* Message couldn't be found."));
+			}
+
+			console.log(colors.green("* Deleting duplicate..."));
+			if (msg) {
+				msg.delete();
+			}
+			const newStreamIDs = streamIDs.filter(sid => sid.msgID !== msgID);
+			saveToFirebase(newStreamIDs, chan.guild.id);
+			console.log(colors.green("* Deleted duplicate."));
+			console.log(newStreamIDs);
 		}
 	}
 	chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`);
