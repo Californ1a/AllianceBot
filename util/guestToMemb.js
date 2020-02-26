@@ -4,7 +4,7 @@ const connection = require("./connection.js");
 let checked;
 
 const guestToMemb = function(bot, msg) {
-	if (checked[msg.guild.id][msg.author.id]) {
+	if (checked && checked[msg.guild.id] && checked[msg.guild.id][msg.author.id]) {
 		return;
 	}
 	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='automemb'`).then(response => {
