@@ -2,10 +2,10 @@ const editPlayRole = require("../util/editRole.js");
 const send = require("../util/sendMessage.js");
 
 const runCheck = (memb, role, guild) => {
-	const P = memb.user.presence;
+	const P = memb.user.presence.activities.find(a => a.name === "Distance");
 
-	const hasStream = (P.game) ? P.game.streaming : false;
-	const hasDistance = (P.game) ? (hasStream) ? /Distance/i.test(P.game.state) : (P.game.applicationID) ? /Distance/i.test(P.game.name) : false : false;
+	const hasStream = (P) ? P.streaming : false;
+	const hasDistance = (P) ? (hasStream) ? /Distance/i.test(P.state) : (P.applicationID) ? /Distance/i.test(P.name) : false : false;
 	const hasRole = memb.roles.has(role.id);
 
 	if (hasDistance && !hasRole) {
@@ -33,7 +33,7 @@ exports.run = (bot, msg, args, perm) => {
 				});
 			} else {
 				runCheck(member, playRole, guild);
-				send(msg.channel, "Note that custom status overrides your game in the Discord api. If you don't have a custom status set, and your role wasn't updated, restart Discord.");
+				send(msg.channel, "Checked for game. Restart Discord if your game isn't being detected.");
 			}
 		}
 	}
