@@ -22,7 +22,7 @@
 	"dependencies": {
 		"colors": "1.1.2",
 		"diff": "3.2.0",
-		"discord.js": "11.5.1",
+		"discord.js": "^11.6.1",
 		"dotenv": "4.0.0",
 		"duration-js": "3.9.2",
 		"firebase-admin": "^6.5.1",
