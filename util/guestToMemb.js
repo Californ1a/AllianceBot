@@ -11,7 +11,15 @@ const guestToMemb = function(bot, msg) {
 		if (!response[0]) {
 			if (!msg.author.bot) {
 				console.log(colors.red("Automemb not enabled for this server."));
-				checked[msg.guild.id][msg.author.id] = true;
+				if (checked && checked[msg.guild.id]) {
+					checked[msg.guild.id][msg.author.id] = true;
+				} else {
+					checked = {
+						[msg.guild.id]: {
+							[msg.author.id]: true
+						}
+					};
+				}
 			}
 			return;
 		}
