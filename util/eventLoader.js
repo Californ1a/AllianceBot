@@ -2,6 +2,7 @@ const reqEvent = (event) => require(`../events/${event}`); // eslint-disable-lin
 module.exports = (bot, stream, meter) => {
 	bot.on("ready", () => reqEvent("ready")(bot));
 	bot.on("reconnecting", () => reqEvent("reconnecting")(bot));
+	bot.on("rateLimit", (rateLimitInfo) => reqEvent("rateLimit")(bot, rateLimitInfo));
 	bot.on("disconnect", (closeEvent) => reqEvent("disconnect")(bot, closeEvent));
 	bot.on("guildUnavailable", (guild) => reqEvent("guildUnavailable")(bot, guild));
 	bot.on("guildCreate", (guild) => reqEvent("guildCreate")(bot, guild));
