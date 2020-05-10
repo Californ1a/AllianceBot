@@ -99,6 +99,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 	let amntSent = 0;
 	for (const stream of streams) {
 		totalViewers += parseInt(stream.viewers);
+		const user = users.filter(u => u.id === stream.userId)[0];
 		const d = new Date(stream.startDate);
 		const now = new Date();
 		const hrs = Math.floor((((now - d) / 1000) / 60) / 60);
@@ -107,13 +108,13 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 		const embed = new RichEmbed()
 			.setDescription(stream.title)
 			.setColor([100, 60, 160])
-			.setAuthor(stream.userDisplayName, users.filter(u => u.id === stream.userId)[0].profilePictureUrl, `https://twitch.tv/${stream.userDisplayName}`)
+			.setAuthor(stream.userDisplayName, user.profilePictureUrl, `https://twitch.tv/${user.login}`)
 			.setTimestamp(d)
 			.setFooter("Started at", "https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png")
-			.setURL(`https://twitch.tv/${stream.userDisplayName}`)
+			.setURL(`https://twitch.tv/${user.login}`)
 			.addField("Viewers", stream.viewers, true)
 			.addField("Uptime", uptime, true)
-			.addField("URL", `[ttv/${stream.userDisplayName}](https://twitch.tv/${stream.userDisplayName})`, true);
+			.addField("URL", `[ttv/${user.login}](https://twitch.tv/${user.login})`, true);
 		const img = `${stream.thumbnailUrl.replace("{width}", "880").replace("{height}", "496")}?${Date.now()}`;
 		if (streams.length > 1) {
 			embed.setThumbnail(img);
