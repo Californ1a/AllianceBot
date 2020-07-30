@@ -19,13 +19,13 @@ const getWinners = (msg, winnerCount) => {
 			let i = 0;
 			let winners = [];
 			for (i; i < win.length; i++) {
-				if (!msg.guild.members.get(win[i].userid) || `${msg.guild.members.get(win[i].userid)}` === "undefined") {
+				if (!msg.guild.members.cache.get(win[i].userid) || `${msg.guild.members.cache.get(win[i].userid)}` === "undefined") {
 					connection.del("giveusers", "giveusers inner join giveaway on giveusers.giveawayid=giveaway.idgive", `server_id='${msg.guild.id}' AND userid='${win[i].userid}'`).then(() => {
 						winners = [];
 						return getWinners(msg, winnerCount);
 					}).catch(e => reject(e));
 				}
-				message += `\n${i+1}. ${msg.guild.members.get(win[i].userid)} with ${(win[i].likelihood === 1)?"1 entry":`${win[i].likelihood} entries`}`;
+				message += `\n${i+1}. ${msg.guild.members.cache.get(win[i].userid)} with ${(win[i].likelihood === 1)?"1 entry":`${win[i].likelihood} entries`}`;
 				winners.push(win[i]);
 			}
 			delWinners(msg.guild, winners);
@@ -47,8 +47,8 @@ const getCurrentEntrants = (channel, topMessage) => {
 					const entriesArray = [];
 					let i = 0;
 					for (i; i < users.length; i++) {
-						if (channel.guild.members.get(users[i].userid)) {
-							nameArray.push(channel.guild.members.get(users[i].userid).displayName);
+						if (channel.guild.members.cache.get(users[i].userid)) {
+							nameArray.push(channel.guild.members.cache.get(users[i].userid).displayName);
 							entriesArray.push(users[i].likelihood);
 						} else {
 							connection.del("giveusers", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}' AND userid='${users[i].userid}'`).then(() => {

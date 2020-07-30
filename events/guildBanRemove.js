@@ -10,7 +10,7 @@ module.exports = (bot, guild, user) => {
 		return;
 	}
 	const logchanid = logchan.slice(2, logchan.length - 1);
-	const chan = guild.channels.get(logchanid);
+	const chan = guild.channels.cache.get(logchanid);
 	if (!chan) {
 		return;
 	}
@@ -20,7 +20,7 @@ module.exports = (bot, guild, user) => {
 	}).then(audit => {
 		const entry = audit.entries.first();
 		const d = new Date();
-		const executor = guild.members.get(entry.executor.id);
+		const executor = guild.members.cache.get(entry.executor.id);
 		let executorEntry = "";
 		if (!executor) {
 			executorEntry = `${entry.executor.tag} (${entry.executor.id})`;

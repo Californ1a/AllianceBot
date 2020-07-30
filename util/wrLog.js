@@ -138,14 +138,14 @@ function embedSendManager(data, chan, maxIndex) {
 }
 
 function sendNewWRMessages(bot, data) {
-	const chan = bot.guilds.get(serverID).channels.find(val => val.name === "wr_log");
+	const chan = bot.guilds.cache.get(serverID).channels.cache.find(val => val.name === "wr_log");
 	if (!chan.lastMessageID) {
 		// console.log("data (1)", data);
 		// console.log("\n\n-------------------------------\n\n");
 		embedSendManager(data, chan, data.length);
 	} else {
 		// console.log("chan.lastMessageID", chan.lastMessageID);
-		chan.fetchMessages({
+		chan.messages.fetch({
 			limit: 20
 		}).then(msgs => msgs.filter(m => m.author.id === bot.user.id)).then(msgs => {
 			const msg = msgs.first();

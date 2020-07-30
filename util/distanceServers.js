@@ -37,11 +37,11 @@ const emptyFields = [{
 }];
 
 const updateEmbed = (bot, servers) => {
-	const distance = bot.guilds.get(serverID);
-	if (!distance.channels.some(val => val.name === channelName)) {
+	const distance = bot.guilds.cache.get(serverID);
+	if (!distance.channels.cache.some(val => val.name === channelName)) {
 		return;
 	}
-	const channel = distance.channels.find(val => val.name === channelName);
+	const channel = distance.channels.cache.find(val => val.name === channelName);
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (const serv of servers) {
@@ -58,7 +58,7 @@ const updateEmbed = (bot, servers) => {
 		serversEmbed.fields = emptyFields;
 	}
 	serversEmbed.timestamp = new Date();
-	channel.fetchMessages({
+	channel.messages.fetch({
 		limit: 20
 	}).then(messages => {
 		if (messages.size === 0) {

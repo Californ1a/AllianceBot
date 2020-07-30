@@ -18,7 +18,7 @@ module.exports = (bot, msg) => {
 		return;
 	}
 	const logchanid = logchan.slice(2, logchan.length - 1);
-	const chan = msg.guild.channels.get(logchanid);
+	const chan = msg.guild.channels.cache.get(logchanid);
 	if (!chan) {
 		return;
 	}

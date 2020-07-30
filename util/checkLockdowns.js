@@ -14,13 +14,13 @@ module.exports = (bot) => {
 			for (i; i < to.length; i++) {
 				enddateMS = to[i].enddate.getTime();
 				remainingMS = (enddateMS - now > 0) ? (enddateMS - now) : 1000;
-				bot.guilds.forEach(g => {
-					const channelTest = g.channels.get(to[i].channel_id);
+				bot.guilds.cache.forEach(g => {
+					const channelTest = g.channels.cache.get(to[i].channel_id);
 					if (channelTest && g.id === to[i].server_id) {
 						const lockdownData = to[i];
 						const d = new Duration(`${remainingMS}ms`);
 						// console.log(to);
-						const toTimer = setTimeout(function() {
+						const toTimer = setTimeout(function () {
 							manageLockdown(g, lockdownData, channelTest);
 						}, d);
 						bot.timer.lockdown.set(to[i].channel_id, toTimer);

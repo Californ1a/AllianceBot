@@ -75,7 +75,7 @@ fs.readdir("./commands", (err, files) => {
 });
 
 //Command reload function
-bot.reload = function(command) {
+bot.reload = function (command) {
 	return new Promise((resolve, reject) => {
 		try {
 			delete require.cache[require.resolve(`./commands/${command}`)];
@@ -108,7 +108,7 @@ function streamCheck(a) {
 	if (accum >= 2) {
 		// console.log("finishServConfLoad SideB");
 		setTimeout(() => {
-			bot.guilds.forEach(g => {
+			bot.guilds.cache.forEach(g => {
 				// console.log(`Twitchcheck Guild ${g.id}`);
 				const conf = bot.servConf.get(g.id);
 				clearTimeout(conf.streamTimeout);
@@ -155,7 +155,7 @@ connection.createAllTables().then(() => {
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
-bot.channels.forEach(c => {
+bot.channels.cache.forEach(c => {
 	if (c.locked && c.timeoutRoles) {
 		const roles = c.timeoutRoles;
 		for (const r of roles) {
@@ -169,7 +169,7 @@ bot.channels.forEach(c => {
 });
 
 //get the permission level of the member who sent message
-bot.elevation = function(msg) {
+bot.elevation = function (msg) {
 	if (!msg.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
@@ -183,20 +183,20 @@ bot.elevation = function(msg) {
 	let permlvl = 0;
 	if (msg.guild && msg.member) {
 		if (memberrole) {
-			const membRole = msg.guild.roles.find(val => val.name === memberrole);
-			if (membRole && msg.member.roles.has(membRole.id)) {
+			const membRole = msg.guild.roles.cache.find(val => val.name === memberrole);
+			if (membRole && msg.member.roles.cache.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
 		if (moderatorrole) {
-			const modRole = msg.guild.roles.find(val => val.name === moderatorrole);
-			if (modRole && msg.member.roles.has(modRole.id)) {
+			const modRole = msg.guild.roles.cache.find(val => val.name === moderatorrole);
+			if (modRole && msg.member.roles.cache.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
 		if (administratorrole) {
-			const adminRole = msg.guild.roles.find(val => val.name === administratorrole);
-			if (adminRole && msg.member.roles.has(adminRole.id)) {
+			const adminRole = msg.guild.roles.cache.find(val => val.name === administratorrole);
+			if (adminRole && msg.member.roles.cache.has(adminRole.id)) {
 				permlvl = 3;
 			}
 		}
@@ -215,7 +215,7 @@ probe.metric({
 	name: "Online Users",
 	value: () => {
 		let total = 0;
-		bot.users.forEach(u => {
+		bot.users.cache.forEach(u => {
 			if (!u.bot && u.presence.status.match(/^(online|idle|dnd)$/)) {
 				total += 1;
 			}
@@ -233,7 +233,7 @@ probe.metric({
 });
 
 //pmx manual throw error button
-pmx.action("throw err", function(reply) {
+pmx.action("throw err", function (reply) {
 	const err = new Error("This is an error.");
 	pmx.notify(err);
 	console.error(err);

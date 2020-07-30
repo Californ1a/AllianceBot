@@ -2,9 +2,9 @@ const colors = require("colors");
 const connection = require("./connection.js");
 
 function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {
-	const guild = bot.guilds.get(guildid);
+	const guild = bot.guilds.cache.get(guildid);
 	if (mentionedMember) {
-		if (guild.members.get(mentionedMember.id)) {
+		if (guild.members.cache.get(mentionedMember.id)) {
 			mentionedMember.removeRole(toRole).catch(e => console.error(e.stack));
 			console.log(colors.red(`${mentionedMember.displayName} removed from timeout.`));
 		} else {

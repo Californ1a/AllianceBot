@@ -3,7 +3,7 @@ const membrolename = require("../config.json").membrolename;
 const connection = require("./connection.js");
 let checked;
 
-const guestToMemb = function(bot, msg) {
+const guestToMemb = function (bot, msg) {
 	if (checked && checked[msg.guild.id] && checked[msg.guild.id][msg.author.id]) {
 		return;
 	}
@@ -27,8 +27,8 @@ const guestToMemb = function(bot, msg) {
 			return console.log(`User isn't guest? (${msg.member.highestRole.name}) (${msg.author.bot})`);
 		}
 		let botcanassign = false;
-		//var bu = cl.getMaxRole(msg.guild.members.get(bot.user.id));
-		const botMemb = msg.guild.members.get(bot.user.id);
+		//var bu = cl.getMaxRole(msg.guild.members.cache.get(bot.user.id));
+		const botMemb = msg.guild.members.cache.get(bot.user.id);
 		if (botMemb.highestRole.name === "@everyone") {
 			return console.log(colors.red("Bot cannot assign (Bot is guest)."));
 		}
@@ -42,7 +42,7 @@ const guestToMemb = function(bot, msg) {
 			}
 		}
 		if (botcanassign && !msg.author.bot) {
-			msg.member.addRole(msg.guild.roles.find(val => val.name === membrolename));
+			msg.member.roles.add(msg.guild.roles.cache.find(val => val.name === membrolename));
 			if (msg.guild.id === "83078957620002816") {
 				msg.reply(`Welcome to the discord! You are now a ${membrolename}. Make sure to read the #rules_and_info channel.`);
 			} else {

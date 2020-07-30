@@ -10,7 +10,7 @@ const del = (chan, m) => {
 };
 
 const doTheThing = (chan, amount, user) => {
-	chan.fetchMessages().then(messages => {
+	chan.messages.fetch().then(messages => {
 		if (user) {
 			const m = messages.filter(m => m.author.id === user.id).first(amount);
 			del(chan, m);

@@ -240,8 +240,8 @@ function streams(bot, guild) {
 	const gameName = conf.twitchgame;
 	if (twitchChannel) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
-		const chan = guild.channels.get(twitchchanid);
-		const missingPerms = chan.memberPermissions(guild.members.get(bot.user.id)).missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]);
+		const chan = guild.channels.cache.get(twitchchanid);
+		const missingPerms = chan.memberPermissions(guild.members.cache.get(bot.user.id)).missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]);
 		// console.log(missingPerms);
 		if (chan && gameName && missingPerms.length === 0) {
 			main(bot, chan, guild, gameName, conf);
@@ -251,7 +251,7 @@ function streams(bot, guild) {
 	} else {
 		// console.log(colors.green(`* No twitch channel set for guild ${guild.id}.`));
 	}
-	//const chan = bot.guilds.get(serverID).channels.get(chanID);
+	//const chan = bot.guilds.cache.get(serverID).channels.cache.get(chanID);
 }
 
 module.exports = streams;
