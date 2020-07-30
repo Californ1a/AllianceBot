@@ -56,7 +56,7 @@ const getCurrentEntrants = (channel, topMessage) => {
 							}).catch(e => reject(e));
 							return getCurrentEntrants(channel);
 						}
-						//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
+						//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.cache.get(response[i].userid))} - ${response[i].score}\r\n`;
 					}
 					const fieldsArray = [""];
 					i = 0;

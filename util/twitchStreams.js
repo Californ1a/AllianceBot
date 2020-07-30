@@ -13,7 +13,7 @@ firebase.db.ref("twitch").once("value").then(data => {
 	}
 });
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 
 const clientId = process.env.TWITCH_CLIENT_ID;
@@ -72,7 +72,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			let m;
 			try {
 				// console.log("B");
-				m = await chan.fetchMessage(streamIDs[i].msgID);
+				m = await chan.messages.fetch(streamIDs[i].msgID);
 			} catch (e) {
 				console.log(colors.green("* Removing from list."));
 			}
@@ -105,7 +105,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 		const hrs = Math.floor((((now - d) / 1000) / 60) / 60);
 		const min = Math.floor(((now - d - (hrs * 60 * 60 * 1000)) / 1000) / 60);
 		const uptime = `${(hrs.toString().length===1)?`0${hrs}`:hrs}:${(min.toString().length===1)?`0${min}`:min}`;
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setDescription(stream.title)
 			.setColor([100, 60, 160])
 			.setAuthor(stream.userDisplayName, user.profilePictureUrl, `https://twitch.tv/${user.name}`)
@@ -134,7 +134,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			let msg;
 			try {
 				// console.log("A");
-				msg = await chan.fetchMessage(msgID);
+				msg = await chan.messages.fetch(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
 			}
@@ -169,7 +169,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 
 			let msg;
 			try {
-				msg = await chan.fetchMessage(msgID);
+				msg = await chan.messages.fetch(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message couldn't be found."));
 			}

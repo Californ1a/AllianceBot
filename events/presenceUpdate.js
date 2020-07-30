@@ -11,7 +11,7 @@ module.exports = (bot, oldMember, newMember) => {
 	}
 
 	const botMember = guild.members.cache.get(bot.user.id);
-	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.highestRole.position > newMember.highestRole.position) {
+	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > newMember.roles.highest.position) {
 
 		const oldP = oldMember.user.presence.activities.find(a => a.name === "Distance");
 		const newP = newMember.user.presence.activities.find(a => a.name === "Distance");

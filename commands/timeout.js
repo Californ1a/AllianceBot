@@ -54,7 +54,7 @@ exports.run = (bot, msg, args) => {
 		enddate: later
 	};
 	connection.insert("timeout", info).then(() => {
-		mentionedMember.addRole(toRole);
+		mentionedMember.roles.add(toRole);
 		send(msg.channel, `${mentionedMember.displayName} has been put in timeout for ${d.toString()}.`);
 		const toTimer = setTimeout(() => {
 			manageTimeout(mentionedMember, bot, toRole, msg.guild.id);

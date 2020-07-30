@@ -1,6 +1,6 @@
 const cl = require("../util/chatinfo.js");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -21,9 +21,9 @@ module.exports = (bot, oldMember, newMember) => {
 		if (!chan) {
 			return;
 		}
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setColor("#ffff00")
-			.setAuthor(`${newMember.user.tag} (${newMember.user.id})`, newMember.user.avatarURL)
+			.setAuthor(`${newMember.user.tag} (${newMember.user.id})`, newMember.user.displayAvatarURL())
 			.setDescription(`**Action:** Nickname Change\n**Change:** \`${oldMember.displayName}\` → \`${newMember.displayName}\``);
 		send(chan, "", embed);
 	}

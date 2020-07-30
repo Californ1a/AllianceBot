@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 //const parse5 = require("parse5");
 const colors = require("colors");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
@@ -101,7 +101,7 @@ function embedDataMatch(embed, data) {
 }
 
 function composeEmbed(d) {
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setTitle(d.map)
 		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)

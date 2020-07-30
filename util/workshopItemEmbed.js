@@ -2,7 +2,7 @@ const request = require("request");
 const Steam = require("steam-web");
 const send = require("./sendMessage.js");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const s = new Steam({
 	apiKey: process.env.STEAM_API_KEY,
@@ -89,7 +89,7 @@ module.exports = (bot, msg) => {
 				});
 				msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			} else {
-				const embed = new RichEmbed()
+				const embed = new MessageEmbed()
 					.setTitle(json.title)
 					.setDescription(`${json.description.slice(0, 200)}...\n\n[Direct Download Link](${json.file_url})\n\n`)
 					.setURL(`https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}`)

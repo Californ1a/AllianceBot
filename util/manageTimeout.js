@@ -5,7 +5,7 @@ function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {
 	const guild = bot.guilds.cache.get(guildid);
 	if (mentionedMember) {
 		if (guild.members.cache.get(mentionedMember.id)) {
-			mentionedMember.removeRole(toRole).catch(e => console.error(e.stack));
+			mentionedMember.roles.remove(toRole).catch(e => console.error(e.stack));
 			console.log(colors.red(`${mentionedMember.displayName} removed from timeout.`));
 		} else {
 			console.log(colors.red(`When attempting to remove Timeout role, ${mentionedMember.displayName} could not be found.`));

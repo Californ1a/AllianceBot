@@ -21,13 +21,13 @@ exports.run = (bot, msg, args) => {
 		}
 		const roleToAddDel = msg.guild.roles.cache.find(val => val.name === addRole);
 		if (args[0] === "set" || args[0] === "add") {
-			if (msgMember.highestRole.position <= roleToAddDel.position) {
+			if (msgMember.roles.highest.position <= roleToAddDel.position) {
 				return send(msg.channel, "You cannot assign a role equal to or higher than your own highest role.");
 			}
-			mentionedMember.addRole(roleToAddDel);
+			mentionedMember.roles.add(roleToAddDel);
 			send(msg.channel, `Added \`${mentionedMember.displayName}\` to the \`${addRole}\` role.`);
 		} else if (args[0] === "del") {
-			mentionedMember.removeRole(roleToAddDel);
+			mentionedMember.roles.remove(roleToAddDel);
 			send(msg.channel, `Removed \`${mentionedMember.displayName}\` from the \`${addRole}\` role.`);
 		} else {
 			send(msg.channel, "Invalid syntax.");

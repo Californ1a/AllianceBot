@@ -68,7 +68,7 @@ const getChanges = (channel, startingScores, topMessage, limit) => {
 		//console.log(union);
 		i = 0;
 		for (i; i < union.length; i++) {
-			if (channel.guild.members.get(union[i].userid)) {
+			if (channel.guild.members.cache.get(union[i].userid)) {
 				const sindex = union[i].sindex;
 				const current = (union[i].rindex < 0) ? 0 : union[i].score;
 				let change = current;

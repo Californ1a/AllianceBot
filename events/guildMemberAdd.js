@@ -1,6 +1,6 @@
 const canAssignRole = require("../util/canAssignRole.js");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -13,7 +13,7 @@ module.exports = (bot, member) => {
 		return;
 	}
 	if (bot.timer.get(member.id) && !member.roles.cache.get(toRole.id)) {
-		member.addRole(toRole);
+		member.roles.add(toRole);
 		console.log(`${member.displayName} re-added to timeout in ${member.guild.name} server.`);
 	}
 
@@ -27,9 +27,9 @@ module.exports = (bot, member) => {
 	if (!chan) {
 		return;
 	}
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setColor("#80f31f")
-		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.avatarURL)
+		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
 		.setFooter("User joined");
 	send(chan, "", embed);
 };

@@ -1,5 +1,5 @@
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -29,9 +29,9 @@ module.exports = (bot, guild, user) => {
 		}
 		if (entry && entry.target.id === user.id && ((d - entry.createdAt) / 1000) <= 5) {
 			console.log(`${entry.target.tag} banned from guild \`${guild.name}\` for reason: ${entry.reason}.`);
-			const embed = new RichEmbed()
+			const embed = new MessageEmbed()
 				.setColor("#ff1900")
-				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.avatarURL)
+				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.displayAvatarURL())
 				.setDescription(`**Action:** Ban\n**Executor:** ${executorEntry}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`);
 			send(chan, "", embed);
 		}
@@ -43,9 +43,9 @@ module.exports = (bot, guild, user) => {
 
 	guild.fetchBan(user).then((ban) => {
 		console.log(`${ban.user.tag} banned from guild \`${guild.name}\` for reason: ${ban.reason}.`);
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setColor("#ff1900")
-			.setAuthor(`${ban.user.tag} (${ban.user.id})`, ban.user.avatarURL)
+			.setAuthor(`${ban.user.tag} (${ban.user.id})`, ban.user.displayAvatarURL())
 			.setDescription(`**Action:** Ban\n**Reason:** ${ban.reason}`);
 		send(chan, "", embed);
 	}).catch(console.error);

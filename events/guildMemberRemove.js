@@ -1,5 +1,5 @@
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 const moment = require("moment");
@@ -25,9 +25,9 @@ module.exports = (bot, member) => {
 		const d = new Date();
 		if (entry && entry.target.id === member.id && ((d - entry.createdAt) / 1000) <= 5) {
 			console.log(`${member.displayName} was kicked from ${member.guild.name} server.`);
-			embed = new RichEmbed()
+			embed = new MessageEmbed()
 				.setColor("#ff8300")
-				.setAuthor(`${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`, member.user.avatarURL)
+				.setAuthor(`${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`, member.user.displayAvatarURL())
 				.setDescription(`**Action:** Kick\n**Executor:** ${entry.executor.tag} (${entry.executor.id})\n**Reason:** ${(entry.reason)?entry.reason:"-"}`);
 			return send(chan, "", embed);
 		} else {
@@ -40,9 +40,9 @@ module.exports = (bot, member) => {
 					return;
 				}
 				console.log(`${member.displayName} left ${member.guild.name} server.`);
-				embed = new RichEmbed()
+				embed = new MessageEmbed()
 					.setColor("#f4bf42")
-					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.avatarURL)
+					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
 					.setFooter(`User left - Joined ${moment.duration(Date.now()-member.joinedTimestamp).humanize()} ago`);
 				return send(chan, "", embed);
 			}).catch(console.error);

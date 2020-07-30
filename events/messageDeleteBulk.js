@@ -1,5 +1,5 @@
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -15,9 +15,9 @@ module.exports = (bot, msgs) => {
 	if (!chan) {
 		return;
 	}
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setColor("#ffcc00")
-		.setAuthor(bot.user.tag, bot.user.avatarURL)
+		.setAuthor(bot.user.tag, bot.user.displayAvatarURL())
 		.setDescription(`**Action:** Bulk Message Delete\n**Channel:** ${msgs.first().channel}\n**Count:** ${msgs.size}`);
 	send(chan, "", embed);
 };

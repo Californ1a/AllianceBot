@@ -1,5 +1,5 @@
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -22,9 +22,9 @@ module.exports = (bot, msg) => {
 	if (!chan) {
 		return;
 	}
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setColor("#ffff00")
-		.setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.avatarURL)
+		.setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.displayAvatarURL())
 		.setDescription(`**Action:** Message Deleted\n**Channel:** ${msg.channel}\n**Content:** ${msg.content}`);
 	send(chan, "", embed);
 };

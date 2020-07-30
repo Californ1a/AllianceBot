@@ -1,5 +1,5 @@
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
@@ -29,9 +29,9 @@ module.exports = (bot, guild, user) => {
 		}
 		if (entry && entry.target.id === user.id && ((d - entry.createdAt) / 1000) <= 5) {
 			console.log(`${entry.target.tag} unbanned from guild \`${guild.name}\`.`);
-			const embed = new RichEmbed()
+			const embed = new MessageEmbed()
 				.setColor("#80f31f")
-				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.avatarURL)
+				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.displayAvatarURL())
 				.setDescription(`**Action:** Unban\n**Executor:** ${executorEntry}`);
 			send(chan, "", embed);
 		}

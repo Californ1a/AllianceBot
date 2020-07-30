@@ -103,10 +103,10 @@ const manageBets = (msg, debugnum) => {
 		let ment;
 		i = 0;
 		for (i; i < winningBets.users.length; i++) {
-			ment = msg.guild.members.get(winningBets.users[i]).user;
+			ment = msg.guild.members.cache.get(winningBets.users[i]).user;
 			textLine += `${ment}: +${winningBets.payouts[i] - ppay.payouts[i]}\n`;
-			sm.setScore(msg.guild, msg.guild.members.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
-			// sm.getScore(msg.guild, msg.guild.members.get(winningBets.users[i])).then(res => {
+			sm.setScore(msg.guild, msg.guild.members.cache.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
+			// sm.getScore(msg.guild, msg.guild.members.cache.get(winningBets.users[i])).then(res => {
 			// 	if (res.score === 0) {
 			// 		var info = {
 			//

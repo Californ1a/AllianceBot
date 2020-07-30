@@ -23,19 +23,19 @@ const guestToMemb = function (bot, msg) {
 			}
 			return;
 		}
-		if (msg.member.highestRole.name !== "@everyone" && !msg.author.bot) {
-			return console.log(`User isn't guest? (${msg.member.highestRole.name}) (${msg.author.bot})`);
+		if (msg.member.roles.highest.name !== "@everyone" && !msg.author.bot) {
+			return console.log(`User isn't guest? (${msg.member.roles.highest.name}) (${msg.author.bot})`);
 		}
 		let botcanassign = false;
 		//var bu = cl.getMaxRole(msg.guild.members.cache.get(bot.user.id));
 		const botMemb = msg.guild.members.cache.get(bot.user.id);
-		if (botMemb.highestRole.name === "@everyone") {
+		if (botMemb.roles.highest.name === "@everyone") {
 			return console.log(colors.red("Bot cannot assign (Bot is guest)."));
 		}
-		if (botMemb.highestRole.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
-			if (botMemb.highestRole.position <= msg.member.highestRole.position) {
+		if (botMemb.roles.highest.hasPermission("MANAGE_ROLES_OR_PERMISSIONS")) {
+			if (botMemb.roles.highest.position <= msg.member.roles.highest.position) {
 				botcanassign = false;
-			} else if (botMemb.highestRole.position - 1 === msg.member.highestRole.position) {
+			} else if (botMemb.roles.highest.position - 1 === msg.member.highesroles.highesttRole.position) {
 				botcanassign = false;
 			} else {
 				botcanassign = true;
