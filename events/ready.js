@@ -43,7 +43,7 @@ module.exports = (bot) => {
 	console.log(colors.red(`Bot online and ready on ${bot.guilds.size} ${(bot.guilds.size >= 2) ? "servers" : "server"}.`));
 	bot.user.setStatus("online").catch(e => console.error(e.stack));
 	bot.user.setPresence({
-		game: {
+		activity: {
 			name: `Distance | ${pre}help`,
 			type: 0
 		}

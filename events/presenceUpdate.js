@@ -1,7 +1,8 @@
 const editPlayRole = require("../util/editRole.js");
 
-module.exports = (bot, oldMember, newMember) => {
-	const guild = newMember.guild;
+module.exports = (bot, oldPresence, newPresence) => {
+	const member = newPresence.member;
+	const guild = member.guild;
 	let playRole = "";
 	if (guild.id === "83078957620002816" || guild.id === "211599888222257152") {
 		playRole = guild.roles.cache.find(val => val.name === "Playing Distance");
@@ -11,10 +12,10 @@ module.exports = (bot, oldMember, newMember) => {
 	}
 
 	const botMember = guild.members.cache.get(bot.user.id);
-	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > newMember.roles.highest.position) {
+	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
 
-		const oldP = oldMember.user.presence.activities.find(a => a.name === "Distance");
-		const newP = newMember.user.presence.activities.find(a => a.name === "Distance");
+		const oldP = oldPresence.activities.find(a => a.name === "Distance");
+		const newP = newPresence.activities.find(a => a.name === "Distance");
 
 		const oldHasStream = (oldP) ? oldP.streaming : false;
 		const oldHasDistance = (oldP) ? (oldHasStream) ? /Distance/i.test(oldP.state) : (oldP.applicationID) ? /Distance/i.test(oldP.name) : false : false;
@@ -22,16 +23,16 @@ module.exports = (bot, oldMember, newMember) => {
 
 		const newHasStream = (newP) ? newP.streaming : false;
 		const newHasDistance = (newP) ? (newHasStream) ? /Distance/i.test(newP.state) : (newP.applicationID) ? /Distance/i.test(newP.name) : false : false;
-		const newHasRole = newMember.roles.cache.has(playRole.id);
+		const newHasRole = member.roles.cache.has(playRole.id);
 
 		if (newHasDistance && !newHasRole) {
-			editPlayRole("add", newMember, playRole, guild);
+			editPlayRole("add", member, playRole, guild);
 		} else if (!newHasDistance && newHasRole) {
-			editPlayRole("del", newMember, playRole, guild);
+			editPlayRole("del", member, playRole, guild);
 		} else if (!oldHasDistance && newHasDistance) {
-			editPlayRole("add", newMember, playRole, guild);
+			editPlayRole("add", member, playRole, guild);
 		} else if (newHasDistance && !newHasRole) {
-			editPlayRole("add", newMember, playRole, guild);
+			editPlayRole("add", member, playRole, guild);
 		}
 
 	}

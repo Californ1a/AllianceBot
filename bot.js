@@ -228,7 +228,7 @@ probe.metric({
 probe.metric({
 	name: "Heartbeat Ping",
 	value: () => {
-		return Math.ceil(bot.ping);
+		return Math.ceil(bot.ws.ping);
 	}
 });
 

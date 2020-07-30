@@ -56,7 +56,7 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 							return index === self.indexOf(elem);
 						});
 						if (unique.length === 0) {
-							m.clearReactions().catch(e => console.error(e));
+							m.reactions.removeAll().catch(e => console.error(e));
 							return;
 						}
 						i = 0;
