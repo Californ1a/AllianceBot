@@ -84,7 +84,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 		// };
 		connection.insert("servcom", info).then(() => {
 			if (type === "quote") {
-				const tableNames = ["advent", "commands", "giveaway", "giveusers", "playtest", "reminders", "servcom", "servers", "timeout", "triviascore"];
+				const tableNames = ["advent", "commands", "giveaway", "giveusers", "lockdown", "playtest", "reminders", "servcom", "servers", "timeout", "triviascore"];
 				if (tableNames.includes(cmdname)) {
 					return send(msg.channel, "Invalid custom command name.");
 				}

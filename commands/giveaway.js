@@ -38,8 +38,8 @@ const getWinners = (msg, winnerCount) => {
 const getCurrentEntrants = (channel, topMessage) => {
 	return new Promise((resolve, reject) => {
 		connection.select("COUNT(*) as count", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}'`).then(c => {
-			if (c[0].count === 0) {
-				resolve("There are no entrants in the giveaway.");
+			if (!c[0].count) {
+				resolve(send(channel, "There are no entrants in the giveaway."));
 			} else {
 				connection.select("*", "giveusers inner join giveaway on giveaway.idgive=giveusers.giveawayid", `server_id='${channel.guild.id}' order by likelihood desc`).then(users => {
 					const maxEntries = users[0].entries;
@@ -67,13 +67,13 @@ const getCurrentEntrants = (channel, topMessage) => {
 							inline: true
 						};
 					}
-					send(channel, topMessage, {
+					resolve(send(channel, topMessage, {
 						embed: {
 							color: 3447003,
 							title: "__**Giveaway Entrants**__",
 							fields: fieldsArray
 						}
-					}).catch(e => reject(e));
+					}).catch(e => reject(e)));
 				}).catch(e => {
 					reject(e);
 				});
@@ -157,7 +157,7 @@ exports.run = (bot, msg, args, perm) => {
 								} else {
 									getWinners(msg, winnerCount).then(m => {
 										send(msg.channel, m);
-										//connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
+										connection.del("giveaway", `server_id='${msg.guild.id}'`).catch(console.error);
 									});
 								}
 							}).catch(() => {

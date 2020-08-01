@@ -47,5 +47,5 @@ exports.help = {
 	name: "role",
 	description: "Set or remove roles.",
 	extendedDescription: "<set(add)|del>\n* Either add or remove the specified role\n\n<mention>\n* An @mention for the user you want to edit the role of.\n\n<role-name>\n* Name of the role to assign or remve.\n\n= Examples =\n\"role set @Alliance Member\" :: This will assign the role \"Member\" to the user \"Alliance\".",
-	usage: "role <set|del> <mention> <role-name>"
+	usage: "role <set(add)|del> <mention> <role-name>"
 };

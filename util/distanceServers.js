@@ -13,7 +13,7 @@ const serversEmbed = {
 	"color": 4886754,
 	"footer": {
 		"icon_url": "https://cdn.discordapp.com/emojis/230880420130979841.png",
-		"text": "Last Updated (ET)"
+		"text": "Last Updated"
 	},
 	"author": {
 		"name": "Distance Servers",
