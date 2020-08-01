@@ -6,7 +6,7 @@ const send = require("../util/sendMessage.js");
 
 const lockIt = (msg, roles) => {
 	for (const r of roles) {
-		msg.channel.overwritePermissions(r, {
+		msg.channel.createOverwrite(r, {
 			"SEND_MESSAGES": false
 		}, "Channel lockdown").catch(console.error);
 	}
@@ -14,7 +14,7 @@ const lockIt = (msg, roles) => {
 
 const unlockIt = (bot, msg, roles) => {
 	for (const r of roles) {
-		msg.channel.overwritePermissions(r, {
+		msg.channel.updateOverwrite(r, {
 			"SEND_MESSAGES": null
 		}, "Revert channel lockdown").catch(console.error);
 	}
@@ -23,6 +23,7 @@ const unlockIt = (bot, msg, roles) => {
 	if (bot.timer.lockdown.get(msg.channel.id)) {
 		clearTimeout(bot.timer.lockdown.get(msg.channel.id));
 	}
+	connection.del("lockdown", `channel_id=${msg.channel.id} AND server_id=${msg.guild.id}`).catch(console.error);
 };
 
 exports.run = (bot, msg, args) => {

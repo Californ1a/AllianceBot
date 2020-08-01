@@ -14,7 +14,7 @@ module.exports = (bot, oldPresence, newPresence) => {
 	const botMember = guild.members.cache.get(bot.user.id);
 	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
 
-		const oldP = oldPresence.activities.find(a => a.name === "Distance");
+		const oldP = (oldPresence && oldPresence.activities) ? oldPresence.activities.find(a => a.name === "Distance") : false;
 		const newP = newPresence.activities.find(a => a.name === "Distance");
 
 		const oldHasStream = (oldP) ? oldP.streaming : false;
