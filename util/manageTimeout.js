@@ -1,5 +1,28 @@
 const colors = require("colors");
 const connection = require("./connection.js");
+const send = require("./sendMessage.js");
+const {
+	MessageEmbed
+} = require("discord.js");
+
+function sendLogChannelMessage(bot, member) {
+	const conf = bot.servConf.get(member.guild.id);
+	const logchan = conf.logchannel;
+	if (!logchan) {
+		return;
+	}
+
+	const logchanid = logchan.slice(2, logchan.length - 1);
+	const chan = member.guild.channels.cache.get(logchanid);
+	if (!chan) {
+		return;
+	}
+	const embed = new MessageEmbed()
+		.setColor("#f4bf42")
+		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
+		.setFooter("Timeout ended");
+	send(chan, "", embed);
+}
 
 function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {
 	const guild = bot.guilds.cache.get(guildid);
@@ -7,6 +30,7 @@ function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {
 		if (guild.members.cache.get(mentionedMember.id)) {
 			mentionedMember.roles.remove(toRole).catch(e => console.error(e.stack));
 			console.log(colors.red(`${mentionedMember.displayName} removed from timeout.`));
+			sendLogChannelMessage(bot, mentionedMember);
 		} else {
 			console.log(colors.red(`When attempting to remove Timeout role, ${mentionedMember.displayName} could not be found.`));
 		}

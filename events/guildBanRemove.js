@@ -20,19 +20,20 @@ module.exports = (bot, guild, user) => {
 	}).then(audit => {
 		const entry = audit.entries.first();
 		const d = new Date();
-		const executor = guild.members.cache.get(entry.executor.id);
-		let executorEntry = "";
-		if (!executor) {
-			executorEntry = `${entry.executor.tag} (${entry.executor.id})`;
-		} else {
-			executorEntry = `${executor.user.tag} (${(executor.nickname)?`${executor.nickname} - `:""}${executor.user.id})`;
-		}
+		// const executor = guild.members.cache.get(entry.executor.id);
+		// let executorEntry = "";
+		// if (!executor) {
+		// 	executorEntry = `${entry.executor.tag} (${entry.executor.id})`;
+		// } else {
+		// 	executorEntry = `${executor.user.tag} (${(executor.nickname)?`${executor.nickname} - `:""}${executor.user.id})`;
+		// }
 		if (entry && entry.target.id === user.id && ((d - entry.createdAt) / 1000) <= 5) {
 			console.log(`${entry.target.tag} unbanned from guild \`${guild.name}\`.`);
 			const embed = new MessageEmbed()
 				.setColor("#80f31f")
 				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.displayAvatarURL())
-				.setDescription(`**Action:** Unban\n**Executor:** ${executorEntry}`);
+				.setDescription(`${entry.target}\n\n**Action:** Unban\n**Executor:** ${entry.executor}`)
+				.setTimestamp();
 			send(chan, "", embed);
 		}
 	}).catch(console.error);

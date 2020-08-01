@@ -28,7 +28,8 @@ module.exports = (bot, member) => {
 			embed = new MessageEmbed()
 				.setColor("#ff8300")
 				.setAuthor(`${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`, member.user.displayAvatarURL())
-				.setDescription(`**Action:** Kick\n**Executor:** ${entry.executor.tag} (${entry.executor.id})\n**Reason:** ${(entry.reason)?entry.reason:"-"}`);
+				.setDescription(`${member.user}\n\n**Action:** Kick\n**Executor:** ${entry.executor}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`)
+				.setTimestamp();
 			return send(chan, "", embed);
 		} else {
 			member.guild.fetchAuditLogs({
@@ -40,10 +41,23 @@ module.exports = (bot, member) => {
 					return;
 				}
 				console.log(`${member.displayName} left ${member.guild.name} server.`);
+				const d2 = Date.now();
+				const d3 = d2 - member.joinedTimestamp;
+				const joinDuration = moment.duration(d3).humanize();
+				if (joinDuration === "51 years") {
+					console.log(JSON.stringify({
+						"moment.duration(d3).humanize()": joinDuration,
+						"moment.duration(d3)": moment.duration(d3),
+						"d2-member.joinedTimestamp": d3,
+						"Date.now()": d2
+					}));
+				}
 				embed = new MessageEmbed()
 					.setColor("#f4bf42")
 					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
-					.setFooter(`User left - Joined ${moment.duration(Date.now()-member.joinedTimestamp).humanize()} ago`);
+					.setDescription(member.user)
+					.setFooter(`User left - Joined ${joinDuration} ago`)
+					.setTimestamp();
 				return send(chan, "", embed);
 			}).catch(console.error);
 		}

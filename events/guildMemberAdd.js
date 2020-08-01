@@ -30,6 +30,8 @@ module.exports = (bot, member) => {
 	const embed = new MessageEmbed()
 		.setColor("#80f31f")
 		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
-		.setFooter("User joined");
+		.setDescription(member.user)
+		.setFooter("User joined")
+		.setTimestamp();
 	send(chan, "", embed);
 };
