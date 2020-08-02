@@ -192,8 +192,6 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			console.log(streamIDs);
 		}
 	}
-	console.log("HIT DISCORD 9");
-	chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
 
 	const closedStreams = streamIDs.filter(sid => streams.filter(s => s.id === sid.streamID).length === 0);
 
@@ -205,11 +203,17 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 	// console.log("closedStreams.length", closedStreams.length);
 	if (amntSent > 0 && closedStreams.length === 0) {
 		console.log(colors.green(`* Sent ${amntSent} new twitch streams in guild ${chan.guild.name}.`));
+		console.log("HIT DISCORD 9");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
 		amntSent = 0;
 	} else if (amntSent > 0 && closedStreams.length > 0) {
 		console.log(colors.green(`* Sent ${amntSent} new twitch streams and removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
+		console.log("HIT DISCORD 10");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
 	} else if (amntSent === 0 && closedStreams.length > 0) {
 		console.log(colors.green(`* Removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
+		console.log("HIT DISCORD 11");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
 	} else {
 		// console.log(colors.green("* No twitch stream changes."));
 	}
@@ -250,7 +254,7 @@ function streams(bot, guild) {
 	if (twitchChannel) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
 		const chan = guild.channels.cache.get(twitchchanid);
-		console.log("HIT DISCORD 10");
+		console.log("HIT DISCORD 12");
 		const missingPerms = chan.guild.members.cache.get(bot.user.id).permissions.missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]); // HIT DISCORD
 		// console.log(missingPerms);
 		if (chan && gameName && missingPerms.length === 0) {
