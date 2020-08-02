@@ -42,7 +42,7 @@
 		"xml2js": "^0.4.23"
 	},
 	"devDependencies": {
-		"jest": "^25.5.4",
+		"jest": "^26.2.2",
 		"rewire": "^5.0.0"
 	}
 }
