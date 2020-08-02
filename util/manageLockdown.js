@@ -4,12 +4,12 @@ const send = require("./sendMessage.js");
 
 module.exports = (g, lockdownData, channelTest) => {
 	const roles = [];
-	roles.push(g.roles.find(val => val.name === "@everyone"));
+	roles.push(g.roles.cache.find(val => val.name === "@everyone"));
 	if (lockdownData.role_id) {
-		roles.push(g.roles.get(lockdownData.role_id));
+		roles.push(g.roles.cache.get(lockdownData.role_id));
 	}
 	for (const r of roles) {
-		channelTest.overwritePermissions(r, {
+		channelTest.updateOverwrite(r, {
 			"SEND_MESSAGES": null
 		}, "Revert channel lockdown").catch(console.error);
 	}

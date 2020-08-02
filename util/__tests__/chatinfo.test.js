@@ -22,11 +22,13 @@ it("getMaxRole", () => {
 	const user = {
 		roles: {
 			size: 2,
-			some: () => {
-				return;
-			},
-			find: () => {
-				return;
+			cache: {
+				some: () => {
+					return;
+				},
+				find: () => {
+					return;
+				}
 			}
 		},
 		user: {
@@ -35,11 +37,13 @@ it("getMaxRole", () => {
 		guild: {
 			roles: {
 				size: 1,
-				find: () => {
-					return {
-						position: 1,
-						name: "Member"
-					};
+				cache: {
+					find: () => {
+						return {
+							position: 1,
+							name: "Member"
+						};
+					}
 				}
 			}
 		},

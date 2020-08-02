@@ -15,7 +15,7 @@ const fetchBoard = (server) => {
 		fetch(server).then(res => {
 			return res.text();
 		}).then(body => {
-			parseString(body, function(error, result) {
+			parseString(body, function (error, result) {
 				if (error) {
 					reject(error);
 				}
@@ -36,38 +36,44 @@ exports.run = (bot, msg, args) => {
 			send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 		} else if (typeof mapid === "string" && mapid !== "") {
 			const lburl = `http://steamcommunity.com/stats/233610/leaderboards/${mapid}`;
-			send(msg.channel, `<${lburl}>`);
-			const server = `${lburl}/?xml=1&start=1&end=1`;
-			fetchBoard(server).then((response) => {
-				let fulltime = "";
-				const sometest = response.entries[0].entry[0].score;
-				const somesteamid = response.entries[0].entry[0].steamid.toString();
-				const working = parseInt(sometest.toString(), 10);
-				let checkForStunt = false;
-				if (mapInfo.mode === "stunt") {
-					checkForStunt = true;
-				}
-				if (!checkForStunt) {
-					const wrmin = ((working / 1000) / 60) >> 0;
-					let wrsec = (working / 1000) - (wrmin * 60) >> 0;
-					let wrmil = (working / 1000).toFixed(2).split(".");
-					wrmil = wrmil[1];
-					if (wrsec < 10) {
-						wrsec = `0${wrsec}`;
+			send(msg.channel, "Loading board...").then((m) => {
+				const server = `${lburl}/?xml=1&start=1&end=1`;
+				fetchBoard(server).then((response) => {
+					if (!response.entries) {
+						return m.edit("No entries found.");
+					} else {
+						m.edit(`<${lburl}>`);
 					}
-					fulltime = `${wrmin}:${wrsec}.${wrmil}`;
-				} else {
-					fulltime = working.toLocaleString("en-US", {
-						minimumFractionDigits: 0
+					let fulltime = "";
+					const sometest = response.entries[0].entry[0].score;
+					const somesteamid = response.entries[0].entry[0].steamid.toString();
+					const working = parseInt(sometest.toString(), 10);
+					let checkForStunt = false;
+					if (mapInfo.mode === "stunt") {
+						checkForStunt = true;
+					}
+					if (!checkForStunt) {
+						const wrmin = ((working / 1000) / 60) >> 0;
+						let wrsec = (working / 1000) - (wrmin * 60) >> 0;
+						let wrmil = (working / 1000).toFixed(2).split(".");
+						wrmil = wrmil[1];
+						if (wrsec < 10) {
+							wrsec = `0${wrsec}`;
+						}
+						fulltime = `${wrmin}:${wrsec}.${wrmil}`;
+					} else {
+						fulltime = working.toLocaleString("en-US", {
+							minimumFractionDigits: 0
+						});
+					}
+					s.getPlayerSummaries({
+						steamids: [`${somesteamid}`],
+						callback: (err, data) => {
+							const name = data.response.players[0].personaname;
+							send(msg.channel, `${fulltime} by ${name}`);
+							//console.log("data.response.players[0].personaname", data.response.players[0].personaname);
+						}
 					});
-				}
-				s.getPlayerSummaries({
-					steamids: [`${somesteamid}`],
-					callback: (err, data) => {
-						const name = data.response.players[0].personaname;
-						send(msg.channel, `${fulltime} by ${name}`);
-						//console.log("data.response.players[0].personaname", data.response.players[0].personaname);
-					}
 				});
 			});
 		} else {

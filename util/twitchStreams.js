@@ -13,7 +13,7 @@ firebase.db.ref("twitch").once("value").then(data => {
 	}
 });
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 
 const clientId = process.env.TWITCH_CLIENT_ID;
@@ -72,7 +72,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			let m;
 			try {
 				// console.log("B");
-				m = await chan.fetchMessage(streamIDs[i].msgID);
+				m = await chan.messages.fetch(streamIDs[i].msgID);
 			} catch (e) {
 				console.log(colors.green("* Removing from list."));
 			}
@@ -105,7 +105,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 		const hrs = Math.floor((((now - d) / 1000) / 60) / 60);
 		const min = Math.floor(((now - d - (hrs * 60 * 60 * 1000)) / 1000) / 60);
 		const uptime = `${(hrs.toString().length===1)?`0${hrs}`:hrs}:${(min.toString().length===1)?`0${min}`:min}`;
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setDescription(stream.title)
 			.setColor([100, 60, 160])
 			.setAuthor(stream.userDisplayName, user.profilePictureUrl, `https://twitch.tv/${user.name}`)
@@ -134,7 +134,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			let msg;
 			try {
 				// console.log("A");
-				msg = await chan.fetchMessage(msgID);
+				msg = await chan.messages.fetch(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
 			}
@@ -169,7 +169,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 
 			let msg;
 			try {
-				msg = await chan.fetchMessage(msgID);
+				msg = await chan.messages.fetch(msgID);
 			} catch (e) {
 				console.log(colors.green("* Message couldn't be found."));
 			}
@@ -240,8 +240,8 @@ function streams(bot, guild) {
 	const gameName = conf.twitchgame;
 	if (twitchChannel) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
-		const chan = guild.channels.get(twitchchanid);
-		const missingPerms = chan.memberPermissions(guild.members.get(bot.user.id)).missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]);
+		const chan = guild.channels.cache.get(twitchchanid);
+		const missingPerms = chan.guild.members.cache.get(bot.user.id).permissions.missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]);
 		// console.log(missingPerms);
 		if (chan && gameName && missingPerms.length === 0) {
 			main(bot, chan, guild, gameName, conf);
@@ -251,7 +251,7 @@ function streams(bot, guild) {
 	} else {
 		// console.log(colors.green(`* No twitch channel set for guild ${guild.id}.`));
 	}
-	//const chan = bot.guilds.get(serverID).channels.get(chanID);
+	//const chan = bot.guilds.cache.get(serverID).channels.cache.get(chanID);
 }
 
 module.exports = streams;

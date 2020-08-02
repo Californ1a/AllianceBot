@@ -2,7 +2,7 @@ const request = require("request");
 const Steam = require("steam-web");
 const send = require("./sendMessage.js");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const s = new Steam({
 	apiKey: process.env.STEAM_API_KEY,
@@ -59,7 +59,9 @@ module.exports = (bot, msg) => {
 			return;
 		}
 		send(msg.channel, "You can only post links to the workshop here.").then(m => {
-			m.delete(botmsgDeleteTimeout).catch(console.error);
+			m.delete({
+				timeout: botmsgDeleteTimeout
+			}).catch(console.error);
 		}).catch(console.error);
 		return msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 	}
@@ -85,11 +87,13 @@ module.exports = (bot, msg) => {
 			// console.log(JSON.stringify(json, null, 2));
 			if (json.creator_app_id !== 233610 || json.creator_app_id !== json.consumer_app_id) {
 				m.edit("This workshop item is not from Distance - Only Distance maps are allowed.").then(m => {
-					m.delete(botmsgDeleteTimeout).catch(console.error);
+					m.delete({
+						timeout: botmsgDeleteTimeout
+					}).catch(console.error);
 				});
 				msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			} else {
-				const embed = new RichEmbed()
+				const embed = new MessageEmbed()
 					.setTitle(json.title)
 					.setDescription(`${json.description.slice(0, 200)}...\n\n[Direct Download Link](${json.file_url})\n\n`)
 					.setURL(`https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}`)

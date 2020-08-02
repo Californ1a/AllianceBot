@@ -1,7 +1,6 @@
-const Discord = require("discord.js");
 const mapjson = require("../mapids.json");
-const maps = new Discord.Collection();
-const aliases = new Discord.Collection();
+const maps = new Map();
+const aliases = new Map();
 for (const elt in mapjson) {
 	maps.set(elt, mapjson[elt]);
 	if (mapjson[elt].aliases[0]) {

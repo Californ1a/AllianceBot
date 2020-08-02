@@ -1,6 +1,7 @@
 const send = require("../util/sendMessage.js");
 const fetch = require("node-fetch");
 const servers = ["http://distance.rip:23469/"];
+const autoServers = ["Tag Auto Unofficial", "Campaign Auto", "PW: Nightmare", "Workshop Mix Unofficial"];
 
 function getInfo() {
 	return new Promise((resolve, reject) => {
@@ -36,14 +37,15 @@ exports.run = (bot, msg, args) => {
 	let auto = true;
 	getInfo().then(servs => {
 		if (args[0] === "-f" || args[0] === "-filter") {
-			servs = servs.filter(s => !RegExp("^.*Auto$", "g").test(s.mode)); //eslint-disable-line no-useless-escape
+			// servs = servs.filter(s => !RegExp("^.*Auto$", "g").test(s.mode));
+			servs = servs.filter(s => !autoServers.includes(s.serverName));
 			auto = false;
 		}
-		console.log(servs);
+		//console.log(servs);
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
-		const chan = (msg.guild.channels.some(val => val.name === "servers")) ? msg.guild.channels.find(val => val.name === "servers") : null;
+		const chan = (msg.guild.channels.cache.some(val => val.name === "servers")) ? msg.guild.channels.cache.find(val => val.name === "servers") : null;
 		compose(msg, pubServs, openPubs, totalSlots, chan, auto);
 	}).catch(() => send(msg.channel, "Failed to obtain server list."));
 };

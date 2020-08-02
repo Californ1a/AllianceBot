@@ -101,7 +101,7 @@ const goScramble = (channel, config, startingScores) => {
 };
 
 eventEmitter.on("manageScrambleCorrect", (channel, collected, winnerid, scoreAdd, config, orig) => {
-	const member = channel.guild.members.get(winnerid);
+	const member = channel.guild.members.cache.get(winnerid);
 	sm.setScore(channel.guild, member, "add", scoreAdd).then(m => {
 		removeScrambleTerm(orig);
 		countQsMissed = 0;
@@ -117,7 +117,7 @@ const timedScramble = (channel, minutes, trivStartUser, category, cmd, config, s
 	populateScramble();
 	send(channel, "```markdown\r\n# Scramble is about to start (" + Math.floor(config.delayBeforeFirstQuestion / 1000) + "s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Terms are presented in **bold** and you're free to guess as many times as you like until it times out.  \r\n* There are no hints.  \r\n*  There is " + Math.floor(config.delayBeforeNoAnswer / 1000) + "s between scramble and timeout, and " + Math.floor(config.delayBeforeNextQuestion / 1000) + "s between timeout and next question.  \r\n\r\n**Commands**\r\n*  You can use the \"!score\" command to view your current scoreboard rank and score.  \r\n*  You can use \"!score board\" to view the current top players.  \r\n*  You can also use \"!score @mention\" to view that specific player's rank and score.```");
 	setTimeout(goScramble, config.delayBeforeFirstQuestion, channel, config, startingScores);
-	timeout = setTimeout(function() {
+	timeout = setTimeout(function () {
 		if (getScrambleStatus()) {
 			toggleScrambleStatus();
 			send(channel, `Everyone thank ${trivStartUser} for the scramble round! \`\`\`markdown\r\n# SCRAMBLE STOPPED!\`\`\``).then(() => {

@@ -1,13 +1,13 @@
 const reqEvent = (event) => require(`../events/${event}`); // eslint-disable-line global-require
 module.exports = (bot, stream, meter) => {
 	bot.on("ready", () => reqEvent("ready")(bot));
-	bot.on("reconnecting", () => reqEvent("reconnecting")(bot));
+	bot.on("shardReconnecting", (id) => reqEvent("shardReconnecting")(bot, id));
 	bot.on("rateLimit", (rateLimitInfo) => reqEvent("rateLimit")(bot, rateLimitInfo));
-	bot.on("disconnect", (closeEvent) => reqEvent("disconnect")(bot, closeEvent));
+	bot.on("shardDisconnect", (closeEvent, shardID) => reqEvent("shardDisconnect")(bot, closeEvent, shardID));
 	bot.on("guildUnavailable", (guild) => reqEvent("guildUnavailable")(bot, guild));
 	bot.on("guildCreate", (guild) => reqEvent("guildCreate")(bot, guild));
 	bot.on("guildDelete", (guild) => reqEvent("guildDelete")(bot, guild));
-	bot.on("presenceUpdate", (oldMember, newMember) => reqEvent("presenceUpdate")(bot, oldMember, newMember));
+	bot.on("presenceUpdate", (oldPresence, newPresence) => reqEvent("presenceUpdate")(bot, oldPresence, newPresence));
 	bot.on("messageDelete", (msg) => reqEvent("messageDelete")(bot, msg));
 	bot.on("messageDeleteBulk", (msgs) => reqEvent("messageDeleteBulk")(bot, msgs));
 	bot.on("messageUpdate", (oldMessage, newMessage) => reqEvent("messageUpdate")(bot, oldMessage, newMessage));
@@ -16,6 +16,7 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildMemberRemove", (member) => reqEvent("guildMemberRemove")(bot, member));
 	bot.on("guildBanAdd", (guild, user) => reqEvent("guildBanAdd")(bot, guild, user));
 	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
+	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
 	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
 	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));

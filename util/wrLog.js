@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 //const parse5 = require("parse5");
 const colors = require("colors");
 const {
-	RichEmbed
+	MessageEmbed
 } = require("discord.js");
 const send = require("./sendMessage.js");
 const serverID = "83078957620002816";
@@ -101,7 +101,7 @@ function embedDataMatch(embed, data) {
 }
 
 function composeEmbed(d) {
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setTitle(d.map)
 		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)
@@ -138,14 +138,14 @@ function embedSendManager(data, chan, maxIndex) {
 }
 
 function sendNewWRMessages(bot, data) {
-	const chan = bot.guilds.get(serverID).channels.find(val => val.name === "wr_log");
+	const chan = bot.guilds.cache.get(serverID).channels.cache.find(val => val.name === "wr_log");
 	if (!chan.lastMessageID) {
 		// console.log("data (1)", data);
 		// console.log("\n\n-------------------------------\n\n");
 		embedSendManager(data, chan, data.length);
 	} else {
 		// console.log("chan.lastMessageID", chan.lastMessageID);
-		chan.fetchMessages({
+		chan.messages.fetch({
 			limit: 20
 		}).then(msgs => msgs.filter(m => m.author.id === bot.user.id)).then(msgs => {
 			const msg = msgs.first();

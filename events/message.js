@@ -41,7 +41,7 @@ module.exports = (bot, meter, msg) => {
 	const membrole = conf.membrole;
 	const cha = cl.formatChatlog(msg);
 	meter.mark();
-	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
+	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
 		if (error) {
 			console.log(msg.content);
 			console.error(error.stack);
@@ -49,13 +49,13 @@ module.exports = (bot, meter, msg) => {
 			console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 		}
 	});
-	fs.appendFile(cha.fullLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
+	fs.appendFile(cha.fullLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
 		if (error) {
 			console.log(msg.content);
 			console.error(error.stack);
 		}
 	});
-	if (membrole && (msg.guild.members.get(msg.author.id) && !msg.guild.members.get(msg.author.id).roles.some(val => val.name === membrole))) {
+	if (membrole && (msg.guild.members.cache.get(msg.author.id) && !msg.guild.members.cache.get(msg.author.id).roles.cache.some(val => val.name === membrole))) {
 		guestToMemb(bot, msg);
 	}
 
@@ -64,11 +64,11 @@ module.exports = (bot, meter, msg) => {
 	if (msg.guild.id === "83078957620002816" && !msg.author.bot) {
 		const urlMatchReg = /(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/i;
 		if (perms === 0 && urlMatchReg.test(msg.content)) {
-			return send(msg.channel, "Guests can't send links. Wait for staff to add you to the Member role.").then(m => {
+			return send(msg.channel, "Guests can't send links. Participare in chat and wait for staff to add you to the Member role.").then(m => {
 				msg.delete().then(() => {
 					setTimeout(() => {
 						m.delete();
-					}, 8000);
+					}, 9000);
 				});
 			}).catch(console.error);
 		}

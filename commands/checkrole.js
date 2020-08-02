@@ -6,7 +6,7 @@ const runCheck = (memb, role, guild) => {
 
 	const hasStream = (P) ? P.streaming : false;
 	const hasDistance = (P) ? (hasStream) ? /Distance/i.test(P.state) : (P.applicationID) ? /Distance/i.test(P.name) : false : false;
-	const hasRole = memb.roles.has(role.id);
+	const hasRole = memb.roles.cache.has(role.id);
 
 	if (hasDistance && !hasRole) {
 		editPlayRole("add", memb, role, guild);
@@ -21,14 +21,14 @@ exports.run = (bot, msg, args, perm) => {
 	const member = msg.member;
 	const guild = member.guild;
 	if (guild.id === "83078957620002816") {
-		const botMember = guild.members.get(bot.user.id);
-		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.highestRole.position > member.highestRole.position) {
-			const playRole = guild.roles.find(val => val.name === "Playing Distance");
+		const botMember = guild.members.cache.get(bot.user.id);
+		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+			const playRole = guild.roles.cache.find(val => val.name === "Playing Distance");
 			if (!playRole) {
 				return;
 			}
 			if (perm >= 2 && args[0] === "all") {
-				guild.members.forEach(m => {
+				guild.members.cache.forEach(m => {
 					runCheck(m, playRole, guild);
 				});
 			} else {

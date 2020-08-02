@@ -82,7 +82,7 @@ eventEmitter.on("remindTime", (bot, reminder) => {
 			//console.log("reminder (before send)", reminder);
 			const strs = reminder.message;
 			const results = strs.slice(1, strs.length - 1);
-			send(bot.users.get(reminder.userid), `Reminding you soon after ${reminder.reminddate.toString()} about:\n${results}\n\nYou set this reminder at: ${reminder.initdate.toString()}`);
+			send(bot.users.cache.get(reminder.userid), `Reminding you soon after ${reminder.reminddate.toString()} about:\n${results}\n\nYou set this reminder at: ${reminder.initdate.toString()}`);
 			reminder.sent = "true";
 			//console.log("reminder (after send)", reminder);
 		}

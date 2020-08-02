@@ -1,3 +1,3 @@
 module.exports = (bot, guild) => {
-	console.log(guild.name + " unavailable.");
+	console.log(`${guild.name} unavailable.`);
 };

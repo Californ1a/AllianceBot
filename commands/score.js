@@ -10,7 +10,7 @@ exports.run = (bot, msg, args, perm) => {
 			msg.reply(`Your Rank: ${s.rank}, Your Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args.length === 1 && msg.mentions.users.first()) {
-		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
+		mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
 		sm.getScore(msg.guild, mentionedMember).then(s => {
 			if (mentionedMember.id === bot.user.id) {
 				return send(msg.channel, "Rank: Godlike, Score: Untouchable");
@@ -43,7 +43,7 @@ exports.run = (bot, msg, args, perm) => {
 		if (amount < 0 && perm < 2) {
 			return send(msg.channel, "The score must be positive.");
 		}
-		mentionedMember = msg.guild.members.get(msg.mentions.users.first().id);
+		mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
 		const type = (args[0] === "set") ? "set" : "add";
 		sm.getScore(msg.guild, msg.member).then(s => {
 			if (perm < 2 && s.score < amount) {

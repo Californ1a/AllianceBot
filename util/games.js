@@ -68,7 +68,7 @@ const getChanges = (channel, startingScores, topMessage, limit) => {
 		//console.log(union);
 		i = 0;
 		for (i; i < union.length; i++) {
-			if (channel.guild.members.get(union[i].userid)) {
+			if (channel.guild.members.cache.get(union[i].userid)) {
 				const sindex = union[i].sindex;
 				const current = (union[i].rindex < 0) ? 0 : union[i].score;
 				let change = current;
@@ -80,7 +80,7 @@ const getChanges = (channel, startingScores, topMessage, limit) => {
 				if (Math.abs(change) > 0) {
 					combined.push({
 						"userid": union[i].userid,
-						"name": channel.guild.members.get(union[i].userid).displayName,
+						"name": channel.guild.members.cache.get(union[i].userid).displayName,
 						"currentscore": current,
 						"scorechange": change,
 						"rank": union[i].rank
@@ -127,8 +127,8 @@ const getLB = (channel, topMessage, limit) => {
 		const rankArray = [];
 		let i = 0;
 		for (i; i < response.length; i++) {
-			if (channel.guild.members.get(response[i].userid)) {
-				nameArray.push(channel.guild.members.get(response[i].userid).displayName);
+			if (channel.guild.members.cache.get(response[i].userid)) {
+				nameArray.push(channel.guild.members.cache.get(response[i].userid).displayName);
 				scoreArray.push(response[i].score);
 				rankArray.push(response[i].rank);
 			} else {
@@ -137,7 +137,7 @@ const getLB = (channel, topMessage, limit) => {
 				}).catch(e => console.error(e.stack));
 				return getLB(channel, topMessage, limit);
 			}
-			//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.get(response[i].userid))} - ${response[i].score}\r\n`;
+			//text += `${response[i].rank} - ${cl.getDisplayName(message.guild.members.cache.get(response[i].userid))} - ${response[i].score}\r\n`;
 		}
 		const fieldsArray = [""];
 		i = 0;

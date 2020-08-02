@@ -67,5 +67,5 @@ module.exports = (cmd, args) => {
 			obj += `, "${keyOrder[i]}": "${val}"`;
 		}
 	}
-	return JSON.parse(obj);
+	return JSON.parse(obj.replace(/(\r\n|\r|\n)/g, "\\n"));
 };

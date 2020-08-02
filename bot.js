@@ -1,5 +1,5 @@
 require("dotenv").config();
-const pmx = require("pmx").init({
+const io = require("@pm2/io").init({
 	http: true,
 	ignore_routes: [/socket\.io/, /notFound/], // eslint-disable-line camelcase
 	errors: true,
@@ -9,7 +9,6 @@ const pmx = require("pmx").init({
 });
 //require("opbeat").start();
 const connection = require("./util/connection.js");
-const probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 bot.reminders = new Discord.Collection();
@@ -33,7 +32,7 @@ const T = new Twit(twitconfig);
 const stream = T.stream("statuses/filter", {
 	follow: ["628034104", "241371699"]
 });
-const meter = probe.meter({
+const meter = io.meter({
 	name: "msg/min",
 	samples: 60
 });
@@ -62,7 +61,7 @@ fs.readdir("./commands", (err, files) => {
 			if (props.f) {
 				bot.commands.get(props.help.name).flags = new Discord.Collection();
 				for (const key in props.f) {
-					if (props.f.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(props.f, key)) {
 						bot.commands.get(props.help.name).flags.set(key, props.f[key]);
 					}
 				}
@@ -75,7 +74,7 @@ fs.readdir("./commands", (err, files) => {
 });
 
 //Command reload function
-bot.reload = function(command) {
+bot.reload = function (command) {
 	return new Promise((resolve, reject) => {
 		try {
 			delete require.cache[require.resolve(`./commands/${command}`)];
@@ -108,7 +107,7 @@ function streamCheck(a) {
 	if (accum >= 2) {
 		// console.log("finishServConfLoad SideB");
 		setTimeout(() => {
-			bot.guilds.forEach(g => {
+			bot.guilds.cache.forEach(g => {
 				// console.log(`Twitchcheck Guild ${g.id}`);
 				const conf = bot.servConf.get(g.id);
 				clearTimeout(conf.streamTimeout);
@@ -155,11 +154,11 @@ connection.createAllTables().then(() => {
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
-bot.channels.forEach(c => {
+bot.channels.cache.forEach(c => {
 	if (c.locked && c.timeoutRoles) {
 		const roles = c.timeoutRoles;
 		for (const r of roles) {
-			c.overwritePermissions(r, {
+			c.updateOverwrite(r, {
 				"SEND_MESSAGES": null
 			}, "Revert channel lockdown").catch(console.error);
 		}
@@ -169,7 +168,7 @@ bot.channels.forEach(c => {
 });
 
 //get the permission level of the member who sent message
-bot.elevation = function(msg) {
+bot.elevation = function (msg) {
 	if (!msg.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
@@ -183,20 +182,20 @@ bot.elevation = function(msg) {
 	let permlvl = 0;
 	if (msg.guild && msg.member) {
 		if (memberrole) {
-			const membRole = msg.guild.roles.find(val => val.name === memberrole);
-			if (membRole && msg.member.roles.has(membRole.id)) {
+			const membRole = msg.guild.roles.cache.find(val => val.name === memberrole);
+			if (membRole && msg.member.roles.cache.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
 		if (moderatorrole) {
-			const modRole = msg.guild.roles.find(val => val.name === moderatorrole);
-			if (modRole && msg.member.roles.has(modRole.id)) {
+			const modRole = msg.guild.roles.cache.find(val => val.name === moderatorrole);
+			if (modRole && msg.member.roles.cache.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
 		if (administratorrole) {
-			const adminRole = msg.guild.roles.find(val => val.name === administratorrole);
-			if (adminRole && msg.member.roles.has(adminRole.id)) {
+			const adminRole = msg.guild.roles.cache.find(val => val.name === administratorrole);
+			if (adminRole && msg.member.roles.cache.has(adminRole.id)) {
 				permlvl = 3;
 			}
 		}
@@ -211,11 +210,11 @@ bot.elevation = function(msg) {
 };
 
 //pm2 keymetrics meter for online suer count
-probe.metric({
+io.metric({
 	name: "Online Users",
 	value: () => {
 		let total = 0;
-		bot.users.forEach(u => {
+		bot.users.cache.forEach(u => {
 			if (!u.bot && u.presence.status.match(/^(online|idle|dnd)$/)) {
 				total += 1;
 			}
@@ -225,17 +224,17 @@ probe.metric({
 });
 
 //pm2 keymetrics meter for heartbeat ping
-probe.metric({
+io.metric({
 	name: "Heartbeat Ping",
 	value: () => {
-		return Math.ceil(bot.ping);
+		return Math.ceil(bot.ws.ping);
 	}
 });
 
 //pmx manual throw error button
-pmx.action("throw err", function(reply) {
+io.action("throw err", function (reply) {
 	const err = new Error("This is an error.");
-	pmx.notify(err);
+	io.notifyError(err);
 	console.error(err);
 	reply({
 		success: false
@@ -245,7 +244,7 @@ pmx.action("throw err", function(reply) {
 
 //catch errors
 bot.on("error", (e) => {
-	pmx.notify(new Error(e));
+	io.notifyError(new Error(e));
 	if (e.message) {
 		console.error(colors.green(e.message));
 	} else {
@@ -265,7 +264,7 @@ bot.on("debug", (e) => {
 bot.login(token);
 
 process.on("unhandledRejection", (reason, p) => {
-	pmx.notify(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
+	io.notifyError(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 	console.log(p.code);
 	console.log(reason.code);

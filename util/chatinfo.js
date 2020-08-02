@@ -41,7 +41,7 @@ function messageDate(message) {
 	};
 }
 
-const getMaxRole = function(user) {
+const getMaxRole = function (user) {
 	let nick = null;
 	let isbot = "";
 	let toprole = "";
@@ -67,9 +67,9 @@ const getMaxRole = function(user) {
 		let maxpos = 0;
 
 		for (i; i < user.guild.roles.size + 1; i++) {
-			maxpos = user.roles.some(posEqI) && user.roles.find(posEqI).position > maxpos ? user.roles.find(posEqI).position : maxpos;
+			maxpos = user.roles.cache.some(posEqI) && user.roles.cache.find(posEqI).position > maxpos ? user.roles.cache.find(posEqI).position : maxpos;
 		}
-		toprole = user.guild.roles.find(val => val.position === maxpos);
+		toprole = user.guild.roles.cache.find(val => val.position === maxpos);
 		if (user.nickname) {
 			nick = user.nickname;
 		}
@@ -81,35 +81,35 @@ const getMaxRole = function(user) {
 	};
 };
 
-const writeLineToAllLogs = function(bot, guild, line) {
-	const guildChannels = guild.channels.array();
+const writeLineToAllLogs = function (bot, guild, line) {
+	const guildChannels = guild.channels.cache.array();
 	const currentDate = new Date();
 	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 	const currentYear = currentDate.getFullYear();
 	const currentMonth = monthNames[currentDate.getMonth()];
 	let i = 0;
 	for (i; i < guildChannels.length; i++) {
-		fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
+		fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function (error) {
 			if (error) {
 				console.error(error.stack);
 				return;
 			}
 		});
 	}
-	fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function(error) {
+	fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function (error) {
 		if (error) {
 			console.error(error.stack);
 			return;
 		}
 	});
 	for (i; i < guildChannels.length; i++) {
-		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.get(bot.user.id)).hasPermissions(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
-			fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
+		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.cache.get(bot.user.id)).hasPermission(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
+			fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function (error) {
 				if (error) {
 					console.error(error.stack);
 				}
 			});
-			fs.appendFile(`${logLocation}${guild.name}/full_logs/#${guildChannels[i].name}.log`, `* ${line}\r\n`, function(error) {
+			fs.appendFile(`${logLocation}${guild.name}/full_logs/#${guildChannels[i].name}.log`, `* ${line}\r\n`, function (error) {
 				if (error) {
 					console.error(error.stack);
 				} else {
@@ -125,7 +125,7 @@ const writeLineToAllLogs = function(bot, guild, line) {
 	}
 };
 
-const formatChatlog = function(message) {
+const formatChatlog = function (message) {
 	const messageTime = messageDate(message);
 	const messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
 	const member = message.member;
@@ -140,18 +140,18 @@ const formatChatlog = function(message) {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(Guest)`;
 		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === message.guild.owner.id)?"Owner":"Guest"})`;
 	} else {
-		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.highestRole.name === "@everyone")?"Guest":member.highestRole.name})`;
-		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.highestRole.name === "@everyone")?((member.id === message.guild.owner.id)?"Owner":"Guest"):member.highestRole.name})`;
+		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.roles.highest.name === "@everyone")?"Guest":member.roles.highest.name})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.roles.highest.name === "@everyone")?((member.id === message.guild.owner.id)?"Owner":"Guest"):member.roles.highest.name})`;
 	}
 	const att = [];
 	let formattedAtturls = "";
-	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
+	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function (error) {
 		if (error) {
 			console.error(error.stack);
 			return;
 		}
 	});
-	fs.mkdirsSync(`${logLocation}${message.guild.name}/full_logs`, function(error) {
+	fs.mkdirsSync(`${logLocation}${message.guild.name}/full_logs`, function (error) {
 		if (error) {
 			console.error(error.stack);
 			return;

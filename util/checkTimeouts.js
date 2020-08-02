@@ -15,13 +15,13 @@ module.exports = (bot) => {
 				enddateMS = to[i].enddate.getTime();
 				remainingMS = (enddateMS - now > 0) ? (enddateMS - now) : 1000;
 				const d = new Duration(`${remainingMS}ms`);
-				bot.guilds.forEach(g => {
-					const memberTest = g.members.get(to[i].memberid);
+				bot.guilds.cache.forEach(g => {
+					const memberTest = g.members.cache.get(to[i].memberid);
 					const membid = to[i].memberid;
 					if (g.id === to[i].server_id) {
 						const timeoutData = to[i];
 						const toTimer = setTimeout(() => {
-							manageTimeout(memberTest, bot, g.roles.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id, membid);
+							manageTimeout(memberTest, bot, g.roles.cache.find(val => val.name === timeoutData.timeoutrole), timeoutData.server_id, membid);
 						}, d);
 						bot.timer.set(to[i].memberid, toTimer);
 					}

@@ -24,6 +24,10 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 		return send(msg.channel, "PM must be true or false.");
 	}
 
+	if (flags.name && !(flags.message || flags.inpm || flags.permlvl || flags.type)) {
+		return send(msg.channel, "You must specify flags for what you want to change.");
+	}
+
 
 	const cmdname = escape.chars(flags.name);
 	if (cmdname !== flags.name) {

@@ -7,7 +7,7 @@ const PUBLIC_KEY = process.env.KEYMETRICS_PUBLIC_KEY; // Keymetrics Public  key
 //let instances = process.env.WEB_CONCURRENCY || -1; // Set by Heroku or -1 to scale to max cpu core -1
 //let maxMemory = process.env.WEB_MEMORY || 512; // " " "
 
-pm2.connect(function() {
+pm2.connect(function () {
 	pm2.start({
 		script: "bot.js",
 		name: "alliance", // ----> THESE ATTRIBUTES ARE OPTIONAL:
@@ -31,18 +31,18 @@ pm2.connect(function() {
 			"--color"
 		],
 		"post_update": ["npm install"] // Commands to execute once we do a pull from Keymetrics
-	}, function() {
-		pm2.interact(PRIVATE_KEY, PUBLIC_KEY, MACHINE_NAME, function() {
+	}, function () {
+		pm2.interact(PRIVATE_KEY, PUBLIC_KEY, MACHINE_NAME, function () {
 
 			// Display logs in standard output
-			pm2.launchBus(function(err, bus) {
+			pm2.launchBus(function (err, bus) {
 				console.log("[PM2] Log streaming started");
 
-				bus.on("log:out", function(packet) {
+				bus.on("log:out", function (packet) {
 					console.log(`[App:${packet.process.name}] ${packet.data.replace(/\n$/g, "")}`);
 				});
 
-				bus.on("log:err", function(packet) {
+				bus.on("log:err", function (packet) {
 					console.error(`[App:${packet.process.name}][Err] ${packet.data}`);
 				});
 			});

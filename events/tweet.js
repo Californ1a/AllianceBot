@@ -7,7 +7,7 @@ const fs = require("fs-extra");
 module.exports = (bot, tweet) => {
 	const tweetid = tweet.id_str;
 	const tweetuser = tweet.user.screen_name;
-	const emoji = (bot.guilds.get("83078957620002816")) ? bot.guilds.get("83078957620002816").emojis.find(val => val.name === "torcht") : "";
+	const emoji = (bot.guilds.cache.get("83078957620002816")) ? bot.guilds.cache.get("83078957620002816").emojis.cache.find(val => val.name === "torcht") : "";
 	//var intent = "https://twitter.com/intent";
 	const profilelink = `https://twitter.com/${tweetuser}`;
 	const tweetlink = `${profilelink}/status/${tweetid}`;
@@ -59,7 +59,7 @@ module.exports = (bot, tweet) => {
 			}
 		};
 
-		send(bot.guilds.get("83078957620002816").channels.get("83078957620002816"), `${emoji} <${tweetlink}>`, opts).catch(console.error);
+		send(bot.guilds.cache.get("83078957620002816").channels.cache.get("83078957620002816"), `${emoji} <${tweetlink}>`, opts).catch(console.error);
 
 	}
 };
