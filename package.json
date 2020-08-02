@@ -1,6 +1,6 @@
 {
 	"name": "alliancebot",
-	"version": "2.0.0",
+	"version": "3.0.0",
 	"description": "Discord bot",
 	"engines": {
 		"node": "12.16.1",
@@ -34,7 +34,7 @@
 		"mysql": "^2.18.1",
 		"node-fetch": "^2.6.0",
 		"parse-duration": "^0.4.4",
-		"pm2": "2.4.3",
+		"pm2": "^2.10.4",
 		"request": "^2.88.2",
 		"steam-web": "^0.7.0",
 		"twit": "^2.2.11",
