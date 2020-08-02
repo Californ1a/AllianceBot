@@ -44,13 +44,11 @@ module.exports = (bot, member) => {
 				const d2 = Date.now();
 				const d3 = d2 - member.joinedTimestamp;
 				const joinDuration = moment.duration(d3).humanize();
-				if (joinDuration === "51 years") {
-					console.log(JSON.stringify({
-						"moment.duration(d3).humanize()": joinDuration,
-						"moment.duration(d3)": moment.duration(d3),
-						"d2-member.joinedTimestamp": d3,
-						"Date.now()": d2
-					}));
+				if (joinDuration.startsWith("51")) {
+					console.log("moment.duration(d3).humanize()", joinDuration);
+					console.log("moment.duration(d3)", moment.duration(d3));
+					console.log("d2-member.joinedTimestamp", d3);
+					console.log("Date.now()", d2);
 				}
 				embed = new MessageEmbed()
 					.setColor("#f4bf42")
