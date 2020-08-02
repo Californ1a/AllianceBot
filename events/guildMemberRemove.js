@@ -44,17 +44,12 @@ module.exports = (bot, member) => {
 				const d2 = Date.now();
 				const d3 = d2 - member.joinedTimestamp;
 				const joinDuration = moment.duration(d3).humanize();
-				if (joinDuration.startsWith("51")) {
-					console.log("moment.duration(d3).humanize()", joinDuration);
-					console.log("moment.duration(d3)", moment.duration(d3));
-					console.log("d2-member.joinedTimestamp", d3);
-					console.log("Date.now()", d2);
-				}
+
 				embed = new MessageEmbed()
 					.setColor("#f4bf42")
 					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
 					.setDescription(member.user)
-					.setFooter(`User left - Joined ${joinDuration} ago`)
+					.setFooter(`User left - ${(member.joinedTimestamp) ? `Joined ${joinDuration} ago` : "Unknown join date"}`)
 					.setTimestamp();
 				return send(chan, "", embed);
 			}).catch(console.error);
