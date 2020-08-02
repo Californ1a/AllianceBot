@@ -20,6 +20,7 @@ module.exports = (bot, msgs) => {
 	// const msgContent = msgs.reduce((acc, m) => ((acc + `${m.author}: ${m.content}\n`).length < 2000 ? acc + `${m.author}: ${m.content}\n` : ""), `**Action:** Bulk Message Delete\n**Channel:** ${msgs.first().channel}\n**Count:** ${msgs.size}\n**Content:**\n\n`);
 
 	const maxLogMsgs = 3;
+	msgs = msgs.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 	for (let i = 0; i < maxLogMsgs; i++) {
 		msgs.each((m, key) => {
 			const attachments = (m.attachments.first()) ? m.attachments.reduce((acc, a) => `${acc + a.url}\n`, " ") : "";

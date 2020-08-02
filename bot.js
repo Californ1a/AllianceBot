@@ -1,5 +1,5 @@
 require("dotenv").config();
-const pmx = require("pmx").init({
+const io = require("@pm2/io").init({
 	http: true,
 	ignore_routes: [/socket\.io/, /notFound/], // eslint-disable-line camelcase
 	errors: true,
@@ -9,7 +9,6 @@ const pmx = require("pmx").init({
 });
 //require("opbeat").start();
 const connection = require("./util/connection.js");
-const probe = pmx.probe();
 const Discord = require("discord.js");
 const bot = new Discord.Client();
 bot.reminders = new Discord.Collection();
@@ -33,7 +32,7 @@ const T = new Twit(twitconfig);
 const stream = T.stream("statuses/filter", {
 	follow: ["628034104", "241371699"]
 });
-const meter = probe.meter({
+const meter = io.meter({
 	name: "msg/min",
 	samples: 60
 });
@@ -62,7 +61,7 @@ fs.readdir("./commands", (err, files) => {
 			if (props.f) {
 				bot.commands.get(props.help.name).flags = new Discord.Collection();
 				for (const key in props.f) {
-					if (props.f.hasOwnProperty(key)) {
+					if (Object.prototype.hasOwnProperty.call(props.f, key)) {
 						bot.commands.get(props.help.name).flags.set(key, props.f[key]);
 					}
 				}
@@ -211,7 +210,7 @@ bot.elevation = function (msg) {
 };
 
 //pm2 keymetrics meter for online suer count
-probe.metric({
+io.metric({
 	name: "Online Users",
 	value: () => {
 		let total = 0;
@@ -225,7 +224,7 @@ probe.metric({
 });
 
 //pm2 keymetrics meter for heartbeat ping
-probe.metric({
+io.metric({
 	name: "Heartbeat Ping",
 	value: () => {
 		return Math.ceil(bot.ws.ping);
@@ -233,9 +232,9 @@ probe.metric({
 });
 
 //pmx manual throw error button
-pmx.action("throw err", function (reply) {
+io.action("throw err", function (reply) {
 	const err = new Error("This is an error.");
-	pmx.notify(err);
+	io.notifyError(err);
 	console.error(err);
 	reply({
 		success: false
@@ -245,7 +244,7 @@ pmx.action("throw err", function (reply) {
 
 //catch errors
 bot.on("error", (e) => {
-	pmx.notify(new Error(e));
+	io.notifyError(new Error(e));
 	if (e.message) {
 		console.error(colors.green(e.message));
 	} else {
@@ -265,7 +264,7 @@ bot.on("debug", (e) => {
 bot.login(token);
 
 process.on("unhandledRejection", (reason, p) => {
-	pmx.notify(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
+	io.notifyError(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 	console.log(p.code);
 	console.log(reason.code);
