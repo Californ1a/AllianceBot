@@ -95,7 +95,7 @@ const updateEmbed = (bot, servers) => {
 };
 
 const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
-	Promise.all(servers.map(fetch))
+	Promise.all(servers.map(s => fetch(s)))
 		.then(responses => Promise.all(responses.map(res => res.json())))
 		.then(multiData => multiData.reduce((merge, data) => ({
 			...merge,
