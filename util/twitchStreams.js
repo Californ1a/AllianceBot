@@ -72,7 +72,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			let m;
 			try {
 				// console.log("B");
-				console.log("HIT DISCORD 1");
+				// console.log("HIT DISCORD 1");
 				m = await chan.messages.fetch(streamIDs[i].msgID); // HIT DISCORD
 			} catch (e) {
 				console.log(colors.green("* Removing from list."));
@@ -80,7 +80,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 			if (m) {
 				//console.log("def456", m);
 				try {
-					console.log("HIT DISCORD 2");
+					// console.log("HIT DISCORD 2");
 					await m.delete(); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`Could not delete msg with id ${m.id} from author ${m.author.username} with id ${m.author.id}`));
@@ -97,10 +97,9 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 	// console.log("twitchStreams2", twitchStreams);
 	// console.log("streamIDs", streamIDs);
 	const totalStreams = streams.length;
-	let totalViewers = 0;
 	let amntSent = 0;
 	for (const stream of streams) {
-		totalViewers += parseInt(stream.viewers);
+		// totalViewers += parseInt(stream.viewers);
 		const user = users.filter(u => u.id === stream.userId)[0];
 		const d = new Date(stream.startDate);
 		const now = new Date();
@@ -124,7 +123,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			embed.setImage(img);
 		}
 		if (streamIDs.filter(s => s.streamID === stream.id).length === 0) {
-			console.log("HIT DISCORD 3");
+			// console.log("HIT DISCORD 3");
 			const m = await send(chan, "", embed); // HIT DISCORD
 			streamIDs.push({
 				streamID: stream.id,
@@ -137,14 +136,14 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			let msg;
 			try {
 				// console.log("A");
-				console.log("HIT DISCORD 4");
+				// console.log("HIT DISCORD 4");
 				msg = await chan.messages.fetch(msgID); // HIT DISCORD
 			} catch (e) {
 				console.log(colors.green("* Message was deleted before stream ended. Reposting..."));
 			}
 			if (msg) {
 				try {
-					console.log("HIT DISCORD 5");
+					// console.log("HIT DISCORD 5");
 					await msg.edit("", embed); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`Couldn't edit msg ${msg.id} from author ${msg.author.username} with id ${msg.author.id}`));
@@ -156,7 +155,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 				saveToFirebase(newStreamIDs, chan.guild.id);
 				let m;
 				try {
-					console.log("HIT DISCORD 6");
+					// console.log("HIT DISCORD 6");
 					m = await send(chan, "", embed); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`B - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
@@ -175,7 +174,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 
 			let msg;
 			try {
-				console.log("HIT DISCORD 7");
+				// console.log("HIT DISCORD 7");
 				msg = await chan.messages.fetch(msgID); // HIT DISCORD
 			} catch (e) {
 				console.log(colors.green("* Message couldn't be found."));
@@ -183,7 +182,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 
 			console.log(colors.green("* Deleting duplicate..."));
 			if (msg) {
-				console.log("HIT DISCORD 8");
+				// console.log("HIT DISCORD 8");
 				msg.delete(); // HIT DISCORD
 			}
 			streamIDs = streamIDs.filter(sid => sid.msgID !== msgID);
@@ -203,17 +202,17 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 	// console.log("closedStreams.length", closedStreams.length);
 	if (amntSent > 0 && closedStreams.length === 0) {
 		console.log(colors.green(`* Sent ${amntSent} new twitch streams in guild ${chan.guild.name}.`));
-		console.log("HIT DISCORD 9");
-		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
+		// console.log("HIT DISCORD 9");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams}`); // HIT DISCORD
 		amntSent = 0;
 	} else if (amntSent > 0 && closedStreams.length > 0) {
 		console.log(colors.green(`* Sent ${amntSent} new twitch streams and removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
-		console.log("HIT DISCORD 10");
-		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
+		// console.log("HIT DISCORD 10");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams}`); // HIT DISCORD
 	} else if (amntSent === 0 && closedStreams.length > 0) {
 		console.log(colors.green(`* Removed ${closedStreams.length} closed twitch streams from guild ${chan.guild.name}.`));
-		console.log("HIT DISCORD 11");
-		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams} \n- Viewers: ${totalViewers}`); // HIT DISCORD
+		// console.log("HIT DISCORD 11");
+		chan.setTopic(`${gameUrl} \n- Streams: ${totalStreams}`); // HIT DISCORD
 	} else {
 		// console.log(colors.green("* No twitch stream changes."));
 	}
@@ -254,7 +253,7 @@ function streams(bot, guild) {
 	if (twitchChannel) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
 		const chan = guild.channels.cache.get(twitchchanid);
-		console.log("HIT DISCORD 12");
+		// console.log("HIT DISCORD 12");
 		const missingPerms = chan.guild.members.cache.get(bot.user.id).permissions.missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]); // HIT DISCORD
 		// console.log(missingPerms);
 		if (chan && gameName && missingPerms.length === 0) {
