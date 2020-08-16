@@ -5,7 +5,7 @@ const autoServers = ["Tag Auto Unofficial", "Campaign Auto", "PW: Nightmare", "W
 
 function getInfo() {
 	return new Promise((resolve, reject) => {
-		Promise.all(servers.map(fetch))
+		Promise.all(servers.map(s => fetch(s)))
 			.then(responses => Promise.all(responses.map(res => res.json())))
 			.then(multiData => multiData.reduce((merge, data) => ({
 				...merge,
@@ -41,13 +41,16 @@ exports.run = (bot, msg, args) => {
 			servs = servs.filter(s => !autoServers.includes(s.serverName));
 			auto = false;
 		}
-		//console.log(servs);
+		// console.log(servs);
 		const pubServs = servs.filter(s => !s.passwordProtected);
 		const openPubs = pubServs.filter(s => s.connectedPlayers < s.playerLimit);
 		const totalSlots = openPubs.reduce((acc, obj) => acc + (obj.playerLimit - obj.connectedPlayers), 0);
 		const chan = (msg.guild.channels.cache.some(val => val.name === "servers")) ? msg.guild.channels.cache.find(val => val.name === "servers") : null;
 		compose(msg, pubServs, openPubs, totalSlots, chan, auto);
-	}).catch(() => send(msg.channel, "Failed to obtain server list."));
+	}).catch((e) => {
+		console.error(e);
+		send(msg.channel, "Failed to obtain server list.");
+	});
 };
 
 exports.conf = {
