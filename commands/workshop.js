@@ -90,18 +90,19 @@ async function createMessageEmbed({
 	const popularURL = "https://steamcommunity.com/workshop/browse/?appid=233610&browsesort=trend&actualsort=trend&days=90";
 	let workshopURL = "";
 	let desc = "";
+	const by = (byAuthor) ? ` by \`${byAuthor}\`` : "";
 	switch (queryType) {
 		case 12:
 			workshopURL = searchURL;
-			desc = `🔍 Search results for \`${searchQuery}\`${(byAuthor) ? ` by \`${byAuthor}\`` : ""}`;
+			desc = `🔍 Search results for \`${searchQuery}\`${by}`;
 			break;
 		case 1:
 			workshopURL = recentURL;
-			desc = "🆕 Recent workshop uploads";
+			desc = `🆕 Recent workshop uploads${by}`;
 			break;
 		case 3:
 			workshopURL = popularURL;
-			desc = "⭐ Most popular (3 months)";
+			desc = `⭐ Most popular (3 months)${by}`;
 			break;
 		default:
 			break;
@@ -118,7 +119,8 @@ async function createMessageEmbed({
 	if (data.publishedfiledetails.length < 1) {
 		return "No data";
 	}
-	const list = data.publishedfiledetails.slice(0, 8).reduce((acc, map) => {
+	data.publishedfiledetails = data.publishedfiledetails.slice(0, 8);
+	const list = data.publishedfiledetails.reduce((acc, map) => {
 		// const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
 		map.creator.personaname = (map.creator.personaname.length > 18) ? `${map.creator.personaname.substr(0, 18)}...` : map.creator.personaname;
 		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
@@ -154,7 +156,8 @@ exports.run = async (bot, msg, args) => {
 		queryType = "recent";
 	} else if (args[0].match(/^(top|popular)$/i)) {
 		queryType = "popular";
-	} else if (args.includes("by")) {
+	}
+	if (args.includes("by")) {
 		const byIndex = args.indexOf("by");
 		if (byIndex === 0) {
 			return await send(msg.channel, "You must include a search term.");
@@ -176,7 +179,7 @@ exports.run = async (bot, msg, args) => {
 		}
 		const embed = await createMessageEmbed(data, msg, author);
 		if (embed === "No data") {
-			return await m.edit(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
 			await m.edit("", embed);
 		}
