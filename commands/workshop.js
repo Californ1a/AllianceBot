@@ -119,7 +119,7 @@ async function createMessageEmbed({
 		.setAuthor(msg.guild.name, msg.guild.iconURL())
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
-		.setThumbnail(data.publishedfiledetails[0].preview_url);
+		.setThumbnail(`${data.publishedfiledetails[0].preview_url}?impolicy=Letterbox`);
 }
 
 exports.run = async (bot, msg, args) => {
