@@ -102,7 +102,8 @@ async function createMessageEmbed({
 	const steamUsers = await getSteamUsers(steamids);
 	const list = data.publishedfiledetails.reduce((acc, map) => {
 		const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
-		const title = (map.title.length > 35) ? `${map.title.substr(0, 35)}...` : map.title;
+		author.personaname = (author.personaname.length > 18) ? `${author.personaname.substr(0, 18)}...` : author.personaname;
+		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
 		const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${map.publishedfileid}`;
 		// const base = `**[${title}](${url})**: `;
 		// let fileDescription = `${map.file_description.substr(0, 135 - base.length).replace(/[\r\n]/g, " ").trim()}...`; // eslint-disable-line camelcase
