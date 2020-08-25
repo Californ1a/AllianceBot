@@ -3,6 +3,7 @@ const fetch = require("node-fetch");
 const {
 	MessageEmbed
 } = require("discord.js");
+const colors = require("colors");
 
 async function getSteamUsers(steamids) {
 	const params = new URLSearchParams({
@@ -18,7 +19,7 @@ async function getSteamUsers(steamids) {
 	};
 	try {
 		const url = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?${params}`;
-		console.log(`Fetching Steam users: ${url}`);
+		console.log(`Fetching Steam users: ${colors.green(url)}`);
 		const res = await fetch(url, options);
 		const data = await res.json();
 		return data.response.players;
@@ -66,7 +67,7 @@ async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
 	};
 	try {
 		const url = `https://api.steampowered.com/IPublishedFileService/QueryFiles/v1/?${params}`;
-		console.log(`Fetching workshop maps: ${url}`);
+		console.log(`Fetching workshop maps: ${colors.green(url)}`);
 		const res = await fetch(url, options);
 		const data = await res.json();
 		return {
@@ -84,21 +85,29 @@ async function createMessageEmbed({
 	searchQuery,
 	data
 }, msg) {
+	const searchURL = `https://steamcommunity.com/workshop/browse/?appid=233610&searchtext=${searchQuery.replace(" ", "+")}&browsesort=textsearch`;
+	const recentURL = "https://steamcommunity.com/workshop/browse/?appid=233610&browsesort=mostrecent&actualsort=mostrecent";
+	const popularURL = "https://steamcommunity.com/workshop/browse/?appid=233610&browsesort=trend&actualsort=trend&days=90";
+	let workshopURL = "";
 	let desc = "";
 	switch (queryType) {
 		case 12:
+			workshopURL = searchURL;
 			desc = `🔍 Search results for \`${searchQuery}\``;
 			break;
 		case 1:
+			workshopURL = recentURL;
 			desc = "🆕 Recent workshop uploads";
 			break;
 		case 3:
+			workshopURL = popularURL;
 			desc = "⭐ Most popular (3 months)";
 			break;
 		default:
 			break;
 	}
-	const steamids = data.publishedfiledetails.map((map) => map.creator);
+	let steamids = data.publishedfiledetails.map((map) => map.creator)
+	steamids = [...new Set(steamids)];
 	const steamUsers = await getSteamUsers(steamids);
 	const list = data.publishedfiledetails.reduce((acc, map) => {
 		const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
@@ -110,17 +119,19 @@ async function createMessageEmbed({
 		// fileDescription = (map.file_description.length + 3 === fileDescription.length) ? map.file_description : fileDescription;
 		// return `${acc}${base}${fileDescription}\n`;
 		const emoji = (acc === "") ? "🖼️" : "🔗";
-		return `${acc}${emoji} **[${title}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${author.personaname}](${author.profileurl})\n`;
+		return `${acc}${emoji} **[${title}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${author.personaname}](${author.profileurl}myworkshopfiles/?appid=233610)\n`;
 	}, "");
-	if (msg.guild.id === "211599888222257152") {
+	if (msg.guild.id === "211599888222257152") { // dev
 		msg.guild.name = "Distance";
 		msg.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
 	return new MessageEmbed()
-		.setAuthor(msg.guild.name, msg.guild.iconURL())
+		.setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
-		.setThumbnail(`${data.publishedfiledetails[0].preview_url}?impolicy=Letterbox`);
+		.setThumbnail(`${data.publishedfiledetails[0].preview_url}?impolicy=Letterbox`)
+		.setFooter(`• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`)
+		.setTimestamp();
 }
 
 exports.run = async (bot, msg, args) => {
@@ -134,8 +145,8 @@ exports.run = async (bot, msg, args) => {
 	} else if (args[0].match(/^(top|popular)$/i)) {
 		queryType = "popular";
 	}
+	const m = await send(msg.channel, "Loading...");
 	try {
-		const m = await send(msg.channel, "Loading...");
 		const data = await getWorkshopQueryResults(searchQuery, queryType);
 		// console.log(JSON.stringify(data, null, 2));
 		if (data.data.total < 1) {
@@ -146,6 +157,7 @@ exports.run = async (bot, msg, args) => {
 		await m.edit("", embed);
 	} catch (e) {
 		console.error(e);
+		await m.edit("Failed getting workshop data.");
 	}
 };
 
@@ -161,7 +173,7 @@ exports.help = {
 	name: "workshop",
 	description: "Search the workshop for maps.",
 	extendedDescription: "",
-	usage: "workshop <search term>"
+	usage: "workshop <search term|new|top>"
 };
 
 /*
