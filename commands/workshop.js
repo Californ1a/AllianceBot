@@ -85,7 +85,7 @@ async function createMessageEmbed({
 	searchQuery,
 	data
 }, msg, byAuthor) {
-	const searchURL = `https://steamcommunity.com/workshop/browse/?appid=233610&searchtext=${searchQuery.replace(" ", "+")}&browsesort=textsearch`;
+	const searchURL = `https://steamcommunity.com/workshop/browse/?appid=233610&searchtext=${searchQuery.replace(/\s+/g, "+")}&browsesort=textsearch`;
 	const recentURL = "https://steamcommunity.com/workshop/browse/?appid=233610&browsesort=mostrecent&actualsort=mostrecent";
 	const popularURL = "https://steamcommunity.com/workshop/browse/?appid=233610&browsesort=trend&actualsort=trend&days=90";
 	let workshopURL = "";
@@ -136,6 +136,7 @@ async function createMessageEmbed({
 		msg.guild.name = "Distance";
 		msg.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
+	console.log(workshopURL);
 	return new MessageEmbed()
 		.setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
 		.setDescription(`${desc}\n\n${list}`)
