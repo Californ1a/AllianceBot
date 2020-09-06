@@ -1,18 +1,36 @@
-// const scraper = require("table-scraper");
-//const tabletojson = require("tabletojson");
-const parse = require("parse-duration");
-const Duration = require("duration-js");
-const fetch = require("node-fetch");
-//const parse5 = require("parse5");
-const colors = require("colors");
 const {
 	MessageEmbed
 } = require("discord.js");
+const colors = require("colors");
+const fetch = require("node-fetch");
+const parse = require("parse-duration");
+const Duration = require("duration-js");
+const firebase = require("./firebase.js");
 const send = require("./sendMessage.js");
-const serverID = "83078957620002816";
+const url = "http://seekr.pw/distance-log/changelist.json";
+const guildID = "83078957620002816";
+const channelID = "551229266336022559";
 const refreshMin = 5;
-let refreshMin2 = refreshMin;
 let sending = false;
+
+let wrMsgs = {};
+firebase.db.ref("wrlog").once("value").then(data => {
+	if (data.val()) {
+		// console.log("[CAL] wrlog firebase", data.val());
+		wrMsgs = JSON.parse(JSON.stringify(data.val()));
+	}
+});
+
+function saveToFirebase(wr) {
+	// console.log("[CAL] Save to firebase", wr);
+	if (wr.mostRecentWR) {
+		firebase.db.ref("wrlog").set(wr);
+		wrMsgs = wr;
+	} else {
+		firebase.db.ref("wrlog/fetchTime").set(wr.fetchTime);
+		wrMsgs.fetchTime = wr.fetchTime;
+	}
+}
 
 function readableTime(time) {
 	let dur = new Duration(time);
@@ -58,10 +76,6 @@ function getDiff(mode, oldTime, newTime) {
 	return diff;
 }
 
-// function checkOfficial(author) {
-// 	return (author === "[unknown]") ? null : (author === "(official level)") ? "[Official Map]" : author;
-// }
-
 function parseMapData(t) {
 	const mode = t.mode;
 	const author = (t.map_author) ? t.map_author : "[Official Map]";
@@ -94,12 +108,6 @@ function parseMapData(t) {
 	};
 }
 
-function embedDataMatch(embed, data) {
-	const check1 = embed.fields[1].value === `${data.newTime} by ${(data.newRecordHolderProfileUrl)?`[${(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}](${data.newRecordHolderProfileUrl})`:(data.newRecordHolderName)?data.newRecordHolderName:"[unknown]"}`;
-	const check2 = (embed.thumbnail) ? embed.thumbnail.url === data.mapThumbnailUrl : embed.title === data.map;
-	return check2 && check1;
-}
-
 function composeEmbed(d) {
 	const embed = new MessageEmbed()
 		.setTitle(d.map)
@@ -112,99 +120,96 @@ function composeEmbed(d) {
 		embed.setThumbnail(d.mapThumbnailUrl);
 		embed.setURL(d.mapUrl);
 	}
-	// console.log("d", d);
-	// console.log("\n\n--------------------------------\n\n");
 	return embed;
-	//await send(chan, "New record time!");
 }
 
-function embedSendManager(data, chan, maxIndex) {
-	console.log(colors.grey(`* Found ${maxIndex} new WRs, sending messages...`));
-	const embeds = [];
-	// console.log("data (2)", data);
-	// console.log("\n\n-----------------------------------------------------------\n\n");
-	for (let i = data.length - maxIndex; i < data.length - 1; i++) {
-		// console.log("data[i]", data[i]);
-		// console.log("\n\n--------------------------------\n\n");
-		embeds.push(composeEmbed(data[i]));
+async function embedSendManager(data, chan) {
+	const embeds = data.map(wr => composeEmbed(wr));
+	try {
+		// for (const embed of embeds) {
+		// 	await send(chan, "New record!", embed);
+		// }
+		return await Promise.all(embeds.map(async (e) => await send(chan, "New record!", e)));
+	} catch (e) {
+		throw Error(e);
 	}
-	Promise.all(embeds.map(e => send(chan, "New record!", e))).then(msgs => {
-		const lastEmbed = composeEmbed(data[data.length - 1]);
-		send(chan, "New record!", lastEmbed).then(() => {
-			console.log(colors.grey(`* Sent ${msgs.length+1} new WR messages.`));
-			sending = false;
-		});
-	}).catch(console.error);
 }
 
-function sendNewWRMessages(bot, data) {
-	const chan = bot.guilds.cache.get(serverID).channels.cache.find(val => val.name === "wr_log");
-	if (!chan.lastMessageID) {
-		// console.log("data (1)", data);
-		// console.log("\n\n-------------------------------\n\n");
-		embedSendManager(data, chan, data.length);
-	} else {
-		// console.log("chan.lastMessageID", chan.lastMessageID);
-		chan.messages.fetch({
-			limit: 20
-		}).then(msgs => msgs.filter(m => m.author.id === bot.user.id)).then(msgs => {
-			const msg = msgs.first();
-			if (!msg) {
-				embedSendManager(data, chan, data.length);
-			} else {
-				//console.log("msg.embeds[0]", msg.embeds[0]);
-				const mostRecentCheck = msg.embeds.filter(e => embedDataMatch(e, data[data.length - 1]));
-				// console.log("mostRecentCheck", mostRecentCheck);
-				if (mostRecentCheck[0]) {
-					console.log(colors.grey("* No WRs need posting - Most recent WR message matches most recent data entry."));
-					sending = false;
-					return;
+async function wrLog(bot) {
+	try {
+		const json = await fetch(url).then(res => res.json());
+		// console.log("test", json.slice(-5));
+		const mostRecentWR = json[json.length - 1];
+		const fetchTimeWR = new Date(mostRecentWR.fetch_time);
+		mostRecentWR.fetchTime = fetchTimeWR.getTime();
+
+		if (wrMsgs && wrMsgs.fetchTime && wrMsgs.fetchTime < mostRecentWR.fetchTime) {
+			const newWRs = [];
+
+			// filter option - needs to check every entry
+			// json.filter((wr) => {
+			// 	const fetchTime = new Date(wr.fetch_time);
+			// 	const d = fetchTime.getTime();
+			// 	return (d > wrMsgs.fetchTime);
+			// });
+
+			// for loop option - start at newest and stop checking entries when they no longer match
+			for (let i = json.length - 1; i >= 0; i--) {
+				const d = new Date(json[i].fetch_time);
+				if (d.getTime() > wrMsgs.fetchTime) {
+					json[i].fetchTime = d.getTime();
+					newWRs.unshift(json[i]);
+				} else {
+					break;
 				}
-				const matchingIndices = [];
-				for (let i = 0; i < data.length; i++) {
-					for (const embed of msg.embeds) {
-						if (embedDataMatch(embed, data[i])) {
-							matchingIndices.push(i);
-						}
-					}
-				}
-				// console.log("data.length", data.length);
-				// console.log("matchingIndices", matchingIndices);
-				const highestMatchedIndex = Math.max(...matchingIndices);
-				//console.log("data[highestMatchedIndex]", data[highestMatchedIndex]);
-				embedSendManager(data, chan, data.length - highestMatchedIndex - 1);
 			}
-		}).catch(console.error);
+
+			console.log(colors.grey(`* Found ${newWRs.length} new WRs, sending messages...`));
+			const mapData = newWRs.map(wr => parseMapData(wr));
+			const chan = bot.guilds.cache.get(guildID).channels.cache.get(channelID);
+			await embedSendManager(mapData, chan);
+
+			// console.log("newWRs", JSON.stringify(newWRs, null, 2));
+			const defaultMsg = {
+				fetchTime: mostRecentWR.fetchTime,
+				mostRecentWR
+			};
+			saveToFirebase(defaultMsg);
+			console.log(colors.grey(`* Sent ${newWRs.length} new WR messages.`));
+
+		} else if (!wrMsgs || !wrMsgs.fetchTime || !wrMsgs.mostRecentWR) {
+			// seed firebase if it has no entry for wrs
+			const defaultMsg = {
+				fetchTime: mostRecentWR.fetchTime,
+				mostRecentWR
+			};
+			saveToFirebase(defaultMsg);
+			console.log(colors.grey("* No new WRs"));
+		} else {
+			// no need to save to db if nothing has changed
+			console.log(colors.grey("* No new WRs"));
+		}
+		sending = false;
+		return;
+	} catch (e) {
+		sending = false;
+		throw Error(e);
 	}
 }
 
-function wrLog(bot) {
+async function interval(bot) {
 	console.log(colors.grey("* Checking for new WRs..."));
-	if (sending) {
-		console.log(colors.grey("* Still sending old WR messages; begin timeout again"));
-		setTimeout(() => {
-			wrLog(bot);
-		}, refreshMin2 * 60 * 1000);
-	}
-	fetch("http://seekr.pw/distance-log/changelist.json").then(res => res.json()).then(json => {
-		return json.map(t => parseMapData(t));
-	}).catch(e => {
-		if (e.code === "ECONNREFUSED" || e.code === "ECONNRESET") {
-			console.log(colors.yellow(e.message));
-		} else {
+	if (!sending) {
+		try {
+			sending = true;
+			await wrLog(bot);
+		} catch (e) {
 			console.error(e);
 		}
-	}).then(data => {
-		if (typeof data !== "undefined") {
-			sending = true;
-			sendNewWRMessages(bot, data);
-		} else {
-			refreshMin2 += refreshMin;
-		}
-		setTimeout(() => {
-			wrLog(bot);
-		}, refreshMin2 * 60 * 1000);
-	});
+	}
+	setTimeout(() => {
+		interval(bot);
+	}, refreshMin * 60 * 1000);
 }
 
-module.exports = wrLog;
+module.exports = interval;
