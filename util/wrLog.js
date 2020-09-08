@@ -137,7 +137,8 @@ async function embedSendManager(data, chan) {
 
 async function wrLog(bot) {
 	try {
-		const json = await fetch(url).then(res => res.json());
+		const res = await fetch(url);
+		const json = await res.json();
 		// console.log("test", json.slice(-5));
 		const mostRecentWR = json[json.length - 1];
 		const fetchTimeWR = new Date(mostRecentWR.fetch_time);
