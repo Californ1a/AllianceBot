@@ -26,9 +26,9 @@ module.exports = (bot, oldUser, newUser) => {
 			return;
 		}
 		const embed = new MessageEmbed()
-			.setColor("#ffff00")
+			.setColor("#2f3136")
 			.setAuthor(`${guildMember.user.tag} (${guildMember.user.id})`, guildMember.user.displayAvatarURL())
-			.setDescription(`${guildMember.user}\n\n**Action:** Username Change\n**Change:** \`${oldUser.username}\` → \`${guildMember.displayName}\``)
+			.setDescription(`${guildMember.user}\n\n**Action:** Username Change\n**Change:** \`${oldUser.username.replace("`", "\\`")}\` → \`${guildMember.displayName.replace("`", "\\`")}\``)
 			.setTimestamp();
 		send(chan, "", embed);
 	});

@@ -125,12 +125,16 @@ async function createMessageEmbed({
 		map.creator.personaname = (map.creator.personaname.length > 18) ? `${map.creator.personaname.substr(0, 18)}...` : map.creator.personaname;
 		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
 		const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${map.publishedfileid}`;
+
+		// add an ending ] if title includes a starting [ but no end
+		const fixMarkdownLink = (title.includes("[") && !title.includes("]")) ? `${title}]` : title;
+
 		// const base = `**[${title}](${url})**: `;
 		// let fileDescription = `${map.file_description.substr(0, 135 - base.length).replace(/[\r\n]/g, " ").trim()}...`; // eslint-disable-line camelcase
 		// fileDescription = (map.file_description.length + 3 === fileDescription.length) ? map.file_description : fileDescription;
 		// return `${acc}${base}${fileDescription}\n`;
 		const emoji = (acc === "") ? "🖼️" : "🔗";
-		return `${acc}${emoji} **[${title}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${map.creator.personaname}](${map.creator.profileurl}myworkshopfiles/?appid=233610)\n`;
+		return `${acc}${emoji} **[${fixMarkdownLink}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${map.creator.personaname}](${map.creator.profileurl}myworkshopfiles/?appid=233610)\n`;
 	}, "");
 	if (msg.guild.id === "211599888222257152") { // dev
 		msg.guild.name = "Distance";
