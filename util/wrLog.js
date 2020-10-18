@@ -5,6 +5,7 @@ const colors = require("colors");
 const fetch = require("node-fetch");
 const parse = require("parse-duration");
 const Duration = require("duration-js");
+const moment = require("moment");
 const firebase = require("./firebase.js");
 const send = require("./sendMessage.js");
 const url = "http://seekr.pw/distance-log/changelist.json";
@@ -93,6 +94,7 @@ function parseMapData(t) {
 	}
 	return {
 		map: t.map_name,
+		workshopID: t.workshop_item_id,
 		author,
 		authorProfileUrl: `https://steamcommunity.com/profiles/${t.steam_id_author}`,
 		mapUrl: `https://steamcommunity.com/workshop/filedetails/?id=${t.workshop_item_id}`,
@@ -108,10 +110,40 @@ function parseMapData(t) {
 	};
 }
 
-function composeEmbed(d) {
+function composeEmbed(d, json) {
+	let standDuration;
+	if (d.oldTime) {
+		const matches = [];
+		for (let i = json.length - 1; i >= 0; i--) {
+			if (json[i].workshop_item_id !== d.workshopID) {
+				continue;
+			} else if (json[i].workshop_item_id === d.workshopID && matches.length < 2) {
+				matches.push(json[i]);
+				if (matches.length >= 2) {
+					break;
+				}
+			} else {
+				break;
+			}
+		}
+
+		// console.log(matches);
+		if (matches.length > 1) {
+			const tempOldFetchTime = new Date(matches[1].fetch_time);
+			const oldFetchTime = tempOldFetchTime.getTime();
+			const tempNewFetchTime = new Date(matches[0].fetch_time);
+			const newFetchTime = tempNewFetchTime.getTime();
+
+			const d3 = newFetchTime - oldFetchTime;
+			standDuration = moment.duration(d3).humanize({
+				d:36500000
+			});
+		}
+	}
+
 	const embed = new MessageEmbed()
 		.setTitle(d.map)
-		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
+		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`\n${(standDuration)?`Stood for: \`${standDuration}\``:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)
 		.setAuthor("WR Log", "https://images-ext-1.discordapp.net/external/PpvdQjaWNtfE0GpMoI2UjilPY2gIp-KgEKY-WHnbSg8/https/cdn.discordapp.com/emojis/230369859920330752.png", "http://seekr.pw/distance-log/")
 		.addField("Old WR", (d.oldTime) ? `${d.oldTime} by ${(d.oldRecordHolderProfileUrl)?`[${(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}](${d.oldRecordHolderProfileUrl})`:(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}` : "None", true)
@@ -123,8 +155,8 @@ function composeEmbed(d) {
 	return embed;
 }
 
-async function embedSendManager(data, chan) {
-	const embeds = data.map(wr => composeEmbed(wr));
+async function embedSendManager(data, chan, json) {
+	const embeds = data.map(wr => composeEmbed(wr, json));
 	try {
 		// for (const embed of embeds) {
 		// 	await send(chan, "New record!", embed);
@@ -168,7 +200,7 @@ async function wrLog(bot) {
 			console.log(colors.grey(`* Found ${newWRs.length} new WRs, sending messages...`));
 			const mapData = newWRs.map(wr => parseMapData(wr));
 			const chan = bot.guilds.cache.get(guildID).channels.cache.get(channelID);
-			await embedSendManager(mapData, chan);
+			await embedSendManager(mapData, chan, json);
 
 			// console.log("newWRs", JSON.stringify(newWRs, null, 2));
 			const defaultMsg = {
