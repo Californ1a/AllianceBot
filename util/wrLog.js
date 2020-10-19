@@ -117,7 +117,12 @@ function composeEmbed(d, json) {
 		for (let i = json.length - 1; i >= 0; i--) {
 			if (json[i].workshop_item_id !== d.workshopID) {
 				continue;
-			} else if (json[i].workshop_item_id === d.workshopID && matches.length < 2) {
+			} else if (((json[i].workshop_item_id === d.workshopID &&
+				d.mode === json[i].mode) ||
+				(d.author === "[Official Map]" &&
+					d.map === json[i].map_name &&
+					d.mode === json[i].mode)) &&
+				matches.length < 2) {
 				matches.push(json[i]);
 				if (matches.length >= 2) {
 					break;
@@ -143,7 +148,7 @@ function composeEmbed(d, json) {
 
 	const embed = new MessageEmbed()
 		.setTitle(d.map)
-		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`\n${(standDuration)?`Stood for: \`${standDuration}\``:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
+		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`${(standDuration)?`\nStood for: \`${standDuration}\``:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)
 		.setAuthor("WR Log", "https://images-ext-1.discordapp.net/external/PpvdQjaWNtfE0GpMoI2UjilPY2gIp-KgEKY-WHnbSg8/https/cdn.discordapp.com/emojis/230369859920330752.png", "http://seekr.pw/distance-log/")
 		.addField("Old WR", (d.oldTime) ? `${d.oldTime} by ${(d.oldRecordHolderProfileUrl)?`[${(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}](${d.oldRecordHolderProfileUrl})`:(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}` : "None", true)
