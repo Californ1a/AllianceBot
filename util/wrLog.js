@@ -115,11 +115,12 @@ function composeEmbed(d, json) {
 	if (d.oldTime) {
 		const matches = [];
 		for (let i = json.length - 1; i >= 0; i--) {
-			if (json[i].workshop_item_id !== d.workshopID) {
+			if ((d.workshopID && json[i].workshop_item_id !== d.workshopID) ||
+			(!d.workshopID && json[i].map_name !== d.map)) {
 				continue;
 			} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode) ||
-				(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode)) &&
-				matches.length < 2) {
+			(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode)) &&
+			matches.length < 2) {
 				matches.push(json[i]);
 				if (matches.length >= 2) {
 					break;
