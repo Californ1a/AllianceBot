@@ -117,11 +117,8 @@ function composeEmbed(d, json) {
 		for (let i = json.length - 1; i >= 0; i--) {
 			if (json[i].workshop_item_id !== d.workshopID) {
 				continue;
-			} else if (((json[i].workshop_item_id === d.workshopID &&
-				d.mode === json[i].mode) ||
-				(d.author === "[Official Map]" &&
-					d.map === json[i].map_name &&
-					d.mode === json[i].mode)) &&
+			} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode) ||
+				(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode)) &&
 				matches.length < 2) {
 				matches.push(json[i]);
 				if (matches.length >= 2) {
