@@ -116,17 +116,15 @@ function composeEmbed(d, json) {
 		const matches = [];
 		for (let i = json.length - 1; i >= 0; i--) {
 			if ((d.workshopID && json[i].workshop_item_id !== d.workshopID) ||
-			(!d.workshopID && json[i].map_name !== d.map)) {
+			(!d.workshopID && (json[i].map_name !== d.map || json[i].map_author)) || d.mode !== json[i].mode) {
 				continue;
 			} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode) ||
-			(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode)) &&
+			(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode && !json[i].map_author)) &&
 			matches.length < 2) {
 				matches.push(json[i]);
 				if (matches.length >= 2) {
 					break;
 				}
-			} else {
-				break;
 			}
 		}
 
