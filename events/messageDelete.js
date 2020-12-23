@@ -4,6 +4,12 @@ const {
 const send = require("../util/sendMessage.js");
 
 module.exports = (bot, msg) => {
+	if (!msg.guild) {
+		if (msg.author && msg.content) {
+			console.log(`Non-guild message deleted: ${msg.author}: ${msg.content}`);
+		}
+		return;
+	}
 	const conf = bot.servConf.get(msg.guild.id);
 	const tc = conf.twitchchannel;
 	if (tc && conf.twitchgame && msg.channel.id === tc.slice(2, tc.length - 1)) {
