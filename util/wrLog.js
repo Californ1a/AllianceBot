@@ -6,11 +6,12 @@ const fetch = require("node-fetch");
 const parse = require("parse-duration");
 const Duration = require("duration-js");
 const moment = require("moment");
+const { URLSearchParams } = require("url");
 const firebase = require("./firebase.js");
 const send = require("./sendMessage.js");
 const url = "http://seekr.pw/distance-log/changelist.json";
-const guildID = "83078957620002816";
-const channelID = "551229266336022559";
+const guildID = (process.env.NODE_ENV === "dev") ? "211599888222257152" : "83078957620002816";
+const channelID = (process.env.NODE_ENV === "dev") ? "223774050537832449" : "551229266336022559";
 const refreshMin = 5;
 let sending = false;
 
@@ -25,10 +26,14 @@ firebase.db.ref("wrlog").once("value").then(data => {
 function saveToFirebase(wr) {
 	// console.log("[CAL] Save to firebase", wr);
 	if (wr.mostRecentWR) {
-		firebase.db.ref("wrlog").set(wr);
+		if (process.env.NODE_ENV !== "dev") {
+			firebase.db.ref("wrlog").set(wr);
+		}
 		wrMsgs = wr;
 	} else {
-		firebase.db.ref("wrlog/fetchTime").set(wr.fetchTime);
+		if (process.env.NODE_ENV !== "dev") {
+			firebase.db.ref("wrlog/fetchTime").set(wr.fetchTime);
+		}
 		wrMsgs.fetchTime = wr.fetchTime;
 	}
 }
@@ -93,6 +98,7 @@ function parseMapData(t) {
 		newTime = readableTime(newTime.replace(tempRegex, tempRepl));
 	}
 	return {
+		fetchTime: t.fetchTime,
 		map: t.map_name,
 		workshopID: t.workshop_item_id,
 		author,
@@ -125,47 +131,58 @@ function getTimeDiff(a, b) {
 async function getStoodFor(d, json) {
 	let standDuration;
 	let txt;
-	if (d.oldTime) {
-		const matches = [];
-		for (let i = json.length - 1; i >= 0; i--) {
-			if ((d.workshopID && json[i].workshop_item_id !== d.workshopID)
-				|| (!d.workshopID && (json[i].map_name !== d.map || json[i].map_author)) || d.mode !== json[i].mode) {
-				continue;
-			} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode)
-					|| (!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode && !json[i].map_author))
-				&& matches.length < 2) {
-				matches.push(json[i]);
-				if (matches.length >= 2) {
-					break;
+	try {
+		if (d.oldTime) {
+			const matches = [];
+			for (let i = json.length - 1; i >= 0; i--) {
+				if ((d.workshopID && json[i].workshop_item_id !== d.workshopID)
+					|| (!d.workshopID && (json[i].map_name !== d.map || json[i].map_author)) || d.mode !== json[i].mode) {
+					continue;
+				} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode)
+						|| (!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode && !json[i].map_author))
+					&& matches.length < 2) {
+					matches.push(json[i]);
+					if (matches.length >= 2) {
+						break;
+					}
 				}
 			}
-		}
 
-		// console.log(matches);
-		if (matches.length > 1) {
-			txt = "Stood";
-			standDuration = getTimeDiff(matches[1].fetch_time, matches[0].fetch_time);
-		}
-	} else if (!d.oldTime && d.workshopID) {
-		txt = "Unbeaten";
-		const res = await fetch("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", {
-			method: "POST",
-			headers: {
-				"content-type": "multipart/form-data",
-				"cache-control": "no-cache",
-				authorization: `Bearer ${process.env.STEAM_API_TOKEN}`
-			},
-			formData: {
+			// console.log(matches);
+			if (matches.length > 1) {
+				txt = "Stood";
+				standDuration = getTimeDiff(matches[1].fetch_time, matches[0].fetch_time);
+			}
+		} else if (!d.oldTime && d.workshopID) {
+			txt = "Unbeaten";
+			const params = new URLSearchParams({
 				itemcount: "1",
 				"publishedfileids[0]": d.workshopID
-			}
-		});
-		const j = await res.json();
-		standDuration = getTimeDiff(j.time_created, d.fetchTime);
-	}
-	if (standDuration) {
-		return `${txt} for: ${standDuration}`;
-	} else {
+			});
+			const detailsUrl = `https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/?${params}`;
+			console.log(`Fetching map details: ${colors.green(detailsUrl)}`);
+			const res = await fetch(detailsUrl, {
+				method: "POST",
+				body: params,
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+					"Cache-Control": "no-cache",
+					Authorization: `Bearer ${process.env.STEAM_API_TOKEN}`
+				}
+			});
+			const j = await res.json();
+			// console.log("j", j);
+			// console.log("d", d);
+			const createdTime = j.response.publishedfiledetails[0].time_created;
+			standDuration = getTimeDiff(createdTime * 1000, d.fetchTime);
+		}
+		if (standDuration) {
+			return `${txt} for: \`${standDuration}\``;
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.error(error);
 		return null;
 	}
 }
@@ -176,7 +193,7 @@ async function composeEmbed(d, json) {
 
 	const embed = new MessageEmbed()
 		.setTitle(d.map)
-		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`${(stoodFor)?`\n${stoodFor}\``:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
+		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`${(stoodFor)?`\n${stoodFor}`:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)
 		.setAuthor("WR Log", "https://images-ext-1.discordapp.net/external/PpvdQjaWNtfE0GpMoI2UjilPY2gIp-KgEKY-WHnbSg8/https/cdn.discordapp.com/emojis/230369859920330752.png", "http://seekr.pw/distance-log/")
 		.addField("Old WR", (d.oldTime) ? `${d.oldTime} by ${(d.oldRecordHolderProfileUrl)?`[${(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}](${d.oldRecordHolderProfileUrl})`:(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}` : "None", true)
@@ -189,14 +206,16 @@ async function composeEmbed(d, json) {
 }
 
 async function embedSendManager(data, chan, json) {
-	const embeds = data.map(async wr => await composeEmbed(wr, json));
 	try {
-		// for (const embed of embeds) {
+		const embeds = await Promise.all(data.map(async wr => await composeEmbed(wr, json)));
+		// console.log(embeds);
+		// for await (const embed of embeds) {
 		// 	await send(chan, "New record!", embed);
 		// }
+		// console.log("embeds", embeds);
 		return await Promise.all(embeds.map(async (e) => await send(chan, "New record!", e)));
 	} catch (e) {
-		throw Error(e);
+		console.error(e);
 	}
 }
 
@@ -259,7 +278,7 @@ async function wrLog(bot) {
 		return;
 	} catch (e) {
 		sending = false;
-		throw Error(e);
+		console.error(e);
 	}
 }
 
