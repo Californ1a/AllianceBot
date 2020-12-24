@@ -74,7 +74,7 @@ fs.readdir("./commands", (err, files) => {
 });
 
 //Command reload function
-bot.reload = function (command) {
+bot.reload = function(command) {
 	return new Promise((resolve, reject) => {
 		try {
 			delete require.cache[require.resolve(`./commands/${command}`)];
@@ -168,13 +168,16 @@ bot.channels.cache.forEach(c => {
 });
 
 //get the permission level of the member who sent message
-bot.elevation = function (msg) {
+bot.elevation = function(msg) {
 	if (!msg.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
 		}
 		return 1;
 	}
+	// if (msg.author.id === botOwner) {
+	// 	return 4;
+	// }
 	const conf = bot.servConf.get(msg.guild.id);
 	const memberrole = conf.membrole;
 	const moderatorrole = conf.modrole;
@@ -199,7 +202,7 @@ bot.elevation = function (msg) {
 				permlvl = 3;
 			}
 		}
-		if (msg.author.id === msg.guild.owner.id) {
+		if (msg.author.id === msg.guild.ownerID) {
 			permlvl = 3;
 		}
 	}
@@ -232,7 +235,7 @@ io.metric({
 });
 
 //pmx manual throw error button
-io.action("throw err", function (reply) {
+io.action("throw err", function(reply) {
 	const err = new Error("This is an error.");
 	io.notifyError(err);
 	console.error(err);

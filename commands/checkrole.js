@@ -4,8 +4,10 @@ const send = require("../util/sendMessage.js");
 const runCheck = (memb, role, guild) => {
 	const P = memb.user.presence.activities.find(a => a.name === "Distance");
 
-	const hasStream = (P) ? P.streaming : false;
-	const hasDistance = (P) ? (hasStream) ? /Distance/i.test(P.state) : (P.applicationID) ? /Distance/i.test(P.name) : false : false;
+	const regex = /^Distance$/i;
+
+	const hasStream = (P) ? P.type === "STREAMING" : false;
+	const hasDistance = (P) ? (hasStream) ? regex.test(P.state) : (P.applicationID) ? regex.test(P.name) : false : false;
 	const hasRole = memb.roles.cache.has(role.id);
 
 	if (hasDistance && !hasRole) {

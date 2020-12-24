@@ -14,15 +14,17 @@ module.exports = (bot, oldPresence, newPresence) => {
 	const botMember = guild.members.cache.get(bot.user.id);
 	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
 
-		const oldP = (oldPresence && oldPresence.activities) ? oldPresence.activities.find(a => a.name === "Distance") : false;
-		const newP = newPresence.activities.find(a => a.name === "Distance");
+		const regex = /^Distance$/i;
 
-		const oldHasStream = (oldP) ? oldP.streaming : false;
-		const oldHasDistance = (oldP) ? (oldHasStream) ? /Distance/i.test(oldP.state) : (oldP.applicationID) ? /Distance/i.test(oldP.name) : false : false;
+		const oldP = (oldPresence && oldPresence.activities) ? oldPresence.activities.find(a => regex.test(a.name)) : false;
+		const newP = newPresence.activities.find(a => regex.test(a.name));
+
+		const oldHasStream = (oldP) ? oldP.type === "STREAMING" : false;
+		const oldHasDistance = (oldP) ? (oldHasStream) ? regex.test(oldP.state) : (oldP.applicationID) ? regex.test(oldP.name) : false : false;
 		//const oldHasRole = oldMember.roles.cache.has(playRole.id);
 
-		const newHasStream = (newP) ? newP.streaming : false;
-		const newHasDistance = (newP) ? (newHasStream) ? /Distance/i.test(newP.state) : (newP.applicationID) ? /Distance/i.test(newP.name) : false : false;
+		const newHasStream = (newP) ? newP.type === "STREAMING" : false;
+		const newHasDistance = (newP) ? (newHasStream) ? regex.test(newP.state) : (newP.applicationID) ? regex.test(newP.name) : false : false;
 		const newHasRole = member.roles.cache.has(playRole.id);
 
 		if (newHasDistance && !newHasRole) {
