@@ -75,7 +75,8 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 				// console.log("HIT DISCORD 1");
 				m = await chan.messages.fetch(streamIDs[i].msgID); // HIT DISCORD
 			} catch (e) {
-				console.log(colors.green("* Removing from list."));
+				console.log(colors.green("* Couldn't fetch message - Removing from list."));
+				console.error(e);
 			}
 			if (m) {
 				//console.log("def456", m);
@@ -84,6 +85,7 @@ async function removeClosedStreams(streamIDs, closedStreams, chan) {
 					await m.delete(); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`Could not delete msg with id ${m.id} from author ${m.author.username} with id ${m.author.id}`));
+					console.error(e);
 				}
 			}
 			streamIDs.splice(i, 1);
@@ -147,6 +149,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 					await msg.edit("", embed); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`Couldn't edit msg ${msg.id} from author ${msg.author.username} with id ${msg.author.id}`));
+					console.error(e);
 				}
 			} else {
 				const closedStreams = streamIDs.filter(sid => sid.msgID === msgID);
@@ -159,6 +162,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 					m = await send(chan, "", embed); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`B - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
+					console.error(e);
 				}
 				streamIDs.push({
 					streamID: stream.id,
