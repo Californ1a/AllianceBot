@@ -120,7 +120,8 @@ async function createMessageEmbed({
 		return "No data";
 	}
 	data.publishedfiledetails = data.publishedfiledetails.slice(0, 8);
-	const list = data.publishedfiledetails.reduce((acc, map) => {
+	let imgIndex = null;
+	const list = data.publishedfiledetails.reduce((acc, map, i) => {
 		// const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
 		map.creator.personaname = (map.creator.personaname.length > 18) ? `${map.creator.personaname.substr(0, 18)}...` : map.creator.personaname;
 		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
@@ -133,7 +134,14 @@ async function createMessageEmbed({
 		// let fileDescription = `${map.file_description.substr(0, 135 - base.length).replace(/[\r\n]/g, " ").trim()}...`; // eslint-disable-line camelcase
 		// fileDescription = (map.file_description.length + 3 === fileDescription.length) ? map.file_description : fileDescription;
 		// return `${acc}${base}${fileDescription}\n`;
-		const emoji = (acc === "") ? "🖼️" : "🔗";
+		let emoji = "";
+		if (map.preview_url && !imgIndex) {
+			emoji = "🖼️";
+			imgIndex = i + 1;
+		} else {
+			emoji = "🔗";
+		}
+		// const emoji = (acc === "") ? "🖼️" : "🔗";
 		return `${acc}${emoji} **[${fixMarkdownLink}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${map.creator.personaname}](${map.creator.profileurl}myworkshopfiles/?appid=233610)\n`;
 	}, "");
 	if (msg.guild.id === "211599888222257152") { // dev
@@ -141,13 +149,16 @@ async function createMessageEmbed({
 		msg.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
 	console.log(workshopURL);
-	return new MessageEmbed()
-		.setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
+	const embed = new MessageEmbed().setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
-		.setThumbnail(`${data.publishedfiledetails[0].preview_url}?impolicy=Letterbox`)
 		.setFooter(`• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`)
 		.setTimestamp();
+	if (data.publishedfiledetails[imgIndex - 1] && data.publishedfiledetails[imgIndex - 1].preview_url) {
+		embed.setThumbnail(`${data.publishedfiledetails[imgIndex-1].preview_url}?impolicy=Letterbox`);
+	}
+	return embed;
+
 }
 
 exports.run = async (bot, msg, args) => {
