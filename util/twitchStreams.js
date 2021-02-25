@@ -246,6 +246,12 @@ function main(bot, chan, guild, gameName, conf) {
 					}, refreshMin * 60 * 1000);
 				});
 			});
+		})
+		.catch(err => {
+			console.error(`Failed to check twitch streams: ${err}`);
+			conf.streamTimeout = setTimeout(() => {
+				streams(bot, guild);
+			}, refreshMin * 60 * 1000);
 		});
 }
 
