@@ -1,5 +1,5 @@
 const logLocation = require("../config.json").loglocation;
-const fs = require("fs-extra");
+// const fs = require("fs-extra");
 const colors = require("colors");
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 let ampm = "AM";
@@ -32,11 +32,11 @@ function messageDate(message) {
 	const year = d.getFullYear();
 	const thedate = monthNames[monthIndex] + " " + day + ", " + year + " " + hournow + ":" + minutenow + ":" + secondnow + " " + ampm;
 	return {
-		"formattedDate": thedate,
+		formattedDate: thedate,
 		year: "" + year,
-		"month": monthNames[monthIndex],
-		"hour": "" + hournow,
-		"minute": "" + minutenow,
+		month: monthNames[monthIndex],
+		hour: "" + hournow,
+		minute: "" + minutenow,
 		ampm
 	};
 }
@@ -50,8 +50,8 @@ const getMaxRole = function(user) {
 		//user = "Guest";
 		//console.log(user.roles.find("name","@everyone").position);
 		toprole = {
-			"position": 0,
-			"name": "Guest"
+			position: 0,
+			name: "Guest"
 		};
 		if (user.user.bot) {
 			isbot = "{BOT}";
@@ -82,42 +82,42 @@ const getMaxRole = function(user) {
 };
 
 const writeLineToAllLogs = function(bot, guild, line) {
-	const guildChannels = guild.channels.cache.array();
-	const currentDate = new Date();
-	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-	const currentYear = currentDate.getFullYear();
-	const currentMonth = monthNames[currentDate.getMonth()];
-	let i = 0;
-	for (i; i < guildChannels.length; i++) {
-		fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
-			if (error) {
-				console.error(error.stack);
-				return;
-			}
-		});
-	}
-	fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function(error) {
-		if (error) {
-			console.error(error.stack);
-			return;
-		}
-	});
-	for (i; i < guildChannels.length; i++) {
-		if (guildChannels[i].type === "text" && guildChannels[i].permissionsFor(guild.members.cache.get(bot.user.id)).permissions.has(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
-			fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
-				if (error) {
-					console.error(error.stack);
-				}
-			});
-			fs.appendFile(`${logLocation}${guild.name}/full_logs/#${guildChannels[i].name}.log`, `* ${line}\r\n`, function(error) {
-				if (error) {
-					console.error(error.stack);
-				} else {
-					//console.log(colors.white.dim("* " + line));
-				}
-			});
-		}
-	}
+	// const guildChannels = guild.channels.cache.array();
+	// const currentDate = new Date();
+	// const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+	// const currentYear = currentDate.getFullYear();
+	// const currentMonth = monthNames[currentDate.getMonth()];
+	// let i = 0;
+	// for (i; i < guildChannels.length; i++) {
+	// 	fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
+	// 		if (error) {
+	// 			console.error(error.stack);
+	// 			return;
+	// 		}
+	// 	});
+	// }
+	// fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function(error) {
+	// 	if (error) {
+	// 		console.error(error.stack);
+	// 		return;
+	// 	}
+	// });
+	// for (i; i < guildChannels.length; i++) {
+	// 	if (guildChannels[i].type === "GUILD_TEXT" && guildChannels[i].permissionsFor(guild.members.cache.get(bot.user.id)).permissions.has(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
+	// 		fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
+	// 			if (error) {
+	// 				console.error(error.stack);
+	// 			}
+	// 		});
+	// 		fs.appendFile(`${logLocation}${guild.name}/full_logs/#${guildChannels[i].name}.log`, `* ${line}\r\n`, function(error) {
+	// 			if (error) {
+	// 				console.error(error.stack);
+	// 			} else {
+	// 				//console.log(colors.white.dim("* " + line));
+	// 			}
+	// 		});
+	// 	}
+	// }
 	if (line.includes("has come online") || line.includes("went offline")) {
 		return;
 	} else {
@@ -145,18 +145,18 @@ const formatChatlog = function(message) {
 	}
 	const att = [];
 	let formattedAtturls = "";
-	fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
-		if (error) {
-			console.error(error.stack);
-			return;
-		}
-	});
-	fs.mkdirsSync(`${logLocation}${message.guild.name}/full_logs`, function(error) {
-		if (error) {
-			console.error(error.stack);
-			return;
-		}
-	});
+	// fs.mkdirsSync(`${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}`, function(error) {
+	// 	if (error) {
+	// 		console.error(error.stack);
+	// 		return;
+	// 	}
+	// });
+	// fs.mkdirsSync(`${logLocation}${message.guild.name}/full_logs`, function(error) {
+	// 	if (error) {
+	// 		console.error(error.stack);
+	// 		return;
+	// 	}
+	// });
 	if (!member) {
 		chatlinedata += `${author.username}: ${messageContent} `;
 		consoleChat += `${author.username}: ${messageContent} `;
@@ -178,11 +178,11 @@ const formatChatlog = function(message) {
 	return {
 		//user,
 		messageTime,
-		"currentLog": chatlog,
+		currentLog: chatlog,
 		fullLog,
 		chatlinedata,
 		consoleChat,
-		"atturls": att,
+		atturls: att,
 		formattedAtturls
 	};
 };
