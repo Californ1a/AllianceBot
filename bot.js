@@ -10,7 +10,10 @@ const io = require("@pm2/io").init({
 //require("opbeat").start();
 const connection = require("./util/connection.js");
 const Discord = require("discord.js");
-const bot = new Discord.Client({ intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_PRESENCES", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
+const bot = new Discord.Client({
+	intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_PRESENCES", "GUILD_MESSAGES", "DIRECT_MESSAGES"],
+	partials: ["CHANNEL"]
+});
 bot.reminders = new Discord.Collection();
 const botOwner = require("./config.json").ownerid;
 const token = process.env.DISCORD_TOKEN;
