@@ -18,10 +18,12 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
 	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
 	bot.on("messageCreate", (msg) => reqEvent("message")(bot, meter, msg));
-	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
-	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
-	stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));
-	stream.on("connected", (response) => reqEvent("tweetConnected")(bot, response));
-	stream.on("reconnect", (request, response, connectInterval) => reqEvent("tweetReconnect")(bot, request, response, connectInterval));
-	stream.on("error", (error) => reqEvent("tweetError")(bot, error));
+	if (stream) { // if NODE_ENV !== "dev"
+		stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
+		stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
+		stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));
+		stream.on("connected", (response) => reqEvent("tweetConnected")(bot, response));
+		stream.on("reconnect", (request, response, connectInterval) => reqEvent("tweetReconnect")(bot, request, response, connectInterval));
+		stream.on("error", (error) => reqEvent("tweetError")(bot, error));
+	}
 };

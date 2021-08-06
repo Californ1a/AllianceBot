@@ -28,10 +28,13 @@ const twitconfig = {
 	access_token: process.env.TWITTER_ACCESS_TOKEN, // eslint-disable-line camelcase
 	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET // eslint-disable-line camelcase
 };
-const T = new Twit(twitconfig);
-const stream = T.stream("statuses/filter", {
-	follow: ["628034104", "241371699"]
-});
+let T, stream;
+if (process.env.NODE_ENV !== "dev") {
+	T = new Twit(twitconfig);
+	stream = T.stream("statuses/filter", {
+		follow: ["628034104", "241371699"]
+	});
+}
 const meter = io.meter({
 	name: "msg/min",
 	samples: 60
