@@ -32,7 +32,8 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 				return;
 			}
 			m.react("⏰").then(() => {
-				const collector = m.createReactionCollector(reaction => reaction.emoji.name === "⏰", {
+				const collector = m.createReactionCollector({
+					filter: reaction => reaction.emoji.name === "⏰",
 					time: timeout * 60 * 1000
 				});
 				collector.on("end", () => {

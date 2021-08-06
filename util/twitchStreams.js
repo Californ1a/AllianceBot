@@ -16,9 +16,9 @@ const {
 	MessageEmbed
 } = require("discord.js");
 
-const clientId = process.env.TWITCH_CLIENT_ID;
+const clientID = process.env.TWITCH_CLIENT_ID;
 const clientSecret = process.env.TWITCH_CLIENT_SECRET;
-const client = TwitchClient.withClientCredentials(clientId, clientSecret);
+const client = TwitchClient.withClientCredentials(clientID, clientSecret);
 
 async function getGameID(name) {
 	const game = await client.helix.games.getGameByName(name);

@@ -205,7 +205,7 @@ bot.elevation = function(msg) {
 				permlvl = 3;
 			}
 		}
-		if (msg.author.id === msg.guild.ownerID) {
+		if (msg.author.id === msg.guild.owner.id) {
 			permlvl = 3;
 		}
 	}

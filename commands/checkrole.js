@@ -7,7 +7,7 @@ const runCheck = (memb, role, guild) => {
 	const regex = /^Distance$/i;
 
 	const hasStream = (P) ? P.type === "STREAMING" : false;
-	const hasDistance = (P) ? (hasStream) ? regex.test(P.state) : (P.applicationID) ? regex.test(P.name) : false : false;
+	const hasDistance = (P) ? (hasStream) ? regex.test(P.state) : (P.application.id) ? regex.test(P.name) : false : false;
 	const hasRole = memb.roles.cache.has(role.id);
 
 	if (hasDistance && !hasRole) {
