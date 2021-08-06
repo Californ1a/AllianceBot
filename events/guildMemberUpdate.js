@@ -28,5 +28,5 @@ module.exports = (bot, oldMember, newMember) => {
 		.setAuthor(`${newMember.user.tag} (${newMember.user.id})`, newMember.user.displayAvatarURL())
 		.setDescription(`${newMember.user}\n\n**Action:** Nickname Change\n**Change:** \`${oldMember.displayName.replace("`", "\\`")}\` → \`${newMember.displayName.replace("`", "\\`")}\``)
 		.setTimestamp();
-	send(chan, "", embed);
+	send(chan, { content: "\u200b", embeds: [embed] });
 };

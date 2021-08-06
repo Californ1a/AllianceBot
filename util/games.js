@@ -106,12 +106,13 @@ const getChanges = (channel, startingScores, topMessage, limit) => {
 				inline: true
 			};
 		}
-		send(channel, topMessage, {
-			embed: {
+		send(channel, {
+			content: topMessage,
+			embeds: [{
 				color: 3447003,
 				title: `__**Top ${fieldsArray.length} Scoreboard**__`,
 				fields: fieldsArray
-			}
+			}]
 		}).catch(e => console.error(e.stack));
 	}).catch(e => console.error(e.stack));
 };
@@ -148,12 +149,13 @@ const getLB = (channel, topMessage, limit) => {
 				inline: true
 			};
 		}
-		send(channel, topMessage, {
-			embed: {
+		send(channel, {
+			content: topMessage,
+			embeds: [{
 				color: 3447003,
 				title: `__**Top ${fieldsArray.length} Scoreboard**__`,
 				fields: fieldsArray
-			}
+			}]
 		}).catch(e => console.error(e.stack));
 	}).catch(e => console.error(e.stack));
 };

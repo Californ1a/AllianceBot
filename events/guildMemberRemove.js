@@ -30,7 +30,7 @@ module.exports = (bot, member) => {
 				.setAuthor(`${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`, member.user.displayAvatarURL())
 				.setDescription(`${member.user}\n\n**Action:** Kick\n**Executor:** ${entry.executor}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`)
 				.setTimestamp();
-			return send(chan, "", embed);
+			return send(chan, { content: "\u200b", embeds: [embed] });
 		} else {
 			member.guild.fetchAuditLogs({
 				type: "MEMBER_BAN_ADD",
@@ -51,7 +51,7 @@ module.exports = (bot, member) => {
 					.setDescription(member.user)
 					.setFooter(`User left - ${(member.joinedTimestamp) ? `Joined ${joinDuration} ago` : "Unknown join date"}`)
 					.setTimestamp();
-				return send(chan, "", embed);
+				return send(chan, { content: "\u200b", embeds: [embed] });
 			}).catch(console.error);
 		}
 	}).catch(console.error);

@@ -17,7 +17,7 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildBanAdd", (guild, user) => reqEvent("guildBanAdd")(bot, guild, user));
 	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
 	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
-	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
+	bot.on("messageCreate", (msg) => reqEvent("message")(bot, meter, msg));
 	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
 	stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));

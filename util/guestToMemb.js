@@ -3,7 +3,7 @@ const membrolename = require("../config.json").membrolename;
 const connection = require("./connection.js");
 let checked;
 
-const guestToMemb = function (bot, msg) {
+const guestToMemb = function(bot, msg) {
 	if (checked && checked[msg.guild.id] && checked[msg.guild.id][msg.author.id]) {
 		return;
 	}
@@ -32,7 +32,7 @@ const guestToMemb = function (bot, msg) {
 		if (botMemb.roles.highest.name === "@everyone") {
 			return console.log(colors.red("Bot cannot assign (Bot is guest)."));
 		}
-		if (botMemb.hasPermission("MANAGE_ROLES")) {
+		if (botMemb.permissions.has("MANAGE_ROLES")) {
 			if (botMemb.roles.highest.position <= msg.member.roles.highest.position) {
 				botcanassign = false;
 			} else if (botMemb.roles.highest.position - 1 === msg.member.roles.highest.position) {

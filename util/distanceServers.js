@@ -62,9 +62,7 @@ const updateEmbed = (bot, servers) => {
 		limit: 20
 	}).then(messages => {
 		if (messages.size === 0) {
-			send(channel, "Distance Server List", {
-				embed: serversEmbed
-			}).catch(console.error);
+			send(channel, { content: "Distance Server List", embeds: [serversEmbed] }).catch(console.error);
 			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
@@ -73,9 +71,7 @@ const updateEmbed = (bot, servers) => {
 				mm.clear().catch(console.error);
 			}
 			if (bm.size > 0) {
-				bm.first().edit("Distance Server List", {
-					embed: serversEmbed
-				}).then(() => {
+				bm.first().edit({ content: "Distance Server List", embeds: [serversEmbed] }).then(() => {
 					count++;
 					if (Date.now() - d >= logTimeMin * 60 * 1000) {
 						console.log(colors.grey(`* Updated Distance server list ${count} times in the past ${logTimeMin} minutes.`));
@@ -85,9 +81,7 @@ const updateEmbed = (bot, servers) => {
 					refreshMin2 = refreshMin;
 				}).catch(console.error);
 			} else {
-				send(channel, "Distance Server List", {
-					embed: serversEmbed
-				}).catch(console.error);
+				send(channel, { content: "Distance Server List", embeds: [serversEmbed] }).catch(console.error);
 				refreshMin2 = refreshMin;
 			}
 		}

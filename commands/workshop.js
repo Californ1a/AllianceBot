@@ -197,7 +197,7 @@ exports.run = async (bot, msg, args) => {
 		if (embed === "No data") {
 			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
-			await m.edit("", embed);
+			await m.edit({ content: "\u200b", embeds: [embed] });
 		}
 	} catch (e) {
 		console.error(e);

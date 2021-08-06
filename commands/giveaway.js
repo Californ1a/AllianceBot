@@ -67,12 +67,13 @@ const getCurrentEntrants = (channel, topMessage) => {
 							inline: true
 						};
 					}
-					resolve(send(channel, topMessage, {
-						embed: {
+					resolve(send(channel, {
+						content: topMessage,
+						embeds: [{
 							color: 3447003,
 							title: "__**Giveaway Entrants**__",
 							fields: fieldsArray
-						}
+						}]
 					}).catch(e => reject(e)));
 				}).catch(e => {
 					reject(e);

@@ -12,7 +12,7 @@ exports.run = (bot, msg, args) => {
 	const pre = conf.prefix;
 	const msgMember = msg.member;
 	const botMember = msg.guild.members.cache.get(bot.user.id);
-	if (!msgMember.hasPermission("MANAGE_ROLES")) {
+	if (!msgMember.permissions.has("MANAGE_ROLES")) {
 		return;
 	}
 	const toRole = (conf.timeoutrole) ? msg.guild.roles.cache.find(val => val.name === conf.timeoutrole) : msg.guild.roles.cache.find(val => val.name === "Timeout");

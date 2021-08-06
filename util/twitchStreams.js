@@ -127,7 +127,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 		}
 		if (streamIDs.filter(s => s.streamID === stream.id).length === 0) {
 			// console.log("HIT DISCORD 3");
-			const m = await send(chan, "", embed); // HIT DISCORD
+			const m = await send(chan, { content: "\u200b", embeds: [embed] }); // HIT DISCORD
 			streamIDs.push({
 				streamID: stream.id,
 				msgID: m.id
@@ -147,7 +147,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			if (msg) {
 				try {
 					// console.log("HIT DISCORD 5");
-					await msg.edit("", embed); // HIT DISCORD
+					await msg.edit({ content: "\u200b", embeds: [embed] }); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`Couldn't edit msg ${msg.id} from author ${msg.author.username} with id ${msg.author.id}`));
 					console.error(e);
@@ -160,7 +160,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 				let m;
 				try {
 					// console.log("HIT DISCORD 6");
-					m = await send(chan, "", embed); // HIT DISCORD
+					m = await send(chan, { content: "\u200b", embeds: [embed] }); // HIT DISCORD
 				} catch (e) {
 					console.log(colors.red(`B - Couldn't send msg to channel ${chan.name} with id ${chan.id} on guild ${chan.guild.name} with id ${chan.guild.id}`));
 					console.error(e);

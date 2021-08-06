@@ -21,7 +21,7 @@ function sendLogChannelMessage(bot, member) {
 		.setColor("#f4bf42")
 		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
 		.setFooter("Timeout ended");
-	send(chan, "", embed);
+	send(chan, { content: "\u200b", embeds: [embed] });
 }
 
 function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {

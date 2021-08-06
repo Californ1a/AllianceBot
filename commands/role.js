@@ -7,7 +7,7 @@ exports.run = (bot, msg, args) => {
 	const pre = bot.servConf.get(msg.guild.id).prefix;
 	const msgMember = msg.member;
 	const botMember = msg.guild.members.cache.get(bot.user.id);
-	if (msgMember.hasPermission("MANAGE_ROLES")) {
+	if (msgMember.permissions.has("MANAGE_ROLES")) {
 		if (!(args.length >= 3) || !msg.mentions.users.first()) {
 			return send(msg.channel, `Incorrect syntax. Use \`${pre}help role\` for syntax.`);
 		}

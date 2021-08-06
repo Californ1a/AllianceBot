@@ -12,7 +12,7 @@ module.exports = (bot, oldPresence, newPresence) => {
 	}
 
 	const botMember = guild.members.cache.get(bot.user.id);
-	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+	if ((botMember.permissions.has("MANAGE_ROLES") || botMember.permissions.has(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
 
 		const regex = /^Distance$/i;
 

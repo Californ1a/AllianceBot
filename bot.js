@@ -10,7 +10,7 @@ const io = require("@pm2/io").init({
 //require("opbeat").start();
 const connection = require("./util/connection.js");
 const Discord = require("discord.js");
-const bot = new Discord.Client();
+const bot = new Discord.Client({ intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_PRESENCES", "GUILD_MESSAGES", "DIRECT_MESSAGES"] });
 bot.reminders = new Discord.Collection();
 const botOwner = require("./config.json").ownerid;
 const token = process.env.DISCORD_TOKEN;
@@ -212,15 +212,17 @@ bot.elevation = function(msg) {
 	return permlvl;
 };
 
-//pm2 keymetrics meter for online suer count
+//pm2 keymetrics meter for online user count
 io.metric({
 	name: "Online Users",
 	value: () => {
 		let total = 0;
-		bot.users.cache.forEach(u => {
-			if (!u.bot && u.presence.status.match(/^(online|idle|dnd)$/)) {
-				total += 1;
-			}
+		bot.guilds.cache.forEach(g => {
+			g.members.cache.forEach(m => {
+				if (!m.bot && m.presence?.status.match(/^(online|idle|dnd)$/)) {
+					total += 1;
+				}
+			});
 		});
 		return total;
 	}

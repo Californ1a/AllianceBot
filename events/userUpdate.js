@@ -30,6 +30,6 @@ module.exports = (bot, oldUser, newUser) => {
 			.setAuthor(`${guildMember.user.tag} (${guildMember.user.id})`, guildMember.user.displayAvatarURL())
 			.setDescription(`${guildMember.user}\n\n**Action:** Username Change\n**Change:** \`${oldUser.username.replace("`", "\\`")}\` → \`${guildMember.displayName.replace("`", "\\`")}\``)
 			.setTimestamp();
-		send(chan, "", embed);
+		send(chan, { content: "\u200b", embeds: [embed] });
 	});
 };

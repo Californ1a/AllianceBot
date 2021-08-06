@@ -41,13 +41,13 @@ const randomNickChange = function(bot) {
 
 module.exports = (bot) => {
 	console.log(colors.red(`Bot online and ready on ${bot.guilds.cache.size} ${(bot.guilds.cache.size >= 2) ? "servers" : "server"}.`));
-	bot.user.setStatus("online").catch(e => console.error(e.stack));
 	bot.user.setPresence({
-		activity: {
+		status: "online",
+		activities: [{
 			name: `Distance | ${pre}help`,
 			type: 0
-		}
-	}).catch(e => console.error(e.stack));
+		}]
+	});
 	if (bot.guilds.cache.get("83078957620002816")) {
 		randomNickChange(bot);
 		distanceServers(bot);

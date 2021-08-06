@@ -37,7 +37,7 @@ module.exports = (bot, msgs) => {
 				.setAuthor(bot.user.tag, bot.user.displayAvatarURL())
 				.setDescription(mainMsg)
 				.setTimestamp();
-			send(chan, "", embed);
+			send(chan, { content: "\u200b", embeds: [embed] });
 			mainMsg = "";
 		}
 	}

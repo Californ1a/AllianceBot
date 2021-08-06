@@ -213,7 +213,7 @@ async function embedSendManager(data, chan, json) {
 		// 	await send(chan, "New record!", embed);
 		// }
 		// console.log("embeds", embeds);
-		return await Promise.all(embeds.map(async (e) => await send(chan, "New record!", e)));
+		return await Promise.all(embeds.map(async (e) => await send(chan, { content: "New record!", embeds: [e] })));
 	} catch (e) {
 		console.error(e);
 	}

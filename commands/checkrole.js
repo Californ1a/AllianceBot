@@ -24,7 +24,7 @@ exports.run = (bot, msg, args, perm) => {
 	const guild = member.guild;
 	if (guild.id === "83078957620002816") {
 		const botMember = guild.members.cache.get(bot.user.id);
-		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+		if ((botMember.permissions.has("MANAGE_ROLES") || botMember.permissions.has(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
 			const playRole = guild.roles.cache.find(val => val.name === "Playing Distance");
 			if (!playRole) {
 				return;

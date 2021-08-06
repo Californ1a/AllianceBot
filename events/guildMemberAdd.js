@@ -33,5 +33,5 @@ module.exports = (bot, member) => {
 		.setDescription(member.user)
 		.setFooter("User joined")
 		.setTimestamp();
-	send(chan, "", embed);
+	send(chan, { content: "\u200b", embeds: [embed] });
 };

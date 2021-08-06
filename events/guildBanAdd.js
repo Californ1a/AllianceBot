@@ -34,7 +34,7 @@ module.exports = (bot, guild, user) => {
 				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.displayAvatarURL())
 				.setDescription(`${entry.target}\n\n**Action:** Ban\n**Executor:** ${entry.executor}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`)
 				.setTimestamp();
-			send(chan, "", embed);
+			send(chan, { content: "\u200b", embeds: [embed] });
 		}
 	}).catch(console.error);
 };

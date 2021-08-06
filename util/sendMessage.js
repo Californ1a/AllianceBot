@@ -18,26 +18,11 @@ const send = (chan, msg, options) => {
 
 module.exports = (chan, msg, options) => {
 	return new Promise((resolve, reject) => {
-		if (chan.content) {
-			if (chan.guild) {
-				send(chan.channel, msg, options).then(m => {
-					resolve(m);
-				}).catch(e => {
-					reject(e);
-				});
-			} else {
-				send(chan.author, msg, options).then(m => {
-					resolve(m);
-				}).catch(e => {
-					reject(e);
-				});
-			}
-		} else {
-			send(chan, msg, options).then(m => {
-				resolve(m);
-			}).catch(e => {
-				reject(e);
-			});
-		}
+		const type = (chan.content) ? (chan.guild) ? chan.channel : chan.author : chan;
+		send(type, msg, options).then(m => {
+			resolve(m);
+		}).catch(e => {
+			reject(e);
+		});
 	});
 };

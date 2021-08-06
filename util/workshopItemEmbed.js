@@ -155,7 +155,7 @@ module.exports = (bot, msg) => {
 						const profile = res.profileurl;
 						const avatar = res.avatar;
 						embed.setAuthor(name, avatar, profile);
-						m.edit(`A new map posted by ${msg.author}`, embed).then(() => {
+						m.edit({ content: `A new map posted by ${msg.author}`, embeds: [embed] }).then(() => {
 							msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 						}).catch(console.error);
 					}

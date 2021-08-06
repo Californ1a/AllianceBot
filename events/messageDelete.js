@@ -36,5 +36,5 @@ module.exports = (bot, msg) => {
 		.setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.displayAvatarURL())
 		.setDescription(`${msg.author}\n\n**Action:** Message Deleted\n**Channel:** ${msg.channel}\n**Content:**${line}`)
 		.setTimestamp();
-	send(chan, "", embed);
+	send(chan, { content: "\u200b", embeds: [embed] });
 };
