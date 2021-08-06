@@ -4,7 +4,7 @@ const colors = require("colors");
 const escape = require("../util/escapeChars.js");
 const workshopItemEmbed = require("../util/workshopItemEmbed.js");
 const cl = require("../util/chatinfo.js");
-const fs = require("fs-extra");
+// const fs = require("fs-extra");
 const guestToMemb = require("../util/guestToMemb.js").guestToMemb;
 const parseFlags = require("../util/parseFlags.js");
 const customQuotes = require("../util/customQuotes.js").ripWin;
@@ -36,25 +36,21 @@ module.exports = (bot, meter, msg) => {
 		}
 		return;
 	}
+
+	if (msg.type.match(/^(thread_starter_message|thread_created)$/i)) {
+		// thread created
+		console.log(colors.grey(`* New thread #${msg.channel.name} created in #${msg.channel.parent.name} on guild ${msg.guild.name}`));
+		return;
+	} else if (!msg.type.match(/^(default|reply)$/i)) {
+		return;
+	}
+
 	const conf = bot.servConf.get(msg.guild.id);
 	pre = conf.prefix;
 	const membrole = conf.membrole;
 	const cha = cl.formatChatlog(msg);
 	meter.mark();
-	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
-		if (error) {
-			console.log(msg.content);
-			console.error(error.stack);
-		} else {
-			console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
-		}
-	});
-	fs.appendFile(cha.fullLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
-		if (error) {
-			console.log(msg.content);
-			console.error(error.stack);
-		}
-	});
+	console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 	if (membrole && (msg.guild.members.cache.get(msg.author.id) && !msg.guild.members.cache.get(msg.author.id).roles.cache.some(val => val.name === membrole))) {
 		guestToMemb(bot, msg);
 	}
