@@ -164,9 +164,9 @@ bot.channels.cache.forEach(c => {
 	if (c.locked && c.timeoutRoles) {
 		const roles = c.timeoutRoles;
 		for (const r of roles) {
-			c.updateOverwrite(r, {
+			c.permissionOverwrites.edit(r, {
 				"SEND_MESSAGES": null
-			}, "Revert channel lockdown").catch(console.error);
+			}, { reason: "Revert channel lockdown" }).catch(console.error);
 		}
 		c.locked = false;
 		c.timeoutRoles = [];

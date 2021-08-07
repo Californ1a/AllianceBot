@@ -6,17 +6,17 @@ const send = require("../util/sendMessage.js");
 
 const lockIt = (msg, roles) => {
 	for (const r of roles) {
-		msg.channel.createOverwrite(r, {
+		msg.channel.permissionOverwrites.create(r, {
 			"SEND_MESSAGES": false
-		}, "Channel lockdown").catch(console.error);
+		}, { reason: "Channel lockdown" }).catch(console.error);
 	}
 };
 
 const unlockIt = (bot, msg, roles) => {
 	for (const r of roles) {
-		msg.channel.updateOverwrite(r, {
+		msg.channel.permissionOverwrites.update(r, {
 			"SEND_MESSAGES": null
-		}, "Revert channel lockdown").catch(console.error);
+		}, { reason: "Revert channel lockdown" }).catch(console.error);
 	}
 	msg.channel.locked = false;
 	msg.channel.timeoutRoles = [];
