@@ -22,7 +22,7 @@ function doAll(flags, msg) {
 		const types = [];
 		const newVals = [];
 		for (const key in flags) {
-			if (flags.hasOwnProperty(key)) {
+			if (Object.prototype.hasOwnProperty.call(flags, key)) {
 				newVals.push(flags[key]);
 				types.push(key);
 				update(flags[key], key, msg).catch(e => {
