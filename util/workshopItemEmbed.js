@@ -158,7 +158,8 @@ module.exports = async (bot, msg) => {
 				});
 			}
 		}).catch(err => {
-			m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.").then(m => m.delete(botmsgDeleteTimeout)).catch(console.error);
+			m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.")
+				.then(m => setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout)).catch(console.error);
 			msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			console.error(err);
 		});
