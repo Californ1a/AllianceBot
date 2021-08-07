@@ -174,7 +174,7 @@ bot.channels.cache.forEach(c => {
 });
 
 //get the permission level of the member who sent message
-bot.elevation = function(msg) {
+bot.elevation = async function(msg) {
 	if (!msg.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
@@ -208,7 +208,8 @@ bot.elevation = function(msg) {
 				permlvl = 3;
 			}
 		}
-		if (msg.author.id === msg.guild.owner.id) {
+		const owner = await msg.guild.fetchOwner();
+		if (msg.author.id === owner.id) {
 			permlvl = 3;
 		}
 	}

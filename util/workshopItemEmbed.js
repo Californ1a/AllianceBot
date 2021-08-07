@@ -47,14 +47,14 @@ const req = (opts) => {
 	});
 };
 
-module.exports = (bot, msg) => {
+module.exports = async (bot, msg) => {
 	if (msg.author.id === bot.user.id) {
 		return;
 	}
 	const reg = /^<?https?:\/\/(www\.)?steamcommunity\.com\/(sharedfiles|workshop)\/filedetails\/\?id=(\d{9,10})(&searchtext=\S*)?>?$/;
 	// console.log(!reg.exec(msg.content.trim()));
 	if (!reg.test(msg.content.trim())) {
-		const perms = bot.elevation(msg);
+		const perms = await bot.elevation(msg);
 		if (perms >= 2) {
 			return;
 		}

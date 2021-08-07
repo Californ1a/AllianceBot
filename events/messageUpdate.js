@@ -3,7 +3,7 @@ require("colors");
 const cl = require("../util/chatinfo.js");
 const jsdiff = require("diff");
 
-module.exports = (bot, oldMessage, newMessage) => {
+module.exports = async (bot, oldMessage, newMessage) => {
 	if (bot.user === oldMessage.author || bot.user === newMessage.author) {
 		return;
 	}
@@ -11,8 +11,8 @@ module.exports = (bot, oldMessage, newMessage) => {
 		return;
 	}
 
-	const newc = cl.formatChatlog(newMessage);
-	const oldc = cl.formatChatlog(oldMessage);
+	const newc = await cl.formatChatlog(newMessage);
+	const oldc = await cl.formatChatlog(oldMessage);
 
 	fs.readFile(oldc.currentLog, function(e, data) {
 		if (e) {

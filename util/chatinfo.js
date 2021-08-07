@@ -82,7 +82,7 @@ const getMaxRole = function(user) {
 };
 
 const writeLineToAllLogs = function(bot, guild, line) {
-	// const guildChannels = guild.channels.cache.array();
+	// const guildChannels = [...guild.channels.cache.values()];
 	// const currentDate = new Date();
 	// const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 	// const currentYear = currentDate.getFullYear();
@@ -125,7 +125,7 @@ const writeLineToAllLogs = function(bot, guild, line) {
 	}
 };
 
-const formatChatlog = function(message) {
+const formatChatlog = async function(message) {
 	const messageTime = messageDate(message);
 	const messageContent = message.cleanContent.replace(/<(:[\w]+:)[\d]+>/g, "$1").replace(/(\r\n|\n|\r)/gm, " ");
 	const member = message.member;
@@ -136,12 +136,13 @@ const formatChatlog = function(message) {
 	const fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
 	let chatlinedata;
 	let consoleChat;
+	const owner = await message.guild.fetchOwner();
 	if (!member) {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(Guest)`;
-		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === message.guild.owner.id)?"Owner":"Guest"})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === owner.id)?"Owner":"Guest"})`;
 	} else {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.roles.highest.name === "@everyone")?"Guest":member.roles.highest.name})`;
-		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.roles.highest.name === "@everyone")?((member.id === message.guild.owner.id)?"Owner":"Guest"):member.roles.highest.name})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.roles.highest.name === "@everyone")?((member.id === owner.id)?"Owner":"Guest"):member.roles.highest.name})`;
 	}
 	const att = [];
 	let formattedAtturls = "";
@@ -165,7 +166,7 @@ const formatChatlog = function(message) {
 		consoleChat += `${member.displayName}: ${messageContent} `;
 	}
 	if (message.attachments.size > 0) {
-		const attc = message.attachments.array();
+		const attc = [...message.attachments.values()];
 		let i = 0;
 		for (i; i < attc.length; i++) {
 			att.push(attc[i].url);
