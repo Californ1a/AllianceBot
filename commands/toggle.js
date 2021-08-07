@@ -14,12 +14,12 @@ exports.run = (bot, msg, args) => {
 	if (!command && args[0] !== "automemb") {
 		return send(msg.channel, `I cannot find the command: ${args[0]}`);
 	}
-	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='${command}'`).then(response => {
+	connection.select("commandname", "commands", `server_id=${msg.channel.guild.id} AND commandname='${command}'`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red(`Trying to insert command '${command}' into database.`));
 			const info = {
 				"commandname": command,
-				"server_id": msg.guild.id
+				"server_id": msg.channel.guild.id
 			};
 			connection.insert("commands", info).then(() => {
 				console.log(colors.red("Successfully added command to server."));
@@ -31,7 +31,7 @@ exports.run = (bot, msg, args) => {
 			});
 		} else {
 			console.log(colors.red(`Trying to remove command '${command}' from database.`));
-			connection.del("commands", `commandname='${command}' AND server_id=${msg.guild.id}`).then(() => {
+			connection.del("commands", `commandname='${command}' AND server_id=${msg.channel.guild.id}`).then(() => {
 				console.log(colors.red("Successfully removed command from server."));
 				send(msg.channel, "Successfully removed command from server.");
 			}).catch(e => {

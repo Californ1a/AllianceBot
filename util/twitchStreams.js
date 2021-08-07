@@ -116,7 +116,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			.setTimestamp(d)
 			.setFooter("Started at", "https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png")
 			.setURL(`https://twitch.tv/${user.name}`)
-			.addField("Viewers", stream.viewers, true)
+			.addField("Viewers", stream.viewers.toString(), true)
 			.addField("Uptime", uptime, true)
 			.addField("URL", `[ttv/${user.name}](https://twitch.tv/${user.name})`, true);
 		const img = `${stream.thumbnailUrl.replace("{width}", "880").replace("{height}", "496")}?${Date.now()}`;

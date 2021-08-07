@@ -4,13 +4,13 @@ const {
 const send = require("../util/sendMessage.js");
 
 module.exports = (bot, msg) => {
-	if (!msg.guild) {
+	if (!msg.channel.guild) {
 		if (msg.author && msg.content) {
 			console.log(`Non-guild message deleted: ${msg.author}: ${msg.content}`);
 		}
 		return;
 	}
-	const conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.channel.guild.id);
 	const tc = conf.twitchchannel;
 	if (tc && conf.twitchgame && msg.channel.id === tc.slice(2, tc.length - 1)) {
 		return;
@@ -24,7 +24,7 @@ module.exports = (bot, msg) => {
 		return;
 	}
 	const logchanid = logchan.slice(2, logchan.length - 1);
-	const chan = msg.guild.channels.cache.get(logchanid);
+	const chan = msg.channel.guild.channels.cache.get(logchanid);
 	if (!chan) {
 		return;
 	}

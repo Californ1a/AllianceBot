@@ -9,7 +9,7 @@ exports.run = (bot, msg, args, perm) => {
 	let eventName;
 	let eventDate;
 	let i = 0;
-	connection.select("*", "advent", `server_id=${msg.guild.id}`).then(response => {
+	connection.select("*", "advent", `server_id=${msg.channel.guild.id}`).then(response => {
 		if (!response[0] && !args[0]) {
 			send(msg.channel, "No event set.");
 		} else if (args[0] === "set" && perm >= 2) {
@@ -29,7 +29,7 @@ exports.run = (bot, msg, args, perm) => {
 					const info = {
 						"name": eventName,
 						"time": eventDate,
-						"server_id": msg.guild.id
+						"server_id": msg.channel.guild.id
 					};
 					connection.insert("advent", info).then(() => {
 						console.log(colors.red("Successfully inserted event."));
@@ -52,7 +52,7 @@ exports.run = (bot, msg, args, perm) => {
 			}
 		} else if (args[0] === "del" && perm >= 2) {
 			console.log(colors.red("Attempting to remove event from the database."));
-			connection.del("advent", `server_id=${msg.guild.id}`).then(() => {
+			connection.del("advent", `server_id=${msg.channel.guild.id}`).then(() => {
 				console.log(colors.red("Successfully removed event."));
 				send(msg.channel, "Event removed.");
 			}).catch(e => {
@@ -70,7 +70,7 @@ exports.run = (bot, msg, args, perm) => {
 			const currentstream = timers.getCount(false, startMessage, forSS);
 			send(msg.channel, `${currentstream}`);
 		} else if (response[0]) {
-			const pre = bot.servConf.get(msg.guild.id).prefix;
+			const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 			send(msg.channel, `There is already an event set. Use \`${pre}advent\` to view it.`);
 		} else {
 			console.log("Something happened.");

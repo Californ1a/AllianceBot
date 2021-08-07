@@ -175,7 +175,7 @@ bot.channels.cache.forEach(c => {
 
 //get the permission level of the member who sent message
 bot.elevation = async function(msg) {
-	if (!msg.guild) {
+	if (!msg.channel.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
 		}
@@ -184,31 +184,31 @@ bot.elevation = async function(msg) {
 	// if (msg.author.id === botOwner) {
 	// 	return 4;
 	// }
-	const conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.channel.guild.id);
 	const memberrole = conf.membrole;
 	const moderatorrole = conf.modrole;
 	const administratorrole = conf.adminrole;
 	let permlvl = 0;
-	if (msg.guild && msg.member) {
+	if (msg.channel.guild && msg.member) {
 		if (memberrole) {
-			const membRole = msg.guild.roles.cache.find(val => val.name === memberrole);
+			const membRole = msg.channel.guild.roles.cache.find(val => val.name === memberrole);
 			if (membRole && msg.member.roles.cache.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
 		if (moderatorrole) {
-			const modRole = msg.guild.roles.cache.find(val => val.name === moderatorrole);
+			const modRole = msg.channel.guild.roles.cache.find(val => val.name === moderatorrole);
 			if (modRole && msg.member.roles.cache.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
 		if (administratorrole) {
-			const adminRole = msg.guild.roles.cache.find(val => val.name === administratorrole);
+			const adminRole = msg.channel.guild.roles.cache.find(val => val.name === administratorrole);
 			if (adminRole && msg.member.roles.cache.has(adminRole.id)) {
 				permlvl = 3;
 			}
 		}
-		const owner = await msg.guild.fetchOwner();
+		const owner = await msg.channel.guild.fetchOwner();
 		if (msg.author.id === owner.id) {
 			permlvl = 3;
 		}

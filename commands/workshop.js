@@ -144,12 +144,12 @@ async function createMessageEmbed({
 		// const emoji = (acc === "") ? "🖼️" : "🔗";
 		return `${acc}${emoji} **[${fixMarkdownLink}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${map.creator.personaname}](${map.creator.profileurl}myworkshopfiles/?appid=233610)\n`;
 	}, "");
-	if (msg.guild.id === "211599888222257152") { // dev
-		msg.guild.name = "Distance";
-		msg.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
+	if (msg.channel.guild.id === "211599888222257152") { // dev
+		msg.channel.guild.name = "Distance";
+		msg.channel.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
 	console.log(workshopURL);
-	const embed = new MessageEmbed().setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
+	const embed = new MessageEmbed().setAuthor(`${msg.channel.guild.name} workshop`, msg.channel.guild.iconURL(), workshopURL)
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
 		.setFooter(`• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`)

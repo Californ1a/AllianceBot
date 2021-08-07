@@ -29,7 +29,7 @@ function addQuote(msg, args, type) {
 		console.log(colors.red(`Trying to insert ${type} message '${recombined}' into database.`));
 		const info = {
 			"quote": recombined,
-			"server_id": msg.guild.id
+			"server_id": msg.channel.guild.id
 		};
 		connection.insert(type, info).then(() => {
 			console.log(colors.red(`Successfully inserted ${type} message.`));
@@ -50,7 +50,7 @@ function delQuote(msg, args, type) {
 		//console.log(results.length);
 		recombined = recombineQuote(args);
 		console.log(colors.red("Attempting to remove " + type + " message '" + recombined + "' from the database."));
-		connection.del(type, `quote = '${recombined}' AND server_id=${msg.guild.id}`).then(() => {
+		connection.del(type, `quote = '${recombined}' AND server_id=${msg.channel.guild.id}`).then(() => {
 			console.log(colors.red("Successfully removed " + type + " message."));
 			send(msg.channel, "Success");
 		}).catch(e => {
@@ -64,7 +64,7 @@ function delQuote(msg, args, type) {
 
 function listQuotes(msg, type) {
 	console.log(colors.red(`Attempting to get full ${type} list.`));
-	connection.select("quote", type, `server_id=${msg.guild.id} order by lower(quote) asc`).then(response => {
+	connection.select("quote", type, `server_id=${msg.channel.guild.id} order by lower(quote) asc`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red("Failed."));
 			send(msg.author, `Failed to find any ${type} quotes for your server.`);
@@ -98,7 +98,7 @@ function searchQuotes(msg, args, type) {
 	//let args = message.content.split(" ").slice(1).join(" ");
 	const searchKey = escape.chars(args.rejoin(" "));
 	console.log(colors.red(`Trying to find ${type} message matching '${searchKey}' in database.`));
-	connection.select("*", type, `server_id=${msg.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1`).then(response => {
+	connection.select("*", type, `server_id=${msg.channel.guild.id} AND quote LIKE '%${searchKey}%' COLLATE utf8mb4_unicode_ci ORDER BY RAND() LIMIT 1`).then(response => {
 		if (!response[0]) {
 			console.log(colors.red("Failed to find any matching."));
 			send(msg.channel, `Unable to find any ${type} quotes matching '${searchKey}'.`);

@@ -8,27 +8,27 @@ const canUserAndBotAssign = require("../util/canAssignRole.js");
 require("../util/Array.prototype.rejoin.js");
 
 exports.run = (bot, msg, args) => {
-	const conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.channel.guild.id);
 	const pre = conf.prefix;
 	const msgMember = msg.member;
-	const botMember = msg.guild.members.cache.get(bot.user.id);
+	const botMember = msg.channel.guild.members.cache.get(bot.user.id);
 	if (!msgMember.permissions.has("MANAGE_ROLES")) {
 		return;
 	}
-	const toRole = (conf.timeoutrole) ? msg.guild.roles.cache.find(val => val.name === conf.timeoutrole) : msg.guild.roles.cache.find(val => val.name === "Timeout");
+	const toRole = (conf.timeoutrole) ? msg.channel.guild.roles.cache.find(val => val.name === conf.timeoutrole) : msg.channel.guild.roles.cache.find(val => val.name === "Timeout");
 	if (!toRole) {
 		return send(msg.channel, `The Timeout role could not be found. Make sure a Timeout role is set in your server config: \`${pre}config --to <role name here>\``);
 	}
 	if (!msg.mentions.users.first()) {
 		return send(msg.channel, `Incorrect syntax. Use \`${pre}help timeout\` for syntax.`);
 	}
-	const mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
+	const mentionedMember = msg.channel.guild.members.cache.get(msg.mentions.users.first().id);
 	if (msg.mentions.users.first() && args.length === 1) {
 		if (bot.timer.get(mentionedMember.id)) {
 			clearTimeout(bot.timer.get(mentionedMember.id));
 		}
 		if (mentionedMember.roles.cache.get(toRole.id)) {
-			manageTimeout(mentionedMember, bot, toRole, msg.guild.id);
+			manageTimeout(mentionedMember, bot, toRole, msg.channel.guild.id);
 			return send(msg.channel, `${mentionedMember.displayName} was manually removed from timeout.`);
 		} else {
 			return send(msg.channel, `${mentionedMember.displayName} does not have the Timeout role.`);
@@ -50,14 +50,14 @@ exports.run = (bot, msg, args) => {
 	const later = new Date(now + d);
 	const info = {
 		memberid: mentionedMember.id,
-		"server_id": msg.guild.id,
+		"server_id": msg.channel.guild.id,
 		enddate: later
 	};
 	connection.insert("timeout", info).then(() => {
 		mentionedMember.roles.add(toRole);
 		send(msg.channel, `${mentionedMember.displayName} has been put in timeout for ${d.toString()}.`);
 		const toTimer = setTimeout(() => {
-			manageTimeout(mentionedMember, bot, toRole, msg.guild.id);
+			manageTimeout(mentionedMember, bot, toRole, msg.channel.guild.id);
 		}, d);
 		bot.timer.set(mentionedMember.id, toTimer);
 	});

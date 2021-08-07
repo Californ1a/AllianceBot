@@ -35,7 +35,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 	if (cmdname !== flags.name) {
 		return send(msg.channel, "Invalid characters used in command name.");
 	}
-	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${cmdname}'`).then(r => {
+	connection.select("*", "servcom", `server_id='${msg.channel.guild.id}' AND comname='${cmdname}'`).then(r => {
 		if (r[0]) {
 			return send(msg.channel, "This command already exists.");
 		}
@@ -62,7 +62,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				comtext: `'${fullmsg}'`,
 				permlvl: permslvl,
 				inpm: inpms,
-				"server_id": msg.guild.id
+				"server_id": msg.channel.guild.id
 			};
 		} else if (type === "quote") {
 			info = {
@@ -70,11 +70,11 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 				type,
 				permlvl: permslvl,
 				inpm: inpms,
-				"server_id": msg.guild.id
+				"server_id": msg.channel.guild.id
 			};
 		}
 
-		console.log(colors.red(`Attempting to add the command \`${cmdname}\` to server \`${msg.guild.name}\`.`));
+		console.log(colors.red(`Attempting to add the command \`${cmdname}\` to server \`${msg.channel.guild.name}\`.`));
 		// var info = {
 		// 	"comname": cmdname,
 		// 	"comtext": `'${escdMsg}'`,

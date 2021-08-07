@@ -10,7 +10,7 @@ function update(flag, type, msg) {
 			if (newFlag !== flag) {
 				reject(new Error("You used an invalid character."));
 			}
-			connection.update("servers", `${type}=${(newFlag.toLowerCase()==="null")?"NULL":`'${newFlag}'`}`, `serverid='${msg.guild.id}'`).then(() => {
+			connection.update("servers", `${type}=${(newFlag.toLowerCase()==="null")?"NULL":`'${newFlag}'`}`, `serverid='${msg.channel.guild.id}'`).then(() => {
 				resolve();
 			}).catch(console.error);
 		}
@@ -40,7 +40,7 @@ function doAll(flags, msg) {
 
 exports.run = (bot, msg, args, perms, cmd, flags) => {
 	send(msg.channel, "Loading...").then(m => {
-		const conf = bot.servConf.get(m.guild.id);
+		const conf = bot.servConf.get(m.channel.guild.id);
 		if (!flags || !args[0]) {
 			return m.edit(`Incorrect syntax. Use \`${conf.prefix}help config\` for help.`);
 		}

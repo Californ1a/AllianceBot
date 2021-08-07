@@ -103,9 +103,9 @@ const manageBets = (msg, debugnum) => {
 		let ment;
 		i = 0;
 		for (i; i < winningBets.users.length; i++) {
-			ment = msg.guild.members.cache.get(winningBets.users[i]).user;
+			ment = msg.channel.guild.members.cache.get(winningBets.users[i]).user;
 			textLine += `${ment}: +${winningBets.payouts[i] - ppay.payouts[i]}\n`;
-			sm.setScore(msg.guild, msg.guild.members.cache.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
+			sm.setScore(msg.channel.guild, msg.channel.guild.members.cache.get(winningBets.users[i]), "add", winningBets.payouts[i]).catch(console.error);
 			// sm.getScore(msg.guild, msg.guild.members.cache.get(winningBets.users[i])).then(res => {
 			// 	if (res.score === 0) {
 			// 		var info = {
@@ -129,7 +129,7 @@ const manageBets = (msg, debugnum) => {
 };
 
 exports.run = (bot, msg, args, perm) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	let debugnum;
 	if (perm >= 2 && args[2] && !isNaN(args[2]) && parseInt(args[2]) >= 0 && parseInt(args[2]) <= 37) {
 		debugnum = parseInt(args[2]);
@@ -149,7 +149,7 @@ exports.run = (bot, msg, args, perm) => {
 	if (amount <= 0) {
 		return msg.reply("Your bet amount must be a positive number.");
 	}
-	sm.getScore(msg.guild, msg.member).then(res => {
+	sm.getScore(msg.channel.guild, msg.member).then(res => {
 		if (res.score === 0 && perm < 2) {
 			return msg.reply("You do not have any points to bet with.");
 		}
@@ -158,7 +158,7 @@ exports.run = (bot, msg, args, perm) => {
 		}
 		//console.log(running, cantbet);
 		if (perm < 2) {
-			sm.setScore(msg.guild, msg.member, "add", amount * -1).catch(console.error);
+			sm.setScore(msg.channel.guild, msg.member, "add", amount * -1).catch(console.error);
 		}
 		if (!running && !cantbet) {
 			running = true;

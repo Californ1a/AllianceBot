@@ -3,7 +3,7 @@ const pre = require("../config.json").prefix;
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
-	connection.select("*", "triviascore", `userid=${msg.author.id} AND server_id='${msg.guild.id}' LIMIT 1`).then(response => {
+	connection.select("*", "triviascore", `userid=${msg.author.id} AND server_id='${msg.channel.guild.id}' LIMIT 1`).then(response => {
 		if (!response[0]) {
 			return send(msg.channel, "You do not have any points to gamble with.");
 		}
@@ -41,7 +41,7 @@ exports.run = (bot, msg, args) => {
 		}
 		newScore = response[0].score - amount;
 		if (newScore <= 0) {
-			connection.del("triviascore", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(() => {
+			connection.del("triviascore", `userid='${msg.author.id}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 				send(msg.channel, `${msg.author}, The dice lands on ${die}. You lose your bet (-${amount})! You have been removed from the scoreboard.`);
 			}).catch(e => {
 				send(msg.channel, "Failed");

@@ -12,8 +12,8 @@ function intersect(one, two) {
 }
 
 exports.run = (bot, msg, args, perm) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
-	connection.select("*", "commands", `server_id='${msg.guild.id}'`).then(response => {
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
+	connection.select("*", "commands", `server_id='${msg.channel.guild.id}'`).then(response => {
 		if (!response[0]) {
 			return send(msg.channel, "No commands enabled for this server.");
 		}
@@ -32,7 +32,7 @@ exports.run = (bot, msg, args, perm) => {
 
 			i = 0;
 			const doneCmds = [];
-			let helpLine = `\`\`\`asciidoc\n= Command List (${msg.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n(PM) means the command can be used in PMs\n\n`;
+			let helpLine = `\`\`\`asciidoc\n= Command List (${msg.channel.guild.name}) =\n\n[Use ${pre}help <command-name> for details]\n(PM) means the command can be used in PMs\n\n`;
 			let nextCmd = "";
 			bot.commands.forEach(cmd => {
 				if (perm === 4) {
@@ -60,7 +60,7 @@ exports.run = (bot, msg, args, perm) => {
 				i++;
 			});
 			//console.log("yo");
-			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.guild.id}'`).then(res => {
+			connection.select("comname, inpm, permlvl", "servcom", `server_id='${msg.channel.guild.id}'`).then(res => {
 				//console.log("yup", res);
 				if (!res[0]) {
 					return send(msg.author, `${helpLine}\`\`\``);

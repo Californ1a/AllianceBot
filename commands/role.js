@@ -4,22 +4,22 @@ const canUserAndBotAssign = require("../util/canAssignRole.js");
 require("../util/Array.prototype.rejoin.js");
 
 exports.run = (bot, msg, args) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	const msgMember = msg.member;
-	const botMember = msg.guild.members.cache.get(bot.user.id);
+	const botMember = msg.channel.guild.members.cache.get(bot.user.id);
 	if (msgMember.permissions.has("MANAGE_ROLES")) {
 		if (!(args.length >= 3) || !msg.mentions.users.first()) {
 			return send(msg.channel, `Incorrect syntax. Use \`${pre}help role\` for syntax.`);
 		}
-		const mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
+		const mentionedMember = msg.channel.guild.members.cache.get(msg.mentions.users.first().id);
 		if (!canUserAndBotAssign(msgMember, mentionedMember, botMember)) {
 			return send(msg.channel, "Either the bot or you do not have permission to perform this action.");
 		}
 		const addRole = args.rejoin(" ", 2);
-		if (!msg.guild.roles.cache.some(val => val.name === addRole)) {
+		if (!msg.channel.guild.roles.cache.some(val => val.name === addRole)) {
 			return send(msg.channel, `Role \`${addRole}\` does not exist.`);
 		}
-		const roleToAddDel = msg.guild.roles.cache.find(val => val.name === addRole);
+		const roleToAddDel = msg.channel.guild.roles.cache.find(val => val.name === addRole);
 		if (args[0] === "set" || args[0] === "add") {
 			if (msgMember.roles.highest.position <= roleToAddDel.position) {
 				return send(msg.channel, "You cannot assign a role equal to or higher than your own highest role.");

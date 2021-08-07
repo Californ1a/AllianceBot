@@ -6,12 +6,12 @@ const send = require("../util/sendMessage.js");
 exports.run = (bot, msg, args, perm) => {
 	let mentionedMember;
 	if (!args[0]) {
-		sm.getScore(msg.guild, msg.member).then(s => {
+		sm.getScore(msg.channel.guild, msg.member).then(s => {
 			msg.reply(`Your Rank: ${s.rank}, Your Score: ${s.score}`);
 		}).catch(e => console.error(e.stack));
 	} else if (args.length === 1 && msg.mentions.users.first()) {
-		mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
-		sm.getScore(msg.guild, mentionedMember).then(s => {
+		mentionedMember = msg.channel.guild.members.cache.get(msg.mentions.users.first().id);
+		sm.getScore(msg.channel.guild, mentionedMember).then(s => {
 			if (mentionedMember.id === bot.user.id) {
 				return send(msg.channel, "Rank: Godlike, Score: Untouchable");
 			}
@@ -22,7 +22,7 @@ exports.run = (bot, msg, args, perm) => {
 		if (perm >= 2 && (args[1] === "full" || args[1] === "f")) {
 			limit = 999;
 		}
-		sm.getScore(msg.guild, msg.author).then(s => {
+		sm.getScore(msg.channel.guild, msg.author).then(s => {
 			game.getLB(msg.channel, `Your Rank: ${s.rank}, Your Score: ${s.score}`, limit);
 		}).catch(e => console.error(e.stack));
 		return;
@@ -43,18 +43,18 @@ exports.run = (bot, msg, args, perm) => {
 		if (amount < 0 && perm < 2) {
 			return send(msg.channel, "The score must be positive.");
 		}
-		mentionedMember = msg.guild.members.cache.get(msg.mentions.users.first().id);
+		mentionedMember = msg.channel.guild.members.cache.get(msg.mentions.users.first().id);
 		const type = (args[0] === "set") ? "set" : "add";
-		sm.getScore(msg.guild, msg.member).then(s => {
+		sm.getScore(msg.channel.guild, msg.member).then(s => {
 			if (perm < 2 && s.score < amount) {
 				return send(msg.channel, "You do not have enough points to give away that many.");
 			}
 			if (amount > 0 && args[2].length > 9) {
 				return send(msg.channel, "The score can only be nine digits maximum.");
 			}
-			sm.setScore(msg.guild, mentionedMember, type, amount).then(m => {
+			sm.setScore(msg.channel.guild, mentionedMember, type, amount).then(m => {
 				if (perm < 2) {
-					sm.setScore(msg.guild, msg.member, type, amount * -1).then(r => {
+					sm.setScore(msg.channel.guild, msg.member, type, amount * -1).then(r => {
 						return send(msg.channel, `${msg.member.displayName}(${r.pScore}-->${r.score}) gave ${amount} points to ${mentionedMember.displayName}(${m.pScore}-->${m.score}).`);
 					});
 				} else {
@@ -75,7 +75,7 @@ exports.run = (bot, msg, args, perm) => {
 			if (collected.first().content === "no" || collected.first().content === "n") {
 				return send(msg.channel, "Boards remain intact.");
 			}
-			connection.del("triviascore", `server_id='${msg.guild.id}'`).then(() => {
+			connection.del("triviascore", `server_id='${msg.channel.guild.id}'`).then(() => {
 				return send(msg.channel, "Successfully cleared the scoreboard.");
 			}).catch(e => console.error(e.stack));
 		}).catch(() => {

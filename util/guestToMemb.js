@@ -4,18 +4,18 @@ const connection = require("./connection.js");
 let checked;
 
 const guestToMemb = function(bot, msg) {
-	if (checked && checked[msg.guild.id] && checked[msg.guild.id][msg.author.id]) {
+	if (checked && checked[msg.channel.guild.id] && checked[msg.channel.guild.id][msg.author.id]) {
 		return;
 	}
-	connection.select("commandname", "commands", `server_id=${msg.guild.id} AND commandname='automemb'`).then(response => {
+	connection.select("commandname", "commands", `server_id=${msg.channel.guild.id} AND commandname='automemb'`).then(response => {
 		if (!response[0]) {
 			if (!msg.author.bot) {
 				console.log(colors.red("Automemb not enabled for this server."));
-				if (checked && checked[msg.guild.id]) {
-					checked[msg.guild.id][msg.author.id] = true;
+				if (checked && checked[msg.channel.guild.id]) {
+					checked[msg.channel.guild.id][msg.author.id] = true;
 				} else {
 					checked = {
-						[msg.guild.id]: {
+						[msg.channel.guild.id]: {
 							[msg.author.id]: true
 						}
 					};
@@ -28,7 +28,7 @@ const guestToMemb = function(bot, msg) {
 		}
 		let botcanassign = false;
 		//var bu = cl.getMaxRole(msg.guild.members.cache.get(bot.user.id));
-		const botMemb = msg.guild.members.cache.get(bot.user.id);
+		const botMemb = msg.channel.guild.members.cache.get(bot.user.id);
 		if (botMemb.roles.highest.name === "@everyone") {
 			return console.log(colors.red("Bot cannot assign (Bot is guest)."));
 		}
@@ -42,8 +42,8 @@ const guestToMemb = function(bot, msg) {
 			}
 		}
 		if (botcanassign && !msg.author.bot) {
-			msg.member.roles.add(msg.guild.roles.cache.find(val => val.name === membrolename));
-			if (msg.guild.id === "83078957620002816") {
+			msg.member.roles.add(msg.channel.guild.roles.cache.find(val => val.name === membrolename));
+			if (msg.channel.guild.id === "83078957620002816") {
 				msg.reply(`Welcome to the discord! You are now a ${membrolename}. Make sure to read the #rules_and_info channel.`);
 			} else {
 				msg.reply(`Welcome to the discord! You are now a ${membrolename}.`);
