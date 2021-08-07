@@ -10,7 +10,7 @@ function recombineQuote(args) {
 }
 
 function randomQuote(message, type) {
-	connection.select("quote", type, `server_id=${message.guild.id} ORDER BY RAND() LIMIT 1`).then(response => {
+	connection.select("quote", type, `server_id=${message.channel.guild.id} ORDER BY RAND() LIMIT 1`).then(response => {
 		if (!response[0]) {
 			send(message.channel, "None found.");
 		} else {

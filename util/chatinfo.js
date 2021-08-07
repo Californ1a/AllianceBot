@@ -132,17 +132,17 @@ const formatChatlog = async function(message) {
 	const author = message.author;
 	const isbot = (author.bot) ? "{BOT}" : "";
 	//var user = getMaxRole(member);
-	const chatlog = `${logLocation}${message.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
-	const fullLog = `${logLocation}${message.guild.name}/full_logs/#${message.channel.name}.log`;
+	const chatlog = `${logLocation}${message.channel.guild.name}/#${message.channel.name}/${messageTime.year}/${messageTime.month}.log`;
+	const fullLog = `${logLocation}${message.channel.guild.name}/full_logs/#${message.channel.name}.log`;
 	let chatlinedata;
 	let consoleChat;
-	const owner = await message.guild.fetchOwner();
+	const owner = await message.channel.guild.fetchOwner();
 	if (!member) {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(Guest)`;
-		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === owner.id)?"Owner":"Guest"})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.channel.guild.name}/#${message.channel.name}] ${isbot}(${(author.id === owner.id)?"Owner":"Guest"})`;
 	} else {
 		chatlinedata = `${messageTime.formattedDate} | ${isbot}(${(member.roles.highest.name === "@everyone")?"Guest":member.roles.highest.name})`;
-		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.guild.name}/#${message.channel.name}] ${isbot}(${(member.roles.highest.name === "@everyone")?((member.id === owner.id)?"Owner":"Guest"):member.roles.highest.name})`;
+		consoleChat = `${messageTime.hour}:${messageTime.minute} ${messageTime.ampm} [${message.channel.guild.name}/#${message.channel.name}] ${isbot}(${(member.roles.highest.name === "@everyone")?((member.id === owner.id)?"Owner":"Guest"):member.roles.highest.name})`;
 	}
 	const att = [];
 	let formattedAtturls = "";
