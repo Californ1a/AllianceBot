@@ -59,9 +59,7 @@ module.exports = async (bot, msg) => {
 			return;
 		}
 		send(msg.channel, "You can only post links to the workshop here.").then(m => {
-			m.delete({
-				timeout: botmsgDeleteTimeout
-			}).catch(console.error);
+			setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout);
 		}).catch(console.error);
 		return msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 	}
@@ -87,9 +85,7 @@ module.exports = async (bot, msg) => {
 			// console.log(JSON.stringify(json, null, 2));
 			if (json.creator_app_id !== 233610 || json.creator_app_id !== json.consumer_app_id) {
 				m.edit("This workshop item is not from Distance - Only Distance maps are allowed.").then(m => {
-					m.delete({
-						timeout: botmsgDeleteTimeout
-					}).catch(console.error);
+					setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout);
 				});
 				msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			} else {
