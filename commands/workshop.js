@@ -28,7 +28,7 @@ async function getSteamUsers(steamids) {
 	}
 }
 
-async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
+async function getWorkshopQueryResults(searchQuery, searchType = "relevance", slash) {
 	if (!searchQuery || searchQuery === "") {
 		searchType = "recent";
 	}
@@ -39,11 +39,15 @@ async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
 			break;
 		case "recent":
 			queryType = 1;
-			searchQuery = "";
+			if (!slash) {
+				searchQuery = "";
+			}
 			break;
 		case "popular":
 			queryType = 3;
-			searchQuery = "";
+			if (!slash) {
+				searchQuery = "";
+			}
 			break;
 		default:
 			break;
@@ -124,7 +128,9 @@ async function createMessageEmbed({
 	const list = data.publishedfiledetails.reduce((acc, map, i) => {
 		// const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
 		map.creator.personaname = (map.creator.personaname.length > 18) ? `${map.creator.personaname.substr(0, 18)}...` : map.creator.personaname;
+		map.creator.personaname = (map.creator.personaname.includes("[") && !map.creator.personaname.includes("]")) ? `${map.creator.personaname}]` : map.creator.personaname;
 		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
+		// title = title.replace(/\*/g, "\\*");
 		const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${map.publishedfileid}`;
 
 		// add an ending ] if title includes a starting [ but no end
@@ -205,6 +211,41 @@ exports.run = async (bot, msg, args) => {
 	}
 };
 
+exports.runSlash = async (bot, interaction) => {
+	let queryType = "relevance";
+	let author;
+	const searchQuery = interaction.options.getString("search");
+	const intAuthor = interaction.options.getString("author");
+	if (searchQuery?.match(/^(new|recent)$/i)) {
+		queryType = "recent";
+	} else if (searchQuery?.match(/^(top|popular)$/i)) {
+		queryType = "popular";
+	}
+	if (intAuthor) {
+		author = intAuthor;
+	}
+	let m = await interaction.reply("Loading...");
+	if (!m) {
+		m = await interaction.fetchReply();
+	}
+	try {
+		const data = await getWorkshopQueryResults(searchQuery, queryType, 1);
+		// console.log(JSON.stringify(data, null, 2));
+		if (data.data.total < 1) {
+			return await m.edit(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+		}
+		const embed = await createMessageEmbed(data, interaction, author);
+		if (embed === "No data") {
+			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+		} else {
+			await m.edit({ content: "\u200b", embeds: [embed] });
+		}
+	} catch (e) {
+		console.error(e);
+		await m.edit("Failed getting workshop data.");
+	}
+};
+
 exports.conf = {
 	guildOnly: true,
 	aliases: ["ws"],
@@ -218,6 +259,21 @@ exports.help = {
 	description: "Search the workshop for maps.",
 	extendedDescription: "",
 	usage: "workshop <search term|new|top>"
+};
+
+exports.slash = {
+	name: "workshop",
+	description: "Search the workshop",
+	options: [{
+		name: "search",
+		description: "The search term",
+		type: "STRING",
+		required: true
+	}, {
+		name: "author",
+		description: "Search by author name",
+		type: "STRING"
+	}]
 };
 
 /*

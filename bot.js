@@ -153,10 +153,56 @@ bot.confRefresh = () => {
 		}).catch(e => reject(e));
 	});
 };
-connection.createAllTables().then(() => {
-	bot.confRefresh();
+
+bot.loadSlashCommands = async () => {
+	try {
+		const cmds = await connection.select("*", "commands");
+		// console.log(cmds);
+		const conf = [...bot.servConf.values()];
+		for (const { serverid } of conf) {
+			const guild = bot.servConf.get(serverid);
+			if (!guild.commands?.enabled) {
+				guild.commands = { enabled: [] };
+			}
+			const matchingCmds = cmds.filter(c => c.server_id === serverid);
+			for (const { commandname } of matchingCmds) {
+				// array of all enabled commands
+				guild.commands.enabled.push(commandname);
+			}
+			guild.commands.disabled = [...bot.commands.keys()].filter(c => !guild.commands.enabled.includes(c));
+			// console.log(guild.commands.enabled, guild.commands.enabled);
+		}
+
+		// TODO register slash commands for enebaled commands
+		if (!bot.application?.owner) {
+			await bot.application?.fetch();
+		}
+		bot.guilds.cache.forEach(async (g) => {
+			const commands = bot.servConf.get(g.id).commands.enabled;
+			const slashCommands = [];
+			for (const c of commands) {
+				// console.log(c);
+				const cmd = bot.commands.get(c);
+				if (cmd?.slash) {
+					slashCommands.push(cmd.slash);
+				}
+			}
+			// TODO register slash commands with only perms for me for disabled commands
+			const c = await g.commands.set(slashCommands);
+			// console.log(c);
+		});
+		// TODO custom commands as slash commands
+		// console.log([...bot.servConf.values()]);
+	} catch (e) {
+		console.error(e);
+	}
+};
+
+connection.createAllTables().then(async () => {
+	await bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
+	bot.loadSlashCommands();
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future

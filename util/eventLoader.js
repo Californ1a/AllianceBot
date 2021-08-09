@@ -18,6 +18,7 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
 	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
 	bot.on("messageCreate", (msg) => reqEvent("message")(bot, meter, msg));
+	bot.on("interactionCreate", (interaction) => reqEvent("interactionCreate")(bot, interaction));
 	if (stream) { // if NODE_ENV !== "dev"
 		stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
 		stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
