@@ -52,11 +52,12 @@ async function getStreamsForGame(gameid, opts = {
 }
 
 async function getAllUsers(streams) {
-	const users = [];
-	for (const stream of streams) {
-		const user = await client.helix.users.getUserById(stream.userId);
-		users.push(user);
-	}
+	let users = streams.map(stream => client.helix.users.getUserById(stream.userId));
+	users = await Promise.all(users);
+	// for (const stream of streams) {
+	// 	const user = await client.helix.users.getUserById(stream.userId);
+	// 	users.push(user);
+	// }
 	return users;
 }
 
@@ -232,8 +233,16 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 	conf.checkAmnt += 1;
 }
 
+function errHandler(err, conf, bot, guild) {
+	conf.streamTimeout = setTimeout(() => {
+		conf.twitchStreamError = false;
+		streams(bot, guild);
+	}, refreshMin * 60 * 1000);
+}
+
 function main(bot, chan, guild, gameName, conf) {
 	const gameUrl = `https://twitch.tv/directory/game/${encodeURIComponent(gameName)}`;
+	let errCheck = false;
 	getGameID(gameName)
 		.then(getStreamsForGame)
 		.then(data => {
@@ -245,13 +254,20 @@ function main(bot, chan, guild, gameName, conf) {
 						streams(bot, guild);
 					}, refreshMin * 60 * 1000);
 				});
+			}).catch(err => {
+				console.error(`Failed to check twitch streams: ${err}`);
+				if (!errCheck) {
+					errCheck = true;
+					errHandler(err, conf, bot, guild);
+				}
 			});
 		})
 		.catch(err => {
 			console.error(`Failed to check twitch streams: ${err}`);
-			conf.streamTimeout = setTimeout(() => {
-				streams(bot, guild);
-			}, refreshMin * 60 * 1000);
+			if (!errCheck) {
+				errCheck = true;
+				errHandler(err, conf, bot, guild);
+			}
 		});
 }
 
