@@ -49,7 +49,7 @@ module.exports = (bot) => {
 		}
 	}).catch(e => console.error(e.stack));
 	if (bot.guilds.cache.get("83078957620002816")) {
-		randomNickChange(bot);
+		//randomNickChange(bot);
 		distanceServers(bot);
 		wrLog(bot);
 	}
