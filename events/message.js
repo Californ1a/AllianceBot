@@ -41,7 +41,7 @@ module.exports = (bot, meter, msg) => {
 	const membrole = conf.membrole;
 	const cha = cl.formatChatlog(msg);
 	meter.mark();
-	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
+	fs.appendFile(cha.currentLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
 		if (error) {
 			console.log(msg.content);
 			console.error(error.stack);
@@ -49,7 +49,7 @@ module.exports = (bot, meter, msg) => {
 			console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
 		}
 	});
-	fs.appendFile(cha.fullLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function (error) {
+	fs.appendFile(cha.fullLog, `${cha.chatlinedata}${cha.formattedAtturls}\r\n`, function(error) {
 		if (error) {
 			console.log(msg.content);
 			console.error(error.stack);
