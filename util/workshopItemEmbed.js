@@ -104,38 +104,20 @@ module.exports = (bot, msg) => {
 					switch (tag.tag) {
 						//begin difficulities
 						case "Casual":
-							difficulty.push("Casual");
-							break;
 						case "Normal":
-							difficulty.push("Normal");
-							break;
 						case "Advanced":
-							difficulty.push("Advanced");
-							break;
 						case "Expert":
-							difficulty.push("Expert");
-							break;
 						case "Nightmare":
-							difficulty.push("Nightmare");
+							difficulty.push(tag.tag);
 							break;
 							//begin modes
 						case "Sprint":
-							modes.push("Sprint");
-							break;
 						case "Reverse Tag":
-							modes.push("Reverse Tag");
-							break;
 						case "Challenge":
-							modes.push("Challenge");
-							break;
 						case "Stunt":
-							modes.push("Stunt");
-							break;
 						case "Trackmogrify":
-							modes.push("Trackmogrify");
-							break;
 						case "Main Menu":
-							modes.push("Main Menu");
+							modes.push(tag.tag);
 							break;
 					}
 				}
