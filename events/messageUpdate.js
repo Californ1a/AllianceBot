@@ -10,6 +10,18 @@ module.exports = (bot, oldMessage, newMessage) => {
 	if (oldMessage.content === newMessage.content) {
 		return;
 	}
+	if (!newMessage.guild || !oldMessage.guild) {
+		const oldM = `(Private) ${oldMessage.author.username}: ${oldMessage.cleanContent}`;
+		const newM = `(Private) ${newMessage.author.username}: ${newMessage.cleanContent}`;
+		const diff = jsdiff.diffWords(oldM, newM);
+		let edit = "Edited --> ".grey;
+		diff.forEach(part => {
+			const color = (part.added) ? "green" : (part.removed) ? "red" : "grey";
+			edit += part.value[color];
+		});
+		console.log(edit);
+		return;
+	}
 
 	const newc = cl.formatChatlog(newMessage);
 	const oldc = cl.formatChatlog(oldMessage);
