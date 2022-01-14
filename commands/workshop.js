@@ -80,6 +80,21 @@ async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
 	}
 }
 
+function countMatchingBrackets(str) {
+	let count = 0;
+	for (let i = 0; i < str.length; i++) {
+		if (str[i] === "[") {
+			count++;
+		} else if (str[i] === "]") {
+			count--;
+		}
+		if (count < 0) {
+			count = 0;
+		}
+	}
+	return count;
+}
+
 async function createMessageEmbed({
 	queryType,
 	searchQuery,
@@ -128,7 +143,8 @@ async function createMessageEmbed({
 		const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${map.publishedfileid}`;
 
 		// add an ending ] if title includes a starting [ but no end
-		const fixMarkdownLink = (title.includes("[") && !title.includes("]")) ? `${title}]` : title;
+		const closeBracketCount = countMatchingBrackets(title);
+		const fixMarkdownLink = (closeBracketCount > 0) ? `${title}${"]".repeat(closeBracketCount)}` : title;
 
 		// const base = `**[${title}](${url})**: `;
 		// let fileDescription = `${map.file_description.substr(0, 135 - base.length).replace(/[\r\n]/g, " ").trim()}...`; // eslint-disable-line camelcase
