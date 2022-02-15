@@ -33,8 +33,14 @@ module.exports = (bot, msg) => {
 	const line = `${content}${attachments}\n`;
 	const embed = new MessageEmbed()
 		.setColor("#ffff00")
-		.setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.displayAvatarURL())
+		.setAuthor({
+			name: `${msg.author.tag} (${msg.author.id})`,
+			iconURL: msg.author.displayAvatarURL()
+		})
 		.setDescription(`${msg.author}\n\n**Action:** Message Deleted\n**Channel:** ${msg.channel}\n**Content:**${line}`)
 		.setTimestamp();
-	send(chan, { content: "\u200b", embeds: [embed] });
+	send(chan, {
+		content: "\u200b",
+		embeds: [embed]
+	});
 };

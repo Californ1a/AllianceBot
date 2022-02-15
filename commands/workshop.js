@@ -171,10 +171,17 @@ async function createMessageEmbed({
 		msg.channel.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
 	console.log(workshopURL);
-	const embed = new MessageEmbed().setAuthor(`${msg.channel.guild.name} workshop`, msg.channel.guild.iconURL(), workshopURL)
+	const embed = new MessageEmbed()
+		.setAuthor({
+			name: `${msg.channel.guild.name} workshop`,
+			iconURL: msg.channel.guild.iconURL(),
+			url: workshopURL
+		})
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
-		.setFooter(`• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`)
+		.setFooter({
+			text: `• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`
+		})
 		.setTimestamp();
 	if (data.publishedfiledetails[imgIndex - 1] && data.publishedfiledetails[imgIndex - 1].preview_url) {
 		embed.setThumbnail(`${data.publishedfiledetails[imgIndex-1].preview_url}?impolicy=Letterbox`);
@@ -219,7 +226,10 @@ exports.run = async (bot, msg, args) => {
 		if (embed === "No data") {
 			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
-			await m.edit({ content: "\u200b", embeds: [embed] });
+			await m.edit({
+				content: "\u200b",
+				embeds: [embed]
+			});
 		}
 	} catch (e) {
 		console.error(e);
@@ -254,7 +264,10 @@ exports.runSlash = async (bot, interaction) => {
 		if (embed === "No data") {
 			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
-			await m.edit({ content: "\u200b", embeds: [embed] });
+			await m.edit({
+				content: "\u200b",
+				embeds: [embed]
+			});
 		}
 	} catch (e) {
 		console.error(e);

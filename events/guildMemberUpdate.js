@@ -25,8 +25,14 @@ module.exports = (bot, oldMember, newMember) => {
 	}
 	const embed = new MessageEmbed()
 		.setColor("#ffff00")
-		.setAuthor(`${newMember.user.tag} (${newMember.user.id})`, newMember.user.displayAvatarURL())
+		.setAuthor({
+			name: `${newMember.user.tag} (${newMember.user.id})`,
+			iconURL: newMember.user.displayAvatarURL()
+		})
 		.setDescription(`${newMember.user}\n\n**Action:** Nickname Change\n**Change:** \`${oldMember.displayName.replace("`", "\\`")}\` → \`${newMember.displayName.replace("`", "\\`")}\``)
 		.setTimestamp();
-	send(chan, { content: "\u200b", embeds: [embed] });
+	send(chan, {
+		content: "\u200b",
+		embeds: [embed]
+	});
 };

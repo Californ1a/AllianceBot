@@ -6,7 +6,9 @@ const fetch = require("node-fetch");
 const parse = require("parse-duration");
 const Duration = require("duration-js");
 const moment = require("moment");
-const { URLSearchParams } = require("url");
+const {
+	URLSearchParams
+} = require("url");
 const firebase = require("./firebase.js");
 const send = require("./sendMessage.js");
 const url = "http://seekr.pw/distance-log/changelist.json";
@@ -135,12 +137,12 @@ async function getStoodFor(d, json) {
 		if (d.oldTime) {
 			const matches = [];
 			for (let i = json.length - 1; i >= 0; i--) {
-				if ((d.workshopID && json[i].workshop_item_id !== d.workshopID)
-					|| (!d.workshopID && (json[i].map_name !== d.map || json[i].map_author)) || d.mode !== json[i].mode) {
+				if ((d.workshopID && json[i].workshop_item_id !== d.workshopID) ||
+					(!d.workshopID && (json[i].map_name !== d.map || json[i].map_author)) || d.mode !== json[i].mode) {
 					continue;
-				} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode)
-						|| (!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode && !json[i].map_author))
-					&& matches.length < 2) {
+				} else if (((d.workshopID && json[i].workshop_item_id === d.workshopID && d.mode === json[i].mode) ||
+						(!d.workshopID && d.map === json[i].map_name && d.mode === json[i].mode && !json[i].map_author)) &&
+					matches.length < 2) {
 					matches.push(json[i]);
 					if (matches.length >= 2) {
 						break;
@@ -195,7 +197,11 @@ async function composeEmbed(d, json) {
 		.setTitle(d.map)
 		.setDescription(`${(d.author === "[Official Map]") ? d.author : (d.authorProfileUrl) ? `Author: [${(d.author)?d.author:"[unknown]"}](${d.authorProfileUrl})` : `Author: ${(d.author)?d.author:"[unknown]"}`}\nMode: \`${d.mode}\`${(stoodFor)?`\n${stoodFor}`:""}\n${(d.mode==="Stunt")?"Score":"Time"} improved by \`${d.diff}\``)
 		.setColor(4886754)
-		.setAuthor("WR Log", "https://images-ext-1.discordapp.net/external/PpvdQjaWNtfE0GpMoI2UjilPY2gIp-KgEKY-WHnbSg8/https/cdn.discordapp.com/emojis/230369859920330752.png", "http://seekr.pw/distance-log/")
+		.setAuthor({
+			name: "WR Log",
+			iconURL: "https://images-ext-1.discordapp.net/external/PpvdQjaWNtfE0GpMoI2UjilPY2gIp-KgEKY-WHnbSg8/https/cdn.discordapp.com/emojis/230369859920330752.png",
+			url: "http://seekr.pw/distance-log/"
+		})
 		.addField("Old WR", (d.oldTime) ? `${d.oldTime} by ${(d.oldRecordHolderProfileUrl)?`[${(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}](${d.oldRecordHolderProfileUrl})`:(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}` : "None", true)
 		.addField("New WR", `${d.newTime} by ${(d.newRecordHolderProfileUrl)?`[${(d.newRecordHolderName)?d.newRecordHolderName:"[unknown]"}](${d.newRecordHolderProfileUrl})`:(d.newRecordHolderName)?d.newRecordHolderName:"[unknown]"}`, true);
 	if (d.author !== "[Official Map]") {
@@ -213,7 +219,10 @@ async function embedSendManager(data, chan, json) {
 		// 	await send(chan, "New record!", embed);
 		// }
 		// console.log("embeds", embeds);
-		return await Promise.all(embeds.map(async (e) => await send(chan, { content: "New record!", embeds: [e] })));
+		return await Promise.all(embeds.map(async (e) => await send(chan, {
+			content: "New record!",
+			embeds: [e]
+		})));
 	} catch (e) {
 		console.error(e);
 	}

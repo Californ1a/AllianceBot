@@ -29,9 +29,17 @@ module.exports = (bot, member) => {
 	}
 	const embed = new MessageEmbed()
 		.setColor("#80f31f")
-		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
+		.setAuthor({
+			name: `${member.user.tag} (${member.user.id})`,
+			iconURL: member.user.displayAvatarURL()
+		})
 		.setDescription(member.user)
-		.setFooter("User joined")
+		.setFooter({
+			text: "User joined"
+		})
 		.setTimestamp();
-	send(chan, { content: "\u200b", embeds: [embed] });
+	send(chan, {
+		content: "\u200b",
+		embeds: [embed]
+	});
 };

@@ -128,7 +128,11 @@ module.exports = async (bot, msg) => {
 						const name = res.personaname;
 						const profile = res.profileurl;
 						const avatar = res.avatar;
-						embed.setAuthor(name, avatar, profile);
+						embed.setAuthor({
+							name,
+							iconURL: avatar,
+							url: profile
+						});
 						m.edit(`A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`, {
 							embeds: [embed]
 						}).then(() => {

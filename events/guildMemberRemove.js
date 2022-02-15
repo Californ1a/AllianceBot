@@ -27,10 +27,16 @@ module.exports = (bot, member) => {
 			console.log(`${member.displayName} was kicked from ${member.guild.name} server.`);
 			embed = new MessageEmbed()
 				.setColor("#ff8300")
-				.setAuthor(`${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`, member.user.displayAvatarURL())
+				.setAuthor({
+					name: `${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`,
+					iconURL: member.user.displayAvatarURL()
+				})
 				.setDescription(`${member.user}\n\n**Action:** Kick\n**Executor:** ${entry.executor}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`)
 				.setTimestamp();
-			return send(chan, { content: "\u200b", embeds: [embed] });
+			return send(chan, {
+				content: "\u200b",
+				embeds: [embed]
+			});
 		} else {
 			member.guild.fetchAuditLogs({
 				type: "MEMBER_BAN_ADD",
@@ -47,11 +53,19 @@ module.exports = (bot, member) => {
 
 				embed = new MessageEmbed()
 					.setColor("#f4bf42")
-					.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
+					.setAuthor({
+						name: `${member.user.tag} (${member.user.id})`,
+						iconURL: member.user.displayAvatarURL()
+					})
 					.setDescription(member.user)
-					.setFooter(`User left - ${(member.joinedTimestamp) ? `Joined ${joinDuration} ago` : "Unknown join date"}`)
+					.setFooter({
+						text: `User left - ${(member.joinedTimestamp) ? `Joined ${joinDuration} ago` : "Unknown join date"}`
+					})
 					.setTimestamp();
-				return send(chan, { content: "\u200b", embeds: [embed] });
+				return send(chan, {
+					content: "\u200b",
+					embeds: [embed]
+				});
 			}).catch(console.error);
 		}
 	}).catch(console.error);

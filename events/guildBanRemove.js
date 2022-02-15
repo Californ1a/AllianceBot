@@ -31,10 +31,16 @@ module.exports = (bot, guild, user) => {
 			console.log(`${entry.target.tag} unbanned from guild \`${guild.name}\`.`);
 			const embed = new MessageEmbed()
 				.setColor("#80f31f")
-				.setAuthor(`${entry.target.tag} (${entry.target.id})`, entry.target.displayAvatarURL())
+				.setAuthor({
+					name: `${entry.target.tag} (${entry.target.id})`,
+					iconURL: entry.target.displayAvatarURL()
+				})
 				.setDescription(`${entry.target}\n\n**Action:** Unban\n**Executor:** ${entry.executor}`)
 				.setTimestamp();
-			send(chan, { content: "\u200b", embeds: [embed] });
+			send(chan, {
+				content: "\u200b",
+				embeds: [embed]
+			});
 		}
 	}).catch(console.error);
 };

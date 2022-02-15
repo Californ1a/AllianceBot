@@ -19,9 +19,17 @@ function sendLogChannelMessage(bot, member) {
 	}
 	const embed = new MessageEmbed()
 		.setColor("#f4bf42")
-		.setAuthor(`${member.user.tag} (${member.user.id})`, member.user.displayAvatarURL())
-		.setFooter("Timeout ended");
-	send(chan, { content: "\u200b", embeds: [embed] });
+		.setAuthor({
+			name: `${member.user.tag} (${member.user.id})`,
+			iconURL: member.user.displayAvatarURL()
+		})
+		.setFooter({
+			text: "Timeout ended"
+		});
+	send(chan, {
+		content: "\u200b",
+		embeds: [embed]
+	});
 }
 
 function manageTimeout(mentionedMember, bot, toRole, guildid, optionalMembID) {
