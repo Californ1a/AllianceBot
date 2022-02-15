@@ -1,6 +1,7 @@
 const colors = require("colors");
 const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
+
 exports.run = (bot, msg, args) => {
 	let command;
 	if (!args[0]) {
@@ -22,6 +23,9 @@ exports.run = (bot, msg, args) => {
 				"server_id": msg.channel.guild.id
 			};
 			connection.insert("commands", info).then(() => {
+				if (bot.commands.get(command).slash) {
+					bot.loadSlashCommands();
+				}
 				console.log(colors.red("Successfully added command to server."));
 				send(msg.channel, "Successfully added command to server.");
 			}).catch(e => {
@@ -32,6 +36,9 @@ exports.run = (bot, msg, args) => {
 		} else {
 			console.log(colors.red(`Trying to remove command '${command}' from database.`));
 			connection.del("commands", `commandname='${command}' AND server_id=${msg.channel.guild.id}`).then(() => {
+				if (bot.commands.get(command).slash) {
+					bot.loadSlashCommands();
+				}
 				console.log(colors.red("Successfully removed command from server."));
 				send(msg.channel, "Successfully removed command from server.");
 			}).catch(e => {

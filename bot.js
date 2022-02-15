@@ -164,20 +164,18 @@ bot.loadSlashCommands = async () => {
 				serverid
 			} = server;
 			const guild = bot.servConf.get(serverid);
-			if (!guild.commands?.enabled) {
-				guild.commands = {
-					enabled: []
-				};
-			}
+			guild.cmds = {
+				enabled: []
+			};
 			const matchingCmds = cmds.filter(c => c.server_id === serverid);
 			for (const command of matchingCmds) {
 				const {
 					commandname
 				} = command;
 				// array of all enabled commands
-				guild.commands.enabled.push(commandname);
+				guild.cmds.enabled.push(commandname);
 			}
-			guild.commands.disabled = [...bot.commands.keys()].filter(c => !guild.commands.enabled.includes(c));
+			guild.cmds.disabled = [...bot.commands.keys()].filter(c => !guild.cmds.enabled.includes(c));
 			// console.log(guild.commands.enabled, guild.commands.enabled);
 		}
 
@@ -186,7 +184,7 @@ bot.loadSlashCommands = async () => {
 			await bot.application?.fetch();
 		}
 		bot.guilds.cache.forEach(async (g) => {
-			const commands = bot.servConf.get(g.id).commands.enabled;
+			const commands = bot.servConf.get(g.id).cmds.enabled;
 			const slashCommands = [];
 			for (const c of commands) {
 				// console.log(c);
