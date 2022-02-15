@@ -23,7 +23,7 @@
 		"@pm2/io": "^4.3.5",
 		"colors": "^1.4.0",
 		"diff": "^4.0.2",
-		"discord.js": "^13.0.0",
+		"discord.js": "^13.6.0",
 		"dotenv": "^8.2.0",
 		"duration-js": "^4.0.0",
 		"firebase-admin": "^9.0.0",
