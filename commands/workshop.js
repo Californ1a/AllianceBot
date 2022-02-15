@@ -250,28 +250,27 @@ exports.runSlash = async (bot, interaction) => {
 	if (intAuthor) {
 		author = intAuthor;
 	}
-	let m = await interaction.reply("Loading...");
-	if (!m) {
-		m = await interaction.fetchReply();
-	}
+	await interaction.deferReply({
+		ephemeral: true
+	});
 	try {
 		const data = await getWorkshopQueryResults(searchQuery, queryType, 1);
 		// console.log(JSON.stringify(data, null, 2));
 		if (data.data.total < 1) {
-			return await m.edit(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+			return await interaction.editReply(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		}
 		const embed = await createMessageEmbed(data, interaction, author);
 		if (embed === "No data") {
-			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+			return await interaction.editReply(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
-			await m.edit({
+			await interaction.editReply({
 				content: "\u200b",
 				embeds: [embed]
 			});
 		}
 	} catch (e) {
 		console.error(e);
-		await m.edit("Failed getting workshop data.");
+		await interaction.editReply("Failed getting workshop data.");
 	}
 };
 
