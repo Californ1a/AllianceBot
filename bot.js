@@ -159,13 +159,21 @@ bot.loadSlashCommands = async () => {
 		const cmds = await connection.select("*", "commands");
 		// console.log(cmds);
 		const conf = [...bot.servConf.values()];
-		for (const { serverid } of conf) {
+		for (const server of conf) {
+			const {
+				serverid
+			} = server;
 			const guild = bot.servConf.get(serverid);
 			if (!guild.commands?.enabled) {
-				guild.commands = { enabled: [] };
+				guild.commands = {
+					enabled: []
+				};
 			}
 			const matchingCmds = cmds.filter(c => c.server_id === serverid);
-			for (const { commandname } of matchingCmds) {
+			for (const command of matchingCmds) {
+				const {
+					commandname
+				} = command;
 				// array of all enabled commands
 				guild.commands.enabled.push(commandname);
 			}
@@ -173,7 +181,7 @@ bot.loadSlashCommands = async () => {
 			// console.log(guild.commands.enabled, guild.commands.enabled);
 		}
 
-		// TODO register slash commands for enebaled commands
+		// TODO register slash commands for enabled commands
 		if (!bot.application?.owner) {
 			await bot.application?.fetch();
 		}
@@ -212,7 +220,9 @@ bot.channels.cache.forEach(c => {
 		for (const r of roles) {
 			c.permissionOverwrites.edit(r, {
 				"SEND_MESSAGES": null
-			}, { reason: "Revert channel lockdown" }).catch(console.error);
+			}, {
+				reason: "Revert channel lockdown"
+			}).catch(console.error);
 		}
 		c.locked = false;
 		c.timeoutRoles = [];

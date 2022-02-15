@@ -17,7 +17,7 @@ function printDiff(oldMsg, newMsg) {
 }
 
 module.exports = async (bot, oldMessage, newMessage) => {
-	if (bot.user === oldMessage.author || bot.user === newMessage.author) {
+	if (bot.user.id === oldMessage.author.id || bot.user.id === newMessage.author.id) {
 		return;
 	}
 	if (oldMessage.content === newMessage.content) {
