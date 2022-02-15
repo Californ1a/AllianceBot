@@ -157,6 +157,8 @@ bot.confRefresh = () => {
 bot.loadSlashCommands = async () => {
 	try {
 		const cmds = await connection.select("*", "commands");
+		const customCmds = await connection.select("*", "servcom");
+
 		// console.log(cmds);
 		const conf = [...bot.servConf.values()];
 		for (const server of conf) {
@@ -177,15 +179,50 @@ bot.loadSlashCommands = async () => {
 			}
 			guild.cmds.disabled = [...bot.commands.keys()].filter(c => !guild.cmds.enabled.includes(c));
 			// console.log(guild.commands.enabled, guild.commands.enabled);
+
+			guild.customCmds = [];
+			const matchingCustomCmds = customCmds.filter(c => c.server_id === serverid);
+			for (const command of matchingCustomCmds) {
+				if (command.type === "simple") {
+					guild.customCmds.push({
+						name: command.comname,
+						description: `Custom command - ${command.type}`
+					});
+				} else if (command.type === "quote") {
+					guild.customCmds.push({
+						name: command.comname,
+						description: `Custom command - ${command.type}`,
+						options: [{
+							name: "term",
+							description: "Search term",
+							type: "STRING"
+						}, {
+							name: "action",
+							description: "Add, delete, or list quotes",
+							type: "STRING",
+							choices: [{
+								name: "List",
+								value: "list"
+							}, {
+								name: "Add",
+								value: "add"
+							}, {
+								name: "Delete",
+								value: "del"
+							}]
+						}]
+					});
+				}
+			}
 		}
 
-		// TODO register slash commands for enabled commands
 		if (!bot.application?.owner) {
 			await bot.application?.fetch();
 		}
 		bot.guilds.cache.forEach(async (g) => {
-			const commands = bot.servConf.get(g.id).cmds.enabled;
-			const slashCommands = [];
+			const serv = bot.servConf.get(g.id);
+			const commands = serv.cmds.enabled;
+			const slashCommands = [...serv.customCmds];
 			for (const c of commands) {
 				// console.log(c);
 				const cmd = bot.commands.get(c);
@@ -193,11 +230,11 @@ bot.loadSlashCommands = async () => {
 					slashCommands.push(cmd.slash);
 				}
 			}
+
 			// TODO register slash commands with only perms for me for disabled commands
-			const c = await g.commands.set(slashCommands);
+			await g.commands.set(slashCommands);
 			// console.log(c);
 		});
-		// TODO custom commands as slash commands
 		// console.log([...bot.servConf.values()]);
 	} catch (e) {
 		console.error(e);
@@ -229,6 +266,9 @@ bot.channels.cache.forEach(c => {
 
 //get the permission level of the member who sent message
 bot.elevation = async function(msg) {
+	if (!msg.author) {
+		msg.author = msg.user;
+	}
 	if (!msg.channel.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
