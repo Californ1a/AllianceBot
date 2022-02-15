@@ -82,42 +82,6 @@ const getMaxRole = function(user) {
 };
 
 const writeLineToAllLogs = function(bot, guild, line) {
-	// const guildChannels = [...guild.channels.cache.values()];
-	// const currentDate = new Date();
-	// const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-	// const currentYear = currentDate.getFullYear();
-	// const currentMonth = monthNames[currentDate.getMonth()];
-	// let i = 0;
-	// for (i; i < guildChannels.length; i++) {
-	// 	fs.mkdirsSync(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}`, function(error) {
-	// 		if (error) {
-	// 			console.error(error.stack);
-	// 			return;
-	// 		}
-	// 	});
-	// }
-	// fs.mkdirsSync(`${logLocation}${guild.name}/full_logs`, function(error) {
-	// 	if (error) {
-	// 		console.error(error.stack);
-	// 		return;
-	// 	}
-	// });
-	// for (i; i < guildChannels.length; i++) {
-	// 	if (guildChannels[i].type === "GUILD_TEXT" && guildChannels[i].permissionsFor(guild.members.cache.get(bot.user.id)).permissions.has(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
-	// 		fs.appendFile(`${logLocation}${guild.name}/#${guildChannels[i].name}/${currentYear}/${currentMonth}.log`, `* ${line}\r\n`, function(error) {
-	// 			if (error) {
-	// 				console.error(error.stack);
-	// 			}
-	// 		});
-	// 		fs.appendFile(`${logLocation}${guild.name}/full_logs/#${guildChannels[i].name}.log`, `* ${line}\r\n`, function(error) {
-	// 			if (error) {
-	// 				console.error(error.stack);
-	// 			} else {
-	// 				//console.log(colors.white.dim("* " + line));
-	// 			}
-	// 		});
-	// 	}
-	// }
 	if (line.includes("has come online") || line.includes("went offline")) {
 		return;
 	} else {

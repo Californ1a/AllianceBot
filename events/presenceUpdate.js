@@ -1,3 +1,6 @@
+const {
+	Permissions
+} = require("discord.js");
 const editPlayRole = require("../util/editRole.js");
 
 module.exports = (bot, oldPresence, newPresence) => {
@@ -12,7 +15,7 @@ module.exports = (bot, oldPresence, newPresence) => {
 	}
 
 	const botMember = guild.members.cache.get(bot.user.id);
-	if ((botMember.permissions.has("MANAGE_ROLES") || botMember.permissions.has(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+	if ((botMember.permissions.has(Permissions.FLAGS.MANAGE_ROLES) || botMember.permissions.has(10000000n)) && botMember.roles.highest.position > member.roles.highest.position) {
 
 		const regex = /^Distance$/i;
 

@@ -1,3 +1,6 @@
+const {
+	Permissions
+} = require("discord.js");
 const send = require("./sendMessage.js");
 const firebase = require("./firebase.js");
 const TwitchClient = require("twitch").default;
@@ -296,7 +299,7 @@ function streams(bot, guild) {
 		const twitchchanid = twitchChannel.slice(2, twitchChannel.length - 1);
 		const chan = guild.channels.cache.get(twitchchanid);
 		// console.log("HIT DISCORD 12");
-		const missingPerms = chan.guild.members.cache.get(bot.user.id).permissions.missing(["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES", "MANAGE_CHANNELS"]); // HIT DISCORD
+		const missingPerms = chan.guild.members.cache.get(bot.user.id).permissions.missing([Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.MANAGE_MESSAGES, Permissions.FLAGS.MANAGE_CHANNELS]); // HIT DISCORD
 		// console.log(missingPerms);
 		if (chan && gameName && missingPerms.length === 0) {
 			main(bot, chan, guild, gameName, conf);

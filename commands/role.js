@@ -1,3 +1,6 @@
+const {
+	Permissions
+} = require("discord.js");
 //const pre = require("../config.json").prefix;
 const send = require("../util/sendMessage.js");
 const canUserAndBotAssign = require("../util/canAssignRole.js");
@@ -7,7 +10,7 @@ exports.run = (bot, msg, args) => {
 	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	const msgMember = msg.member;
 	const botMember = msg.channel.guild.members.cache.get(bot.user.id);
-	if (msgMember.permissions.has("MANAGE_ROLES")) {
+	if (msgMember.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) {
 		if (!(args.length >= 3) || !msg.mentions.users.first()) {
 			return send(msg.channel, `Incorrect syntax. Use \`${pre}help role\` for syntax.`);
 		}
