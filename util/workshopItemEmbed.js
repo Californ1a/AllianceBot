@@ -1,4 +1,4 @@
-const request = require("request");
+const fetch = require("node-fetch");
 const Steam = require("steam-web");
 const send = require("./sendMessage.js");
 const {
@@ -10,42 +10,33 @@ const s = new Steam({
 });
 const botmsgDeleteTimeout = 8000;
 
-let count = 0;
-const time = 1000;
-const re = (opts, cb) => {
-	if (count === 10) {
-		return cb(new Error("Request took too long."));
+async function apiCall(options) {
+	const body = new URLSearchParams(options.formData);
+	const response = await fetch(options.url, {
+		method: options.method,
+		headers: options.headers,
+		body: body
+	});
+	if (response.status === 200) {
+		return response.json();
+	} else {
+		throw new Error(`${response.status} ${response.statusText}`);
 	}
-	count++;
-	console.log(`Attempt #${count}...`);
-	request(opts, (err, res, body) => {
-		if (err) {
-			cb(new Error(err));
-		}
-		if (res.statusCode === 200) {
-			count = 0;
-			cb(null, JSON.parse(body).response.publishedfiledetails[0]);
-		} else {
-			console.log(`Waiting ${time/1000} seconds...`);
-			setTimeout(() => {
-				// time *= 2;
-				re(opts, cb);
-			}, time);
-		}
-	});
-};
+}
 
-const req = (opts) => {
-	return new Promise((resolve, reject) => {
-		console.log("Attempting to map data...");
-		re(opts, (err, json) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(json);
-		});
-	});
-};
+const delay = retryCount => new Promise(resolve => setTimeout(resolve, 10 ** retryCount));
+
+async function getResource(options, retryCount = 0, lastError = null) {
+	if (retryCount > 5) {
+		throw new Error(lastError);
+	}
+	try {
+		return apiCall(options);
+	} catch (e) {
+		await delay(retryCount);
+		return getResource(options, retryCount + 1, e);
+	}
+}
 
 module.exports = async (bot, msg) => {
 	if (msg.author.id === bot.user.id) {
@@ -72,7 +63,7 @@ module.exports = async (bot, msg) => {
 		headers: {
 			"Cache-Control": "no-cache",
 			Authorization: `Bearer ${process.env.STEAM_API_KEY}`,
-			"content-type": "multipart/form-data"
+			"content-type": "application/x-www-form-urlencoded"
 		},
 		formData: {
 			itemcount: "1",
@@ -80,10 +71,11 @@ module.exports = async (bot, msg) => {
 		}
 	};
 	send(msg.channel, "Obtaining map data...").then(m => {
-		req(options).then(json => {
+		getResource(options).then(data => {
+			const json = data.response.publishedfiledetails[0];
 			const steamid = json.creator;
 			// console.log(JSON.stringify(json, null, 2));
-			if (json.creator_app_id !== 233610 || json.creator_app_id !== json.consumer_app_id) {
+			if (json.consumer_app_id !== 233610 && (json.creator_app_id !== json.consumer_app_id || json.creator_app_id === 766)) {
 				m.edit("This workshop item is not from Distance - Only Distance maps are allowed.").then(m => {
 					setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout);
 				});
@@ -91,55 +83,41 @@ module.exports = async (bot, msg) => {
 			} else {
 				const embed = new MessageEmbed()
 					.setTitle(json.title)
-					.setDescription(`${json.description.slice(0, 200)}...\n\n[Direct Download Link](${json.file_url})\n\n`)
+					.setDescription(`${json.description.slice(0, 200)}${(json.description.length>200)?"...":""}${(json.creator_app_id === 233610)?`\n\n[Direct Download Link](${json.file_url})\n\n`:""}`)
 					.setURL(`https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}`)
-					.setColor(4886754)
-					//.setThumbnail(json.preview_url)
-					.setImage(json.preview_url)
-					.addField("File Name", json.filename, true)
-					.addField("File Size", `${Math.floor(json.file_size/1000).toLocaleString()}KB`, true);
+					.setColor(4886754);
+				if (json.creator_app_id === 233610) {
+					embed.addField("File Name", json.filename, true)
+						.addField("File Size", `${Math.floor(json.file_size/1000).toLocaleString()}KB`, true)
+						.setImage(json.preview_url);
+				} else {
+					embed.addField("Type", "Collection", true)
+						.setThumbnail(json.preview_url);
+				}
 				let modes = [];
-				let difficulty;
+				let difficulty = [];
 				for (const tag of json.tags) {
 					switch (tag.tag) {
 						//begin difficulities
 						case "Casual":
-							difficulty = "Casual";
-							break;
 						case "Normal":
-							difficulty = "Normal";
-							break;
 						case "Advanced":
-							difficulty = "Advanced";
-							break;
 						case "Expert":
-							difficulty = "Expert";
-							break;
 						case "Nightmare":
-							difficulty = "Nightmare";
+							difficulty.push(tag.tag);
 							break;
 							//begin modes
 						case "Sprint":
-							modes.push("Sprint");
-							break;
 						case "Reverse Tag":
-							modes.push("Reverse Tag");
-							break;
 						case "Challenge":
-							modes.push("Challenge");
-							break;
 						case "Stunt":
-							modes.push("Stunt");
-							break;
 						case "Trackmogrify":
-							modes.push("Trackmogrify");
-							break;
 						case "Main Menu":
-							modes.push("Main Menu");
+							modes.push(tag.tag);
 							break;
 					}
 				}
-				difficulty = (difficulty) ? difficulty : "None";
+				difficulty = (difficulty.length === 0) ? "None" : difficulty.join(", ");
 				modes = (modes.length === 0) ? "None" : modes.join(", ");
 				embed.addField("Mode(s)", modes, true)
 					.addField("Difficulty", difficulty, true);
@@ -151,7 +129,9 @@ module.exports = async (bot, msg) => {
 						const profile = res.profileurl;
 						const avatar = res.avatar;
 						embed.setAuthor(name, avatar, profile);
-						m.edit({ content: `A new map posted by ${msg.author}`, embeds: [embed] }).then(() => {
+						m.edit(`A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`, {
+							embeds: [embed]
+						}).then(() => {
 							msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 						}).catch(console.error);
 					}

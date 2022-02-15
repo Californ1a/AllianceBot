@@ -35,7 +35,6 @@
 		"node-fetch": "^2.6.0",
 		"parse-duration": "^0.4.4",
 		"pm2": "^2.10.4",
-		"request": "^2.88.2",
 		"steam-web": "^0.7.0",
 		"twit": "^2.2.11",
 		"twitch": "^4.1.3",

@@ -51,7 +51,7 @@ module.exports = async (bot, meter, msg) => {
 	const cha = await cl.formatChatlog(msg);
 	meter.mark();
 	console.log(colors.white(cha.consoleChat + cha.formattedAtturls));
-	if (membrole && (msg.channel.guild.members.cache.get(msg.author.id) && !msg.channel.guild.members.cache.get(msg.author.id).roles.cache.some(val => val.name === membrole))) {
+	if (membrole && (msg.guild.members.cache.get(msg.author.id) && !msg.guild.members.cache.get(msg.author.id).roles.cache.some(val => val.name === membrole))) {
 		guestToMemb(bot, msg);
 	}
 

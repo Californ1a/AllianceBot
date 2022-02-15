@@ -36,7 +36,8 @@ const emptyFields = [{
 	"inline": true
 }];
 
-const updateEmbed = (bot, servers) => {
+const updateEmbed = (bot, data) => {
+	const { servers } = data;
 	const distance = bot.guilds.cache.get(serverID);
 	if (!distance.channels.cache.some(val => val.name === channelName)) {
 		return;
@@ -45,10 +46,14 @@ const updateEmbed = (bot, servers) => {
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (const serv of servers) {
+			let count = serv.connectedPlayers;
+			if (serv.serverName === "Workshop Mix Unofficial" && serv.mode === "Sprint Auto") {
+				count = data.Players.length;
+			}
 			const servName = serv.serverName.replace(/^\[[a-zA-Z0-9]{6}\]/i, "");
 			fieldsArray.push({
 				"name": (serv.passwordProtected) ? `~~${servName}~~` : servName,
-				"value": `${serv.mode} (${serv.connectedPlayers}/${serv.playerLimit}) \`${serv.build}\``,
+				"value": `${serv.mode} (${count}/${serv.playerLimit}) \`${serv.build}\``,
 				"inline": true
 			});
 		}
@@ -88,7 +93,7 @@ const updateEmbed = (bot, servers) => {
 	}).catch(console.error);
 };
 
-const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
+const distanceServers = (bot, servers = ["http://distance.rip:23469/", "http://144.202.124.150:45672/summary"]) => {
 	Promise.all(servers.map(s => fetch(s)))
 		.then(responses => Promise.all(responses.map(res => res.json())))
 		.then(multiData => multiData.reduce((merge, data) => ({
@@ -104,7 +109,7 @@ const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
 		})
 		.then(merged => {
 			if (typeof merged !== "undefined") {
-				updateEmbed(bot, merged.servers);
+				updateEmbed(bot, merged);
 			} else {
 				refreshMin2 += refreshMin;
 			}
