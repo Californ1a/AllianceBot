@@ -12,8 +12,9 @@ const {
 const firebase = require("./firebase.js");
 const send = require("./sendMessage.js");
 const url = "http://seekr.pw/distance-log/changelist.json";
-const guildID = (process.env.NODE_ENV === "dev") ? "211599888222257152" : "83078957620002816";
-const channelID = (process.env.NODE_ENV === "dev") ? "223774050537832449" : "551229266336022559";
+const isDev = process.env.NODE_ENV === "dev";
+const guildID = (isDev) ? "211599888222257152" : "83078957620002816";
+const channelID = (isDev) ? "223774050537832449" : "551229266336022559";
 const refreshMin = 5;
 let sending = false;
 
@@ -28,12 +29,12 @@ firebase.db.ref("wrlog").once("value").then(data => {
 function saveToFirebase(wr) {
 	// console.log("[CAL] Save to firebase", wr);
 	if (wr.mostRecentWR) {
-		if (process.env.NODE_ENV !== "dev") {
+		if (!isDev) {
 			firebase.db.ref("wrlog").set(wr);
 		}
 		wrMsgs = wr;
 	} else {
-		if (process.env.NODE_ENV !== "dev") {
+		if (!isDev) {
 			firebase.db.ref("wrlog/fetchTime").set(wr.fetchTime);
 		}
 		wrMsgs.fetchTime = wr.fetchTime;
