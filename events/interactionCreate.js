@@ -35,7 +35,7 @@ module.exports = async (bot, interaction) => {
 	const cmd = bot.commands.get(interaction.commandName);
 	const perms = await bot.elevation(interaction);
 	const options = JSON.stringify(getOpts(interaction.options.data));
-	console.log(colors.grey(`* ${interaction.member.displayName} used command /${interaction.commandName}: ${options}`));
+	console.log(colors.grey(`* ${interaction.member.displayName} used command /${interaction.commandName}${interaction.options.data.length?`: ${options}`:""}`));
 	const response = await connection.select("*", "servcom", `server_id='${interaction.channel.guild.id}' AND comname='${interaction.commandName}'`);
 	if (response[0]) {
 		let strs;
