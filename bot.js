@@ -154,10 +154,16 @@ bot.confRefresh = () => {
 	});
 };
 
-bot.loadSlashCommands = async () => {
+bot.loadSlashCommands = async (guildid) => {
 	try {
-		const cmds = await connection.select("*", "commands");
-		const customCmds = await connection.select("*", "servcom");
+		let cmds, customCmds;
+		if (guildid) {
+			cmds = await connection.select("*", "commands", `server_id=${guildid}`);
+			cmds = await connection.select("*", "servcom", `server_id=${guildid}`);
+		} else {
+			cmds = await connection.select("*", "commands");
+			customCmds = await connection.select("*", "servcom");
+		}
 
 		// console.log(cmds);
 		const conf = [...bot.servConf.values()];
@@ -221,7 +227,7 @@ bot.loadSlashCommands = async () => {
 		}
 		bot.guilds.cache.forEach(async (g) => {
 			const serv = bot.servConf.get(g.id);
-			const commands = serv.cmds.enabled;
+			const commands = [...serv.cmds.enabled, ...serv.cmds.disabled];
 			const slashCommands = [...serv.customCmds];
 			for (const c of commands) {
 				// console.log(c);
@@ -231,9 +237,79 @@ bot.loadSlashCommands = async () => {
 				}
 			}
 
-			// TODO register slash commands with only perms for me for disabled commands
-			await g.commands.set(slashCommands);
-			// console.log(c);
+			const cmds = await g.commands.set(slashCommands);
+			// console.log(cmds);
+			const cmd = cmds.filter(c => c.defaultPermission === false);
+			const fullPermissions = [];
+			for (const [c1] of cmd) {
+				const c = cmd.get(c1);
+				// console.log(c);
+				const perms = [];
+				const permLevel = bot.commands.get(c.name)?.conf?.permLevel;
+				// console.log("permLevel", permLevel);
+
+				// let permlvl;
+				const memberrole = serv.membrole;
+				const moderatorrole = serv.modrole;
+				const administratorrole = serv.adminrole;
+				if (memberrole && permLevel <= 1) {
+					const membRole = g.roles.cache.find(val => val.name === memberrole);
+					if (membRole) {
+						perms.push({
+							id: membRole.id,
+							type: "ROLE",
+							permission: true
+						});
+						// permlvl = 1;
+					}
+				}
+				if (moderatorrole && permLevel <= 2) {
+					const modRole = g.roles.cache.find(val => val.name === moderatorrole);
+					if (modRole) {
+						perms.push({
+							id: modRole.id,
+							type: "ROLE",
+							permission: true
+						});
+						// permlvl = 2;
+					}
+				}
+				if (administratorrole && permLevel <= 3) {
+					const adminRole = g.roles.cache.find(val => val.name === administratorrole);
+					if (adminRole) {
+						perms.push({
+							id: adminRole.id,
+							type: "ROLE",
+							permission: true
+						});
+						// permlvl = 3;
+					}
+				}
+				const owner = await g.fetchOwner();
+				if (owner && permLevel <= 3) {
+					perms.push({
+						id: owner.id,
+						type: "USER",
+						permission: true
+					});
+					// permlvl = 3;
+				}
+				perms.push({
+					id: botOwner,
+					type: "USER",
+					permission: true
+				});
+				// console.log("perms", perms);
+				fullPermissions.push({
+					id: c.id,
+					permissions: perms
+				});
+				// console.log("fullPermissions", fullPermissions);
+			}
+			console.log(fullPermissions);
+			g.commands.permissions.set({
+				fullPermissions
+			});
 		});
 		// console.log([...bot.servConf.values()]);
 	} catch (e) {
@@ -267,6 +343,7 @@ bot.channels.cache.forEach(c => {
 //get the permission level of the member who sent message
 bot.elevation = async function(msg) {
 	if (!msg.author) {
+		// interaction command doesn't have author, just user
 		msg.author = msg.user;
 	}
 	if (!msg.channel.guild) {
@@ -372,8 +449,8 @@ bot.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	io.notifyError(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
-	console.log(p.code);
-	console.log(reason.code);
+	console.log("p.code", p.code);
+	console.log("reason.code", reason.code);
 	if (p.code && p.code === "ETIMEDOUT") {
 		process.exit();
 	}

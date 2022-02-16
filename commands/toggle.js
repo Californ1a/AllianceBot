@@ -24,7 +24,7 @@ exports.run = (bot, msg, args) => {
 			};
 			connection.insert("commands", info).then(() => {
 				if (bot.commands.get(command).slash) {
-					bot.loadSlashCommands();
+					bot.loadSlashCommands(msg.channel.guild.id);
 				}
 				console.log(colors.red("Successfully added command to server."));
 				send(msg.channel, "Successfully added command to server.");
@@ -37,7 +37,7 @@ exports.run = (bot, msg, args) => {
 			console.log(colors.red(`Trying to remove command '${command}' from database.`));
 			connection.del("commands", `commandname='${command}' AND server_id=${msg.channel.guild.id}`).then(() => {
 				if (bot.commands.get(command).slash) {
-					bot.loadSlashCommands();
+					bot.loadSlashCommands(msg.channel.guild.id);
 				}
 				console.log(colors.red("Successfully removed command from server."));
 				send(msg.channel, "Successfully removed command from server.");
