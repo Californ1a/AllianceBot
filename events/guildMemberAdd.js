@@ -1,22 +1,19 @@
-const canAssignRole = require("../util/canAssignRole.js");
 const {
 	MessageEmbed
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
-module.exports = (bot, member) => {
+module.exports = async (bot, member) => {
+	if (member.partial) {
+		try {
+			member = await member.fetch();
+		} catch (e) {
+			console.error(e);
+			return;
+		}
+	}
 	console.log(`${member.displayName} joined ${member.guild.name} server.`);
 	const conf = bot.servConf.get(member.guild.id);
-	const botMember = member.guild.members.cache.get(bot.user.id);
-	const toRole = (conf.timeoutrole) ? member.guild.roles.cache.find(val => val.name === conf.timeoutrole) : member.guild.roles.cache.find(val => val.name === "Timeout");
-	if (!toRole || !canAssignRole(botMember, member)) {
-		return;
-	}
-	if (bot.timer.get(member.id) && !member.roles.cache.get(toRole.id)) {
-		member.roles.add(toRole);
-		console.log(`${member.displayName} re-added to timeout in ${member.guild.name} server.`);
-	}
-
 
 	const logchan = conf.logchannel;
 	if (!logchan) {
@@ -38,7 +35,7 @@ module.exports = (bot, member) => {
 			text: "User joined"
 		})
 		.setTimestamp();
-	send(chan, {
+	await send(chan, {
 		content: "\u200b",
 		embeds: [embed]
 	});

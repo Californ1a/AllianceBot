@@ -12,7 +12,7 @@ const connection = require("./util/connection.js");
 const Discord = require("discord.js");
 const bot = new Discord.Client({
 	intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_PRESENCES", "GUILD_MESSAGES", "DIRECT_MESSAGES"],
-	partials: ["CHANNEL"]
+	partials: ["CHANNEL", "GUILD_MEMBER"]
 });
 bot.reminders = new Discord.Collection();
 const botOwner = require("./config.json").ownerid;
