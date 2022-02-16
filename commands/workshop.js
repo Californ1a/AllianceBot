@@ -292,6 +292,7 @@ exports.help = {
 exports.slash = {
 	name: "workshop",
 	description: "Search the workshop",
+	defaultPermission: false,
 	options: [{
 		name: "search",
 		description: "The search term",

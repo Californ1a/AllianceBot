@@ -159,7 +159,7 @@ bot.loadSlashCommands = async (guildid) => {
 		let cmds, customCmds;
 		if (guildid) {
 			cmds = await connection.select("*", "commands", `server_id=${guildid}`);
-			cmds = await connection.select("*", "servcom", `server_id=${guildid}`);
+			customCmds = await connection.select("*", "servcom", `server_id=${guildid}`);
 		} else {
 			cmds = await connection.select("*", "commands");
 			customCmds = await connection.select("*", "servcom");
@@ -241,6 +241,8 @@ bot.loadSlashCommands = async (guildid) => {
 			// console.log(cmds);
 			const cmd = cmds.filter(c => c.defaultPermission === false);
 			const fullPermissions = [];
+			// console.log(serv.cmds.disabled);
+			const everyone = g.roles.cache.find(r => r.name === "@everyone");
 			for (const [c1] of cmd) {
 				const c = cmd.get(c1);
 				// console.log(c);
@@ -252,13 +254,23 @@ bot.loadSlashCommands = async (guildid) => {
 				const memberrole = serv.membrole;
 				const moderatorrole = serv.modrole;
 				const administratorrole = serv.adminrole;
+				const isDisabled = serv.cmds.disabled.includes(c.name);
+
+				if (everyone && permLevel === 0) {
+					perms.push({
+						id: everyone.id,
+						type: "ROLE",
+						permission: !isDisabled
+					});
+				}
+
 				if (memberrole && permLevel <= 1) {
 					const membRole = g.roles.cache.find(val => val.name === memberrole);
 					if (membRole) {
 						perms.push({
 							id: membRole.id,
 							type: "ROLE",
-							permission: true
+							permission: !isDisabled
 						});
 						// permlvl = 1;
 					}
@@ -269,7 +281,7 @@ bot.loadSlashCommands = async (guildid) => {
 						perms.push({
 							id: modRole.id,
 							type: "ROLE",
-							permission: true
+							permission: !isDisabled
 						});
 						// permlvl = 2;
 					}
@@ -280,7 +292,7 @@ bot.loadSlashCommands = async (guildid) => {
 						perms.push({
 							id: adminRole.id,
 							type: "ROLE",
-							permission: true
+							permission: !isDisabled
 						});
 						// permlvl = 3;
 					}
@@ -290,7 +302,7 @@ bot.loadSlashCommands = async (guildid) => {
 					perms.push({
 						id: owner.id,
 						type: "USER",
-						permission: true
+						permission: !isDisabled
 					});
 					// permlvl = 3;
 				}
@@ -306,7 +318,7 @@ bot.loadSlashCommands = async (guildid) => {
 				});
 				// console.log("fullPermissions", fullPermissions);
 			}
-			console.log(fullPermissions);
+			// console.log(fullPermissions);
 			g.commands.permissions.set({
 				fullPermissions
 			});
