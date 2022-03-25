@@ -2,6 +2,9 @@
 // const pre = config.prefix;
 const connection = require("../util/connection.js");
 const send = require("../util/sendMessage.js");
+const {
+	Formatters
+} = require("discord.js");
 let i = 0;
 
 function intersect(one, two) {
@@ -107,9 +110,8 @@ exports.run = (bot, msg, args, perm) => {
 			} else {
 				command = bot.commands.get(command);
 				if (command.conf.permLevel <= perm) {
-					send(msg.author, `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription && command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`, {
-						code: "asciidoc"
-					});
+					const content = Formatters.codeBlock("asciidoc", `= ${command.help.name.charAt(0).toUpperCase()}${command.help.name.slice(1)} = \n${command.help.description}\n\nUsage :: ${pre}${command.help.usage}${(command.help.extendedDescription && command.help.extendedDescription !== "")?`\n<> Required, [] Optional\n\n${command.help.extendedDescription}`:""}`);
+					send(msg.author, content);
 				}
 			}
 		}
