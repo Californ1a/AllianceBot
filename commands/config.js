@@ -38,6 +38,34 @@ function doAll(flags, msg) {
 	});
 }
 
+function createMsg(type, val) {
+	let msgCon = "";
+	switch (type) {
+		case "prefix":
+			msgCon = `Prefix - ${val}`;
+			break;
+		case "membrole":
+			msgCon = `Member Role Name - ${val}`;
+			break;
+		case "modrole":
+			msgCon = `Moderator Role Name - ${val}`;
+			break;
+		case "adminrole":
+			msgCon = `Admin Role Name - ${val}`;
+			break;
+		case "logchannel":
+			msgCon = `Log Channel - ${val}`;
+			break;
+		case "twitchchannel":
+			msgCon = `Twitch Channel - ${val}`;
+			break;
+		case "twitchgame":
+			msgCon = `Twitch Game - ${val}`;
+			break;
+	}
+	return msgCon;
+}
+
 exports.run = (bot, msg, args, perms, cmd, flags) => {
 	send(msg.channel, "Loading...").then(m => {
 		const conf = bot.servConf.get(m.channel.guild.id);
@@ -48,29 +76,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 			const msgCon = [];
 			let i = 0;
 			for (i; i < ret.types.length; i++) {
-				switch (ret.types[i]) {
-					case "prefix":
-						msgCon.push(`Prefix - ${ret.newVals[i]}`);
-						break;
-					case "membrole":
-						msgCon.push(`Member Role Name - ${ret.newVals[i]}`);
-						break;
-					case "modrole":
-						msgCon.push(`Moderator Role Name - ${ret.newVals[i]}`);
-						break;
-					case "adminrole":
-						msgCon.push(`Admin Role Name - ${ret.newVals[i]}`);
-						break;
-					case "logchannel":
-						msgCon.push(`Log Channel - ${ret.newVals[i]}`);
-						break;
-					case "twitchchannel":
-						msgCon.push(`Twitch Channel - ${ret.newVals[i]}`);
-						break;
-					case "twitchgame":
-						msgCon.push(`Twitch Game - ${ret.newVals[i]}`);
-						break;
-				}
+				msgCon.push(createMsg(ret.types[i], ret.newVals[i]));
 			}
 			setTimeout(() => {
 				bot.confRefresh().then(() => {
@@ -90,6 +96,60 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 		console.log("A");
 		console.error(e);
 	});
+};
+
+exports.runSlash = async (bot, interaction) => {
+	if (!interaction.options.data[0]) {
+		return interaction.reply({
+			content: "You must select at least one option to change.",
+			ephemeral: true
+		});
+	}
+	try {
+		await interaction.deferReply({
+			ephemeral: true
+		});
+		const opts = interaction.options;
+		const flags = {
+			prefix: opts.getString("prefix"),
+			membrole: `${opts.getRole("membrole")}`,
+			modrole: `${opts.getRole("modrole")}`,
+			adminrole: `${opts.getRole("adminrole")}`,
+			logchannel: `${opts.getChannel("logchannel")}`,
+			twitchchannel: `${opts.getChannel("twitchchannel")}`,
+			twitchgame: opts.getString("twitchgame"),
+			clear: opts.getString("clear")
+		};
+		const msgCon = [];
+		for (const [key, value] of Object.entries(flags)) {
+			if (value && value !== "null" && key !== "clear") {
+				await update(value, key, interaction);
+				msgCon.push(createMsg(key, value));
+			} else if (value && value !== "null" && key === "clear") {
+				await update("NULL", value, interaction);
+				msgCon.push(createMsg(value, "NULL"));
+			}
+		}
+		if (!msgCon[0]) {
+			return interaction.editReply("You must select at least one option to change.");
+		}
+		setTimeout(async () => {
+			try {
+				await bot.confRefresh();
+				await interaction.editReply(`**Updated:**\n${msgCon.join("\n")}`);
+			} catch (e) {
+				try {
+					await interaction.editReply(e.message);
+				} catch (e) {
+					console.log("D");
+					console.error(e);
+				}
+			}
+		}, 1000);
+	} catch (e) {
+		console.log("E");
+		console.error(e);
+	}
 };
 
 exports.conf = {
@@ -115,4 +175,62 @@ exports.f = {
 	logchannel: ["lc", "logchannel"],
 	twitchchannel: ["tc", "twitchchannel"],
 	twitchgame: ["tg", "twitchgame"]
+};
+
+exports.slash = {
+	name: "config",
+	description: "Basic bot config",
+	defaultPermission: false,
+	options: [{
+		name: "prefix",
+		description: "Prefix used when typing commands in chat",
+		type: "STRING"
+	}, {
+		name: "membrole",
+		description: "'Member' role name, if one exists (for use in permissions)",
+		type: "ROLE"
+	}, {
+		name: "modrole",
+		description: "'Moderator' role name, if one exists (for use in permissions)",
+		type: "ROLE"
+	}, {
+		name: "adminrole",
+		description: "'Administrator' role name, if one exists (for use in permissions)",
+		type: "ROLE"
+	}, {
+		name: "logchannel",
+		description: "Channel to post logs to, if one exists",
+		type: "CHANNEL"
+	}, {
+		name: "twitchchannel",
+		description: "Channel to post twitch streams to, if one exists",
+		type: "CHANNEL"
+	}, {
+		name: "twitchgame",
+		description: "The game to search Twitch for streams of",
+		type: "STRING"
+	}, {
+		name: "clear",
+		description: "Pick a config option to clear",
+		type: "STRING",
+		choices: [{
+			name: "membrole",
+			value: "membrole"
+		}, {
+			name: "modrole",
+			value: "modrole"
+		}, {
+			name: "adminrole",
+			value: "adminrole"
+		}, {
+			name: "logchannel",
+			value: "logchannel"
+		}, {
+			name: "twitchchannel",
+			value: "twitchchannel"
+		}, {
+			name: "twitchgame",
+			value: "twitchgame"
+		}]
+	}]
 };
