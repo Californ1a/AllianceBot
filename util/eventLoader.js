@@ -14,8 +14,8 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildMemberUpdate", (oldMember, newMember) => reqEvent("guildMemberUpdate")(bot, oldMember, newMember));
 	bot.on("guildMemberAdd", (member) => reqEvent("guildMemberAdd")(bot, member));
 	bot.on("guildMemberRemove", (member) => reqEvent("guildMemberRemove")(bot, member));
-	bot.on("guildBanAdd", (guild, user) => reqEvent("guildBanAdd")(bot, guild, user));
-	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
+	bot.on("guildBanAdd", (ban) => reqEvent("guildBanAdd")(bot, ban));
+	bot.on("guildBanRemove", (ban) => reqEvent("guildBanRemove")(bot, ban));
 	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
 	bot.on("messageCreate", (msg) => reqEvent("message")(bot, meter, msg));
 	bot.on("interactionCreate", (interaction) => reqEvent("interactionCreate")(bot, interaction));

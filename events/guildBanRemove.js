@@ -3,7 +3,19 @@ const {
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
-module.exports = async (bot, guild, user) => {
+module.exports = async (bot, ban) => {
+	if (ban.partial) {
+		try {
+			ban = await ban.fetch();
+		} catch (e) {
+			console.error(e);
+			return;
+		}
+	}
+	const {
+		guild,
+		user
+	} = ban;
 	const conf = bot.servConf.get(guild.id);
 	const logchan = conf.logchannel;
 	if (!logchan) {

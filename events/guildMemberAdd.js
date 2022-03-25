@@ -30,7 +30,7 @@ module.exports = async (bot, member) => {
 			name: `${member.user.tag} (${member.user.id})`,
 			iconURL: member.user.displayAvatarURL()
 		})
-		.setDescription(member.user)
+		.setDescription(`${member.user}`)
 		.setFooter({
 			text: "User joined"
 		})
