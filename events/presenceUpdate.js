@@ -23,11 +23,11 @@ module.exports = (bot, oldPresence, newPresence) => {
 		const newP = newPresence.activities.find(a => regex.test(a.name));
 
 		const oldHasStream = (oldP) ? oldP.type === "STREAMING" : false;
-		const oldHasDistance = (oldP) ? (oldHasStream) ? regex.test(oldP.state) : (oldP.application.id) ? regex.test(oldP.name) : false : false;
+		const oldHasDistance = (oldP) ? (oldHasStream) ? regex.test(oldP.state) : (oldP.applicationId) ? regex.test(oldP.name) : false : false;
 		//const oldHasRole = oldMember.roles.cache.has(playRole.id);
 
 		const newHasStream = (newP) ? newP.type === "STREAMING" : false;
-		const newHasDistance = (newP) ? (newHasStream) ? regex.test(newP.state) : (newP.application.id) ? regex.test(newP.name) : false : false;
+		const newHasDistance = (newP) ? (newHasStream) ? regex.test(newP.state) : (newP.applicationId) ? regex.test(newP.name) : false : false;
 		const newHasRole = member.roles.cache.has(playRole.id);
 
 		if (newHasDistance && !newHasRole) {
