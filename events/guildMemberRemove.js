@@ -9,6 +9,7 @@ module.exports = async (bot, member) => {
 		try {
 			member = await member.fetch();
 		} catch (e) {
+			console.log(member);
 			console.error(e);
 			return;
 		}
