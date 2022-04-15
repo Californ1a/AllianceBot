@@ -3,7 +3,7 @@ const timers = require("../util/timers.js");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	const forSS = {
 		"bool": true
 	};

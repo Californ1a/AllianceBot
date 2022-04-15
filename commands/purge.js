@@ -22,7 +22,7 @@ const doTheThing = (chan, amount, user) => {
 };
 
 exports.run = (bot, msg, args) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	if (!args[0]) {
 		return send(msg.channel, `Must specify an amount or an @mention and amount. Use \`${pre}help purge\` for help.`);
 	} else if (((args[0] && isNaN(args[0]) && !msg.mentions.users.first()) || (!isNaN(args[0]) && parseInt(args[0]) < 1)) || (isNaN(args[0]) && !msg.mentions.users.first() && !args[1])) {

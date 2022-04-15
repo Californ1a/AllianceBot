@@ -14,14 +14,17 @@ module.exports = (bot, stream, meter) => {
 	bot.on("guildMemberUpdate", (oldMember, newMember) => reqEvent("guildMemberUpdate")(bot, oldMember, newMember));
 	bot.on("guildMemberAdd", (member) => reqEvent("guildMemberAdd")(bot, member));
 	bot.on("guildMemberRemove", (member) => reqEvent("guildMemberRemove")(bot, member));
-	bot.on("guildBanAdd", (guild, user) => reqEvent("guildBanAdd")(bot, guild, user));
-	bot.on("guildBanRemove", (guild, user) => reqEvent("guildBanRemove")(bot, guild, user));
+	bot.on("guildBanAdd", (ban) => reqEvent("guildBanAdd")(bot, ban));
+	bot.on("guildBanRemove", (ban) => reqEvent("guildBanRemove")(bot, ban));
 	bot.on("userUpdate", (oldUser, newUser) => reqEvent("userUpdate")(bot, oldUser, newUser));
-	bot.on("message", (msg) => reqEvent("message")(bot, meter, msg));
-	stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
-	stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
-	stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));
-	stream.on("connected", (response) => reqEvent("tweetConnected")(bot, response));
-	stream.on("reconnect", (request, response, connectInterval) => reqEvent("tweetReconnect")(bot, request, response, connectInterval));
-	stream.on("error", (error) => reqEvent("tweetError")(bot, error));
+	bot.on("messageCreate", (msg) => reqEvent("message")(bot, meter, msg));
+	bot.on("interactionCreate", (interaction) => reqEvent("interactionCreate")(bot, interaction));
+	if (stream) { // if NODE_ENV !== "dev"
+		stream.on("tweet", (tweet) => reqEvent("tweet")(bot, tweet));
+		stream.on("disconnect", (disconnectMessage) => reqEvent("tweetDisconnect")(bot, disconnectMessage));
+		stream.on("connect", (request) => reqEvent("tweetConnect")(bot, request));
+		stream.on("connected", (response) => reqEvent("tweetConnected")(bot, response));
+		stream.on("reconnect", (request, response, connectInterval) => reqEvent("tweetReconnect")(bot, request, response, connectInterval));
+		stream.on("error", (error) => reqEvent("tweetError")(bot, error));
+	}
 };

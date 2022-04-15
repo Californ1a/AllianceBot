@@ -1,13 +1,14 @@
 const colors = require("colors");
 const connection = require("../util/connection.js");
 
-const addServer = (bot, guild) => {
+const addServer = async (bot, guild) => {
 	console.log(colors.red(`Does not exist, trying to insert server '${guild.name}' into database...`));
+	const owner = await guild.fetchOwner();
 	const info = {
-		"servername": `'${guild.name}'`,
-		"serverid": guild.id,
-		"ownerid": guild.owner.id,
-		"prefix": "!"
+		servername: `'${guild.name}'`,
+		serverid: guild.id,
+		ownerid: owner.id,
+		prefix: "!"
 	};
 	connection.insert("servers", info).then(() => {
 		console.log(colors.red("Success. Inserting default commands for new server..."));

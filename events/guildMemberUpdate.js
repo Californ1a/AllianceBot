@@ -4,7 +4,18 @@ const {
 } = require("discord.js");
 const send = require("../util/sendMessage.js");
 
-module.exports = (bot, oldMember, newMember) => {
+module.exports = async (bot, oldMember, newMember) => {
+	if (oldMember.partial) {
+		return;
+	}
+	if (newMember.partial) {
+		try {
+			newMember = await newMember.fetch();
+		} catch (e) {
+			console.error(e);
+			return;
+		}
+	}
 	if (!oldMember || !newMember || !oldMember.displayName || !newMember.displayName) {
 		return;
 	}
@@ -25,8 +36,14 @@ module.exports = (bot, oldMember, newMember) => {
 	}
 	const embed = new MessageEmbed()
 		.setColor("#ffff00")
-		.setAuthor(`${newMember.user.tag} (${newMember.user.id})`, newMember.user.displayAvatarURL())
+		.setAuthor({
+			name: `${newMember.user.tag} (${newMember.user.id})`,
+			iconURL: newMember.user.displayAvatarURL()
+		})
 		.setDescription(`${newMember.user}\n\n**Action:** Nickname Change\n**Change:** \`${oldMember.displayName.replace("`", "\\`")}\` → \`${newMember.displayName.replace("`", "\\`")}\``)
 		.setTimestamp();
-	send(chan, "", embed);
+	await send(chan, {
+		content: "\u200b",
+		embeds: [embed]
+	});
 };

@@ -4,17 +4,17 @@ const colors = require("colors");
 const send = require("../util/sendMessage.js");
 
 exports.run = (bot, msg, args) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	if (args.length !== 1) {
 		return send(msg.channel, `Incorrect syntax. Use \`${pre}help delcom\` for help.`);
 	}
-	connection.select("*", "servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(response => {
+	connection.select("*", "servcom", `comname='${args[0]}' AND server_id='${msg.channel.guild.id}'`).then(response => {
 		if (!response[0]) {
 			return send(msg.channel, "Command does not exist.");
 		}
-		console.log(colors.red(`Attempting to remove the command \`${args[0]}\` from server \`${msg.guild.name}\`.`));
+		console.log(colors.red(`Attempting to remove the command \`${args[0]}\` from server \`${msg.channel.guild.name}\`.`));
 		if (response[0].type === "simple") {
-			connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(() => {
+			connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 				console.log(colors.red("Successfully removed command."));
 				send(msg.channel, "Success");
 			}).catch(e => {
@@ -23,8 +23,8 @@ exports.run = (bot, msg, args) => {
 			});
 			return;
 		} else if (response[0].type === "quote") {
-			connection.select("*", `${response[0].comname}`, `server_id!='${msg.guild.id}'`).then(res => {
-				connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.guild.id}'`).then(() => {
+			connection.select("*", `${response[0].comname}`, `server_id!='${msg.channel.guild.id}'`).then(res => {
+				connection.del("servcom", `comname='${args[0]}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 					if (!res[0]) {
 						connection.query(`DROP TABLE IF EXISTS ${response[0].comname}`).then(() => {
 							return send(msg.channel, "Success");

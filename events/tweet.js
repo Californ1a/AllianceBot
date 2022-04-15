@@ -39,27 +39,24 @@ module.exports = (bot, tweet) => {
 		desc = `${text}`;
 		//desc += `\r\n\r\n**[View Tweet](${tweetlink})\r\n\r\n[Reply](${intent}/tweet?in_reply_to=${tweetid}) | [Retweet](${intent}/retweet?tweet_id=${tweetid}) | [Like](${intent}/like?tweet_id=${tweetid})**`;
 
-		const opts = {
-			embed: {
-				color: 3447003,
-				author: {
-					name: tweet.user.name,
-					url: profilelink,
-					"icon_url": tweet.user.profile_image_url
-				},
-				url: tweetlink,
-				description: `${desc}`,
-				image: {
-					url: medialink
-				},
-				timestamp: new Date(tweet.created_at),
-				footer: {
-					text: `@${tweet.user.screen_name}`
-				}
+		const embed = {
+			color: 3447003,
+			author: {
+				name: tweet.user.name,
+				url: profilelink,
+				"icon_url": tweet.user.profile_image_url
+			},
+			url: tweetlink,
+			description: `${desc}`,
+			image: {
+				url: medialink
+			},
+			timestamp: new Date(tweet.created_at),
+			footer: {
+				text: `@${tweet.user.screen_name}`
 			}
 		};
-
-		send(bot.guilds.cache.get("83078957620002816").channels.cache.get("83078957620002816"), `${emoji} <${tweetlink}>`, opts).catch(console.error);
-
+		const chan = bot.guilds.cache.get("83078957620002816").channels.cache.get("83078957620002816");
+		send(chan, { content: `${emoji} <${tweetlink}>`, embeds: [embed] }).catch(console.error);
 	}
 };

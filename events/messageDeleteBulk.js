@@ -34,10 +34,16 @@ module.exports = (bot, msgs) => {
 		if (mainMsg !== "") {
 			const embed = new MessageEmbed()
 				.setColor("#ffcc00")
-				.setAuthor(bot.user.tag, bot.user.displayAvatarURL())
+				.setAuthor({
+					name: bot.user.tag,
+					iconURL: bot.user.displayAvatarURL()
+				})
 				.setDescription(mainMsg)
 				.setTimestamp();
-			send(chan, "", embed);
+			send(chan, {
+				content: "\u200b",
+				embeds: [embed]
+			});
 			mainMsg = "";
 		}
 	}
@@ -48,7 +54,7 @@ module.exports = (bot, msgs) => {
 	// }
 	// const embed = new MessageEmbed()
 	// 	.setColor("#ffcc00")
-	// 	.setAuthor(bot.user.tag, bot.user.displayAvatarURL())
+	// 	.setAuthor({name: bot.user.tag, iconURL: bot.user.displayAvatarURL()})
 	// 	.setDescription(mainMsg)
 	// 	.setTimestamp();
 	// send(chan, "", embed);

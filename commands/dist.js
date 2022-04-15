@@ -15,7 +15,7 @@ const fetchBoard = (server) => {
 		fetch(server).then(res => {
 			return res.text();
 		}).then(body => {
-			parseString(body, function (error, result) {
+			parseString(body, function(error, result) {
 				if (error) {
 					reject(error);
 				}
@@ -26,7 +26,7 @@ const fetchBoard = (server) => {
 };
 
 exports.run = (bot, msg, args) => {
-	const pre = bot.servConf.get(msg.guild.id).prefix;
+	const pre = bot.servConf.get(msg.channel.guild.id).prefix;
 	if (typeof args[0] !== "string") {
 		send(msg.channel, `Incorrect syntax. Use \`${pre}help dist\` for syntax help.`);
 	} else {

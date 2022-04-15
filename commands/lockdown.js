@@ -6,24 +6,24 @@ const send = require("../util/sendMessage.js");
 
 const lockIt = (msg, roles) => {
 	for (const r of roles) {
-		msg.channel.createOverwrite(r, {
+		msg.channel.permissionOverwrites.create(r, {
 			"SEND_MESSAGES": false
-		}, "Channel lockdown").catch(console.error);
+		}, { reason: "Channel lockdown" }).catch(console.error);
 	}
 };
 
 const unlockIt = (bot, msg, roles) => {
 	for (const r of roles) {
-		msg.channel.updateOverwrite(r, {
+		msg.channel.permissionOverwrites.update(r, {
 			"SEND_MESSAGES": null
-		}, "Revert channel lockdown").catch(console.error);
+		}, { reason: "Revert channel lockdown" }).catch(console.error);
 	}
 	msg.channel.locked = false;
 	msg.channel.timeoutRoles = [];
 	if (bot.timer.lockdown.get(msg.channel.id)) {
 		clearTimeout(bot.timer.lockdown.get(msg.channel.id));
 	}
-	connection.del("lockdown", `channel_id=${msg.channel.id} AND server_id=${msg.guild.id}`).catch(console.error);
+	connection.del("lockdown", `channel_id=${msg.channel.id} AND server_id=${msg.channel.guild.id}`).catch(console.error);
 };
 
 exports.run = (bot, msg, args) => {
@@ -52,9 +52,9 @@ exports.run = (bot, msg, args) => {
 	} else if (msg.channel.locked && args[0]) {
 		return send(msg.channel, "This channel is already locked. You can use `lockdown` with no arguments to force unlock.");
 	} else if (time) {
-		roles.push(msg.guild.roles.cache.find(val => val.name === "@everyone"));
-		if (msg.guild.roles.cache.some(val => val.name === args[args.length - 1])) {
-			roles.push(msg.guild.roles.cache.find(val => val.name === args[args.length - 1]));
+		roles.push(msg.channel.guild.roles.cache.find(val => val.name === "@everyone"));
+		if (msg.channel.guild.roles.cache.some(val => val.name === args[args.length - 1])) {
+			roles.push(msg.channel.guild.roles.cache.find(val => val.name === args[args.length - 1]));
 		}
 		const durationMS = parse(time);
 		const d = Duration.parse(`${durationMS}ms`);
@@ -64,7 +64,7 @@ exports.run = (bot, msg, args) => {
 
 
 		const info = {
-			"server_id": msg.guild.id,
+			"server_id": msg.channel.guild.id,
 			"channel_id": msg.channel.id,
 			"role_id": (roles.length === 2) ? roles[1].id : null,
 			startdate: now,

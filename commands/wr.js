@@ -14,10 +14,10 @@ exports.run = (bot, msg, args) => {
 		}
 		const category = str.join(" ");
 		let gamename = "";
-		if (msg.guild.name === "Cali Test Server") {
+		if (msg.channel.guild.name === "Cali Test Server") {
 			gamename = "Antichamber";
 		} else {
-			gamename = msg.guild.name;
+			gamename = msg.channel.guild.name;
 		}
 		let nonefound = true;
 		fetch(`https://www.speedrun.com/api_records.php?game=${gamename}`)

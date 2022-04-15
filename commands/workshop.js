@@ -28,7 +28,7 @@ async function getSteamUsers(steamids) {
 	}
 }
 
-async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
+async function getWorkshopQueryResults(searchQuery, searchType = "relevance", slash) {
 	if (!searchQuery || searchQuery === "") {
 		searchType = "recent";
 	}
@@ -39,11 +39,15 @@ async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
 			break;
 		case "recent":
 			queryType = 1;
-			searchQuery = "";
+			if (!slash) {
+				searchQuery = "";
+			}
 			break;
 		case "popular":
 			queryType = 3;
-			searchQuery = "";
+			if (!slash) {
+				searchQuery = "";
+			}
 			break;
 		default:
 			break;
@@ -139,7 +143,9 @@ async function createMessageEmbed({
 	const list = data.publishedfiledetails.reduce((acc, map, i) => {
 		// const author = steamUsers.filter((user) => user.steamid === map.creator)[0];
 		map.creator.personaname = (map.creator.personaname.length > 18) ? `${map.creator.personaname.substr(0, 18)}...` : map.creator.personaname;
+		map.creator.personaname = (map.creator.personaname.includes("[") && !map.creator.personaname.includes("]")) ? `${map.creator.personaname}]` : map.creator.personaname;
 		const title = (map.title.length > 28) ? `${map.title.substr(0, 28)}...` : map.title;
+		// title = title.replace(/\*/g, "\\*");
 		const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${map.publishedfileid}`;
 
 		// add an ending ] if title includes a starting [ but no end
@@ -160,15 +166,22 @@ async function createMessageEmbed({
 		// const emoji = (acc === "") ? "🖼️" : "🔗";
 		return `${acc}${emoji} **[${fixMarkdownLink}](${url})**: ${map.subscriptions.toLocaleString()} subs • by [${map.creator.personaname}](${map.creator.profileurl}myworkshopfiles/?appid=233610)\n`;
 	}, "");
-	if (msg.guild.id === "211599888222257152") { // dev
-		msg.guild.name = "Distance";
-		msg.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
+	if (msg.channel.guild.id === "211599888222257152") { // dev
+		msg.channel.guild.name = "Distance";
+		msg.channel.guild.iconURL = () => "https://cdn.discordapp.com/icons/83078957620002816/975cd82978e995a4de73840649ab3f74.png";
 	}
 	console.log(workshopURL);
-	const embed = new MessageEmbed().setAuthor(`${msg.guild.name} workshop`, msg.guild.iconURL(), workshopURL)
+	const embed = new MessageEmbed()
+		.setAuthor({
+			name: `${msg.channel.guild.name} workshop`,
+			iconURL: msg.channel.guild.iconURL(),
+			url: workshopURL
+		})
 		.setDescription(`${desc}\n\n${list}`)
 		.setColor("#3498db")
-		.setFooter(`• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`)
+		.setFooter({
+			text: `• Returned ${data.publishedfiledetails.length} result${(data.publishedfiledetails.length > 1) ? "s" : ""}`
+		})
 		.setTimestamp();
 	if (data.publishedfiledetails[imgIndex - 1] && data.publishedfiledetails[imgIndex - 1].preview_url) {
 		embed.setThumbnail(`${data.publishedfiledetails[imgIndex-1].preview_url}?impolicy=Letterbox`);
@@ -213,11 +226,51 @@ exports.run = async (bot, msg, args) => {
 		if (embed === "No data") {
 			return await m.edit(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
 		} else {
-			await m.edit("", embed);
+			await m.edit({
+				content: "\u200b",
+				embeds: [embed]
+			});
 		}
 	} catch (e) {
 		console.error(e);
 		await m.edit("Failed getting workshop data.");
+	}
+};
+
+exports.runSlash = async (bot, interaction) => {
+	let queryType = "relevance";
+	let author;
+	const searchQuery = interaction.options.getString("search");
+	const intAuthor = interaction.options.getString("author");
+	if (searchQuery?.match(/^(new|recent)$/i)) {
+		queryType = "recent";
+	} else if (searchQuery?.match(/^(top|popular)$/i)) {
+		queryType = "popular";
+	}
+	if (intAuthor) {
+		author = intAuthor;
+	}
+	await interaction.deferReply({
+		ephemeral: true
+	});
+	try {
+		const data = await getWorkshopQueryResults(searchQuery, queryType, 1);
+		// console.log(JSON.stringify(data, null, 2));
+		if (data.data.total < 1) {
+			return await interaction.editReply(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+		}
+		const embed = await createMessageEmbed(data, interaction, author);
+		if (embed === "No data") {
+			return await interaction.editReply(`No results found for \`${searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
+		} else {
+			await interaction.editReply({
+				content: "\u200b",
+				embeds: [embed]
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		await interaction.editReply("Failed getting workshop data.");
 	}
 };
 
@@ -234,6 +287,22 @@ exports.help = {
 	description: "Search the workshop for maps.",
 	extendedDescription: "",
 	usage: "workshop <search term|new|top>"
+};
+
+exports.slash = {
+	name: "workshop",
+	description: "Search the workshop",
+	defaultPermission: false,
+	options: [{
+		name: "search",
+		description: "The search term",
+		type: "STRING",
+		required: true
+	}, {
+		name: "author",
+		description: "Search by author name",
+		type: "STRING"
+	}]
 };
 
 /*

@@ -9,9 +9,9 @@ module.exports = (g, lockdownData, channelTest) => {
 		roles.push(g.roles.cache.get(lockdownData.role_id));
 	}
 	for (const r of roles) {
-		channelTest.updateOverwrite(r, {
+		channelTest.permissionOverwrites.update(r, {
 			"SEND_MESSAGES": null
-		}, "Revert channel lockdown").catch(console.error);
+		}, { reason: "Revert channel lockdown" }).catch(console.error);
 	}
 	channelTest.locked = false;
 	channelTest.timeoutRoles = [];

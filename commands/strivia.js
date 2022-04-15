@@ -12,7 +12,7 @@ let startingScores;
 
 exports.run = (bot, msg, args, perm, cmd) => {
 	const category = "default";
-	if (perm >= 2 && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152")) {
+	if (perm >= 2 && (msg.channel.id === "279033061490950146" || msg.channel.guild.id === "211599888222257152")) {
 		if (args[0]) {
 			if (!game.trivia.getStatus() && !game.scramble.getStatus()) {
 				game.trivia.toggleStatus();
@@ -35,14 +35,14 @@ exports.run = (bot, msg, args, perm, cmd) => {
 		} else {
 			if (!game.trivia.getStatus() && !game.scramble.getStatus()) {
 				startingScores = 0;
-				connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.guild.id}' ORDER BY rank`).then(response => {
+				connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.channel.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.channel.guild.id}' ORDER BY rank`).then(response => {
 					startingScores = response;
 					game.trivia.toggleStatus();
 					game.trivia.populateQ("default");
 					send(msg.channel, `# Trivia is about to start (${Math.floor(delayBeforeFirstQ / 1000)}s)!\r\nBefore it does, here is some info:\r\n\r\n**Info**\r\n*  Questions are presented in **bold** and you're free to guess as many times as you like until the hint appears!  \r\n*  Hints will appear automatically ${Math.floor(delayBeforeH / 1000)}s after the question. There is no hint command.  \r\n*  There is ${Math.floor(delayBeforeH / 1000)}s between question and hint, ${Math.floor(delayBeforeNoA / 1000)}s between hint and timeout, and ${Math.floor(delayBeforeNextQ / 1000)}s between timeout and next question.  \r\n*  If the hint is *multiple choice* , you only get **one** guess after it appears. Extra guesses (even if correct) are ignored.  \r\n*  If the hint is *not* multiple choice, then you may continue to guess many more times.\r\n\r\n**Commands**\r\n*  You can use the "!score" command to view your current scoreboard rank and score.  \r\n*  You can use "!score board" to view the current top players.  \r\n*  You can also use "!score @mention" to view that specific player's rank and score.`, {
 						code: "markdown"
 					});
-					setTimeout(function () {
+					setTimeout(function() {
 						game.trivia.go(msg.channel, -1, category, triviaconfig, startingScores);
 					}, delayBeforeFirstQ);
 				});
@@ -60,11 +60,11 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				console.log("wut4");
 			}
 		}
-	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.guild.id === "211599888222257152") && !awaitStart) {
+	} else if (args[0] && (msg.channel.id === "279033061490950146" || msg.channel.guild.id === "211599888222257152") && !awaitStart) {
 		if (isNaN(args[0])) {
 			return send(msg.channel, "Amount must be a number.");
 		}
-		connection.select("*", "triviascore", `userid='${msg.author.id}' AND server_id='${msg.guild.id}'`).then(response => {
+		connection.select("*", "triviascore", `userid='${msg.author.id}' AND server_id='${msg.channel.guild.id}'`).then(response => {
 			if (!response[0]) {
 				return send(msg.channel, "You don't have any points.");
 			}
@@ -91,8 +91,8 @@ exports.run = (bot, msg, args, perm, cmd) => {
 				const newScore = parseInt(response[0].score) - cost;
 				if (newScore > 0) {
 					startingScores = 0;
-					connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.guild.id}' ORDER BY rank`).then(response => {
-						connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
+					connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.channel.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.channel.guild.id}' ORDER BY rank`).then(response => {
+						connection.update("triviascore", `score=${newScore}`, `userid='${trivStartUser.id}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 							send(msg.channel, `${trivStartUser}, Your score is now ${newScore}. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
 								startingScores = response;
 								game.trivia.timed(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig, startingScores);
@@ -106,8 +106,8 @@ exports.run = (bot, msg, args, perm, cmd) => {
 					return;
 				}
 				startingScores = 0;
-				connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.guild.id}' ORDER BY rank`).then(response => {
-					connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.guild.id}'`).then(() => {
+				connection.select(`t1.*, (select  count(*)+1 FROM triviascore as t2 WHERE t2.score > t1.score AND server_id='${msg.channel.guild.id}') as rank`, "triviascore as t1", `server_id='${msg.channel.guild.id}' ORDER BY rank`).then(response => {
+					connection.del("triviascore", `userid='${trivStartUser.id}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 						send(msg.channel, `${trivStartUser}, You have been removed from the scoreboard. Trivia will begin and last for ${minutes} ${(minutes < 2) ? "minute" : "minutes"}.`).then(() => {
 							startingScores = response;
 							game.trivia.timed(msg.channel, minutes, trivStartUser, category, cmd, triviaconfig, startingScores);

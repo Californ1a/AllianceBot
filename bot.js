@@ -10,7 +10,10 @@ const io = require("@pm2/io").init({
 //require("opbeat").start();
 const connection = require("./util/connection.js");
 const Discord = require("discord.js");
-const bot = new Discord.Client();
+const bot = new Discord.Client({
+	intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_PRESENCES", "GUILD_MESSAGES", "DIRECT_MESSAGES"],
+	partials: ["CHANNEL", "GUILD_MEMBER"]
+});
 bot.reminders = new Discord.Collection();
 const botOwner = require("./config.json").ownerid;
 const token = process.env.DISCORD_TOKEN;
@@ -28,10 +31,13 @@ const twitconfig = {
 	access_token: process.env.TWITTER_ACCESS_TOKEN, // eslint-disable-line camelcase
 	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET // eslint-disable-line camelcase
 };
-const T = new Twit(twitconfig);
-const stream = T.stream("statuses/filter", {
-	follow: ["628034104", "241371699"]
-});
+let T, stream;
+if (process.env.NODE_ENV !== "dev") {
+	T = new Twit(twitconfig);
+	stream = T.stream("statuses/filter", {
+		follow: ["628034104", "241371699"]
+	});
+}
 const meter = io.meter({
 	name: "msg/min",
 	samples: 60
@@ -147,10 +153,187 @@ bot.confRefresh = () => {
 		}).catch(e => reject(e));
 	});
 };
-connection.createAllTables().then(() => {
-	bot.confRefresh();
+
+bot.loadSlashCommands = async (guildid) => {
+	try {
+		let cmds, customCmds;
+		if (guildid) {
+			cmds = await connection.select("*", "commands", `server_id=${guildid}`);
+			customCmds = await connection.select("*", "servcom", `server_id=${guildid}`);
+		} else {
+			cmds = await connection.select("*", "commands");
+			customCmds = await connection.select("*", "servcom");
+		}
+
+		// console.log(cmds);
+		const conf = [...bot.servConf.values()];
+		for (const server of conf) {
+			const {
+				serverid
+			} = server;
+			const guild = bot.servConf.get(serverid);
+			guild.cmds = {
+				enabled: []
+			};
+			const matchingCmds = cmds.filter(c => c.server_id === serverid);
+			for (const command of matchingCmds) {
+				const {
+					commandname
+				} = command;
+				// array of all enabled commands
+				guild.cmds.enabled.push(commandname);
+			}
+			guild.cmds.disabled = [...bot.commands.keys()].filter(c => !guild.cmds.enabled.includes(c));
+			// console.log(guild.commands.enabled, guild.commands.enabled);
+
+			guild.customCmds = [];
+			const matchingCustomCmds = customCmds.filter(c => c.server_id === serverid);
+			for (const command of matchingCustomCmds) {
+				if (command.type === "simple") {
+					guild.customCmds.push({
+						name: command.comname,
+						description: `Custom command - ${command.type}`
+					});
+				} else if (command.type === "quote") {
+					guild.customCmds.push({
+						name: command.comname,
+						description: `Custom command - ${command.type}`,
+						options: [{
+							name: "term",
+							description: "Search term",
+							type: "STRING"
+						}, {
+							name: "action",
+							description: "Add, delete, or list quotes",
+							type: "STRING",
+							choices: [{
+								name: "List",
+								value: "list"
+							}, {
+								name: "Add",
+								value: "add"
+							}, {
+								name: "Delete",
+								value: "del"
+							}]
+						}]
+					});
+				}
+			}
+		}
+
+		if (!bot.application?.owner) {
+			await bot.application?.fetch();
+		}
+		bot.guilds.cache.forEach(async (g) => {
+			const serv = bot.servConf.get(g.id);
+			const commands = [...serv.cmds.enabled, ...serv.cmds.disabled];
+			const slashCommands = [...serv.customCmds];
+			for (const c of commands) {
+				// console.log(c);
+				const cmd = bot.commands.get(c);
+				if (cmd?.slash) {
+					slashCommands.push(cmd.slash);
+				}
+			}
+
+			const cmds = await g.commands.set(slashCommands);
+			// console.log(cmds);
+			const cmd = cmds.filter(c => c.defaultPermission === false);
+			const fullPermissions = [];
+			// console.log(serv.cmds.disabled);
+			const everyone = g.roles.cache.find(r => r.name === "@everyone");
+			for (const [c1] of cmd) {
+				const c = cmd.get(c1);
+				// console.log(c);
+				const perms = [];
+				const permLevel = bot.commands.get(c.name)?.conf?.permLevel;
+				// console.log("permLevel", permLevel);
+
+				// let permlvl;
+				const memberrole = serv.membrole;
+				const moderatorrole = serv.modrole;
+				const administratorrole = serv.adminrole;
+				const isDisabled = serv.cmds.disabled.includes(c.name);
+
+				if (everyone && permLevel === 0) {
+					perms.push({
+						id: everyone.id,
+						type: "ROLE",
+						permission: !isDisabled
+					});
+				}
+
+				if (memberrole && permLevel <= 1) {
+					const membRole = g.roles.cache.find(val => val.name === memberrole);
+					if (membRole) {
+						perms.push({
+							id: membRole.id,
+							type: "ROLE",
+							permission: !isDisabled
+						});
+						// permlvl = 1;
+					}
+				}
+				if (moderatorrole && permLevel <= 2) {
+					const modRole = g.roles.cache.find(val => val.name === moderatorrole);
+					if (modRole) {
+						perms.push({
+							id: modRole.id,
+							type: "ROLE",
+							permission: !isDisabled
+						});
+						// permlvl = 2;
+					}
+				}
+				if (administratorrole && permLevel <= 3) {
+					const adminRole = g.roles.cache.find(val => val.name === administratorrole);
+					if (adminRole) {
+						perms.push({
+							id: adminRole.id,
+							type: "ROLE",
+							permission: !isDisabled
+						});
+						// permlvl = 3;
+					}
+				}
+				const owner = await g.fetchOwner();
+				if (owner && permLevel <= 3) {
+					perms.push({
+						id: owner.id,
+						type: "USER",
+						permission: !isDisabled
+					});
+					// permlvl = 3;
+				}
+				perms.push({
+					id: botOwner,
+					type: "USER",
+					permission: true
+				});
+				// console.log("perms", perms);
+				fullPermissions.push({
+					id: c.id,
+					permissions: perms
+				});
+				// console.log("fullPermissions", fullPermissions);
+			}
+			// console.log(fullPermissions);
+			g.commands.permissions.set({
+				fullPermissions
+			});
+		});
+		// console.log([...bot.servConf.values()]);
+	} catch (e) {
+		console.error(e);
+	}
+};
+
+connection.createAllTables().then(async () => {
+	await bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
+	bot.loadSlashCommands();
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
@@ -158,9 +341,11 @@ bot.channels.cache.forEach(c => {
 	if (c.locked && c.timeoutRoles) {
 		const roles = c.timeoutRoles;
 		for (const r of roles) {
-			c.updateOverwrite(r, {
+			c.permissionOverwrites.edit(r, {
 				"SEND_MESSAGES": null
-			}, "Revert channel lockdown").catch(console.error);
+			}, {
+				reason: "Revert channel lockdown"
+			}).catch(console.error);
 		}
 		c.locked = false;
 		c.timeoutRoles = [];
@@ -168,8 +353,12 @@ bot.channels.cache.forEach(c => {
 });
 
 //get the permission level of the member who sent message
-bot.elevation = function(msg) {
-	if (!msg.guild) {
+bot.elevation = async function(msg) {
+	if (!msg.author) {
+		// interaction command doesn't have author, just user
+		msg.author = msg.user;
+	}
+	if (!msg.channel.guild) {
 		if (msg.author.id === botOwner) {
 			return 4;
 		}
@@ -178,31 +367,32 @@ bot.elevation = function(msg) {
 	// if (msg.author.id === botOwner) {
 	// 	return 4;
 	// }
-	const conf = bot.servConf.get(msg.guild.id);
+	const conf = bot.servConf.get(msg.channel.guild.id);
 	const memberrole = conf.membrole;
 	const moderatorrole = conf.modrole;
 	const administratorrole = conf.adminrole;
 	let permlvl = 0;
-	if (msg.guild && msg.member) {
+	if (msg.channel.guild && msg.member) {
 		if (memberrole) {
-			const membRole = msg.guild.roles.cache.find(val => val.name === memberrole);
+			const membRole = msg.channel.guild.roles.cache.find(val => val.name === memberrole);
 			if (membRole && msg.member.roles.cache.has(membRole.id)) {
 				permlvl = 1;
 			}
 		}
 		if (moderatorrole) {
-			const modRole = msg.guild.roles.cache.find(val => val.name === moderatorrole);
+			const modRole = msg.channel.guild.roles.cache.find(val => val.name === moderatorrole);
 			if (modRole && msg.member.roles.cache.has(modRole.id)) {
 				permlvl = 2;
 			}
 		}
 		if (administratorrole) {
-			const adminRole = msg.guild.roles.cache.find(val => val.name === administratorrole);
+			const adminRole = msg.channel.guild.roles.cache.find(val => val.name === administratorrole);
 			if (adminRole && msg.member.roles.cache.has(adminRole.id)) {
 				permlvl = 3;
 			}
 		}
-		if (msg.author.id === msg.guild.ownerID) {
+		const owner = await msg.channel.guild.fetchOwner();
+		if (msg.author.id === owner.id) {
 			permlvl = 3;
 		}
 	}
@@ -212,15 +402,17 @@ bot.elevation = function(msg) {
 	return permlvl;
 };
 
-//pm2 keymetrics meter for online suer count
+//pm2 keymetrics meter for online user count
 io.metric({
 	name: "Online Users",
 	value: () => {
 		let total = 0;
-		bot.users.cache.forEach(u => {
-			if (!u.bot && u.presence.status.match(/^(online|idle|dnd)$/)) {
-				total += 1;
-			}
+		bot.guilds.cache.forEach(g => {
+			g.members.cache.forEach(m => {
+				if (!m.bot && m.presence?.status.match(/^(online|idle|dnd)$/)) {
+					total += 1;
+				}
+			});
 		});
 		return total;
 	}
@@ -269,8 +461,8 @@ bot.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	io.notifyError(new Error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason));
 	console.error("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
-	console.log(p.code);
-	console.log(reason.code);
+	console.log("p.code", p.code);
+	console.log("reason.code", reason.code);
 	if (p.code && p.code === "ETIMEDOUT") {
 		process.exit();
 	}

@@ -33,7 +33,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 	if (cmdname !== flags.name) {
 		return send(msg.channel, "Invalid characters used in command name.");
 	}
-	connection.select("*", "servcom", `server_id='${msg.guild.id}' AND comname='${cmdname}'`).then(r => {
+	connection.select("*", "servcom", `server_id='${msg.channel.guild.id}' AND comname='${cmdname}'`).then(r => {
 		if (!r[0]) {
 			return send(msg.channel, `The command \`${cmdname}\` does not exist.`);
 		} else if (r[0].type === "quote" && flags.message) {
@@ -58,7 +58,7 @@ exports.run = (bot, msg, args, perms, cmd, flags) => {
 
 		console.log(colors.red(`Attempting to edit the command \`${cmdname}\`.`));
 
-		connection.update("servcom", assignment, `comname='${cmdname}' AND server_id='${msg.guild.id}'`).then(() => {
+		connection.update("servcom", assignment, `comname='${cmdname}' AND server_id='${msg.channel.guild.id}'`).then(() => {
 			console.log(colors.red("Successfully edited command."));
 			send(msg.channel, "Success");
 		}).catch(e => {

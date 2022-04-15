@@ -1,3 +1,6 @@
+const {
+	Permissions
+} = require("discord.js");
 const editPlayRole = require("../util/editRole.js");
 
 module.exports = (bot, oldPresence, newPresence) => {
@@ -12,7 +15,7 @@ module.exports = (bot, oldPresence, newPresence) => {
 	}
 
 	const botMember = guild.members.cache.get(bot.user.id);
-	if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+	if ((botMember.permissions.has(Permissions.FLAGS.MANAGE_ROLES) || botMember.permissions.has(10000000n)) && botMember.roles.highest.position > member.roles.highest.position) {
 
 		const regex = /^Distance$/i;
 
@@ -20,11 +23,11 @@ module.exports = (bot, oldPresence, newPresence) => {
 		const newP = newPresence.activities.find(a => regex.test(a.name));
 
 		const oldHasStream = (oldP) ? oldP.type === "STREAMING" : false;
-		const oldHasDistance = (oldP) ? (oldHasStream) ? regex.test(oldP.state) : (oldP.applicationID) ? regex.test(oldP.name) : false : false;
+		const oldHasDistance = (oldP) ? (oldHasStream) ? regex.test(oldP.state) : (oldP.applicationId) ? regex.test(oldP.name) : false : false;
 		//const oldHasRole = oldMember.roles.cache.has(playRole.id);
 
 		const newHasStream = (newP) ? newP.type === "STREAMING" : false;
-		const newHasDistance = (newP) ? (newHasStream) ? regex.test(newP.state) : (newP.applicationID) ? regex.test(newP.name) : false : false;
+		const newHasDistance = (newP) ? (newHasStream) ? regex.test(newP.state) : (newP.applicationId) ? regex.test(newP.name) : false : false;
 		const newHasRole = member.roles.cache.has(playRole.id);
 
 		if (newHasDistance && !newHasRole) {

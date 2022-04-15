@@ -27,12 +27,13 @@ exports.run = (bot, msg, args, perm, cmd, flags) => {
 	connection.insert("reminders", info).then(() => {
 		reminders.refresh(bot);
 	}).then(() => {
-		send(msg, `${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}.${(msg.guild) ? `\n\nOthers may click the ⏰ reaction within the next ${(timeout > 1) ? `${timeout} minutes` : "1 minute"} to also be sent the same reminder (removing your reaction will **not** remove your reminder).` : ""}`).then(m => {
-			if (!msg.guild) {
+		send(msg, `${msg.author}, Success. I will PM you a reminder within ${reminderCheckTime}min after ${later.toString()}.${(msg.channel.guild) ? `\n\nOthers may click the ⏰ reaction within the next ${(timeout > 1) ? `${timeout} minutes` : "1 minute"} to also be sent the same reminder (removing your reaction will **not** remove your reminder).` : ""}`).then(m => {
+			if (!msg.channel.guild) {
 				return;
 			}
 			m.react("⏰").then(() => {
-				const collector = m.createReactionCollector(reaction => reaction.emoji.name === "⏰", {
+				const collector = m.createReactionCollector({
+					filter: reaction => reaction.emoji.name === "⏰",
 					time: timeout * 60 * 1000
 				});
 				collector.on("end", () => {

@@ -1,3 +1,6 @@
+const {
+	Permissions
+} = require("discord.js");
 const editPlayRole = require("../util/editRole.js");
 const send = require("../util/sendMessage.js");
 
@@ -7,7 +10,7 @@ const runCheck = (memb, role, guild) => {
 	const regex = /^Distance$/i;
 
 	const hasStream = (P) ? P.type === "STREAMING" : false;
-	const hasDistance = (P) ? (hasStream) ? regex.test(P.state) : (P.applicationID) ? regex.test(P.name) : false : false;
+	const hasDistance = (P) ? (hasStream) ? regex.test(P.state) : (P.applicationId) ? regex.test(P.name) : false : false;
 	const hasRole = memb.roles.cache.has(role.id);
 
 	if (hasDistance && !hasRole) {
@@ -24,7 +27,7 @@ exports.run = (bot, msg, args, perm) => {
 	const guild = member.guild;
 	if (guild.id === "83078957620002816") {
 		const botMember = guild.members.cache.get(bot.user.id);
-		if ((botMember.hasPermission("MANAGE_ROLES") || botMember.hasPermission(10000000)) && botMember.roles.highest.position > member.roles.highest.position) {
+		if ((botMember.permissions.has(Permissions.FLAGS.MANAGE_ROLES) || botMember.permissions.has(10000000n)) && botMember.roles.highest.position > member.roles.highest.position) {
 			const playRole = guild.roles.cache.find(val => val.name === "Playing Distance");
 			if (!playRole) {
 				return;

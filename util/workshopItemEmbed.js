@@ -38,21 +38,19 @@ async function getResource(options, retryCount = 0, lastError = null) {
 	}
 }
 
-module.exports = (bot, msg) => {
+module.exports = async (bot, msg) => {
 	if (msg.author.id === bot.user.id) {
 		return;
 	}
 	const reg = /^<?https?:\/\/(www\.)?steamcommunity\.com\/(sharedfiles|workshop)\/filedetails\/\?id=(\d{9,10})(&searchtext=\S*)?>?$/;
 	// console.log(!reg.exec(msg.content.trim()));
 	if (!reg.test(msg.content.trim())) {
-		const perms = bot.elevation(msg);
+		const perms = await bot.elevation(msg);
 		if (perms >= 2) {
 			return;
 		}
 		send(msg.channel, "You can only post links to the workshop here.").then(m => {
-			m.delete({
-				timeout: botmsgDeleteTimeout
-			}).catch(console.error);
+			setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout);
 		}).catch(console.error);
 		return msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 	}
@@ -79,9 +77,7 @@ module.exports = (bot, msg) => {
 			// console.log(JSON.stringify(json, null, 2));
 			if (json.consumer_app_id !== 233610 && (json.creator_app_id !== json.consumer_app_id || json.creator_app_id === 766)) {
 				m.edit("This workshop item is not from Distance - Only Distance maps are allowed.").then(m => {
-					m.delete({
-						timeout: botmsgDeleteTimeout
-					}).catch(console.error);
+					setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout);
 				});
 				msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			} else {
@@ -132,17 +128,22 @@ module.exports = (bot, msg) => {
 						const name = res.personaname;
 						const profile = res.profileurl;
 						const avatar = res.avatar;
-						embed.setAuthor(name, avatar, profile);
-						m.edit(`A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`, embed).then(() => {
+						embed.setAuthor({
+							name,
+							iconURL: avatar,
+							url: profile
+						});
+						m.edit(`A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`, {
+							embeds: [embed]
+						}).then(() => {
 							msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 						}).catch(console.error);
 					}
 				});
 			}
 		}).catch(err => {
-			m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.").then(m => m.delete({
-				timeout: botmsgDeleteTimeout
-			})).catch(console.error);
+			m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.")
+				.then(m => setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout)).catch(console.error);
 			msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
 			console.error(err);
 		});
