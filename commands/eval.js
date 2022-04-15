@@ -1,3 +1,7 @@
+const {
+	Util
+} = require("discord.js");
+const botOwner = require("../config.json").ownerid;
 const util = require("util");
 const send = require("../util/sendMessage.js");
 
@@ -10,6 +14,12 @@ function clean(text) {
 }
 
 async function mainEval(bot, msg, code, loc) {
+	if (msg.author.id !== botOwner) {
+		if (msg.type === "APPLICATION_COMMAND") {
+			return msg.reply("You do not have permission to use this command.");
+		}
+		return send(msg, "You do not have permission to use this command.");
+	}
 	try {
 		let evaled = eval(code);
 		const type = typeof evaled;
@@ -17,15 +27,28 @@ async function mainEval(bot, msg, code, loc) {
 			evaled = util.inspect(evaled);
 		}
 		const cleaned = clean(evaled);
-		const m = `**EVAL:**\n\`\`\`js\n${code}\`\`\`\n**Evaluates to:**\n\`\`\`xl\n${cleaned}\`\`\`\n**Type:**\n\`\`\`fix\n${type}\`\`\``;
+		const m = `**EVAL:**\n\`\`\`js\n${code}\`\`\`\n**Type:**\n\`\`\`fix\n${type}\`\`\`\n**Evaluates to:**\n\`\`\`xl\n${cleaned}\`\`\``;
+		const msgs = Util.splitMessage(m, {
+			maxLength: 1900,
+			prepend: "```xl\n",
+			append: "```"
+		});
 		try {
 			if (msg.type === "APPLICATION_COMMAND") {
-				msg.reply({
-					content: m,
+				await msg.reply({
+					content: msgs[0],
 					ephemeral: true
 				});
+				for (let i = 1; i < msgs.length; i++) {
+					await msg.followUp({
+						content: msgs[i],
+						ephemeral: true
+					});
+				}
 			} else {
-				send(loc, m);
+				for (let i = 0; i < msgs.length; i++) {
+					await send(loc, msgs[i]);
+				}
 			}
 		} catch (e) {
 			let err = e.response.request.req.res;
