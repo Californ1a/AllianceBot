@@ -225,6 +225,7 @@ bot.loadSlashCommands = async (guildid) => {
 		if (!bot.application?.owner) {
 			await bot.application?.fetch();
 		}
+		await bot.guilds.fetch();
 		bot.guilds.cache.forEach(async (g) => {
 			const serv = bot.servConf.get(g.id);
 			const commands = [...serv.cmds.enabled, ...serv.cmds.disabled];
@@ -242,6 +243,7 @@ bot.loadSlashCommands = async (guildid) => {
 			const cmd = cmds.filter(c => c.defaultPermission === false);
 			const fullPermissions = [];
 			// console.log(serv.cmds.disabled);
+			await g.roles.fetch();
 			const everyone = g.roles.cache.find(r => r.name === "@everyone");
 			for (const [c1] of cmd) {
 				const c = cmd.get(c1);

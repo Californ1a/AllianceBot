@@ -133,7 +133,8 @@ module.exports = async (bot, msg) => {
 							iconURL: avatar,
 							url: profile
 						});
-						m.edit(`A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`, {
+						m.edit({
+							content: `A new ${(json.creator_app_id === 233610)?"map":"collection"} posted by ${msg.author}`,
 							embeds: [embed]
 						}).then(() => {
 							msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);

@@ -3,9 +3,16 @@ const {
 } = require("discord.js");
 const editPlayRole = require("../util/editRole.js");
 
-module.exports = (bot, oldPresence, newPresence) => {
-	const member = newPresence.member;
-	const guild = member.guild;
+module.exports = async (bot, oldPresence, newPresence) => {
+	let member = newPresence.member;
+	const guild = newPresence.guild || member?.guild;
+	if (!guild) {
+		console.log(oldPresence, newPresence);
+		return;
+	}
+	if (!member && guild) {
+		member = await guild.members.fetch(newPresence.userId);
+	}
 	let playRole = "";
 	if (guild.id === "83078957620002816" || guild.id === "211599888222257152") {
 		playRole = guild.roles.cache.find(val => val.name === "Playing Distance");

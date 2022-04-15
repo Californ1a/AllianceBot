@@ -20,7 +20,7 @@
 	"author": "Californ1a",
 	"license": "ISC",
 	"dependencies": {
-		"@pm2/io": "^4.3.5",
+		"@pm2/io": "^5.0.0",
 		"@twurple/api": "^5.0.18",
 		"@twurple/auth": "^5.0.18",
 		"colors": "^1.4.0",
