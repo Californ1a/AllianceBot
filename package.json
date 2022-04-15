@@ -6,9 +6,9 @@
 		"node": "16.14.0",
 		"npm": "8.3.1"
 	},
-	"main": "main.js",
+	"main": "bot.js",
 	"scripts": {
-		"start": "node main.js",
+		"start": "node bot.js",
 		"test": "jest",
 		"watch": "jest --watch"
 	},
