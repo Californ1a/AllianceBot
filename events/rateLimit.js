@@ -1,3 +1,3 @@
 module.exports = (bot, rateLimitInfo) => {
-	console.log(rateLimitInfo);
+	console.log("rateLimitInfo", rateLimitInfo);
 };
