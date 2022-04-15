@@ -7,6 +7,7 @@ module.exports = async (bot, oldPresence, newPresence) => {
 	let member = newPresence.member;
 	const guild = newPresence.guild || member?.guild;
 	if (!guild) {
+		console.log(oldPresence, newPresence);
 		return;
 	}
 	if (!member && guild) {
