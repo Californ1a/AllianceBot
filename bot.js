@@ -135,6 +135,7 @@ function streamCheck(a) {
 
 bot.confEventEmitter.on("finishServConfLoad", (a) => {
 	streamCheck(a);
+	bot.loadSlashCommands();
 });
 
 bot.servConf = new Discord.Collection();
@@ -225,8 +226,12 @@ bot.loadSlashCommands = async (guildid) => {
 		if (!bot.application?.owner) {
 			await bot.application?.fetch();
 		}
-		await bot.guilds.fetch();
-		bot.guilds.cache.forEach(async (g) => {
+		// await bot.guilds.fetch();
+		let guilds = bot.guilds.cache;
+		if (guildid) {
+			guilds = [bot.guilds.cache.get(guildid)];
+		}
+		guilds.forEach(async (g) => {
 			const serv = bot.servConf.get(g.id);
 			const commands = [...serv.cmds.enabled, ...serv.cmds.disabled];
 			const slashCommands = [...serv.customCmds];
@@ -243,7 +248,7 @@ bot.loadSlashCommands = async (guildid) => {
 			const cmd = cmds.filter(c => c.defaultPermission === false);
 			const fullPermissions = [];
 			// console.log(serv.cmds.disabled);
-			await g.roles.fetch();
+			// await g.roles.fetch();
 			const everyone = g.roles.cache.find(r => r.name === "@everyone");
 			for (const [c1] of cmd) {
 				const c = cmd.get(c1);
@@ -335,7 +340,6 @@ connection.createAllTables().then(async () => {
 	await bot.confRefresh();
 	reminders.refresh(bot);
 	reminders.reminderEmitter(bot);
-	bot.loadSlashCommands();
 }).catch(console.error);
 
 //Temporary quickfix just remove lockdown TODO: use db with proper remaining time in future
