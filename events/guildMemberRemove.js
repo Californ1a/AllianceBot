@@ -5,27 +5,23 @@ const send = require("../util/sendMessage.js");
 const moment = require("moment");
 
 module.exports = async (bot, member) => {
-	if (member.partial) {
-		try {
-			member = await member.fetch();
-		} catch (e) {
-			console.log(member);
-			console.error(e);
-			return;
-		}
+	const guild = member.guild;
+	if (member.partial || !member.user) {
+		// can't member.fetch() after they leave
+		return;
 	}
-	const conf = bot.servConf.get(member.guild.id);
+	const conf = bot.servConf.get(guild.id);
 	const logchan = conf.logchannel;
 	if (!logchan) {
 		return;
 	}
 	const logchanid = logchan.slice(2, logchan.length - 1);
-	const chan = member.guild.channels.cache.get(logchanid);
+	const chan = guild.channels.cache.get(logchanid);
 	if (!chan) {
 		return;
 	}
 	try {
-		const audit = await member.guild.fetchAuditLogs({
+		const audit = await guild.fetchAuditLogs({
 			type: "MEMBER_KICK",
 			limit: 1
 		});
@@ -33,12 +29,15 @@ module.exports = async (bot, member) => {
 		const entry = audit.entries.first();
 		// console.log(entry);
 		const d = new Date();
-		if (entry && entry.target.id === member.id && ((d - entry.createdAt) / 1000) <= 5) {
-			console.log(`${member.displayName} was kicked from ${member.guild.name} server.`);
+		const displayName = member.displayName || member.user.username;
+		const tag = member.user.tag || `${member.user.username}#${member.user.discriminator}`;
+		const nickname = member.nickname || "";
+		if (entry && entry.target.id === member.user.id && ((d - entry.createdAt) / 1000) <= 5) {
+			console.log(`${displayName} was kicked from ${guild.name} server.`);
 			embed = new MessageEmbed()
 				.setColor("#ff8300")
 				.setAuthor({
-					name: `${member.user.tag} (${(member.nickname)?`${member.nickname} - `:""}${member.user.id})`,
+					name: `${tag} (${nickname}${member.user.id})`,
 					iconURL: member.user.displayAvatarURL()
 				})
 				.setDescription(`${member.user}\n\n**Action:** Kick\n**Executor:** ${entry.executor}\n**Reason:** ${(entry.reason)?entry.reason:"-"}`)
@@ -48,15 +47,15 @@ module.exports = async (bot, member) => {
 				embeds: [embed]
 			});
 		} else {
-			const auditcheck = await member.guild.fetchAuditLogs({
+			const auditcheck = await guild.fetchAuditLogs({
 				type: "MEMBER_BAN_ADD",
 				limit: 1
 			});
 			const entrycheck = auditcheck.entries.first();
-			if (entrycheck && entrycheck.target.id === member.id && ((d - entrycheck.createdAt) / 1000) <= 5) {
+			if (entrycheck && entrycheck.target.id === member.user.id && ((d - entrycheck.createdAt) / 1000) <= 5) {
 				return;
 			}
-			console.log(`${member.displayName} left ${member.guild.name} server.`);
+			console.log(`${displayName} left ${guild.name} server.`);
 			const d2 = Date.now();
 			const d3 = d2 - member.joinedTimestamp;
 			const joinDuration = moment.duration(d3).humanize();
@@ -64,7 +63,7 @@ module.exports = async (bot, member) => {
 			embed = new MessageEmbed()
 				.setColor("#f4bf42")
 				.setAuthor({
-					name: `${member.user.tag} (${member.user.id})`,
+					name: `${tag} (${member.user.id})`,
 					iconURL: member.user.displayAvatarURL()
 				})
 				.setDescription(`${member.user}`)
