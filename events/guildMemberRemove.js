@@ -6,11 +6,9 @@ const moment = require("moment");
 
 module.exports = async (bot, member) => {
 	const guild = member.guild;
-	if (member.partial) {
+	if (member.partial || !member.user) {
 		// can't member.fetch() after they leave
-		if (!member.user?.id) {
-			return;
-		}
+		return;
 	}
 	const conf = bot.servConf.get(guild.id);
 	const logchan = conf.logchannel;
