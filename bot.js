@@ -135,7 +135,6 @@ function streamCheck(a) {
 
 bot.confEventEmitter.on("finishServConfLoad", (a) => {
 	streamCheck(a);
-	bot.loadSlashCommands();
 });
 
 bot.servConf = new Discord.Collection();
@@ -157,6 +156,7 @@ bot.confRefresh = () => {
 
 bot.loadSlashCommands = async (guildid) => {
 	try {
+		console.log(colors.red("Loading slash commands"));
 		let cmds, customCmds;
 		if (guildid) {
 			cmds = await connection.select("*", "commands", `server_id=${guildid}`);
@@ -239,98 +239,18 @@ bot.loadSlashCommands = async (guildid) => {
 				// console.log(c);
 				const cmd = bot.commands.get(c);
 				if (cmd?.slash) {
+					if (cmd.conf.permLevel <= 1) {
+						cmd.slash.defaultPermission = true; // temp
+					}
 					slashCommands.push(cmd.slash);
 				}
 			}
 
-			const cmds = await g.commands.set(slashCommands);
-			// console.log(cmds);
-			const cmd = cmds.filter(c => c.defaultPermission === false);
-			const fullPermissions = [];
-			// console.log(serv.cmds.disabled);
-			// await g.roles.fetch();
-			const everyone = g.roles.cache.find(r => r.name === "@everyone");
-			for (const [c1] of cmd) {
-				const c = cmd.get(c1);
-				// console.log(c);
-				const perms = [];
-				const permLevel = bot.commands.get(c.name)?.conf?.permLevel;
-				// console.log("permLevel", permLevel);
+			await g.commands.set(slashCommands);
 
-				// let permlvl;
-				const memberrole = serv.membrole;
-				const moderatorrole = serv.modrole;
-				const administratorrole = serv.adminrole;
-				const isDisabled = serv.cmds.disabled.includes(c.name);
-
-				if (everyone && permLevel === 0) {
-					perms.push({
-						id: everyone.id,
-						type: "ROLE",
-						permission: !isDisabled
-					});
-				}
-
-				if (memberrole && permLevel <= 1) {
-					const membRole = g.roles.cache.find(val => val.name === memberrole);
-					if (membRole) {
-						perms.push({
-							id: membRole.id,
-							type: "ROLE",
-							permission: !isDisabled
-						});
-						// permlvl = 1;
-					}
-				}
-				if (moderatorrole && permLevel <= 2) {
-					const modRole = g.roles.cache.find(val => val.name === moderatorrole);
-					if (modRole) {
-						perms.push({
-							id: modRole.id,
-							type: "ROLE",
-							permission: !isDisabled
-						});
-						// permlvl = 2;
-					}
-				}
-				if (administratorrole && permLevel <= 3) {
-					const adminRole = g.roles.cache.find(val => val.name === administratorrole);
-					if (adminRole) {
-						perms.push({
-							id: adminRole.id,
-							type: "ROLE",
-							permission: !isDisabled
-						});
-						// permlvl = 3;
-					}
-				}
-				const owner = await g.fetchOwner();
-				if (owner && permLevel <= 3) {
-					perms.push({
-						id: owner.id,
-						type: "USER",
-						permission: !isDisabled
-					});
-					// permlvl = 3;
-				}
-				perms.push({
-					id: botOwner,
-					type: "USER",
-					permission: true
-				});
-				// console.log("perms", perms);
-				fullPermissions.push({
-					id: c.id,
-					permissions: perms
-				});
-				// console.log("fullPermissions", fullPermissions);
-			}
-			// console.log(fullPermissions);
-			g.commands.permissions.set({
-				fullPermissions
-			});
 		});
 		// console.log([...bot.servConf.values()]);
+		console.log(colors.red("Loaded slash commands"));
 	} catch (e) {
 		console.error(e);
 	}
