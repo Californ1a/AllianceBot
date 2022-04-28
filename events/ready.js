@@ -22,4 +22,5 @@ module.exports = (bot) => {
 	}
 	checkLockdowns(bot);
 	bot.confEventEmitter.emit("finishServConfLoad", 1);
+	bot.loadSlashCommands();
 };

@@ -28,7 +28,7 @@ async function getSteamUsers(steamids) {
 	}
 }
 
-async function getWorkshopQueryResults(searchQuery, searchType = "relevance", slash) {
+async function getWorkshopQueryResults(searchQuery, searchType = "relevance") {
 	if (!searchQuery || searchQuery === "") {
 		searchType = "recent";
 	}
@@ -39,15 +39,11 @@ async function getWorkshopQueryResults(searchQuery, searchType = "relevance", sl
 			break;
 		case "recent":
 			queryType = 1;
-			if (!slash) {
-				searchQuery = "";
-			}
+			searchQuery = "";
 			break;
 		case "popular":
 			queryType = 3;
-			if (!slash) {
-				searchQuery = "";
-			}
+			searchQuery = "";
 			break;
 		default:
 			break;
@@ -254,7 +250,7 @@ exports.runSlash = async (bot, interaction) => {
 		ephemeral: true
 	});
 	try {
-		const data = await getWorkshopQueryResults(searchQuery, queryType, 1);
+		const data = await getWorkshopQueryResults(searchQuery, queryType);
 		// console.log(JSON.stringify(data, null, 2));
 		if (data.data.total < 1) {
 			return await interaction.editReply(`No results found for \`${data.searchQuery}\`${(author) ? ` by \`${author}\`` : ""}`);
