@@ -170,7 +170,7 @@ async function getStoodFor(d, json) {
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 					"Cache-Control": "no-cache",
-					Authorization: `Bearer ${process.env.STEAM_API_TOKEN}`
+					Authorization: `Bearer ${process.env.STEAM_API_KEY}`
 				}
 			});
 			const j = await res.json();
