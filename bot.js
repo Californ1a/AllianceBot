@@ -8,8 +8,6 @@ const io = require("@pm2/io").init({
 	ports: true
 });
 //require("opbeat").start();
-const express = require("express");
-const morgan = require("morgan");
 const connection = require("./util/connection.js");
 const Discord = require("discord.js");
 const bot = new Discord.Client({
@@ -50,9 +48,6 @@ const log = (msg) => {
 	console.log(`[${moment().format("YYY-MM-DD HH:mm:ss")}] ${msg}`);
 };
 console.log(colors.red("Starting"));
-
-const app = express();
-app.use(morgan("dev"));
 
 //Create and load commands and aliases
 bot.commands = new Discord.Collection();
@@ -363,18 +358,6 @@ io.action("throw err", function(reply) {
 	reply({
 		success: false
 	});
-});
-
-app.get("/", (req, res) => {
-	if (bot.uptime || bot.status === 0 || bot.status === 3) { // ready or idle
-		res.status(200).json({
-			status: "online"
-		});
-	} else {
-		res.status(500).json({
-			error: "Bot not ready"
-		});
-	}
 });
 
 const port = process.env.PORT || 3001;
