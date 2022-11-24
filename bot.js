@@ -360,12 +360,6 @@ io.action("throw err", function(reply) {
 	});
 });
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-	console.log(`Listening on http://localhost:${port}`);
-});
-
-
 //catch errors
 bot.on("error", (e) => {
 	io.notifyError(new Error(e));
