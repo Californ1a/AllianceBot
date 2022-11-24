@@ -366,7 +366,7 @@ io.action("throw err", function(reply) {
 });
 
 app.get("/", (req, res) => {
-	if (bot.status === 0 || bot.status === 3) { // ready or idle
+	if (bot.uptime || bot.status === 0 || bot.status === 3) { // ready or idle
 		res.status(200).json({
 			status: "online"
 		});
