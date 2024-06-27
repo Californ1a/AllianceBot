@@ -64,8 +64,8 @@ function readableTime(time) {
 function getDiff(mode, oldTime, newTime) {
 	let diff = null;
 	if (mode !== "Stunt") {
-		const tempRegex = /^(\d{2}):(\d{2}):(\d{2})\.(\d{2})$/gi;
-		const tempRepl = "$1h $2m $3s $40ms";
+		const tempRegex = /^((\d{2}):)?(\d{2}):(\d{2})\.(\d{2})$/gi;
+		const tempRepl = "0$2h $3m $4s $50ms";
 		let tempOldTime = oldTime;
 		let tempNewTime = newTime;
 		if (!oldTime) {
@@ -93,8 +93,8 @@ function parseMapData(t) {
 
 	const diff = getDiff(t.mode, oldTime, newTime);
 	if (mode !== "Stunt") {
-		const tempRegex = /^(\d{2}):(\d{2}):(\d{2})\.(\d{2})$/gi;
-		const tempRepl = "$1h $2m $3s $40ms";
+		const tempRegex = /^((\d{2}):)?(\d{2}):(\d{2})\.(\d{2})$/gi;
+		const tempRepl = "0$2h $3m $4s $50ms";
 		if (oldTime) {
 			oldTime = readableTime(oldTime.replace(tempRegex, tempRepl));
 		}
