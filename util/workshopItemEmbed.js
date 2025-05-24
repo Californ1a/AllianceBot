@@ -38,6 +38,14 @@ async function getResource(options, retryCount = 0, lastError = null) {
 	}
 }
 
+async function failedMsg(m, msg, err) {
+	m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.")
+		.then(m => setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout)).catch(console.error);
+	msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
+	console.error(err);
+	return;
+}
+
 module.exports = async (bot, msg) => {
 	if (msg.author.id === bot.user.id) {
 		return;
@@ -124,6 +132,11 @@ module.exports = async (bot, msg) => {
 				s.getPlayerSummaries({
 					steamids: [`${steamid}`],
 					callback: (err, data) => {
+						if (err) {
+							failedMsg(m, msg, err);
+							return;
+						}
+						console.log(data);
 						const res = data.response.players[0];
 						const name = res.personaname;
 						const profile = res.profileurl;
@@ -143,10 +156,7 @@ module.exports = async (bot, msg) => {
 				});
 			}
 		}).catch(err => {
-			m.edit("Failed to obtain map info. Make sure your map is public and try again in a few minutes.")
-				.then(m => setTimeout(() => m.delete().catch(console.error), botmsgDeleteTimeout)).catch(console.error);
-			msg.delete().then(msg => console.log(`Deleted message from ${msg.member.displayName}`)).catch(console.error);
-			console.error(err);
+			failedMsg(m, msg, err);
 		});
 	}).catch(console.error);
 };
