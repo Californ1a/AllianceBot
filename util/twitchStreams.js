@@ -119,7 +119,7 @@ async function sendManager(streams, users, chan, gameUrl, conf) {
 			.setTimestamp(d)
 			.setFooter({
 				text: "Started at",
-				iconURL: "https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png"
+				iconURL: "https://i.imgur.com/hRRGu1L.png"
 			})
 			.setURL(`https://twitch.tv/${user.name}`)
 			.addField("Viewers", stream.viewers.toString(), true)

@@ -37,7 +37,9 @@ const emptyFields = [{
 }];
 
 const updateEmbed = (bot, data) => {
-	const { servers } = data;
+	const {
+		servers
+	} = data;
 	const distance = bot.guilds.cache.get(serverID);
 	if (!distance.channels.cache.some(val => val.name === channelName)) {
 		return;
@@ -46,14 +48,10 @@ const updateEmbed = (bot, data) => {
 	let fieldsArray = [];
 	if (servers[0]) {
 		for (const serv of servers) {
-			let count = serv.connectedPlayers;
-			if (serv.serverName === "Workshop Mix Unofficial" && serv.mode === "Sprint Auto") {
-				count = data.Players.length;
-			}
 			const servName = serv.serverName.replace(/^\[[a-zA-Z0-9]{6}\]/i, "");
 			fieldsArray.push({
 				"name": (serv.passwordProtected) ? `~~${servName}~~` : servName,
-				"value": `${serv.mode} (${count}/${serv.playerLimit}) \`${serv.build}\``,
+				"value": `${serv.mode} (${serv.connectedPlayers}/${serv.playerLimit}) \`${serv.build}\``,
 				"inline": true
 			});
 		}
@@ -67,7 +65,10 @@ const updateEmbed = (bot, data) => {
 		limit: 20
 	}).then(messages => {
 		if (messages.size === 0) {
-			send(channel, { content: "Distance Server List", embeds: [serversEmbed] }).catch(console.error);
+			send(channel, {
+				content: "Distance Server List",
+				embeds: [serversEmbed]
+			}).catch(console.error);
 			refreshMin2 = refreshMin;
 		} else {
 			const bm = messages.filter(m => m.author.id === bot.user.id);
@@ -76,7 +77,10 @@ const updateEmbed = (bot, data) => {
 				mm.clear().catch(console.error);
 			}
 			if (bm.size > 0) {
-				bm.first().edit({ content: "Distance Server List", embeds: [serversEmbed] }).then(() => {
+				bm.first().edit({
+					content: "Distance Server List",
+					embeds: [serversEmbed]
+				}).then(() => {
 					count++;
 					if (Date.now() - d >= logTimeMin * 60 * 1000) {
 						console.log(colors.grey(`* Updated Distance server list ${count} times in the past ${logTimeMin} minutes.`));
@@ -86,14 +90,17 @@ const updateEmbed = (bot, data) => {
 					refreshMin2 = refreshMin;
 				}).catch(console.error);
 			} else {
-				send(channel, { content: "Distance Server List", embeds: [serversEmbed] }).catch(console.error);
+				send(channel, {
+					content: "Distance Server List",
+					embeds: [serversEmbed]
+				}).catch(console.error);
 				refreshMin2 = refreshMin;
 			}
 		}
 	}).catch(console.error);
 };
 
-const distanceServers = (bot, servers = ["http://distance.rip:23469/", "http://144.202.124.150:45672/summary"]) => {
+const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
 	Promise.all(servers.map(s => fetch(s)))
 		.then(responses => Promise.all(responses.map(res => res.json())))
 		.then(multiData => multiData.reduce((merge, data) => ({
