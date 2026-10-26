@@ -206,7 +206,7 @@ async function composeEmbed(d, json) {
 		.addField("Old WR", (d.oldTime) ? `${d.oldTime} by ${(d.oldRecordHolderProfileUrl)?`[${(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}](${d.oldRecordHolderProfileUrl})`:(d.oldRecordHolderName)?d.oldRecordHolderName:"[unknown]"}` : "None", true)
 		.addField("New WR", `${d.newTime} by ${(d.newRecordHolderProfileUrl)?`[${(d.newRecordHolderName)?d.newRecordHolderName:"[unknown]"}](${d.newRecordHolderProfileUrl})`:(d.newRecordHolderName)?d.newRecordHolderName:"[unknown]"}`, true);
 	if (d.author !== "[Official Map]") {
-		embed.setThumbnail(d.mapThumbnailUrl);
+		embed.setThumbnail(`${d.mapThumbnailUrl}?impolicy=Letterbox`);
 		embed.setURL(d.mapUrl);
 	}
 	return embed;

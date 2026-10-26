@@ -97,10 +97,10 @@ module.exports = async (bot, msg) => {
 				if (json.creator_app_id === 233610) {
 					embed.addField("File Name", json.filename, true)
 						.addField("File Size", `${Math.floor(json.file_size/1000).toLocaleString()}KB`, true)
-						.setImage(json.preview_url);
+						.setImage(`${json.preview_url}?impolicy=Letterbox`);
 				} else {
 					embed.addField("Type", "Collection", true)
-						.setThumbnail(json.preview_url);
+						.setThumbnail(`${json.preview_url}?impolicy=Letterbox`);
 				}
 				let modes = [];
 				let difficulty = [];
