@@ -17,7 +17,7 @@ const serversEmbed = {
 	},
 	"author": {
 		"name": "Distance Servers",
-		"url": "http://distance.rip/",
+		"url": "https://distance.rocks/servers",
 		"icon_url": "https://cdn.discordapp.com/emojis/230369859920330752.png"
 	},
 	"fields": []
@@ -100,7 +100,7 @@ const updateEmbed = (bot, data) => {
 	}).catch(console.error);
 };
 
-const distanceServers = (bot, servers = ["http://distance.rip:23469/"]) => {
+const distanceServers = (bot, servers = ["https://distance.rocks/api/servers"]) => {
 	Promise.all(servers.map(s => fetch(s)))
 		.then(responses => Promise.all(responses.map(res => res.json())))
 		.then(multiData => multiData.reduce((merge, data) => ({
